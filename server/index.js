@@ -25,7 +25,9 @@ var fs = require('fs'),
 
     port = process.env.PORT || config.defaultPort,
     isSocket = isNaN(port),
-    isDev = process.env.NODE_ENV === 'development';
+    isDev = process.env.NODE_ENV === 'development',
+
+    router = require('./router');
 
 require('debug-http')();
 
@@ -45,7 +47,7 @@ app
     }))
     .use(passport.initialize())
     .use(passport.session())
-    .use(csrf());
+    // .use(csrf());
 
 // NOTE: conflicts with livereload
 isDev || app.use(slashes());
@@ -58,23 +60,7 @@ passport.deserializeUser(function(user, done) {
     done(null, JSON.parse(user));
 });
 
-app.get('/ping/', function(req, res) {
-    res.send('ok');
-});
-
-app.get('/', function(req, res) {
-    render(req, res, {
-        view: 'page-index',
-        title: 'Main page',
-        meta: {
-            description: 'Page description',
-            og: {
-                url: 'https://site.com',
-                siteName: 'Site name'
-            }
-        }
-    })
-});
+router(app);
 
 isDev && require('./rebuild')(app);
 
