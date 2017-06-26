@@ -24,7 +24,6 @@ module.exports = {
                 var rstr = '/login' + ( (req.originalUrl.length>1) ? '?trg='+encodeURIComponent(req.originalUrl) : '' );
                 res.redirect(rstr);
             } else render(req, res, 'login');
-            // render(req, res, 'login');
         }
     },
 
@@ -34,7 +33,6 @@ module.exports = {
     },
 
     checkAuthorisation: function (req, res) {
-        console.log(req.body);
         Account.findOne({
             login: req.body.login,
             password: password.createHash(req.body.password),
