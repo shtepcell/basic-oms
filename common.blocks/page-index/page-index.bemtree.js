@@ -1,3 +1,3 @@
 block('page-index').content()(function() {
-    return 'Index page content';
+    return this.data.page;
 });

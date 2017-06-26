@@ -1,3 +1,6 @@
+const Auth = require('./controllers/auth');
+const Account = require('./controllers/account');
+
 var Render = require('./render'),
     render = Render.render;
 
@@ -7,18 +10,22 @@ module.exports = function (app) {
         res.send('ok');
     });
 
-    app.get('/', function(req, res) {
-        render(req, res, {
-            view: 'page-index',
-            title: 'Main page',
-            meta: {
-                description: 'Page description',
-                og: {
-                    url: 'https://site.com',
-                    siteName: 'Site name'
-                }
-            }
-        })
+    app.post('/login', Auth.checkAuthorisation);
+
+    app.all('*', Auth.isLoggedIn);
+
+    app.get('/logout', Auth.logout);
+
+    app.get('/', function (req, res) {
+        render(req, res, 'main');
+    });
+
+    // app.all('/admin/*', Auth.isAdmin);
+
+    app.get('/admin/users', Account.getAll);
+
+    app.get('/admin/users/add', function (req, res) {
+        render(req, res, 'add_account');
     });
 
 }

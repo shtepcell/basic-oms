@@ -29,6 +29,8 @@ var fs = require('fs'),
 
     router = require('./router');
 
+const db = require('./controllers/connect').connections[0];
+
 require('debug-http')();
 
 app

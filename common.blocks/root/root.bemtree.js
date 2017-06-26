@@ -5,7 +5,7 @@ block('root').replace()(function() {
         og = meta.og || {};
 
     if (ctx.context) return ctx.context;
-
+    
     return {
         block: 'page',
         title: data.title,

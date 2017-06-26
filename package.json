@@ -29,7 +29,7 @@
     "express-session": "^1.13.0",
     "lodash": "^4.11.2",
     "mongodb": "^2.2.29",
-    "mongoose": "^4.10.8",
+    "mongoose": "4.9.0",
     "morgan": "^1.7.0",
     "node-eval": "^1.1.0",
     "object-assign": "^4.1.0",
@@ -75,11 +75,11 @@
     "ym": "^0.1.2"
   },
   "scripts": {
-    "start": "node server",
+    "start": "node init && node server",
     "postinstall": "npm run drop-cache && npm run make",
     "make": "enb make",
     "drop-cache": "rm -rf .enb/tmp",
-    "dev": "npm run make && nodemon",
+    "dev": "node init && npm run make && nodemon",
     "watch": "chokidar '*.blocks/**' --initial -c 'enb make && notify -t bem-express -m Built'",
     "test": "npm run lint && npm run make",
     "lint": "eslint . && bemhint . && stylelint *.blocks/**/*.css"

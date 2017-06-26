@@ -1,5 +1,5 @@
 block('footer').content()(function() {
     return [
-        'footer content'
+        'Разработано в Миранда-Медиа. 2017'
     ];
 });

@@ -12,6 +12,8 @@ var fs = require('fs'),
     cacheTTL = config.cacheTTL,
     cache = {};
 
+    const View = require('./views');
+
 function render(req, res, data, context) {
     var query = req.query,
         user = req.user,
@@ -22,6 +24,8 @@ function render(req, res, data, context) {
         return res.send(cached.html);
     }
 
+    if(!data.view) data = View[data];
+
     if (isDev && query.json) return res.send('<pre>' + JSON.stringify(data, null, 4) + '</pre>');
 
     var bemtreeCtx = {
@@ -29,7 +33,8 @@ function render(req, res, data, context) {
         context: context,
         // extend with data needed for all routes
         data: Object.assign({}, {
-            url: req._parsedUrl
+            url: req._parsedUrl,
+            locals: res.locals
             // csrf: req.csrfToken()
         }, data)
     };
