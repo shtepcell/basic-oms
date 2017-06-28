@@ -4,6 +4,13 @@ block('header').content()(function() {
         ret.push({
             block: 'navigator',
         });
+    } else {
+        ret.push({
+            block: 'title',
+            mods: {
+                login: true
+            }
+        });
     }
     return ret;
 });

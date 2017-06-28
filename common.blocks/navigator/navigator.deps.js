@@ -13,6 +13,7 @@
             mods: {
                 switcher: 'link',
                 theme: 'islands',
+                nav: true,
                 size: 'm',
             }
         }

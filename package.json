@@ -75,7 +75,7 @@
     "ym": "^0.1.2"
   },
   "scripts": {
-    "start": "node init && node server",
+    "start": "node server",
     "postinstall": "npm run drop-cache && npm run make",
     "make": "enb make",
     "drop-cache": "rm -rf .enb/tmp",

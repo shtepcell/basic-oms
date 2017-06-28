@@ -1,3 +1,3 @@
 ({
-    shouldDeps: ['link']
+    mustDeps: ['link']
 })

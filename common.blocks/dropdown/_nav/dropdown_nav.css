@@ -1,15 +1,15 @@
-.link_nav {
+.dropdown_nav {
     display: inline-block;
     padding: 15px 10px 15px 10px;
 
 }
-.link_nav.link_theme_islands {
+.dropdown_nav.dropdown_theme_islands {
     color: #fff;
     font-weight: bold;
     transition: 0.3s all;
 }
 
-.link_nav.link_theme_islands:hover {
+.dropdown_nav.dropdown_theme_islands:hover {
     color: #fff;
     transform: translateY(3px);
 }

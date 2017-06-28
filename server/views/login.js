@@ -10,12 +10,6 @@ module.exports = {
     },
     page: [
         {
-            block: 'title',
-            mods: {
-                login: true
-            }
-        },
-        {
             block: 'form',
             mods: {
                 login: true
