@@ -7,7 +7,7 @@ modules.define('pager__item',
                     this._pagerId = this._block().domElem.attr('id');
                     this._button = this.findMixedBlock(Button);
                     this._button && this._events(this._button).on('click', this._onClick);
-                    this._page = location.getUri().getParam('page' + this._pagerId ) || 1;
+                    this._page = location.getUri().getParam('pager' + this._pagerId ) || 1;
                     location.on('change', function (e, state) {
                         if (!state.params.page) {
                             this._page = 1;
@@ -24,7 +24,7 @@ modules.define('pager__item',
         _onClick: function () {
             var params = {};
 
-            params['page' + this._pagerId] =  this.params.page;
+            params['pager' + this._pagerId] =  this.params.page;
             location.change({ params: params });
         }
     }));
