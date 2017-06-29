@@ -1,11 +1,10 @@
 block('pager')(
     def()(function() {
-        
-        return {
-            block: 'pager',
-            page: this.data.options.pageNumber,
-            records: this.data.options.records,
-            perPage: this.data.options.perPage
-        }
+
+        return this.extend(this.ctx, {
+            page: this.data.locals.pager.pageNumber,
+            records: this.data.locals.pager.records,
+            perPage: this.data.locals.pager.perPage
+        });
     })
 );
