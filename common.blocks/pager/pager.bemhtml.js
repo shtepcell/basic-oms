@@ -1,75 +1,86 @@
 block('pager')(
+    js()(true),
     content()(function() {
         var items = [],
-        	_this = this,
+            _this = this,
             pages = Math.ceil(_this.ctx.records / _this.ctx.perPage),
             hasPreviosStep = _this.ctx.page !== 1;
             hasNextStep = _this.ctx.page !== pages;
 
-        if (hasPreviosStep) {
-        	items.push({
-        		block: 'link',
-        		url: '?page=' + (_this.ctx.page - 1),
-        		content: '<',
-        		mix: [
-        			{
-        				block: 'pager',
-        				elem: 'item'
-        			}
-        		]
-        	});
-        } else {
-        	items.push({
-        		block: 'pager',
-        		elem: 'item',
-        		content: '<'
-        	});
-        }
+
+        items.push({
+            block: 'button',
+            mods: {
+                theme: 'islands',
+                size: 's',
+                disabled: !hasPreviosStep
+            },
+            text: '<',
+            mix: [
+                    {
+                        block: 'pager',
+                        elem: 'item',
+                        js: {
+                            page: hasPreviosStep ? _this.ctx.page - 1 : undefined
+                        }
+                    },
+                    {
+                        block: 'pager',
+                        elem: 'item-arrow-prev'
+                    }
+                ]
+        });
 
         for (var i = 1; i <= pages; i++) {
-        	if (i !== _this.ctx.page) {
-        		items.push({
-        			block: 'link',
-        			url: '?page=' + i,
-        			content: i,
-        			mix: [
-        				{
-        					block: 'pager',
-        					elem: 'item'
-        				}
-        			]
-	        	});
-        	} else {
-        		items.push({
-        			block: 'pager',
-        			elem: 'item',
-        			elemMods: {
-        				active: 'yes'
-        			},
-        			content: i
-        		});
-        	}
+            items.push({
+                block: 'button',
+                mods: {
+                    theme: 'islands',
+                    size: 's',
+                    disabled: i === _this.ctx.page
+                },
+                text: i,
+                mix: [
+                        {
+                            block: 'pager',
+                            elem: 'item-number'
+                        },
+                        {
+                            block: 'pager',
+                            elem: 'item',
+                            elemMods: {
+                                active: i === _this.ctx.page
+                            },
+                            js: {
+                                page: i !== _this.ctx.page ? i : undefined
+                            }
+                        }
+                    ]
+            });
         }
 
-        if (hasNextStep) {
-        	items.push({
-        		block: 'link',
-        		url: '?page=' + (_this.ctx.page + 1),
-        		content: '>',
-        		mix: [
-        			{
-        				block: 'pager',
-        				elem: 'item'
-        			}
-        		]
-        	});
-        } else {
-        	items.push({
-        		block: 'pager',
-        		elem: 'item',
-        		content: '>'
-        	});
-        }
+        items.push({
+            block: 'button',
+            mods: {
+                theme: 'islands',
+                size: 's',
+                disabled: !hasNextStep
+            },
+            text: '>',
+            mix: [
+                    {
+                        block: 'pager',
+                        elem: 'item',
+                        js: {
+                            page: hasNextStep ? _this.ctx.page + 1 : undefined
+                        }
+                    },
+                    {
+                        block: 'pager',
+                        elem: 'item-arrow-next'
+                    }
+                ]
+        });
 
         return items;
     })

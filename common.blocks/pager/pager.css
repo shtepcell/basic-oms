@@ -3,7 +3,22 @@
 	display: inline-block;
 }
 
-.pager__item_active_yes
+.pager__item-number.button
+{
+	border-radius: 0;
+}
+
+.pager__item-arrow-next.button
+{
+    border-radius: 0 3px 3px 0;
+}
+
+.pager__item-arrow-prev.button
+{
+    border-radius: 3px 0 0 3px;
+}
+
+.pager__item_active
 {
 
 }
