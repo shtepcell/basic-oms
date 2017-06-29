@@ -25,7 +25,6 @@ modules.define('pager__item',
             var params = {};
 
             params['page' + this._pagerId] =  this.params.page;
-            console.log(this);
             location.change({ params: params });
         }
     }));

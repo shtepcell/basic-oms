@@ -1,11 +1,11 @@
 .pager__item
 {
-	display: inline-block;
+    display: inline-block;
 }
 
 .pager__item-number.button
 {
-	border-radius: 0;
+    border-radius: 0;
 }
 
 .pager__item-arrow-next.button

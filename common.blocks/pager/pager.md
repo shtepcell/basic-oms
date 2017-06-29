@@ -12,13 +12,13 @@
 
 ```
 {
-	block: 'pager'; // +передавать параметры с сервера 
+    block: 'pager'; // +передавать параметры с сервера 
 }
 ```
 
 ```
 {
-	block: 'pager'; // использование в BEMHTML
+    block: 'pager'; // использование в BEMHTML
     page: 2,
     records: 20,
     perPage: 3

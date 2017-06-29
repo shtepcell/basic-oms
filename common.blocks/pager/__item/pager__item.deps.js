@@ -1,7 +1,7 @@
 ({
-	mustDeps: 'i-bem-dom',
-	shouldDeps: [
-		'button',
-		'location'
-	]
+    mustDeps: 'i-bem-dom',
+    shouldDeps: [
+        'button',
+        'location'
+    ]
 })
