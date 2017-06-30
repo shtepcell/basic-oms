@@ -26,6 +26,7 @@ modules.define('pager__item',
 
             params['pager' + this._pagerId] =  this.params.page;
             location.change({ params: params });
+            window.location.reload();
         }
     }));
 });
