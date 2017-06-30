@@ -12,6 +12,26 @@ module.exports = {
             render(req, res, 'users');
         })
     },
+    getPage: function (req, res) {
+        var pagerId = 'first',
+            pageNumber = req.query['pager' + pagerId] || 1,
+            perPage = 1; // TODO брать из конфига?
+
+        Account.find({status: true}).then( accs => {
+            if (pageNumber !== accs.length) 
+                res.locals.users = accs.splice((pageNumber - 1) * perPage, perPage);
+            else
+                res.locals.users = accs.splice((pageNumber - 1) * perPage);
+
+            res.locals.pagers = {};
+            res.locals.pagers['first'] = {
+                pageNumber: +pageNumber,
+                records: accs.length,
+                perPage: perPage
+            };
+            render(req, res, 'users');
+        })
+    },
     getOne: function (req, res) {
         Account.findOne({login: 'some', status: true}).then( acc => {
             res.end(JSON.stringify(acc));

@@ -20,6 +20,12 @@ module.exports = {
             mods: {
                 users: true
             }
+        },
+        {
+            block: 'pager',
+            attrs: {
+                id: 'first'
+            }
         }
     ]
 };
