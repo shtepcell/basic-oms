@@ -1,6 +1,7 @@
 'use strict';
 
 var mongoose = require('../controllers/connect');
+var mongoosePaginate = require('mongoose-paginate');
 
 var schema = mongoose.Schema( {
 	login : {
@@ -28,6 +29,8 @@ var schema = mongoose.Schema( {
 		required : true
 	}
 });
+
+schema.plugin(mongoosePaginate);
 
 schema.methods.remove = function () {
 	if(this.status) {

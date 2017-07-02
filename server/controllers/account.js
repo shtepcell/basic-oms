@@ -14,28 +14,35 @@ module.exports = {
     },
     getPage: function (req, res) {
         var pagerId = 'first',
-            pageNumber = req.query['pager' + pagerId],
+            pageNumber = req.query['pager' + pagerId] || 1,
             perPage = 1; // TODO брать из конфига?
 
-        Account.find({status: true}).then( accs => {
-            if (!!(+pageNumber) && pageNumber > 0 && pageNumber < Math.ceil(accs.length / perPage) )
-                pageNumber = +pageNumber;
-            else
-                pageNumber = 1;
+        if (!!(+pageNumber) && (+pageNumber) > 0) 
+            pageNumber = +pageNumber;
+        else
+            res.redirect(req.path);
 
-            if (pageNumber !== accs.length) 
-                res.locals.users = accs.splice((pageNumber - 1) * perPage, perPage);
-            else
-                res.locals.users = accs.splice((pageNumber - 1) * perPage);
+        Account.paginate({status: true}, { page: pageNumber, limit: perPage})
+            .then((accs) => {
+                if (!accs.docs.length)
+                {
+                    res.redirect(req.path);
+                    return;
+                }
 
-            res.locals.pagers = {};
-            res.locals.pagers['first'] = {
-                pageNumber: +pageNumber,
-                records: accs.length,
-                perPage: perPage
-            };
-            render(req, res, 'users');
-        })
+                res.locals.users = accs.docs;
+                res.locals.pagers = {};
+                res.locals.pagers[pagerId] = {
+                    pageNumber: +pageNumber,
+                    records: accs.total,
+                    perPage: accs.limit
+                };
+                render(req, res, 'users');
+            })
+            .catch((err) => {
+                console.log('errr', err);
+                // TODO: что делаем при ошибке?
+            });
     },
     getOne: function (req, res) {
         Account.findOne({login: 'some', status: true}).then( acc => {
