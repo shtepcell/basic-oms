@@ -14,10 +14,15 @@ module.exports = {
     },
     getPage: function (req, res) {
         var pagerId = 'first',
-            pageNumber = req.query['pager' + pagerId] || 1,
+            pageNumber = req.query['pager' + pagerId],
             perPage = 1; // TODO брать из конфига?
 
         Account.find({status: true}).then( accs => {
+            if (!!(+pageNumber) && pageNumber > 0 && pageNumber < Math.ceil(accs.length / perPage) )
+                pageNumber = +pageNumber;
+            else
+                pageNumber = 1;
+
             if (pageNumber !== accs.length) 
                 res.locals.users = accs.splice((pageNumber - 1) * perPage, perPage);
             else
