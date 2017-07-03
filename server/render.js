@@ -18,13 +18,19 @@ function render(req, res, data, context) {
     var query = req.query,
         user = req.user,
         cacheKey = req.originalUrl + (context ? JSON.stringify(context) : '') + (user ? JSON.stringify(user) : ''),
-        cached = cache[cacheKey];
+        cached = cache[cacheKey],
+        opt;
 
     if (useCache && cached && (new Date() - cached.timestamp < cacheTTL)) {
         return res.send(cached.html);
     }
 
-    if(!data.view) data = View[data];
+    if (data.viewName) {
+        opt = data.options;
+        data = View[data.viewName](opt);
+    }
+
+    if(!data.view) data = View[data]();
 
     if (isDev && query.json) return res.send('<pre>' + JSON.stringify(data, null, 4) + '</pre>');
 

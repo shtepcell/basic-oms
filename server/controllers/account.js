@@ -14,11 +14,14 @@ module.exports = {
     },
     getPage: function (req, res) {
         var pagerId = 'first',
+            pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
             perPage = 1; // TODO брать из конфига?
 
-        if (!!(+pageNumber) && (+pageNumber) > 0) 
+        if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
+            pagers[0] = pagerId;
+        }
         else
             res.redirect(req.path);
 
@@ -37,7 +40,12 @@ module.exports = {
                     records: accs.total,
                     perPage: accs.limit
                 };
-                render(req, res, 'users');
+                render(req, res, {
+                    viewName: 'users',
+                    options: {
+                        pagers: pagers
+                    }
+                });
             })
             .catch((err) => {
                 console.log('errr', err);
