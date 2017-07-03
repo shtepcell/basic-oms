@@ -12,6 +12,7 @@ modules.define('pager__item',
                         if (!state.params.page) {
                             this._page = 1;
                         }
+                        window.location.reload();
                     }, this);
                 }
             },
@@ -26,7 +27,6 @@ modules.define('pager__item',
 
             params['pager' + this._pagerId] =  this.params.page;
             location.change({ params: params });
-            window.location.reload();
         }
     }));
 });
