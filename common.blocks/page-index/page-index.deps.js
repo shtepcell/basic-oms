@@ -34,6 +34,9 @@
                 theme: 'islands',
                 size: 'm'
             }
+        },
+        {
+            block: 'pager'
         }
     ]
 })

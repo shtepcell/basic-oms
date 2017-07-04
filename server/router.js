@@ -22,7 +22,7 @@ module.exports = function (app) {
 
     // app.all('/admin/*', Auth.isAdmin);
 
-    app.get('/admin/users', Account.getAll);
+    app.get('/admin/users', Account.getPage);
 
     app.get('/admin/users/add', function (req, res) {
         render(req, res, 'add_account');
