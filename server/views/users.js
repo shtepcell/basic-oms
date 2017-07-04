@@ -31,7 +31,7 @@ module.exports = function(opt) {
             {
                 block: 'pager',
                 attrs: {
-                    id: 'first'
+                    id: pagerId
                 }
             }
         ]
