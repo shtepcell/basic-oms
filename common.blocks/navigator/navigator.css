@@ -1,5 +1,6 @@
 .navigator {
     margin-bottom: 1em;
+    min-width: 630px;
     background-color: #1a7abe;
 }
 .navigator__link {
@@ -20,4 +21,8 @@
 
 .navigator__right {
     float: right;
+}
+.navigator__dropdown {
+    margin: 0.5em 2em 0.5em 2em;
+    display: block;
 }
