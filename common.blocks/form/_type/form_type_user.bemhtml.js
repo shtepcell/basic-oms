@@ -1,4 +1,4 @@
-block('form').mod('userAdd')(
+block('form').mod('type', 'user')(
     attrs()({
         method: 'POST',
         action: '/admin/users/add'

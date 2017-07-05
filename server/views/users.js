@@ -17,10 +17,19 @@ module.exports = function(opt) {
         },
         page: [
             {
-                block: 'form',
+                block: 'button',
                 mods: {
-                    userAdd: true
-                }
+                    theme: 'islands',
+                    size: 'm',
+                    type: 'link'
+                },
+                url: '/admin/users/add',
+                icon: {
+                    block: 'icon',
+                    url: '/add.svg',
+                    mix: 'button__icon'
+                },
+                text: 'Создать пользователя'
             },
             {
                 block: 'table',

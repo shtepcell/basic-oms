@@ -2,3 +2,22 @@
     margin-bottom: 1em;
     background-color: #1a7abe;
 }
+.navigator__link {
+    display: inline-block;
+    padding: 15px 10px 15px 10px;
+
+}
+.navigator__link.link_theme_islands {
+    color: #fff;
+    font-weight: bold;
+    transition: 0.3s all;
+}
+
+.navigator__link.link_theme_islands:hover {
+    color: #fff;
+    transform: translateY(3px);
+}
+
+.navigator__right {
+    float: right;
+}

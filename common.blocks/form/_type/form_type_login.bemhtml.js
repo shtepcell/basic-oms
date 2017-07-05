@@ -1,4 +1,4 @@
-block('form').mod('login')(
+block('form').mod('type', 'login')(
     attrs()({
         method: 'POST',
         action: '/login'
@@ -40,8 +40,11 @@ block('form').mod('login')(
                 mods: {
                     theme: 'islands',
                     size: 'xl',
-                    type: 'submit',
-                    login: true
+                    type: 'submit'
+                },
+                mix: {
+                    block: 'button',
+                    elem: 'login'
                 },
                 text: 'Войти'
             }

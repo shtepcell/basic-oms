@@ -3,14 +3,13 @@
         {
             block: 'form',
             mods: {
-                login: true,
-                userAdd: true
+                type: ['login', 'user']
             }
         },
         {
             block: 'title',
             mods: {
-                login: true
+                type: 'login'
             }
         },
         {

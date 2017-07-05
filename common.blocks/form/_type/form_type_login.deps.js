@@ -13,8 +13,7 @@
             mods: {
                 theme: 'islands',
                 size: 'l',
-                type: 'submit',
-                login: true
+                type: 'submit'
             }
         },
         {
