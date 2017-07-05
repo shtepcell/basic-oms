@@ -6,34 +6,26 @@ block('form').mod('type', 'login')(
     content()(function () {
         return [
             {
-                block: 'fields',
+                block: 'input',
                 mods: {
-                    login: true
+                    theme: 'islands',
+                    size: 'xl'
                 },
-                content: [
-                    {
-                        block: 'input',
-                        mods: {
-                            theme: 'islands',
-                            size: 'xl'
-                        },
-                        name: 'login',
-                        placeholder: 'Логин'
-                    },
-                    {
-                        tag: 'br'
-                    },
-                    {
-                        block: 'input',
-                        mods: {
-                            theme: 'islands',
-                            size: 'xl',
-                            type: 'password'
-                        },
-                        name: 'password',
-                        placeholder: 'Пароль'
-                    }
-                ]
+                name: 'login',
+                placeholder: 'Логин'
+            },
+            {
+                tag: 'br'
+            },
+            {
+                block: 'input',
+                mods: {
+                    theme: 'islands',
+                    size: 'xl',
+                    type: 'password'
+                },
+                name: 'password',
+                placeholder: 'Пароль'
             },
             {
                 block: 'button',

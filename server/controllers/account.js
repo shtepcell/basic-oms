@@ -58,15 +58,22 @@ module.exports = {
         })
     },
     create: function (req, res) {
-        var acc = new Account({
-            login: req.body.login,
-            password: req.body.password,
-            name: req.body.name,
-            email: req.body.email,
-            role: req.body.role,
-            status: true
-        });
-        return acc.save();
+        Account.findOne({login: req.body.login})
+            .then( a => {
+                if (!a) {
+                    var acc = new Account({
+                        login: req.body.login,
+                        password: req.body.password,
+                        name: req.body.name,
+                        email: req.body.email,
+                        department: req.body.department,
+                        status: true
+                    });
+                    return acc.save();
+                    console.log('Created user', acc.login);
+                }
+            })
+            .then( () => res.redirect('/admin/users'))
     },
     edit: function (req, res) {
         Account.find({ login: req.body.login }).then( acc => {

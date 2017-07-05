@@ -12,13 +12,9 @@ module.exports = function(opt) {
         },
         page: [
             {
-                block: 'title',
-                content: 'Создание пользователя'
-            },
-            {
                 block: 'form',
                 mods: {
-                    userAdd: true
+                    type: 'user'
                 }
             }
         ]

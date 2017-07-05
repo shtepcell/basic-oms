@@ -20,7 +20,7 @@ var schema = mongoose.Schema( {
 	},
 	email : String,
 	phone : String,
-	role : {
+	department : {
 		type : Number,
 		required : true
 	},

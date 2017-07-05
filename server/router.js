@@ -27,5 +27,7 @@ module.exports = function (app) {
     app.get('/admin/users/add', function (req, res) {
         render(req, res, 'add_account');
     });
+    
+    app.post('/admin/users/add', Account.create);
 
 }

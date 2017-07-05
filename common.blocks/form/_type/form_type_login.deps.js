@@ -15,12 +15,6 @@
                 size: 'l',
                 type: 'submit'
             }
-        },
-        {
-            block: 'fields',
-            mods: {
-                login: true
-            }
         }
     ]
 })
