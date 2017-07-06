@@ -1,0 +1,49 @@
+module.exports = function(opt) {
+        console.log(opt);
+    var info = {
+        create: {
+            title: 'Создание пользователя',
+            description: 'Страница редактирования пользователя',
+            action: '/admin/users/add'
+        },
+
+        edit: {
+            title: 'Пользователь ',
+            description: 'Страница редактирования пользователя',
+            action: '/admin/users/'
+        },
+
+        profile: {
+            title: 'Мой профиль',
+            description: 'Страница редактирования профиля',
+            action: '/profile'
+        }
+    }
+
+    if(opt.type == 'edit') {
+        info.edit.title+= opt.login;
+        info.edit.action+= opt.login
+    }
+
+    return {
+        view: 'page-index',
+        title: info[opt.type].title,
+        meta: {
+            description: info[opt.type].description,
+            og: {
+                url: 'https://suz.miranda-media.ru',
+                siteName: 'СУЗ 2.0'
+            }
+        },
+        page: [
+            {
+                block: 'form',
+                mods: {
+                    type: 'user'
+                },
+                type: opt.type,
+                action: info[opt.type].action
+            }
+        ]
+    };
+};

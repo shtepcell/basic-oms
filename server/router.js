@@ -24,10 +24,19 @@ module.exports = function (app) {
 
     app.get('/admin/users', Account.getPage);
 
+
     app.get('/admin/users/add', function (req, res) {
-        render(req, res, 'add_account');
+        render(req, res, {
+            viewName: 'user',
+            options: {
+                type: 'create'
+            }
+        });
     });
-    
     app.post('/admin/users/add', Account.create);
+
+    app.get('/admin/users/:login', Account.getOne);
+    app.post('/admin/users/:login', Account.edit);
+
 
 }

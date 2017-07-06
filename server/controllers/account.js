@@ -53,8 +53,21 @@ module.exports = {
             });
     },
     getOne: function (req, res) {
-        Account.findOne({login: 'some', status: true}).then( acc => {
-            res.end(JSON.stringify(acc));
+        Account.findOne({login: req.params.login, status: true}).then( acc => {
+            res.locals.user = {
+                login: acc.login,
+                name: acc.name,
+                email: acc.email,
+                department: acc.department
+            };
+
+            render(req, res, {
+                viewName: 'user',
+                options: {
+                    type: 'edit',
+                    login: acc.login
+                }
+            });
         })
     },
     create: function (req, res) {
@@ -76,15 +89,17 @@ module.exports = {
             .then( () => res.redirect('/admin/users'))
     },
     edit: function (req, res) {
-        Account.find({ login: req.body.login }).then( acc => {
-            acc.name = req.body.name;
-            acc.email = req.body.email;
-            acc.role = req.body.role;
-            acc.status = req.body.status;
+        console.log();
+        Account.findOne({ login: req.params.login }).then( acc => {
+            acc.name = req.body.name || acc.name;
+            acc.email = req.body.email || acc.email;
+            acc.role = req.body.role || acc.role;
+            acc.status = req.body.status || acc.status
+            console.log(acc);
             return acc.save();
         }).then( () => {
-            console.log('Edit account', req.body.login);
-            res.send('Ok');
+            console.log('Edit account', req.params.login);
+            res.redirect('/admin/users/'+req.params.login)
         });
     },
     selfEdit: function (req, res) {
