@@ -20,6 +20,8 @@ module.exports = function (app) {
         render(req, res, 'main');
     });
 
+    app.get('/profile', Account.getProfile);
+    app.post('/profile', Account.selfEdit);
     // app.all('/admin/*', Auth.isAdmin);
 
     app.get('/admin/users', Account.getPage);

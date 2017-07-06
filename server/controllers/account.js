@@ -70,6 +70,24 @@ module.exports = {
             });
         })
     },
+    getProfile: function (req, res) {
+        Account.findOne({login: res.locals.__user.login, status: true}).then( acc => {
+            res.locals.user = {
+                login: acc.login,
+                name: acc.name,
+                email: acc.email,
+                department: acc.department
+            };
+
+            render(req, res, {
+                viewName: 'user',
+                options: {
+                    type: 'profile',
+                    login: acc.login
+                }
+            });
+        })
+    },
     create: function (req, res) {
         Account.findOne({login: req.body.login})
             .then( a => {
@@ -103,13 +121,13 @@ module.exports = {
         });
     },
     selfEdit: function (req, res) {
-        Account.find({ login: req.body.login }).then( acc => {
-            acc.email = req.body.email;
-            acc.name = req.body.name;
+        Account.findOne({ login: res.locals.__user.login }).then( acc => {
+            acc.email = req.body.email || acc.email;
+            acc.name = req.body.name || acc.name;
             return acc.save();
         }).then( () => {
-            console.log('Edit account', req.body.login);
-            res.send('Ok');
+            console.log('Edit profile', res.locals.__user.login);
+            res.redirect('/profile');
         });
     },
     passEdit: function (req, res) {
