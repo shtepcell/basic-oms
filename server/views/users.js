@@ -17,11 +17,22 @@ module.exports = function(opt) {
         },
         page: [
             {
+                block: 'title',
+                mods: {
+                    type: 'user'
+                },
+                type: 'main'
+            },
+            {
                 block: 'button',
                 mods: {
                     theme: 'islands',
                     size: 'm',
                     type: 'link'
+                },
+                mix: {
+                    block: 'button',
+                    elem: 'add'
                 },
                 url: '/admin/users/add',
                 icon: {

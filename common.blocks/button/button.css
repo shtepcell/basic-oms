@@ -4,3 +4,8 @@
 .button__login {
     width: 200px;
 }
+
+.button__add.button {
+    margin-left: 3em;
+    margin-bottom: 2em;
+}

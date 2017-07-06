@@ -47,6 +47,10 @@ module.exports = function(opt) {
                 mods: {
                     type: 'user'
                 },
+                mix: {
+                    block: 'form',
+                    elem: 'user'
+                },
                 type: opt.type,
                 action: info[opt.type].action
             }
