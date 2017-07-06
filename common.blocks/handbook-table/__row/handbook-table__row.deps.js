@@ -62,6 +62,14 @@
                     size: 's'
                 },
                 tech: 'bemhtml'
+            },
+            {
+                block: 'button',
+                mods: {
+                    theme: 'islands',
+                    size: 's'
+                },
+                tech: 'bemhtml'
             }
         ]
     }

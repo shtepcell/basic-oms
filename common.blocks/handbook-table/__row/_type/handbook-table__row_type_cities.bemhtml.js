@@ -67,6 +67,32 @@ block('handbook-table').elem('row').elemMod('type', 'cities').elemMod('edited', 
                     placeholder: 'Город',
                     val: this.ctx.cellsData.name
                 }
+            },
+            {
+                block: 'handbook-table',
+                elem: 'cell',
+                content: {
+                    block: 'button',
+                    text: 'Сохранить',
+                    mix: [{ block: 'handbook-table', elem: 'save-chng' }],
+                    mods: {
+                        theme: 'islands',
+                        size: 's'
+                    }
+                }
+            },
+            {
+                block: 'handbook-table',
+                elem: 'cell',
+                content: {
+                    block: 'button',
+                    text: 'Отмена',
+                    mix: [{ block: 'handbook-table', elem: 'cancel-chng' }],
+                    mods: {
+                        theme: 'islands',
+                        size: 's'
+                    }
+                }
             }
         ];
     })
