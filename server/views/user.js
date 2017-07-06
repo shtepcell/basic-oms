@@ -1,5 +1,4 @@
 module.exports = function(opt) {
-        console.log(opt);
     var info = {
         create: {
             title: 'Создание пользователя',
@@ -36,6 +35,13 @@ module.exports = function(opt) {
             }
         },
         page: [
+            {
+                block: 'title',
+                mods: {
+                    type: 'user'
+                },
+                type: opt.type
+            },
             {
                 block: 'form',
                 mods: {

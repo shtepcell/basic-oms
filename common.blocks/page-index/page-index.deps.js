@@ -9,7 +9,7 @@
         {
             block: 'title',
             mods: {
-                type: 'login'
+                type: ['login', 'user']
             }
         },
         {
