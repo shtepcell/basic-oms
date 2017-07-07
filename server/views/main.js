@@ -11,6 +11,14 @@ module.exports = function(opt){
             }
         },
         page: [
+            {
+                block: 'popup',
+                mods: {
+                    type: 'notify'
+                },
+                text: 'Успешно создана система',
+                type: 'success'
+            },
             'Main page'
         ]
     };
