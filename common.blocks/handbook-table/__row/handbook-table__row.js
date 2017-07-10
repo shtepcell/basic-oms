@@ -54,6 +54,8 @@ modules.define('handbook-table__row',
                 chngBtn,
                 dltBtn;
 
+            this._typeValue = this._elem('row').getMod('type');
+
             chngBtn = this.findChildElem({ elem: 'chng-btn' });
             if (chngBtn) 
                 this._chngBtn = chngBtn.findMixedBlock(Button);
@@ -65,41 +67,51 @@ modules.define('handbook-table__row',
             this._chngBtn && this._events(this._chngBtn).on('click', function() {
                 _this.setMod('edited');
             });
+
+            this._dltBtn && this._events(this._dltBtn).on('click', this._deleteRow);
         },
 
         _saveChanges: function() {
             this._chngSaveBtn.setMod('disabled');
 
-            this._xhrSave = $.ajax({
-                type: 'POST',
-                dataType: 'json',
-                url: '/admin/cities/change',
-                data: {
-                    cityData: this.params.cellsData
-                },
-                context: this
-            }).fail(function() {
-                console.log('CHANGING requiest FAILED');
-            }).done(function(res) {
-                console.log('CHANGING requiest DONE')
-            });
+            console.log(this, '-------ELEM------');
+
+            this._validate();
+
+            if (!this._errorText) {
+                this._xhrSave = $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: '/admin/' + this._typeValue + '/change',
+                    data: {
+                        obj: this.params.cellsData
+                    },
+                    context: this
+                }).fail(function() {
+                    console.log('CHANGING requiest FAILED');
+                }).done(function(res) {
+                    console.log('CHANGING requiest DONE')
+                });
+            } else {
+                // показать _errortext в попапе
+            }
         },
 
-        _deleteCity: function() {
+        _deleteRow: function() {
             this._dltBtn.setMod('disabled');
 
             this._xhrSave = $.ajax({
                 type: 'DELETE',
                 dataType: 'json',
-                url: '/admin/cities/delete',
+                url: '/admin/' + this._typeValue + '/delete',
                 data: {
-                    cityData: this.params.cellsData
+                    obj: this.params.cellsData
                 },
                 context: this
-            }).fail(function(err) {
-                console.log('DELETE requiest FAILED');
-            }).done(function(res) {
-                console.log('CHANGING requiest DONE')
+            }).catch(function(err) {
+                console.log('DELETE requiest FAILED', err);
+            }).then(function(res) {
+                console.log('CHANGING requiest DONE', res)
                 //+ показать плашку
                 window.location.reload();
             });
@@ -107,6 +119,8 @@ modules.define('handbook-table__row',
 
         _abortSaveRequest: function() {
             this._xhrSave && this._xhrSave.abort();
-        }
+        },
+
+        _validate: function() { }
     }));
 });

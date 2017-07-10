@@ -24,6 +24,7 @@ module.exports = function(opt) {
             },*/
             {
                 block: 'handbook-table',
+                js: true,
                 mods: {
                     type: opt.handbookType
                 }
