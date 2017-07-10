@@ -6,7 +6,8 @@
             {
                 block: 'modal',
                 mods: {
-                    theme: 'islands'
+                    theme: 'islands',
+                    closable: true
                 }
             }
         ]

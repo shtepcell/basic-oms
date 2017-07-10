@@ -3,7 +3,8 @@ block('b-modal-dynamic-popup').replace()(function() {
 		block: 'modal',
 		js: true,
 		mods: {
-			theme: 'islands'
+			theme: 'islands',
+			closable: this.ctx.closable
 		},
 		mix: [
 			{ 

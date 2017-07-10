@@ -1,0 +1,24 @@
+.modal__close-icon
+{
+    background: url('modal_closable.svg') no-repeat;
+    background-size: 100%;
+    position: relative;
+    width: 15px;
+    height: 15px;
+    right: 5px;
+    top: 5px;
+    opacity: 0.5;
+}
+
+.modal__close-icon:hover
+{
+    opacity: 1;
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.modal__close-icon:active
+{
+    opacity: 1;
+    transform: scale(1);
+}
