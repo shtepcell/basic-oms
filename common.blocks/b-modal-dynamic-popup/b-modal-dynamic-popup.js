@@ -5,9 +5,14 @@ modules.define('b-modal-dynamic-popup',
         onSetMod: {
             js: {
                 inited: function() {
+                    var _this = this,
+                        closeIcon;
+
                     this._modal = this._getModal();
-                    console.log('BLOCK-inited__MODAL', this._modal);
-                    //this._modal.setMod('visible');
+                    closeIcon = this._modal.findChildElem('close-icon');
+                    closeIcon && this._domEvents(closeIcon).on('click', function() {
+                        this._emit('close');
+                    });
                 }
             }
         },

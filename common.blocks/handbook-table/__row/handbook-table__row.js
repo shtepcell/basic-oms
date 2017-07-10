@@ -51,6 +51,7 @@ modules.define('handbook-table__row',
 
         init: function() {
             var _this = this,
+                _block = this._block(),
                 chngBtn,
                 dltBtn;
 
@@ -69,9 +70,13 @@ modules.define('handbook-table__row',
             });
 
             this._dltBtn && this._events(this._dltBtn).on('click', this._deleteRow);
+
+            _block && this._events(_block._popup).on('close', this._onPopupClose);
         },
 
         _saveChanges: function() {
+            var _this = this;
+
             this._chngSaveBtn.setMod('disabled');
 
             console.log(this, '-------ELEM------');
@@ -89,8 +94,13 @@ modules.define('handbook-table__row',
                     context: this
                 }).fail(function() {
                     console.log('CHANGING requiest FAILED');
-                }).done(function(res) {
-                    console.log('CHANGING requiest DONE')
+                }).then(function(res) {
+                    console.log('CHANGING requiest DONE');
+                    // if (res.responceJSON.err) ... else ...
+                }).always(function() {
+                    _this._events(_this._block()._popup).once('close', function() {
+                        _this._chngSaveBtn.delMod('disabled')
+                    });
                 });
             } else {
                 // показать _errortext в попапе
@@ -98,7 +108,10 @@ modules.define('handbook-table__row',
         },
 
         _deleteRow: function() {
+            var _this = this;
+
             this._dltBtn.setMod('disabled');
+            this._block()._popup.show();
 
             this._xhrSave = $.ajax({
                 type: 'DELETE',
@@ -113,12 +126,23 @@ modules.define('handbook-table__row',
             }).then(function(res) {
                 console.log('CHANGING requiest DONE', res)
                 //+ показать плашку
-                window.location.reload();
+                //window.location.reload();
+                // if (res.responceJSON.err) ... else ...
+            }).always(function() {
+                _this._events(_this._block()._popup).once('close', function() {
+                    _this._dltBtn.delMod('disabled')
+                });
             });
         },
 
         _abortSaveRequest: function() {
             this._xhrSave && this._xhrSave.abort();
+        },
+
+        _onPopupClose: function() {
+            // но вообще когда-либо тут могут появится всякие проверки
+            // пред тем как закрыть модалку
+            this._block()._popup.hide();
         },
 
         _validate: function() { }
