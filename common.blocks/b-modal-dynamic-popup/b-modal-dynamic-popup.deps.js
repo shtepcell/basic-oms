@@ -10,6 +10,10 @@
                     theme: 'islands',
                     closable: true
                 }
+            },
+            {
+                block: 'b-modal-dynamic-popup',
+                elem: 'loader'
             }
         ]
     },

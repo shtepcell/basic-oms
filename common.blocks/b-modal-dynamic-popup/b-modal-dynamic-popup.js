@@ -16,6 +16,21 @@ modules.define('b-modal-dynamic-popup',
 
                     this._initFooterButtons();
                 }
+            },
+
+            loading: {
+                true: function(modName, modVal) {
+                    console.log(this._elem('body'), 'loading');
+                    BEMDOM.append(this._elem('body').domElem, BEMHTML.apply({
+                        block: 'b-modal-dynamic-popup',
+                        elem: 'loader'
+                    }));
+                },
+
+                '': function() {
+                    var loader = this._elem('loader');
+                    loader && BEMDOM.replace(loader.domElem, '');
+                }
             }
         },
 
@@ -58,7 +73,7 @@ modules.define('b-modal-dynamic-popup',
             this._modal.delMod('visible');
         },
 
-        setModalBody: function(content) {
+        setModalBody: function(str) {
 
         },
 

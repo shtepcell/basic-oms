@@ -137,6 +137,7 @@ modules.define('handbook-table__row',
                     ]
                 }
             ]));
+            popup.setMod('loading');
             popup.show();
 
             this._xhrSave = $.ajax({
@@ -157,11 +158,13 @@ modules.define('handbook-table__row',
             }).always(function() {
                 _this._events(popup)
                     .once('close', function() {
-                        _this._dltBtn.delMod('disabled')
+                        _this._dltBtn.delMod('disabled');
+                        popup.delMod('loading');
                     })
                     .once('OK', function() {
                         popup.hide();
-                        _this._dltBtn.delMod('disabled')
+                        _this._dltBtn.delMod('disabled');
+                        popup.delMod('loading');
                     });
             });
         },
