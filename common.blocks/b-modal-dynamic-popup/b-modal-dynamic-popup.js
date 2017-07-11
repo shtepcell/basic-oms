@@ -13,6 +13,8 @@ modules.define('b-modal-dynamic-popup',
                     closeIcon && this._domEvents(closeIcon).on('click', function() {
                         this._emit('close');
                     });
+
+                    this._initFooterButtons();
                 }
             }
         },
@@ -20,6 +22,8 @@ modules.define('b-modal-dynamic-popup',
         _getModal: function() {
             return this.findMixedBlock(Modal);
         },
+
+        _initFooterButtons: function() { },
 
         show: function() {
             this._modal || (this._modal = this._getModal());
@@ -33,17 +37,24 @@ modules.define('b-modal-dynamic-popup',
 
         setModalBody: function(content) {
 
+        },
+
+        setModalContent: function(str) {
+            BEMDOM.update(this.findChildElem('content').domElem, str);
+            this._initFooterButtons();
+            return this;
         }
 
     }, {
-        create: function(appendTo, mods, params) {
+        create: function(appendTo, content, mods, params) {
             var name = this.getName(),
                 params = params || {};
 
             return BEMDOM.append(appendTo, BEMHTML.apply({
                     block: name,
                     mods: mods,
-                    closable: params.closable
+                    closable: params.closable,
+                    content: content
                 })).bem(this);
         }
     }));

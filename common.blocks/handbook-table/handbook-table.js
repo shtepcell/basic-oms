@@ -5,14 +5,17 @@ modules.define('handbook-table',
         onSetMod: {
             js: {
                 inited: function () {
-                    this._popup = bModalDynPopup.create(this.domElem, null, {
-                        closable: true
-                    });
+                    this._popup = bModalDynPopup.create(
+                        this.domElem,
+                        null,
+                        null, 
+                        {
+                            closable: true
+                        });
 
                     this._events(this._popup).on('close', function() {
                         console.log('popup closed!');
                     });
-                    //this._popup.show();
                 }
             }
         }
