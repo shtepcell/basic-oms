@@ -2,7 +2,7 @@
 {
     background: url('modal_closable.svg') no-repeat;
     background-size: 100%;
-    position: relative;
+    position: absolute;
     width: 15px;
     height: 15px;
     right: 5px;
