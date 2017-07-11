@@ -46,7 +46,7 @@ modules.define('b-modal-dynamic-popup',
         }
 
     }, {
-        create: function(appendTo, content, mods, params) {
+        create: function(appendTo, content, mods, mix, params) {
             var name = this.getName(),
                 params = params || {};
 
@@ -54,7 +54,8 @@ modules.define('b-modal-dynamic-popup',
                     block: name,
                     mods: mods,
                     closable: params.closable,
-                    content: content
+                    content: content,
+                    mix: mix
                 })).bem(this);
         }
     }));

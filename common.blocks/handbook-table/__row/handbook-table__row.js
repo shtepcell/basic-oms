@@ -108,10 +108,36 @@ modules.define('handbook-table__row',
         },
 
         _deleteRow: function() {
-            var _this = this;
+            var _this = this,
+                popup = this._block()._popup;
 
             this._dltBtn.setMod('disabled');
-            this._block()._popup.show();
+            popup.setModalContent(BEMHTML.apply([
+                {
+                    block: 'b-modal-dynamic-popup',
+                    elem: 'head',
+                    content: 'Удаление...'
+                },
+                {
+                    block: 'b-modal-dynamic-popup',
+                    elem: 'body'
+                },
+                {
+                    block: 'b-modal-dynamic-popup',
+                    elem: 'foot',
+                    content: [
+                        {
+                            block: 'button',
+                            mods: {
+                                theme: 'islands',
+                                size: 's'
+                            },
+                            text: 'OK'
+                        }
+                    ]
+                }
+            ]));
+            popup.show();
 
             this._xhrSave = $.ajax({
                 type: 'DELETE',
@@ -129,7 +155,7 @@ modules.define('handbook-table__row',
                 //window.location.reload();
                 // if (res.responceJSON.err) ... else ...
             }).always(function() {
-                _this._events(_this._block()._popup).once('close', function() {
+                _this._events(popup).once('close', function() {
                     _this._dltBtn.delMod('disabled')
                 });
             });

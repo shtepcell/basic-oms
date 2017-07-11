@@ -1,0 +1,9 @@
+.handbook-table__modal .b-modal-dynamic-popup__content
+{
+	width: 250px;
+}
+
+.handbook-table__modal .b-modal-dynamic-popup__body
+{
+	min-height: 100px;
+}

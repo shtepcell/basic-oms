@@ -9,6 +9,10 @@ modules.define('handbook-table',
                         this.domElem,
                         null,
                         null, 
+                        [{
+                            block: 'handbook-table',
+                            elem: 'modal'
+                        }],
                         {
                             closable: true
                         });

@@ -1,4 +1,11 @@
 block('b-modal-dynamic-popup').replace()(function() {
+    var mixed = this.ctx.mix || [];
+
+    mixed.push({ 
+        block: 'b-modal-dynamic-popup',
+        mods: this.ctx.mods
+    });
+
     return {
         block: 'modal',
         js: true,
@@ -6,12 +13,7 @@ block('b-modal-dynamic-popup').replace()(function() {
             theme: 'islands',
             closable: this.ctx.closable
         },
-        mix: [
-            { 
-                block: 'b-modal-dynamic-popup',
-                mods: this.ctx.mods
-            }
-        ],
+        mix: mixed,
         content: {
             block: 'b-modal-dynamic-popup',
             elem: 'content',

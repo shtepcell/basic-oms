@@ -1,4 +1,23 @@
+.b-modal-dynamic-popup__head
+{
+    padding: 10px;
+    font-size: 20px;
+    background: #adbfff;
+}
+
+.b-modal-dynamic-popup__body
+{
+    padding: 10px;
+    background: #fff;
+}
+
+.b-modal-dynamic-popup__foot
+{
+    padding: 10px;
+    background: #e5e5e5;
+}
+
 .modal_closable .b-modal-dynamic-popup__head
 {
-    margin-right: 25px;
+    padding-right: 25px;
 }
