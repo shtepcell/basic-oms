@@ -1,6 +1,6 @@
 modules.define('b-modal-dynamic-popup',
-    ['i-bem-dom', 'BEMHTML', 'jquery', 'modal'],
-    function (provide, BEMDOM, BEMHTML, $, Modal) {
+    ['i-bem-dom', 'BEMHTML', 'jquery', 'modal', 'button'],
+    function (provide, BEMDOM, BEMHTML, $, Modal, Button) {
     provide(BEMDOM.declBlock(this.name, {
         onSetMod: {
             js: {
@@ -23,7 +23,30 @@ modules.define('b-modal-dynamic-popup',
             return this.findMixedBlock(Modal);
         },
 
-        _initFooterButtons: function() { },
+        /*
+         * Первые две кнопки в футере -> OK & CANCEL
+         */
+        _initFooterButtons: function() {
+            var footer = this.findChildElem('foot'),
+                btnOk,
+                btnCancel,
+                btns;
+
+            if (footer) {
+                btns = footer.findChildBlocks(Button);
+                btnOk = btns.get(0);
+                btnCancel = btns.get(1);
+
+                btnOk && this._domEvents(btnOk).on('click', function() {
+                    this._emit('OK');
+                });
+
+                btnCancel && this._domEvents(btnCancel).on('click', function() {
+                    this._emit('CANCEL');
+                });
+            }
+            console.log(footer, btns);
+        },
 
         show: function() {
             this._modal || (this._modal = this._getModal());

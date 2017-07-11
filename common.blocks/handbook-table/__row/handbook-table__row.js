@@ -155,9 +155,14 @@ modules.define('handbook-table__row',
                 //window.location.reload();
                 // if (res.responceJSON.err) ... else ...
             }).always(function() {
-                _this._events(popup).once('close', function() {
-                    _this._dltBtn.delMod('disabled')
-                });
+                _this._events(popup)
+                    .once('close', function() {
+                        _this._dltBtn.delMod('disabled')
+                    })
+                    .once('OK', function() {
+                        popup.hide();
+                        _this._dltBtn.delMod('disabled')
+                    });
             });
         },
 

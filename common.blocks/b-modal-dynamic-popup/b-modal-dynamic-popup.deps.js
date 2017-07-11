@@ -3,6 +3,7 @@
         shouldDeps: [
             'i-bem-dom',
             'jquery',
+            'button',
             {
                 block: 'modal',
                 mods: {
