@@ -37,6 +37,11 @@
         },
         {
             block: 'pager'
+        },
+        {
+            block: 'handbook-table',
+            mod: 'type',
+            val: 'cities'
         }
     ]
 })
