@@ -29,7 +29,7 @@ module.exports = function (app) {
         render(req, res, 'add_account');
     });
 
-    app.get('/admin/cities', City.getAll);
+    app.get('/admin/cities', City.getPage);
 
     app.delete('/admin/cities/delete', City.delete);
 

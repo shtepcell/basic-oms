@@ -29,12 +29,12 @@ module.exports = function(opt) {
                     type: opt.handbookType
                 }
             },
-            /*{
+            {
                 block: 'pager',
                 attrs: {
                     id: pagerId
                 }
-            }*/
+            }
         ]
     };
 };

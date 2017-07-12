@@ -2,7 +2,7 @@ block('handbook-table').mod('type', 'cities')
     .elem('tbody')(
         content()(function() {
             var rows = [],
-                cities = this.data.locals.cities || [{type: 'г.', name: '<b>Симферополь</b>', _id: '1' }, {type: 'г.', name: 'Севастополь'}];
+                cities = this.data.locals.cities;
 
             if (cities && cities.length) {
                 cities.forEach(function(item) {
