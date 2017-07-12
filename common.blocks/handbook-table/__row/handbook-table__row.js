@@ -17,7 +17,7 @@ modules.define('handbook-table__row',
                             elem: 'row',
                             elemMods: {
                                 edited: true,
-                                type: 'cities'
+                                type: this._block().getMod('type')
                             },
                             cellsData: this.params.cellsData
                         });
@@ -38,7 +38,7 @@ modules.define('handbook-table__row',
                             block: 'handbook-table',
                             elem: 'row',
                             elemMods: {
-                                type: 'cities'
+                                type: this._block().getMod('type')
                             },
                             cellsData: this.params.cellsData
                         });
