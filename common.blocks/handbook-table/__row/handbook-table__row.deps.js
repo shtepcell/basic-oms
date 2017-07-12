@@ -5,6 +5,7 @@
             'button',
             'jquery',
             'select',
+            'input',
             {
                 block: 'handbook-table',
                 elems: ['cell']

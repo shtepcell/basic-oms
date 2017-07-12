@@ -5,7 +5,7 @@ modules.define('handbook-table__row',
         onSetMod: {
             js: {
                 inited: function () {
-                    this.init();
+                    this._init();
                 }
             },
 
@@ -44,12 +44,12 @@ modules.define('handbook-table__row',
                         });
 
                     BEMDOM.update(this.domElem, $(content).html());
-                    this.init();
+                    this._init();
                 }
             }
         },
 
-        init: function() {
+        _init: function() {
             var _this = this,
                 _block = this._block(),
                 chngBtn,
@@ -71,39 +71,89 @@ modules.define('handbook-table__row',
 
             this._dltBtn && this._events(this._dltBtn).on('click', this._deleteRow);
 
-            _block && this._events(_block._popup).on('close', this._onPopupClose);
+            this._reinitPopupEvents();
+            //_block && this._events(_block._popup).on('close', this._onPopupClose);
+        },
+
+        _reinitPopupEvents: function() {
+            var popup = this._block()._popup;
+
+            this._events(popup).un();
+            this._events(popup).on('close', this._onPopupClose);
         },
 
         _saveChanges: function() {
-            var _this = this;
+            var _this = this,
+                popup = this._block()._popup;
 
             this._chngSaveBtn.setMod('disabled');
+            this._setPopupContent('Изменение...');
 
-            console.log(this, '-------ELEM------');
+            this._reinitPopupEvents();
+            this._events(_this._block()._popup)
+                .once('OK', function() {
+                    popup.hide();
+                    popup.delMod('loading');
+                    _this._chngSaveBtn.delMod('disabled');
+                    _this._abortRequest();
+                })
+                .once('close', function() {
+                    popup.hide();
+                    popup.delMod('loading');
+                    _this._chngSaveBtn.delMod('disabled');
+                    _this._abortRequest();
+                });
+
+            popup.setMod('loading');
+            popup.show();
 
             this._validate();
 
             if (!this._errorText) {
-                this._xhrSave = $.ajax({
+                this._xhr = $.ajax({
                     type: 'POST',
                     dataType: 'json',
                     url: '/admin/' + this._typeValue + '/change',
+                    timeout: 5000,
                     data: {
                         obj: this.params.cellsData
                     },
-                    context: this
-                }).fail(function() {
-                    console.log('CHANGING requiest FAILED');
-                }).then(function(res) {
-                    console.log('CHANGING requiest DONE');
-                    // if (res.responceJSON.err) ... else ...
-                }).always(function() {
-                    _this._events(_this._block()._popup).once('close', function() {
-                        _this._chngSaveBtn.delMod('disabled')
-                    });
+                    context: this,
+                    error: function(err) {
+                        console.log('CHANGING requiest FAILED');
+                        _this._setPopupContent('Ошибка!', undefined, 'Не удается отправить запрос');
+                        popup.show();
+                    },
+                    success: function(res) {
+                        console.log('CHANGING requiest DONE');
+                        _this._setPopupContent('Информация', 'Данные успешно изменены');
+                        popup.show();
+                        // if (res.responceJSON.err) ... else ...
+                    },
+                    complete: function() {
+                        this._reinitPopupEvents();
+                        this._events(_this._block()._popup)
+                            .once('close', function() {
+                                _this._chngSaveBtn.delMod('disabled');
+                                popup.delMod('loading');
+                            })
+                            .once('OK', function() {
+                                popup.hide();
+                                _this._chngSaveBtn.delMod('disabled');
+                                popup.delMod('loading');
+                            });
+                    }
                 });
             } else {
                 // показать _errortext в попапе
+                this._events(popup)
+                    .once('OK', function() {
+                        popup.hide();
+                        _this._chngSaveBtn.delMod('disabled');
+                    });
+
+                this._setPopupContent('Ошибка!', undefined, this._errorText);
+                popup.show();
             }
         },
 
@@ -112,15 +162,97 @@ modules.define('handbook-table__row',
                 popup = this._block()._popup;
 
             this._dltBtn.setMod('disabled');
-            popup.setModalContent(BEMHTML.apply([
+            this._setPopupContent('Удаление...');
+
+            this._reinitPopupEvents();
+            this._events(_this._block()._popup)
+                .once('OK', function() {
+                    popup.hide();
+                    popup.delMod('loading');
+                    _this._dltBtn.delMod('disabled');
+                    _this._abortRequest();
+                })
+                .once('close', function() {
+                    popup.hide();
+                    popup.delMod('loading');
+                    _this._dltBtn.delMod('disabled');
+                    _this._abortRequest();
+                });
+
+            popup.setMod('loading');
+            popup.show();
+
+            this._abortRequest();
+            this._xhr = $.ajax({
+                type: 'DELETE',
+                dataType: 'json',
+                url: '/admin/' + this._typeValue + '/delete',
+                timeout: 5000,
+                data: {
+                    obj: this.params.cellsData
+                },
+                context: this,
+                error: function(err) {
+                    console.log('DELETE requiest FAILED', err);
+                    _this._setPopupContent('Ошибка!', undefined, 'Не удается отправить запрос');
+                    this._reinitPopupEvents();
+                    popup.show();
+                },
+                success: function(res) {
+                    console.log('DELETE requiest DONE', res)
+                    _this._setPopupContent('Информация', 'Успешно удалено');
+                    this._reinitPopupEvents();
+                    _this._events(popup)
+                        .once('OK', function() {
+                            window.location.reload();
+                        })
+                        .once('close', function() {
+                            window.location.reload();
+                        });
+                    // if (res.responceJSON.err) ... else ...
+                },
+                complete: function() {
+                    _this._events(popup)
+                        .once('close', function() {
+                            _this._dltBtn.delMod('disabled');
+                            popup.delMod('loading');
+                        })
+                        .once('OK', function() {
+                            popup.hide();
+                            _this._dltBtn.delMod('disabled');
+                            popup.delMod('loading');
+                        });
+                }
+            });
+        },
+
+        _abortRequest: function() {
+            this._xhr && this._xhr.abort();
+        },
+
+        _onPopupClose: function() {
+            // но вообще когда-либо тут могут появится всякие проверки
+            // пред тем как закрыть модалку
+            this._block()._popup.hide();
+        },
+
+        _setPopupContent: function(title, body, errText) {
+            var bodyContent = errText ? {
+                    elem: 'error-text',
+                    content: errText
+                } :
+                body;
+
+            this._block()._popup.setModalContent(BEMHTML.apply([
                 {
                     block: 'b-modal-dynamic-popup',
                     elem: 'head',
-                    content: 'Удаление...'
+                    content: title
                 },
                 {
                     block: 'b-modal-dynamic-popup',
-                    elem: 'body'
+                    elem: 'body',
+                    content: bodyContent
                 },
                 {
                     block: 'b-modal-dynamic-popup',
@@ -137,46 +269,6 @@ modules.define('handbook-table__row',
                     ]
                 }
             ]));
-            popup.setMod('loading');
-            popup.show();
-
-            this._xhrSave = $.ajax({
-                type: 'DELETE',
-                dataType: 'json',
-                url: '/admin/' + this._typeValue + '/delete',
-                data: {
-                    obj: this.params.cellsData
-                },
-                context: this
-            }).catch(function(err) {
-                console.log('DELETE requiest FAILED', err);
-            }).then(function(res) {
-                console.log('CHANGING requiest DONE', res)
-                //+ показать плашку
-                //window.location.reload();
-                // if (res.responceJSON.err) ... else ...
-            }).always(function() {
-                _this._events(popup)
-                    .once('close', function() {
-                        _this._dltBtn.delMod('disabled');
-                        popup.delMod('loading');
-                    })
-                    .once('OK', function() {
-                        popup.hide();
-                        _this._dltBtn.delMod('disabled');
-                        popup.delMod('loading');
-                    });
-            });
-        },
-
-        _abortSaveRequest: function() {
-            this._xhrSave && this._xhrSave.abort();
-        },
-
-        _onPopupClose: function() {
-            // но вообще когда-либо тут могут появится всякие проверки
-            // пред тем как закрыть модалку
-            this._block()._popup.hide();
         },
 
         _validate: function() { }

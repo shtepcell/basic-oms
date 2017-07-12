@@ -18,6 +18,11 @@
     background: #e5e5e5;
 }
 
+.b-modal-dynamic-popup__error-text
+{
+    color: #f00;
+}
+
 .modal_closable .b-modal-dynamic-popup__head
 {
     padding-right: 25px;

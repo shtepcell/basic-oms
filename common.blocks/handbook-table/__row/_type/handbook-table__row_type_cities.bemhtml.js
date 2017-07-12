@@ -52,6 +52,10 @@ block('handbook-table').elem('row').elemMod('type', 'cities').elemMod('edited', 
                         mode: 'radio',
                         size: 's',
                         theme: 'islands'
+                    },
+                    mix: {
+                        block: 'handbook-table',
+                        elem: 'city-type'
                     }
                 }
             },
@@ -63,6 +67,10 @@ block('handbook-table').elem('row').elemMod('type', 'cities').elemMod('edited', 
                     mods: {
                         theme: 'islands',
                         size: 's'
+                    },
+                    mix: {
+                        block: 'handbook-table',
+                        elem: 'city-name'
                     },
                     placeholder: 'Город',
                     val: this.ctx.cellsData.name
