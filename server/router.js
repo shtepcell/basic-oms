@@ -29,8 +29,9 @@ module.exports = function (app) {
         render(req, res, 'add_account');
     });
 
-    app.get('/admin/cities', City.getPage);
+    app.route('/admin/cities')
+        .get(City.getPage)
+        .delete(City.delete);
 
-    app.delete('/admin/cities/delete', City.delete);
-
+    app.post('/admin/cities/change', City.edit);
 }

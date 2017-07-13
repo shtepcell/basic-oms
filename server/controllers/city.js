@@ -66,7 +66,33 @@ module.exports = {
 
     },
     edit: function (req, res) {
+        var reqData = req.body,
+            hasClone = false;
 
+        if (reqData.obj.name.length == 0 || reqData.obj.name.length >= 25 || ['г.', 'с.', 'пгт.'].indexOf(reqData.obj.type) == -1) {
+            res.status(400).send({ errText: 'Ошибка валидации' });
+            return;
+        }
+
+        City.findOne({ name: reqData.obj.name, type: reqData.obj.type})
+            .then(city => {
+                if (city != null) {
+                    res.status(400).send({ errText: 'Город с таким названием уже есть в базе.' });
+                    return;
+                } 
+
+                City.findByIdAndUpdate(
+                    reqData.obj._id,
+                    { name: reqData.obj.name, type: reqData.obj.type},
+                    function(err, city) {
+                        if (err) return; //TODO что делаем при ошибке?
+                        if (city == null) {
+                            res.status(400).send({ errText: 'Невозможно изменить несуществующий город.' });
+                        } else {
+                            res.send({ ok: 'ok' });
+                        }
+                    });
+            });
     },
     delete: function (req, res) {
         res.status(404).send({ err: 'errorText'});
