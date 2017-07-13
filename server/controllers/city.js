@@ -95,6 +95,25 @@ module.exports = {
             });
     },
     delete: function (req, res) {
-        res.status(404).send({ err: 'errorText'});
+        City.findById(req.body.obj._id)
+            .then(city => {
+                if (city == null) {
+                    res.status(400).send({ errText: 'Невозможно удалить несуществующий город.' });
+                    return;
+                }
+
+                if (city.isUsed()) {
+                    res.status(400).send({ errText: 'Невозможно удалить город, использующийся в системе.' });
+                    return;
+                }
+
+                City.deleteOne(city, function(err, ok) {
+                    if (err) {
+                        //TODO что делаем при ошибке?
+                        return;
+                    }
+                    res.send({ ok: 'ok' });
+                });
+            })
     }
 };
