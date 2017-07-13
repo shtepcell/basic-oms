@@ -84,7 +84,8 @@ modules.define('handbook-table__row',
 
         _saveChanges: function() {
             var _this = this,
-                popup = this._block()._popup;
+                popup = this._block()._popup,
+                data;
 
             this._chngSaveBtn.setMod('disabled');
             this._setPopupContent('Изменение...');
@@ -107,7 +108,7 @@ modules.define('handbook-table__row',
             popup.setMod('loading');
             popup.show();
 
-            this._validate();
+            data = this._validate() || {};
 
             if (!this._errorText) {
                 this._xhr = $.ajax({
@@ -116,12 +117,14 @@ modules.define('handbook-table__row',
                     url: '/admin/' + this._typeValue + '/change',
                     timeout: 5000,
                     data: {
-                        obj: this.params.cellsData
+                        obj: Object.assign({}, this.params.cellsData, data)
                     },
                     context: this,
                     error: function(err) {
+                        var errText = err.responseJSON && err.responseJSON.errText ? '\n' + err.responseJSON.errText : ''
+
                         console.log('CHANGING requiest FAILED');
-                        _this._setPopupContent('Ошибка!', undefined, 'Не удается отправить запрос');
+                        _this._setPopupContent('Ошибка!', undefined, 'Не удается отправить запрос' + errText);
                         popup.show();
                     },
                     success: function(res) {
@@ -129,6 +132,8 @@ modules.define('handbook-table__row',
                         _this._setPopupContent('Информация', 'Данные успешно изменены');
                         popup.show();
                         // if (res.responceJSON.err) ... else ...
+                        Object.assign(this.params.cellsData, data);
+                        _this.delMod('edited');
                     },
                     complete: function() {
                         this._reinitPopupEvents();
@@ -186,15 +191,16 @@ modules.define('handbook-table__row',
             this._xhr = $.ajax({
                 type: 'DELETE',
                 dataType: 'json',
-                url: '/admin/' + this._typeValue + '/delete',
+                url: '/admin/' + this._typeValue,
                 timeout: 5000,
                 data: {
                     obj: this.params.cellsData
                 },
                 context: this,
                 error: function(err) {
+                    var errText = err.responseJSON && err.responseJSON.errText ? '\n' + err.responseJSON.errText : ''
                     console.log('DELETE requiest FAILED', err);
-                    _this._setPopupContent('Ошибка!', undefined, 'Не удается отправить запрос');
+                    _this._setPopupContent('Ошибка!', undefined, 'Не удается отправить запрос' + errText);
                     this._reinitPopupEvents();
                     popup.show();
                 },

@@ -8,7 +8,8 @@ provide(Row.declMod({ modName : 'type', modVal : 'cities' }, {
 	_validate: function() {
 		var select = this.findChildElem('city-type'),
 			inputName = this.findChildElem('city-name'),
-			inputVal;
+			inputVal,
+			err = false;
 
 		this._errorText = '';
 
@@ -25,14 +26,26 @@ provide(Row.declMod({ modName : 'type', modVal : 'cities' }, {
 			return;
 		}
 
-		if (select.getVal().indexOf(['г.', 'пгт.', 'с.']) !== -1) 
+		if (select.getVal().indexOf(['г.', 'пгт.', 'с.']) !== -1)
+		{ 
 			this._errorText += 'Ошибка выбора типа населенного пункта\n';
+			err = true
+		}
 
 		inputVal = inputName.getVal();
 
 		if (inputVal.length <= 0 || inputVal.length >= 25) 
+		{
 			this._errorText += 'Название города не может быть пустым или длиннее 25 символов\n';
-		console.log('validted!', Select);
+			err = true
+		}
+		
+		if (!err)
+			return {
+				type: select.getVal(),
+				name: inputName.getVal()
+			}
+
 	}
 }, 
 {}));
