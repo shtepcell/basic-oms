@@ -34,7 +34,17 @@ module.exports = {
             .then((cities) => {
                 if (!cities.docs.length)
                 {
-                    res.redirect(req.path);
+                    if (pageNumber !== 1) {
+                        res.redirect(req.path);
+                    } else {
+                        render(req, res, {
+                            viewName: 'handbook',
+                            options: {
+                                title: 'Справочник городов',
+                                handbookType: 'cities'
+                            }
+                        });
+                    }
                     return;
                 }
 
