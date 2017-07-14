@@ -36,12 +36,6 @@
         },
         {
             block: 'pager'
-        },
-        {
-            block: 'popup',
-            mods: {
-                type: 'notify'
-            }
         }
     ]
 })
