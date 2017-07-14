@@ -1,5 +1,6 @@
 const Auth = require('./controllers/auth');
 const Account = require('./controllers/account');
+const City = require('./controllers/city');
 
 var Render = require('./render'),
     render = Render.render;
@@ -28,4 +29,9 @@ module.exports = function (app) {
         render(req, res, 'add_account');
     });
 
+    app.route('/admin/cities')
+        .get(City.getPage)
+        .delete(City.delete);
+
+    app.post('/admin/cities/change', City.edit);
 }

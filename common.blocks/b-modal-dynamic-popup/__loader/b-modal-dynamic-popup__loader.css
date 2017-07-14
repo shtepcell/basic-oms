@@ -1,0 +1,23 @@
+.b-modal-dynamic-popup__loader-wrapper
+{
+    background: rgba(170, 181, 0, 0.2);
+    display: table;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+.b-modal-dynamic-popup__loader-cell
+{
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.b-modal-dynamic-popup__loader
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}

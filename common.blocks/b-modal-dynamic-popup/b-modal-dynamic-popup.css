@@ -1,0 +1,29 @@
+.b-modal-dynamic-popup__head
+{
+    padding: 10px;
+    font-size: 20px;
+    background: #adbfff;
+}
+
+.b-modal-dynamic-popup__body
+{
+    padding: 10px;
+    position: relative;
+    background: #fff;
+}
+
+.b-modal-dynamic-popup__foot
+{
+    padding: 10px;
+    background: #e5e5e5;
+}
+
+.b-modal-dynamic-popup__error-text
+{
+    color: #f00;
+}
+
+.modal_closable .b-modal-dynamic-popup__head
+{
+    padding-right: 25px;
+}

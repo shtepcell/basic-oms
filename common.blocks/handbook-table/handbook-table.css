@@ -1,0 +1,38 @@
+.handbook-table
+{
+	border-spacing: 0;
+	border: 1px solid #e5e5e5;
+	border-bottom: none;
+	margin: 10px;
+}
+
+.handbook-table__head-row
+{
+	font-size: 20px;
+}
+
+.handbook-table__cell
+{
+	border-bottom: 1px solid #e5e5e5;
+	padding: 5px;
+}
+
+.handbook-table__row:hover
+{
+	background: #e5e5e5;
+}
+
+.handbook-table__row_edited, .handbook-table__row_edited:hover
+{
+	background: #bad7eb;
+}
+
+.handbook-table__modal .b-modal-dynamic-popup__content
+{
+	width: 250px;
+}
+
+.handbook-table__modal .b-modal-dynamic-popup__body
+{
+	min-height: 100px;
+}
