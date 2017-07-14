@@ -73,13 +73,40 @@ module.exports = {
         //оно нам надо?
     },
     create: function (req, res) {
+        var obj = {
+                name: req.body.name,
+                type: req.body.type
+            };
 
+        if (isErrorValidateCity(obj.name, obj.type)) {
+            res.status(400).send({ errText: 'Ошибка валидации' });
+            return;
+        }
+
+        City.findOne({ name: obj.name, type: obj.type })
+            .then(city => {
+                var newCity;
+
+                if (city != null) {
+                    res.status(400).send({ errText: 'Город с таким названием уже есть в базе.' });
+                    return;
+                } 
+
+                newCity = new City({
+                    name: obj.name,
+                    type: obj.type
+                });
+                return newCity.save();
+            })
+            .then(() => {
+                res.send({ created: true});
+            });
     },
     edit: function (req, res) {
         var reqData = req.body,
             hasClone = false;
 
-        if (reqData.obj.name.length == 0 || reqData.obj.name.length >= 25 || ['г.', 'с.', 'пгт.'].indexOf(reqData.obj.type) == -1) {
+        if (isErrorValidateCity(reqData.obj.name, reqData.obj.type)) {
             res.status(400).send({ errText: 'Ошибка валидации' });
             return;
         }
@@ -127,3 +154,7 @@ module.exports = {
             })
     }
 };
+
+function isErrorValidateCity(name, type) {
+    return name.length == 0 || name.length >= 25 || ['г.', 'с.', 'пгт.'].indexOf(type) == -1;
+}
