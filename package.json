@@ -29,7 +29,7 @@
     "express-session": "^1.13.0",
     "lodash": "^4.11.2",
     "mongodb": "^2.2.29",
-    "mongoose": "4.9.0",
+    "mongoose": "^4.11.3",
     "mongoose-paginate": "^5.0.3",
     "morgan": "^1.7.0",
     "node-eval": "^1.1.0",
