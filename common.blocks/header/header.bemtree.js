@@ -4,13 +4,6 @@ block('header').content()(function() {
         ret.push({
             block: 'navigator',
         });
-    } else {
-        ret.push({
-            block: 'title',
-            mods: {
-                type: 'login'
-            }
-        });
     }
     return ret;
 });

@@ -2,8 +2,12 @@
     shouldDeps: [
         {
             block: 'form',
+            elem: 'login'
+        },
+        {
+            block: 'form',
             mods: {
-                type: ['login', 'user']
+                type: 'user'
             }
         },
         {

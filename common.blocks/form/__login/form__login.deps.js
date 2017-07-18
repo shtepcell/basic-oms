@@ -12,7 +12,7 @@
             block: 'button',
             mods: {
                 theme: 'islands',
-                size: 'l',
+                size: 'xl',
                 type: 'submit'
             }
         }

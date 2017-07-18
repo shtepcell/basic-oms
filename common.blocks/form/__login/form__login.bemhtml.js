@@ -1,4 +1,5 @@
-block('form').mod('type', 'login')(
+block('form').elem('login')(
+    tag()('form'),
     attrs()({
         method: 'POST',
         action: '/login'

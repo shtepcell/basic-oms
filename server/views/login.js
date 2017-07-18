@@ -12,10 +12,14 @@ module.exports = function (opt) {
         },
         page: [
             {
-                block: 'form',
+                block: 'title',
                 mods: {
                     type: 'login'
                 }
+            },
+            {
+                block: 'form',
+                elem: 'login'
             }
         ]
     };
