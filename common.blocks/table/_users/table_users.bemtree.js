@@ -11,7 +11,7 @@ block('table').mod('users').content()(function() {
             mods: {
                 users: true
             },
-            users: this.data.locals.users 
+            users: this.data.locals.users
         }
     ];
 });

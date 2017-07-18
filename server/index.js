@@ -15,7 +15,7 @@ var fs = require('fs'),
     // LocalStrategy = require('passport-local').Strategy,
     csrf = require('csurf'),
     compression = require('compression'),
-
+    logger = require('./controllers/logger'),
     config = require('./config'),
     staticFolder = config.staticFolder,
 
@@ -39,7 +39,7 @@ app
     .use(compression())
     .use(favicon(path.join(staticFolder, 'favicon.ico')))
     .use(serveStatic(staticFolder))
-    .use(morgan('combined'))
+    .use(morgan(':method [:date[web]] :url :status :res[header] - :response-time ms'))
     .use(cookieParser())
     .use(bodyParser.urlencoded({ extended: true }))
     .use(expressSession({

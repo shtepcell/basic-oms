@@ -1,0 +1,20 @@
+.table__common {
+    width: 98%;
+    margin-left: 1em;
+    border-collapse: collapse;
+    font-size: 10pt;
+    border-spacing: 0;
+    font-family: sans-serif;
+}
+.table__common th.login {
+    width: 30px;
+}
+.table__common th {
+    border-bottom: 2px solid #ddd;
+}
+.table__common td {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    text-align: center;
+}

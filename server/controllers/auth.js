@@ -3,7 +3,7 @@
 const models = require('../models');
 const Account = models.Account;
 const password = require('./password');
-
+const logger = require('./logger');
 const Render = require('../render'),
     render = Render.render;
 const View = require('../views');
@@ -40,11 +40,11 @@ module.exports = {
         }).then( acc => {
             if (acc) {
                 req.session.__user = acc.login;
-                console.log('Success authorization by :', acc.login);
+                logger.log(`Success authorization by : ${acc.login}`);
                 var url = req.query.trg || '/';
                 res.redirect(url);
             } else {
-                console.log('Fail authorization');
+                logger.log(`Fail authorization.`);
                 res.status(401).redirect(req.originalUrl);
             }
         })

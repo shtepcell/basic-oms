@@ -1,7 +1,8 @@
 'use strict'
 
 const config = require('../config');
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const logger = require('./logger');
 
 mongoose.Promise = global.Promise;
 var options = {
@@ -16,7 +17,7 @@ var uri = 'mongodb://' + url + '/' + name;
 mongoose.connect(uri, options);
 
 mongoose.connection.on('connected', function() {
-    console.log('Connected to DB.');
+    logger.log(`Connected to DB.`);
 });
 
 module.exports = mongoose;

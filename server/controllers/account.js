@@ -5,6 +5,8 @@ const password = require('./password');
 const Render = require('../render'),
     render = Render.render;
 
+const logger = require('./logger');
+
 module.exports = {
     getAll: function (req, res) {
         Account.find({status: true}).then( accs => {
@@ -48,7 +50,8 @@ module.exports = {
                 });
             })
             .catch((err) => {
-                console.log('errr', err);
+                logger.log(err);
+                // console.log('errr', err);
                 // TODO: что делаем при ошибке?
             });
     },
@@ -100,23 +103,21 @@ module.exports = {
                         department: req.body.department,
                         status: true
                     });
+                    logger.log(`Created user ${ acc.login }`);
                     return acc.save();
-                    console.log('Created user', acc.login);
                 }
             })
             .then( () => res.redirect('/admin/users'))
     },
     edit: function (req, res) {
-        console.log();
         Account.findOne({ login: req.params.login }).then( acc => {
             acc.name = req.body.name || acc.name;
             acc.email = req.body.email || acc.email;
             acc.role = req.body.role || acc.role;
             acc.status = req.body.status || acc.status
-            console.log(acc);
             return acc.save();
         }).then( () => {
-            console.log('Edit account', req.params.login);
+            logger.log(`Edit account ${req.params.login}`);
             res.redirect('/admin/users/'+req.params.login)
         });
     },
@@ -126,16 +127,16 @@ module.exports = {
             acc.name = req.body.name || acc.name;
             return acc.save();
         }).then( () => {
-            console.log('Edit profile', res.locals.__user.login);
+            logger.log(`Edit profile ${res.locals.__user.login}`);
             res.redirect('/profile');
         });
     },
     passEdit: function (req, res) {
         Account.find({ login: req.body.login }).then( acc => {
-            acc.password = passord.createHash(req.body.password);
+            acc.password = password.createHash(req.body.password);
             return acc.save();
         }).then( () => {
-            console.log('Edit pass', req.body.login);
+            logger.log(`Edit password ${req.body.login}`);
             res.send('Ok');
         });
     },
@@ -144,9 +145,11 @@ module.exports = {
             if(acc != null) {
                 return acc.remove();
             } else throw `Cant find account ${'login'}`;
-        }).then(() => res.send('Ok'), err => {
-            console.log(err); //TODO: LOGGER
-            res.send(err);
+        }).then(() => {
+            logger.log(`Delete account ${req.body.login}`);
+            res.send('Ok')
+        }, err => {
+            logger.log(err, 'ERROR');
         });
     }
 };

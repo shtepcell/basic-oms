@@ -23,6 +23,10 @@
             }
         },
         {
+            block: 'table',
+            elem: 'common'
+        },
+        {
             block: 'button',
             mods: {
                 theme: 'islands',

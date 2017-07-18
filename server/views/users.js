@@ -46,6 +46,10 @@ module.exports = function(opt) {
                 block: 'table',
                 mods: {
                     users: true
+                },
+                mix: {
+                    block: 'table',
+                    elem: 'common'
                 }
             },
             {

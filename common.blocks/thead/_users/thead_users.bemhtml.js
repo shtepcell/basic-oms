@@ -5,23 +5,24 @@ block('thead').mod('users')(
             tag: 'tr',
             content: [
                 {
-                    tag: 'td',
-                    content: 'Логин'
+                    tag: 'th',
+                    content: 'Логин',
+                    mix: 'login'
                 },
                 {
-                    tag: 'td',
+                    tag: 'th',
                     content: 'Ф.И.О'
                 },
                 {
-                    tag: 'td',
+                    tag: 'th',
                     content: 'Email'
                 },
                 {
-                    tag: 'td',
+                    tag: 'th',
                     content: 'Телефон'
                 },
                 {
-                    tag: 'td',
+                    tag: 'th',
                     content: 'Отдел'
                 }
             ]
