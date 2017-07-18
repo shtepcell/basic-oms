@@ -4,27 +4,27 @@ block('navigator').content()(function() {
             block: 'link',
             content: 'Главная',
             mods: {
-                theme: 'islands',
-                nav: true
+                theme: 'islands'
             },
+            mix: 'navigator__link',
             url: '/'
         },
         {
             block: 'link',
             content: 'Поиск заявок',
             mods: {
-                nav: true,
                 theme: 'islands'
             },
+            mix: 'navigator__link',
             url: '/search'
         },
         {
             block: 'link',
             content: 'Статус',
             mods: {
-                theme: 'islands',
-                nav: true
+                theme: 'islands'
             },
+            mix: 'navigator__link',
             url: '/status'
         }
     ];
@@ -34,20 +34,18 @@ block('navigator').content()(function() {
             block: 'link',
             content: 'Выйти',
             mods: {
-                theme: 'islands',
-                nav: true,
-                end: true
+                theme: 'islands'
             },
+            mix: ['navigator__link', 'navigator__right'],
             url: '/logout'
         },
         {
             block: 'link',
             content: '[' + this.data.locals.__user.login + ']',
             mods: {
-                theme: 'islands',
-                nav: true,
-                end: true
+                theme: 'islands'
             },
+            mix: ['navigator__link', 'navigator__right'],
             url: '/profile'
         }
     ]
@@ -58,9 +56,9 @@ block('navigator').content()(function() {
             mods: {
                 switcher: 'link',
                 theme: 'islands',
-                nav: true,
                 size: 'm'
             },
+            mix: 'navigator__link',
             switcher: 'Администрирование',
             popup: [
                 {
@@ -68,6 +66,82 @@ block('navigator').content()(function() {
                     content: 'Учетные записи',
                     mods: {
                         theme: 'islands'
+                    },
+                    mix: {
+                        block: 'navigator',
+                        elem: 'dropdown'
+                    },
+                    url: '/admin/users'
+                },
+                {
+                    block: 'link',
+                    content: 'Отделы',
+                    mods: {
+                        theme: 'islands'
+                    },
+                    mix: {
+                        block: 'navigator',
+                        elem: 'dropdown'
+                    },
+                    url: '/admin/users'
+                },
+                {
+                    block: 'link',
+                    content: 'Адреса',
+                    mods: {
+                        theme: 'islands'
+                    },
+                    mix: {
+                        block: 'navigator',
+                        elem: 'dropdown'
+                    },
+                    url: '/admin/users'
+                },
+                {
+                    block: 'link',
+                    content: 'Клиенты',
+                    mods: {
+                        theme: 'islands'
+                    },
+                    mix: {
+                        block: 'navigator',
+                        elem: 'dropdown'
+                    },
+                    url: '/admin/users'
+                },
+                {
+                    block: 'link',
+                    content: 'Типы клиентов',
+                    mods: {
+                        theme: 'islands'
+                    },
+                    mix: {
+                        block: 'navigator',
+                        elem: 'dropdown'
+                    },
+                    url: '/admin/users'
+                },
+                {
+                    block: 'link',
+                    content: 'Провайдеры',
+                    mods: {
+                        theme: 'islands'
+                    },
+                    mix: {
+                        block: 'navigator',
+                        elem: 'dropdown'
+                    },
+                    url: '/admin/users'
+                },
+                {
+                    block: 'link',
+                    content: 'Услуги',
+                    mods: {
+                        theme: 'islands'
+                    },
+                    mix: {
+                        block: 'navigator',
+                        elem: 'dropdown'
                     },
                     url: '/admin/users'
                 }

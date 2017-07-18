@@ -16,7 +16,7 @@ module.exports = {
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
-            perPage = 1; // TODO брать из конфига?
+            perPage = 5; // TODO брать из конфига?
 
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
@@ -53,41 +53,81 @@ module.exports = {
             });
     },
     getOne: function (req, res) {
-        Account.findOne({login: 'some', status: true}).then( acc => {
-            res.end(JSON.stringify(acc));
+        Account.findOne({login: req.params.login, status: true}).then( acc => {
+            res.locals.user = {
+                login: acc.login,
+                name: acc.name,
+                email: acc.email,
+                department: acc.department
+            };
+
+            render(req, res, {
+                viewName: 'user',
+                options: {
+                    type: 'edit',
+                    login: acc.login
+                }
+            });
+        })
+    },
+    getProfile: function (req, res) {
+        Account.findOne({login: res.locals.__user.login, status: true}).then( acc => {
+            res.locals.user = {
+                login: acc.login,
+                name: acc.name,
+                email: acc.email,
+                department: acc.department
+            };
+
+            render(req, res, {
+                viewName: 'user',
+                options: {
+                    type: 'profile',
+                    login: acc.login
+                }
+            });
         })
     },
     create: function (req, res) {
-        var acc = new Account({
-            login: req.body.login,
-            password: req.body.password,
-            name: req.body.name,
-            email: req.body.email,
-            role: req.body.role,
-            status: true
-        });
-        return acc.save();
+        Account.findOne({login: req.body.login})
+            .then( a => {
+                if (!a) {
+                    var acc = new Account({
+                        login: req.body.login,
+                        password: password.createHash(req.body.password),
+                        name: req.body.name,
+                        email: req.body.email,
+                        department: req.body.department,
+                        status: true
+                    });
+                    return acc.save();
+                    console.log('Created user', acc.login);
+                }
+            })
+            .then( () => res.redirect('/admin/users'))
     },
     edit: function (req, res) {
-        Account.find({ login: req.body.login }).then( acc => {
-            acc.name = req.body.name;
-            acc.email = req.body.email;
-            acc.role = req.body.role;
-            acc.status = req.body.status;
+        console.log();
+        Account.findOne({ login: req.params.login }).then( acc => {
+            acc.name = req.body.name || acc.name;
+            acc.email = req.body.email || acc.email;
+            acc.role = req.body.role || acc.role;
+            acc.status = req.body.status || acc.status
+            console.log(acc);
             return acc.save();
         }).then( () => {
-            console.log('Edit account', req.body.login);
-            res.send('Ok');
+            console.log('Edit account', req.params.login);
+            res.redirect('/admin/users/'+req.params.login)
         });
     },
     selfEdit: function (req, res) {
-        Account.find({ login: req.body.login }).then( acc => {
-            acc.email = req.body.email;
-            acc.name = req.body.name;
+        Account.findOne({ login: res.locals.__user.login }).then( acc => {
+            acc.email = req.body.email || acc.email;
+            acc.name = req.body.name || acc.name;
             return acc.save();
         }).then( () => {
-            console.log('Edit account', req.body.login);
-            res.send('Ok');
+            console.log('Edit profile', res.locals.__user.login);
+            res.redirect('/profile');
         });
     },
     passEdit: function (req, res) {

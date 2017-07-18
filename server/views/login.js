@@ -14,7 +14,7 @@ module.exports = function (opt) {
             {
                 block: 'form',
                 mods: {
-                    login: true
+                    type: 'login'
                 }
             }
         ]

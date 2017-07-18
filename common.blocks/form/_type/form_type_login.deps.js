@@ -13,14 +13,7 @@
             mods: {
                 theme: 'islands',
                 size: 'l',
-                type: 'submit',
-                login: true
-            }
-        },
-        {
-            block: 'fields',
-            mods: {
-                login: true
+                type: 'submit'
             }
         }
     ]

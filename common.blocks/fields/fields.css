@@ -1,0 +1,21 @@
+.fields {
+    width: 100%;
+    display: table;
+}
+.fields__title {
+    width: 1%;
+    min-width: 200px;
+    font-size: 115%;
+    font-weight: 500;
+    line-height: 32px;
+    display: table-cell;
+    vertical-align: top;
+}
+.fields__label {
+    font-family: sans-serif;
+    display: block;
+    margin-bottom: 14px;
+}
+.fields__line {
+    margin-bottom: 18px;
+}

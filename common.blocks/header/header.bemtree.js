@@ -8,7 +8,7 @@ block('header').content()(function() {
         ret.push({
             block: 'title',
             mods: {
-                login: true
+                type: 'login'
             }
         });
     }
