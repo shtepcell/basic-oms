@@ -81,6 +81,41 @@ modules.define('b-modal-dynamic-popup',
             BEMDOM.update(this.findChildElem('content').domElem, str);
             this._initFooterButtons();
             return this;
+        },
+
+        setModalSectionContent: function(title, body, errText) {
+            var bodyContent = errText ? {
+                    elem: 'error-text',
+                    content: errText
+                } :
+                body;
+
+            this.setModalContent(BEMHTML.apply([
+                {
+                    block: 'b-modal-dynamic-popup',
+                    elem: 'head',
+                    content: title
+                },
+                {
+                    block: 'b-modal-dynamic-popup',
+                    elem: 'body',
+                    content: bodyContent
+                },
+                {
+                    block: 'b-modal-dynamic-popup',
+                    elem: 'foot',
+                    content: [
+                        {
+                            block: 'button',
+                            mods: {
+                                theme: 'islands',
+                                size: 's'
+                            },
+                            text: 'OK'
+                        }
+                    ]
+                }
+            ]));
         }
 
     }, {

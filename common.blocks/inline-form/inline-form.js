@@ -15,10 +15,15 @@ modules.define('inline-form',
                         });
 
                     this._domEvents(this).on('submit', function(e) {
+                        var popup = this._popup;
+
                         e.preventDefault();
                         data = this._validate() || {};
 
                         if (this._errText) {
+                            popup.setModalSectionContent('Сохранение...');
+                            popup.setMod('loading');
+                            popup.show();
                             this._abortSaving();
                             this.xhr = $.ajax({
                                 url: 'admin/' + this._block().getMod('type') + '/add',
