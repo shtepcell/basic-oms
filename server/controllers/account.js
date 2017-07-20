@@ -14,11 +14,12 @@ module.exports = {
             render(req, res, 'users');
         })
     },
+
     getPage: function (req, res) {
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
-            perPage = 5; // TODO брать из конфига?
+            perPage = 20; // TODO брать из конфига?
 
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
@@ -50,11 +51,11 @@ module.exports = {
                 });
             })
             .catch((err) => {
-                logger.log(err);
-                // console.log('errr', err);
+                logger.error(err);
                 // TODO: что делаем при ошибке?
             });
     },
+
     getOne: function (req, res) {
         Account.findOne({login: req.params.login, status: true}).then( acc => {
             res.locals.user = {
@@ -73,6 +74,7 @@ module.exports = {
             });
         })
     },
+
     getProfile: function (req, res) {
         Account.findOne({login: res.locals.__user.login, status: true}).then( acc => {
             res.locals.user = {
@@ -91,24 +93,29 @@ module.exports = {
             });
         })
     },
+
     create: function (req, res) {
-        Account.findOne({login: req.body.login})
+        req.body.login = req.body.login.toLowerCase();
+
+        Account.findOne({login: req.body.login.toLowerCase()})
             .then( a => {
-                if (!a) {
+                if (!a && validate(req.body)) {
                     var acc = new Account({
-                        login: req.body.login,
+                        login: req.body.login.toLowerCase(),
                         password: password.createHash(req.body.password),
                         name: req.body.name,
                         email: req.body.email,
                         department: req.body.department,
                         status: true
                     });
-                    logger.log(`Created user ${ acc.login }`);
+                    logger.info(`Created user ${ acc.login }`, res.locals.__user);
                     return acc.save();
-                }
+                } else logger.warn(`Try to create an existing account ${req.body.login}`); // TODO: Отображение ошибок в интерфейсе
             })
+            .catch( err => logger.error(err))
             .then( () => res.redirect('/admin/users'))
     },
+
     edit: function (req, res) {
         Account.findOne({ login: req.params.login }).then( acc => {
             acc.name = req.body.name || acc.name;
@@ -116,40 +123,53 @@ module.exports = {
             acc.role = req.body.role || acc.role;
             acc.status = req.body.status || acc.status
             return acc.save();
-        }).then( () => {
-            logger.log(`Edit account ${req.params.login}`);
+        })
+        .then( () => {
+            logger.info(`Edit account ${req.params.login}`, res.locals.__user);
             res.redirect('/admin/users/'+req.params.login)
-        });
+        })
+        .catch( err => logger.error(err) );
     },
+
     selfEdit: function (req, res) {
         Account.findOne({ login: res.locals.__user.login }).then( acc => {
             acc.email = req.body.email || acc.email;
             acc.name = req.body.name || acc.name;
             return acc.save();
-        }).then( () => {
-            logger.log(`Edit profile ${res.locals.__user.login}`);
+        })
+        .then( () => {
+            logger.info(`Edit profile ${res.locals.__user.login}`, res.locals.__user);
             res.redirect('/profile');
-        });
+        })
+        .catch( err => logger.error(err) );
+
     },
+
     passEdit: function (req, res) {
         Account.find({ login: req.body.login }).then( acc => {
             acc.password = password.createHash(req.body.password);
             return acc.save();
         }).then( () => {
-            logger.log(`Edit password ${req.body.login}`);
+            logger.info(`Edit password ${req.body.login}`, res.locals.__user);
             res.send('Ok');
-        });
+        })
+        .catch( err => logger.error(err) );
+
     },
+    
     remove: function (req, res) {
         Account.findOne({login: req.body.login}).then( acc => {
             if(acc != null) {
                 return acc.remove();
             } else throw `Cant find account ${'login'}`;
         }).then(() => {
-            logger.log(`Delete account ${req.body.login}`);
+            logger.info(`Delete account ${req.body.login}`, res.locals.__user);
             res.send('Ok')
-        }, err => {
-            logger.log(err, 'ERROR');
-        });
+        })
+        .catch( err => logger.error(err) );
     }
 };
+
+function validate(user) {
+    return /^[a-zA-Z][a-zA-Z0-9]+$/.test(user.login) && user.password === user.passwordRep;
+}

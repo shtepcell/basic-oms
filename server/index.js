@@ -27,11 +27,24 @@ var fs = require('fs'),
     isSocket = isNaN(port),
     isDev = process.env.NODE_ENV === 'development',
 
-    router = require('./router');
+    MongoStore = require('connect-mongo')(expressSession),
+    common = require('./controllers/common'),
+    router = require('./router'),
 
-const db = require('./controllers/connect').connections[0];
+    db = require('./controllers/connect').connections[0];
 
 require('debug-http')();
+
+morgan.token('date', function() {
+    var p = common.dateToExtStr(new Date());
+    return p;
+});
+
+morgan.token('user', function(req, res) {
+    if(res.locals.__user)
+        return res.locals.__user.login;
+    else return 'guest'
+});
 
 app
     .disable('x-powered-by')
@@ -39,13 +52,25 @@ app
     .use(compression())
     .use(favicon(path.join(staticFolder, 'favicon.ico')))
     .use(serveStatic(staticFolder))
-    .use(morgan(':method [:date[web]] :url :status :res[header] - :response-time ms'))
+    .use(morgan('[HTTP] :date[web] <:user> :method :url :status :res[header] - :response-time ms'))
     .use(cookieParser())
     .use(bodyParser.urlencoded({ extended: true }))
     .use(expressSession({
-        resave: true,
-        saveUninitialized: true,
-        secret: config.sessionSecret
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 14 * 24 * 60 * 60 * 1000 // 2 недели
+        },
+        unset: 'destroy',
+        secret: 's562hdnYsd52nSBN',
+        // secret: secretConf.secret,
+        store: new MongoStore({
+            mongooseConnection: db,
+            autoRemove: 'native',
+            ttl: 14 * 24 * 60 * 60,
+            touchAfter: 10 * 60,
+            stringify: true
+        })
     }))
     .use(passport.initialize())
     .use(passport.session())
@@ -83,5 +108,6 @@ isSocket && fs.existsSync(port) && fs.unlinkSync(port);
 
 app.listen(port, function() {
     isSocket && fs.chmod(port, '0777');
-    console.log('server is listening on', this.address().port);
+    console.log(`\n  ################## RELOAD SERVER - ${common.dateToExtStr()} ################### \n`);
+    logger.info(`Server is listening on ${this.address().port}`);
 });

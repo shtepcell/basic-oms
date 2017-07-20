@@ -40,11 +40,11 @@ module.exports = {
         }).then( acc => {
             if (acc) {
                 req.session.__user = acc.login;
-                logger.log(`Success authorization by : ${acc.login}`);
+                logger.info(`Success authorization by : ${acc.login}`);
                 var url = req.query.trg || '/';
                 res.redirect(url);
             } else {
-                logger.log(`Fail authorization.`);
+                logger.warn(`Fail authorization.`);
                 res.status(401).redirect(req.originalUrl);
             }
         })
