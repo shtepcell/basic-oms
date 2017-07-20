@@ -2,6 +2,7 @@
 	shouldDeps: [
 		'control-group',
 		'select',
-		'input'
+		'input',
+		'b-modal-dynamic-popup'
 	]
 })
