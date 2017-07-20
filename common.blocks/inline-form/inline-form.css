@@ -1,0 +1,9 @@
+.inline-form
+{
+	margin: 10px;
+}
+
+.inline-form__city-type
+{
+	min-width: 80px;
+}
