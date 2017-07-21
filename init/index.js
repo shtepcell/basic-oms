@@ -6,6 +6,7 @@ Account.find().then( acc => {
         var admin = new Account({
             login : 'admin',
             password : password.createHash('admin'),
+            department: 1,
             name : 'Admin',
             role: 0,
             status: true
