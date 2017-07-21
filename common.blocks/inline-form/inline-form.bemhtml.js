@@ -20,7 +20,13 @@ block('inline-form')(
 		}
 	),
 	tag()('form'),
-	js()(true)
+	js()(function() {
+		var url = (this.ctx.js && this.ctx.js.reqUrl) || (this.ctx.attrs && this.ctx.attrs.method);
+
+		return {
+			reqUrl: url || '/nothing'
+		}
+	})
 );
 
 block('inline-form').elem('controls').wrap()(function() {

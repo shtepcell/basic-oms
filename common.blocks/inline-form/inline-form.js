@@ -45,10 +45,11 @@ modules.define('inline-form',
                         if (!this._errorText) {
                             this._abortSaving();
                             this.xhr = $.ajax({
-                                url: '/admin/' + this._block().getMod('type') + '/add',
+                                url: _this.params.reqUrl || '/nothing',
                                 type: 'POST',
                                 dataType: 'json',
                                 data: data,
+                                timeout: 5000,
                                 error: function(err) {
                                     var errText = err.responseJSON && err.responseJSON.errText ? '\n' + err.responseJSON.errText : ''
 
