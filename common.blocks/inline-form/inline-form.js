@@ -1,6 +1,6 @@
 modules.define('inline-form',
-    ['i-bem-dom', 'jquery', 'b-modal-dynamic-popup'],
-    function (provide, BEMDOM, $, bModalDynPopup) {
+    ['i-bem-dom', 'jquery', 'dom', 'b-modal-dynamic-popup', 'input'],
+    function (provide, BEMDOM, $, dom, bModalDynPopup, Input) {
     provide(BEMDOM.declBlock('inline-form', {
         onSetMod: {
             js: {
@@ -39,6 +39,7 @@ modules.define('inline-form',
                                 _this._abortSaving();
                             });
 
+                        dom.getFocused().blur();
                         popup.setMod('loading');
                         popup.show();
 
