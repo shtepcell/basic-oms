@@ -83,12 +83,37 @@ modules.define('b-modal-dynamic-popup',
             return this;
         },
 
-        setModalSectionContent: function(title, body, errText) {
+        setModalSectionContent: function(title, body, errText, btns) {
             var bodyContent = errText ? {
                     elem: 'error-text',
                     content: errText
                 } :
-                body;
+                body,
+                buttonsCtx = [];
+
+            if (btns && btns.length > 0) {
+                buttonsCtx = btns.map(function(item) {
+                    return {
+                        block: 'button',
+                        mods: {
+                            theme: 'islands',
+                            size: 's'
+                        },
+                        text: item
+                    }
+                });
+            } else {
+                buttonsCtx = [
+                    {
+                        block: 'button',
+                        mods: {
+                            theme: 'islands',
+                            size: 's'
+                        },
+                        text: 'OK'
+                    }
+                ]
+            }
 
             this.setModalContent(BEMHTML.apply([
                 {
@@ -104,16 +129,7 @@ modules.define('b-modal-dynamic-popup',
                 {
                     block: 'b-modal-dynamic-popup',
                     elem: 'foot',
-                    content: [
-                        {
-                            block: 'button',
-                            mods: {
-                                theme: 'islands',
-                                size: 's'
-                            },
-                            text: 'OK'
-                        }
-                    ]
+                    content: buttonsCtx
                 }
             ]));
         }
