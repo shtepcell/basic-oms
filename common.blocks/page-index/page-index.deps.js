@@ -49,6 +49,12 @@
             block: 'handbook-table',
             mod: 'type',
             val: 'cities'
+        },
+        {
+            block: 'inline-form',
+            mods: {
+                type:  'cities'
+            }
         }
     ]
 })
