@@ -39,3 +39,14 @@ block('footer').content()(function() {
         }
     ];
 });
+
+block('footer').wrap()(function () {
+    if(this.data.url.pathname != '/login')
+        return [
+            {
+                block: 'footer-control',
+                content: this.ctx
+            }
+        ]
+    else return {};
+})
