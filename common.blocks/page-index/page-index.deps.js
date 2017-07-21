@@ -11,6 +11,12 @@
             }
         },
         {
+            block: 'form',
+            mods: {
+                type: 'password'
+            }
+        },
+        {
             block: 'title',
             mods: {
                 type: ['login', 'user']

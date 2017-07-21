@@ -21,7 +21,7 @@ module.exports = function(opt) {
                 mods: {
                     type: 'user'
                 },
-                type: 'main'
+                type: 'list'
             },
             {
                 block: 'button',

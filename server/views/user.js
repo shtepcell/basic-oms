@@ -53,6 +53,18 @@ module.exports = function(opt) {
                 },
                 type: opt.type,
                 action: info[opt.type].action
+            },
+            {
+                block: 'form',
+                mods: {
+                    type: 'password'
+                },
+                mix: {
+                    block: 'form',
+                    elem: 'user'
+                },
+                type: opt.type,
+                action: info[opt.type].action+'/password'
             }
         ]
     };

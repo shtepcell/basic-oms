@@ -23,6 +23,8 @@ module.exports = function (app) {
 
     app.get('/profile', Account.getProfile);
     app.post('/profile', Account.selfEdit);
+    app.post('/profile/password', Account.selfPassEdit);
+
     // app.all('/admin/*', Auth.isAdmin);
 
     app.get('/admin/users', Account.getPage);
@@ -40,6 +42,7 @@ module.exports = function (app) {
 
     app.get('/admin/users/:login', Account.getOne);
     app.post('/admin/users/:login', Account.edit);
+    app.post('/admin/users/:login/password', Account.passEdit);
 
 
     app.route('/admin/cities')

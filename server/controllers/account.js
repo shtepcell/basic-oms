@@ -146,17 +146,47 @@ module.exports = {
     },
 
     passEdit: function (req, res) {
-        Account.find({ login: req.body.login }).then( acc => {
-            acc.password = password.createHash(req.body.password);
-            return acc.save();
+        Account.findOne({ login: req.params.login }).then( acc => {
+            if(acc)
+                if(req.body.password === req.body.passwordRep) {
+                    acc.password = password.createHash(req.body.password);
+                    return acc.save();
+                } else {
+                    res.send('Пароли не совпадают') // TODO: отображение ошибок в интерфейсе
+                }
         }).then( () => {
-            logger.info(`Edit password ${req.body.login}`, res.locals.__user);
-            res.send('Ok');
+            logger.info(`Edit password ${req.params.login}`, res.locals.__user);
+            res.redirect(`/admin/users/${req.params.login}`);
         })
         .catch( err => logger.error(err) );
 
     },
-    
+
+    selfPassEdit: function (req, res) {
+        Account.findOne({
+            login: res.locals.__user.login,
+            password: password.createHash(req.body.passwordOld)
+        })
+        .then( acc => {
+            if(acc) {
+                if(req.body.password === req.body.passwordRep) {
+                    acc.password = password.createHash(req.body.password);
+                    return acc.save();
+                } else {
+                    res.send('Пароли не совпадают') // TODO: отображение ошибок в интерфейсе
+                }
+            } else {
+                res.send('Неверующий текущий пароль') // TODO: отображение ошибок в интерфейсе
+            }
+        })
+        .then( () => {
+            logger.info(`Edit profile password`, res.locals.__user);
+            res.redirect(`/profile`);
+        })
+        .catch( err => logger.error(err) );
+
+    },
+
     remove: function (req, res) {
         Account.findOne({login: req.body.login}).then( acc => {
             if(acc != null) {
