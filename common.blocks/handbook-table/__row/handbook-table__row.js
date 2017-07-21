@@ -69,7 +69,7 @@ modules.define('handbook-table__row',
                 _this.setMod('edited');
             });
 
-            this._dltBtn && this._events(this._dltBtn).on('click', this._deleteRow);
+            this._dltBtn && this._events(this._dltBtn).on('click', this._confirmDeleteRow);
 
             this._reinitPopupEvents();
             //_block && this._events(_block._popup).on('close', this._onPopupClose);
@@ -230,6 +230,36 @@ modules.define('handbook-table__row',
                         });
                 }
             });
+        },
+
+        _confirmDeleteRow: function() {
+            var _this = this,
+                popup = this._block()._popup;
+
+            this._dltBtn.setMod('disabled');
+            popup.setModalSectionContent(
+                'Подтверждение удаления',
+                'Вы уверены, что хотите удалить: ' + this.params.cellsData.type + ' ' + this.params.cellsData.name + '?',
+                null,
+                ['Да', 'Нет']
+            );
+
+            this._reinitPopupEvents();
+            this._events(popup)
+                .once('OK', function() {
+                    popup.hide();
+                    _this._deleteRow();
+                })
+                .once('CANCEL', function() {
+                    popup.hide();
+                    _this._dltBtn.delMod('disabled');
+                })
+                .once('close', function() {
+                    popup.hide();
+                    _this._dltBtn.delMod('disabled');
+                });
+
+            popup.show();
         },
 
         _abortRequest: function() {
