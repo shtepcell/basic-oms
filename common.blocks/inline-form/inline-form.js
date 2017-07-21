@@ -5,11 +5,16 @@ modules.define('inline-form',
         onSetMod: {
             js: {
                 inited: function () {
+                    var _this = this;
+
                     this._popup = bModalDynPopup.create(
                         this.domElem,
                         null,
                         null, 
-                        [],
+                        [{
+                            block: 'inline-form',
+                            elem: 'modal'
+                        }],
                         {
                             closable: true
                         });
@@ -19,20 +24,68 @@ modules.define('inline-form',
 
                         e.preventDefault();
                         data = this._validate() || {};
+                        popup.setModalSectionContent('Сохранение...');
 
-                        if (this._errText) {
-                            popup.setModalSectionContent('Сохранение...');
-                            popup.setMod('loading');
-                            popup.show();
+                        this._reinitPopupEvents();
+                        this._events(popup)
+                            .once('OK', function() {
+                                popup.hide();
+                                popup.delMod('loading');
+                                _this._abortSaving();
+                            })
+                            .once('close', function() {
+                                popup.hide();
+                                popup.delMod('loading');
+                                _this._abortSaving();
+                            });
+
+                        popup.setMod('loading');
+                        popup.show();
+
+                        if (!this._errorText) {
                             this._abortSaving();
                             this.xhr = $.ajax({
-                                url: 'admin/' + this._block().getMod('type') + '/add',
+                                url: '/admin/' + this._block().getMod('type') + '/add',
                                 type: 'POST',
                                 dataType: 'json',
-                                data: data
+                                data: data,
+                                error: function(err) {
+                                    var errText = err.responseJSON && err.responseJSON.errText ? '\n' + err.responseJSON.errText : ''
+
+                                    popup.setModalSectionContent('Ошибка!', undefined, 'Не удается сохранить.' + errText);
+                                    popup.show();
+                                },
+                                success: function(res) {
+                                    popup.setModalSectionContent('Информация', 'Данные успешно изменены');
+                                    popup.show();
+                                    _this._reinitPopupEvents();
+                                    _this._events(popup)
+                                        .once('close', function() {
+                                            window.location.reload();
+                                        })
+                                        .once('OK', function() {
+                                            window.location.reload();
+                                        });
+                                },
+                                complete: function() {
+                                    _this._events(popup)
+                                        .once('close', function() {
+                                            popup.delMod('loading');
+                                        })
+                                        .once('OK', function() {
+                                            popup.hide();
+                                            popup.delMod('loading');
+                                        });
+                                }
                             });
                         } else {
-                            // show popup
+                            this._events(popup)
+                                .once('OK', function() {
+                                    popup.hide();
+                                });
+
+                            popup.setModalSectionContent('Ошибка!', undefined, this._errorText);
+                            popup.show();
                         }
                     });
                 }
@@ -41,6 +94,15 @@ modules.define('inline-form',
 
         _abortSaving: function() {
             this.xhr && this.xhr.abort();         
+        },
+
+        _reinitPopupEvents: function() {
+            var popup = this._popup;
+
+            this._events(popup).un();
+            this._events(popup).on('close', function() {
+                popup.hide();
+            })
         },
 
         _validate: function() { }

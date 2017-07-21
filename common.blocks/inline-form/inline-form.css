@@ -7,3 +7,9 @@
 {
 	min-width: 80px;
 }
+
+.inline-form__modal .b-modal-dynamic-popup__body
+{
+	min-height: 100px;
+	width: 300px;
+}
