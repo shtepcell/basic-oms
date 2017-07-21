@@ -1,7 +1,11 @@
 .navigator {
+    position: fixed;
+    top: 0;
+    width: 100%;
     margin-bottom: 1em;
-    min-width: 630px;
+    min-width: 850px;
     background-color: #1a7abe;
+    z-index: 999;
 }
 .navigator__link {
     display: inline-block;

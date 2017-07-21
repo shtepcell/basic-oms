@@ -1,5 +1,51 @@
 .footer {
-    position: fixed;
-    bottom: 0;
-    right: 5px;
+    margin-left: 2em;
+    margin-right: 2em;
+    border-top: solid 1px #ddd;
+    margin-top: 5em;
+    margin-bottom: 1em;
+    padding-top: 1em;
+}
+.footer__company {
+    display: inline-block;
+    margin-right: 3em;
+}
+
+.footer__support {
+    float: right;
+    margin-top: 23px;
+    margin-right: 1em;
+    display: inline-block;
+    margin-left: auto;
+}
+
+.footer__support .label, .footer__support a {
+    color: #1a7abe;
+    display: inline-block;
+    font-family: sans-serif;
+    font-size: 10pt;
+}
+
+.footer__support .label:nth-child(1) {
+    margin-right: 0.5em;
+}
+
+.footer__company .icon {
+    background-size:contain;
+    height: 80px;
+    width: 100px;
+}
+
+.footer__company .link {
+    margin-left: 1em;
+    color: #1a7abe;
+    font-size: 14pt;
+    text-decoration: none;
+    vertical-align: -24px;
+}
+
+.footer__copyright {
+    color: #1a7abe;
+    font-size: 10pt;
+    text-align: center;
 }
