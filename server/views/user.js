@@ -24,6 +24,21 @@ module.exports = function(opt) {
         info.edit.action+= opt.login
     }
 
+    var passwordForm = {};
+    if(opt.type != 'create')
+        passwordForm = {
+            block: 'form',
+            mods: {
+                type: 'password'
+            },
+            mix: {
+                block: 'form',
+                elem: 'user'
+            },
+            type: opt.type,
+            action: info[opt.type].action+'/password'
+        };
+
     return {
         view: 'page-index',
         title: info[opt.type].title,
@@ -54,18 +69,7 @@ module.exports = function(opt) {
                 type: opt.type,
                 action: info[opt.type].action
             },
-            {
-                block: 'form',
-                mods: {
-                    type: 'password'
-                },
-                mix: {
-                    block: 'form',
-                    elem: 'user'
-                },
-                type: opt.type,
-                action: info[opt.type].action+'/password'
-            }
+            passwordForm
         ]
     };
 };
