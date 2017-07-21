@@ -1,4 +1,4 @@
 .input_theme_islands.input_errored:before
 {
-	box-shadow: 0 0 0 1px #f00, inset 0 0 0 1px #f00;
+    box-shadow: 0 0 0 1px #f00, inset 0 0 0 1px #f00;
 }
