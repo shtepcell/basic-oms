@@ -9,8 +9,8 @@ block('inline-form').mod('type', 'providers').elem('controls').def()(function() 
                     text: 'STOP'
                 },
                 {
-                    val: 'WSAT',
-                    text: 'WSAT'
+                    val: 'VSAT',
+                    text: 'VSAT'
                 }
             ],
             name: 'type',

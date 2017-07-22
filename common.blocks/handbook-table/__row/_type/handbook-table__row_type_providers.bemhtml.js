@@ -39,8 +39,8 @@ block('handbook-table').elem('row').elemMod('type', 'providers').elemMod('edited
                             text: 'STOP'
                         },
                         {
-                            val: 'WSAT',
-                            text: 'WSAT'
+                            val: 'VSAT',
+                            text: 'VSAT'
                         }
                     ],
                     name: 'providersType',

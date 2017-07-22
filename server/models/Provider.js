@@ -10,7 +10,7 @@ var schema = mongoose.Schema( {
 	},
 	type : {
 		type: String,
-		enum: ['STOP', 'WSAT'],
+		enum: ['STOP', 'VSAT'],
 		required : true
 	},
 	usage : {

@@ -157,5 +157,5 @@ module.exports = {
 
 function isErrorValidateProvider(name, type) {
     // TODO: consts.js
-    return name.length == 0 || name.length >= 25 || ['STOP', 'WSAT'].indexOf(type) == -1;
+    return name.length == 0 || name.length >= 25 || ['STOP', 'VSAT'].indexOf(type) == -1;
 }

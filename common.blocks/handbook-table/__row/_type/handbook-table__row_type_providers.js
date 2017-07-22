@@ -26,7 +26,7 @@ provide(Row.declMod({ modName : 'type', modVal : 'providers' }, {
             return;
         }
 
-        if (['STOP', 'WSAT'].indexOf(select.getVal()) === -1)
+        if (['STOP', 'VSAT'].indexOf(select.getVal()) === -1)
         { 
             select.setMod('errored');
             this._errorText += 'Ошибка выбора типа провайдера\n';
