@@ -4,3 +4,7 @@
     flex-wrap: nowrap;
     flex: 0 1 100%;
 }
+
+.ultra-form__row:last-child {
+    margin-bottom: 25px;
+}

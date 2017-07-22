@@ -72,19 +72,34 @@ block('ultra-form').content()(function () {
     })
 
     ret.push({
-            block: 'button',
-            mods: {
-                theme: 'islands',
-                size: 'm',
-                type: 'submit'
-            },
-            mix: {
-                block: 'button',
-                elem: 'create'
-            },
-            text: this.ctx.text
-    });
+            elem: 'row',
+            content: {
+                elem: 'cell',
+                content: {
+                    block: 'button',
+                    mods: {
+                        theme: 'islands',
+                        size: 'm',
+                        type: 'submit'
+                    },
+                    mix: {
+                        block: 'button',
+                        elem: 'create'
+                    },
+                    text: this.ctx.text
+                }
+            }
+
+        });
 
     return ret;
 
+})
+
+block('ultra-form').wrap()(function () {
+    return {
+        block: 'ultra-form',
+        elem: 'wrap',
+        content: this.ctx
+    };
 })
