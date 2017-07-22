@@ -1,0 +1,9 @@
+.handbook-table_type_client-types .handbook-table__head-row .handbook-table__cell:first-child
+{
+    min-width: 200px;
+}
+
+.handbook-table_type_client-types .handbook-table__head-row .handbook-table__cell:nth-child(2)
+{
+    min-width: 250px;
+}
