@@ -48,7 +48,11 @@ provide(Row.declMod({ modName : 'type', modVal : 'cities' }, {
 				name: inputName.getVal()
 			}
 
-	}
+	},
+
+	_getConfirmText: function() {
+        return 'Вы уверены, что хотите удалить населенный пункт: ' + this.params.cellsData.type + ' ' + this.params.cellsData.name + '?'
+    }
 }, 
 {}));
 

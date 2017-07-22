@@ -48,6 +48,10 @@ provide(Row.declMod({ modName : 'type', modVal : 'providers' }, {
                 name: inputName.getVal()
             }
 
+    },
+
+    _getConfirmText: function() {
+        return 'Вы уверены, что хотите удалить провайдера: ' + this.params.cellsData.type + ' ' + this.params.cellsData.name + '?'
     }
 }, 
 {}));
