@@ -75,15 +75,15 @@ module.exports = {
     create: function (req, res) {
         var obj = {
                 name: req.body.name,
-                type: req.body.type
+                shortName: req.body.shortName
             };
 
-        if (isErrorValidateClientType(obj.name, obj.type)) {
+        if (isErrorValidateClientType(obj.name, obj.shortName)) {
             res.status(400).send({ errText: 'Ошибка валидации' });
             return;
         }
 
-        ClientType.findOne({ name: obj.name, type: obj.type })
+        ClientType.findOne({ name: obj.name, shortName: obj.shortName })
             .then(clientType => {
                 var newClientType;
 
@@ -94,7 +94,7 @@ module.exports = {
 
                 newClientType = new ClientType({
                     name: obj.name,
-                    type: obj.type
+                    shortName: obj.shortName
                 });
                 return newClientType.save();
             })
@@ -105,21 +105,21 @@ module.exports = {
     edit: function (req, res) {
         var reqData = req.body;
 
-        if (isErrorValidateClientType(reqData.obj.name, reqData.obj.type)) {
+        if (isErrorValidateClientType(reqData.obj.name, reqData.obj.shortName)) {
             res.status(400).send({ errText: 'Ошибка валидации' });
             return;
         }
 
-        ClientType.findOne({ name: reqData.obj.name, type: reqData.obj.type})
+        ClientType.findOne({ name: reqData.obj.name, shortName: reqData.obj.shortName})
             .then(clientType => {
-                if (clientTypes != null) {
+                if (clientType != null) {
                     res.status(400).send({ errText: 'Такой тип клиента уже есть в базе.' });
                     return;
                 } 
 
                 ClientType.findByIdAndUpdate(
                     reqData.obj._id,
-                    { name: reqData.obj.name, type: reqData.obj.type},
+                    { name: reqData.obj.name, shortName: reqData.obj.shortName},
                     function(err, clientType) {
                         if (err) return; //TODO что делаем при ошибке?
                         if (clientType == null) {
