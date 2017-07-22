@@ -54,7 +54,7 @@ module.exports = function (app) {
     app.post('/admin/cities/add', City.create);
 
     app.route('/admin/providers')
-        .get(Provider.getAll)
+        .get(Provider.getPage)
         .delete(Provider.delete);
 
     app.post('/admin/providers/change', Provider.edit);
