@@ -1,6 +1,7 @@
 const Auth = require('./controllers/auth');
 const Account = require('./controllers/account');
 const City = require('./controllers/city');
+const Provider = require('./controllers/provider');
 
 var Render = require('./render'),
     render = Render.render;
@@ -51,4 +52,11 @@ module.exports = function (app) {
 
     app.post('/admin/cities/change', City.edit);
     app.post('/admin/cities/add', City.create);
+
+    app.route('/admin/providers')
+        .get(Provider.getAll)
+        .delete(Provider.delete);
+
+    app.post('/admin/providers/change', Provider.edit);
+    app.post('/admin/providers/add', Provider.create);
 }
