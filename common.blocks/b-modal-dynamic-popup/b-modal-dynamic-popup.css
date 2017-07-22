@@ -27,3 +27,13 @@
 {
     padding-right: 25px;
 }
+
+.b-modal-dynamic-popup__foot .button
+{
+    margin-right: 10px;
+}
+
+.b-modal-dynamic-popup__foot .button:last-child
+{
+    margin-right: 0;
+}
