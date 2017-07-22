@@ -66,6 +66,12 @@
         {
             block: 'ultra-form',
             elem: 'row'
+        },
+        {
+            block: 'inline-form',
+            mods: {
+                type:  'cities'
+            }
         }
     ]
 })

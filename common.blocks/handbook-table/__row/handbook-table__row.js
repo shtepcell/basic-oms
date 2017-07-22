@@ -69,7 +69,7 @@ modules.define('handbook-table__row',
                 _this.setMod('edited');
             });
 
-            this._dltBtn && this._events(this._dltBtn).on('click', this._deleteRow);
+            this._dltBtn && this._events(this._dltBtn).on('click', this._confirmDeleteRow);
 
             this._reinitPopupEvents();
             //_block && this._events(_block._popup).on('close', this._onPopupClose);
@@ -88,7 +88,7 @@ modules.define('handbook-table__row',
                 data;
 
             this._chngSaveBtn.setMod('disabled');
-            this._setPopupContent('Изменение...');
+            popup.setModalSectionContent('Изменение...');
 
             this._reinitPopupEvents();
             this._events(_this._block()._popup)
@@ -124,12 +124,12 @@ modules.define('handbook-table__row',
                         var errText = err.responseJSON && err.responseJSON.errText ? '\n' + err.responseJSON.errText : ''
 
                         console.log('CHANGING requiest FAILED');
-                        _this._setPopupContent('Ошибка!', undefined, 'Не удается отправить запрос' + errText);
+                        popup.setModalSectionContent('Ошибка!', undefined, 'Не удается отправить запрос' + errText);
                         popup.show();
                     },
                     success: function(res) {
                         console.log('CHANGING requiest DONE');
-                        _this._setPopupContent('Информация', 'Данные успешно изменены');
+                        popup.setModalSectionContent('Информация', 'Данные успешно изменены');
                         popup.show();
                         // if (res.responceJSON.err) ... else ...
                         Object.assign(this.params.cellsData, data);
@@ -157,7 +157,7 @@ modules.define('handbook-table__row',
                         _this._chngSaveBtn.delMod('disabled');
                     });
 
-                this._setPopupContent('Ошибка!', undefined, this._errorText);
+                popup.setModalSectionContent('Ошибка!', undefined, this._errorText);
                 popup.show();
             }
         },
@@ -167,7 +167,7 @@ modules.define('handbook-table__row',
                 popup = this._block()._popup;
 
             this._dltBtn.setMod('disabled');
-            this._setPopupContent('Удаление...');
+            popup.setModalSectionContent('Удаление...');
 
             this._reinitPopupEvents();
             this._events(_this._block()._popup)
@@ -200,13 +200,13 @@ modules.define('handbook-table__row',
                 error: function(err) {
                     var errText = err.responseJSON && err.responseJSON.errText ? '\n' + err.responseJSON.errText : ''
                     console.log('DELETE requiest FAILED', err);
-                    _this._setPopupContent('Ошибка!', undefined, 'Не удается отправить запрос' + errText);
+                    popup.setModalSectionContent('Ошибка!', undefined, 'Не удается отправить запрос' + errText);
                     this._reinitPopupEvents();
                     popup.show();
                 },
                 success: function(res) {
                     console.log('DELETE requiest DONE', res)
-                    _this._setPopupContent('Информация', 'Успешно удалено');
+                    popup.setModalSectionContent('Информация', 'Успешно удалено');
                     this._reinitPopupEvents();
                     _this._events(popup)
                         .once('OK', function() {
@@ -232,6 +232,36 @@ modules.define('handbook-table__row',
             });
         },
 
+        _confirmDeleteRow: function() {
+            var _this = this,
+                popup = this._block()._popup;
+
+            this._dltBtn.setMod('disabled');
+            popup.setModalSectionContent(
+                'Подтверждение удаления',
+                'Вы уверены, что хотите удалить: ' + this.params.cellsData.type + ' ' + this.params.cellsData.name + '?',
+                null,
+                ['Да', 'Нет']
+            );
+
+            this._reinitPopupEvents();
+            this._events(popup)
+                .once('OK', function() {
+                    popup.hide();
+                    _this._deleteRow();
+                })
+                .once('CANCEL', function() {
+                    popup.hide();
+                    _this._dltBtn.delMod('disabled');
+                })
+                .once('close', function() {
+                    popup.hide();
+                    _this._dltBtn.delMod('disabled');
+                });
+
+            popup.show();
+        },
+
         _abortRequest: function() {
             this._xhr && this._xhr.abort();
         },
@@ -240,41 +270,6 @@ modules.define('handbook-table__row',
             // но вообще когда-либо тут могут появится всякие проверки
             // пред тем как закрыть модалку
             this._block()._popup.hide();
-        },
-
-        _setPopupContent: function(title, body, errText) {
-            var bodyContent = errText ? {
-                    elem: 'error-text',
-                    content: errText
-                } :
-                body;
-
-            this._block()._popup.setModalContent(BEMHTML.apply([
-                {
-                    block: 'b-modal-dynamic-popup',
-                    elem: 'head',
-                    content: title
-                },
-                {
-                    block: 'b-modal-dynamic-popup',
-                    elem: 'body',
-                    content: bodyContent
-                },
-                {
-                    block: 'b-modal-dynamic-popup',
-                    elem: 'foot',
-                    content: [
-                        {
-                            block: 'button',
-                            mods: {
-                                theme: 'islands',
-                                size: 's'
-                            },
-                            text: 'OK'
-                        }
-                    ]
-                }
-            ]));
         },
 
         _validate: function() { }

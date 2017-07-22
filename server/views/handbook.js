@@ -16,12 +16,15 @@ module.exports = function(opt) {
             }
         },
         page: [
-            /*{
-                block: 'form',
+            {
+                block: 'inline-form',
+                attrs: {
+                    method: opt.reqUrl
+                },
                 mods: {
-                    userAdd: true
+                    type: opt.handbookType
                 }
-            },*/
+            },
             {
                 block: 'handbook-table',
                 js: true,
