@@ -28,6 +28,7 @@ provide(Row.declMod({ modName : 'type', modVal : 'cities' }, {
 
 		if (select.getVal().indexOf(['г.', 'пгт.', 'с.']) !== -1)
 		{ 
+            select.setMod('errored');
 			this._errorText += 'Ошибка выбора типа населенного пункта\n';
 			err = true
 		}
@@ -36,6 +37,7 @@ provide(Row.declMod({ modName : 'type', modVal : 'cities' }, {
 
 		if (inputVal.length <= 0 || inputVal.length >= 25) 
 		{
+            inputName.setMod('errored');
 			this._errorText += 'Название города не может быть пустым или длиннее 25 символов\n';
 			err = true
 		}

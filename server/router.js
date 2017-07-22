@@ -47,4 +47,5 @@ module.exports = function (app) {
         .delete(City.delete);
 
     app.post('/admin/cities/change', City.edit);
+    app.post('/admin/cities/add', City.create);
 }

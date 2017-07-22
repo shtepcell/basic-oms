@@ -12,7 +12,8 @@ module.exports = {
                 viewName: 'handbook',
                 options: {
                     title: 'Справочник городов',
-                    handbookType: 'cities'
+                    handbookType: 'cities',
+                    reqUrl: '/admin/cities/add'
                 }
             });
         });
@@ -41,7 +42,8 @@ module.exports = {
                             viewName: 'handbook',
                             options: {
                                 title: 'Справочник городов',
-                                handbookType: 'cities'
+                                handbookType: 'cities',
+                                reqUrl: '/admin/cities/add'
                             }
                         });
                     }
@@ -60,7 +62,8 @@ module.exports = {
                     options: {
                         title: 'Справочник городов',
                         handbookType: 'cities',
-                        pagers: pagers
+                        pagers: pagers,
+                        reqUrl: '/admin/cities/add'
                     }
                 });
             })
