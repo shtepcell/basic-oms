@@ -239,7 +239,7 @@ modules.define('handbook-table__row',
             this._dltBtn.setMod('disabled');
             popup.setModalSectionContent(
                 'Подтверждение удаления',
-                'Вы уверены, что хотите удалить: ' + this.params.cellsData.type + ' ' + this.params.cellsData.name + '?',
+                this._getConfirmText(),
                 null,
                 ['Да', 'Нет']
             );
@@ -272,6 +272,8 @@ modules.define('handbook-table__row',
             this._block()._popup.hide();
         },
 
-        _validate: function() { }
+        _validate: function() { },
+
+        _getConfirmText: function() { }
     }));
 });

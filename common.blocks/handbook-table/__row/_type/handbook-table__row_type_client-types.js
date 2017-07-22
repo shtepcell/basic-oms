@@ -51,6 +51,10 @@ provide(Row.declMod({ modName : 'type', modVal : 'client-types' }, {
                 name: inputNameVal
             }
 
+    },
+
+    _getConfirmText: function() {
+        return 'Вы уверены, что хотите удалить данный тип клиента: ' + this.params.cellsData.name + ' (' + this.params.cellsData.shortName + ') ?';
     }
 }, 
 {}));
