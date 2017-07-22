@@ -1,0 +1,6 @@
+.ultra-form__row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: nowrap;
+    flex: 0 1 100%;
+}

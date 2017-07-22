@@ -1,42 +1,74 @@
 module.exports = function(opt) {
+    var user = opt.user;
+    var hasInfo = !!user;
+    if(!hasInfo) {
+        user = {}
+    }
     var info = {
         create: {
             title: 'Создание пользователя',
+            text: 'Создать',
             description: 'Страница редактирования пользователя',
             action: '/admin/users/add'
         },
 
         edit: {
             title: 'Пользователь ',
+            text: 'Сохранить',
             description: 'Страница редактирования пользователя',
             action: '/admin/users/'
         },
 
         profile: {
             title: 'Мой профиль',
+            text: 'Сохранить',
             description: 'Страница редактирования профиля',
             action: '/profile'
         }
     }
 
     if(opt.type == 'edit') {
-        info.edit.title+= opt.login;
-        info.edit.action+= opt.login
+        info.edit.title+= user.login;
+        info.edit.action+= user.login;
     }
 
     var passwordForm = {};
     if(opt.type != 'create')
         passwordForm = {
-            block: 'form',
-            mods: {
-                type: 'password'
-            },
-            mix: {
-                block: 'form',
-                elem: 'user'
-            },
-            type: opt.type,
-            action: info[opt.type].action+'/password'
+            block: 'ultra-form',
+            action: info[opt.type].action+'/password',
+            method: 'POST',
+            text: 'Сбросить пароль',
+            fields: [
+                {
+                    name: 'passwordOld',
+                    desc: 'Текущий пароль',
+                    mods: {
+                        type: 'password',
+                        maxLenght: 20
+                    },
+                    required: true,
+                    hidden: opt.type != 'profile'
+                },
+                {
+                    name: 'password',
+                    desc: 'Новый пароль',
+                    required: true,
+                    mods: {
+                        type: 'password',
+                        maxLenght: 20
+                    }
+                },
+                {
+                    name: 'passwordRep',
+                    desc: 'Подтверждение пароля',
+                    required: true,
+                    mods: {
+                        type: 'password',
+                        maxLenght: 20
+                    }
+                }
+            ]
         };
 
     return {
@@ -58,16 +90,94 @@ module.exports = function(opt) {
                 type: opt.type
             },
             {
-                block: 'form',
-                mods: {
-                    type: 'user'
-                },
-                mix: {
-                    block: 'form',
-                    elem: 'user'
-                },
-                type: opt.type,
-                action: info[opt.type].action
+                block: 'ultra-form',
+                action: info[opt.type].action,
+                method: 'POST',
+                text: info[opt.type].text,
+                fields: [
+                    {
+                        name: 'login',
+                        desc: 'Логин',
+                        mods: {
+                            type: 'text',
+                            maxLenght: 25
+                        },
+                        required: true,
+                        disabled: hasInfo,
+                        val: user.login
+                    },
+                    {
+                        name: 'password',
+                        desc: 'Пароль',
+                        hidden: opt.type != 'create',
+                        required: true,
+                        mods: {
+                            type: 'password',
+                            maxLenght: 20
+                        }
+                    },
+                    {
+                        name: 'passwordRep',
+                        desc: 'Подтверждение пароля',
+                        required: true,
+                        hidden: opt.type != 'create',
+                        mods: {
+                            type: 'password',
+                            maxLenght: 20
+                        }
+                    },
+                    {
+                        name: 'name',
+                        desc: 'Ф.И.О.',
+                        mods: {
+                            type: 'text',
+                            maxLenght: 40
+                        },
+                        required: true,
+                        val: user.name
+                    },
+                    {
+                        name: 'email',
+                        desc: 'E-mail',
+                        mods: {
+                            type: 'text',
+                            maxLenght: 40
+                        },
+                        val: user.email
+                    },
+                    {
+                        name: 'phone',
+                        desc: 'Телефон',
+                        mods: {
+                            type: 'text',
+                            maxLenght: 40
+                        },
+                        val: user.phone
+                    },
+                    {
+                        name: 'department',
+                        desc: 'Отдел',
+                        mods: {
+                            type: 'select'
+                        },
+                        disabled: opt.type == 'profile',
+                        val: user.department || 'Без отдела',
+                        data: [
+                            {
+                                text: 'Первый',
+                                val: 1
+                            },
+                            {
+                                text: 'Второй',
+                                val: 2
+                            },
+                            {
+                                text: 'Третий',
+                                val: 3
+                            }
+                        ]
+                    }
+                ]
             },
             passwordForm
         ]

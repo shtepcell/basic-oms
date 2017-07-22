@@ -1,0 +1,7 @@
+.ultra-form__cell {
+    flex: 0 1 100%;
+}
+
+.ultra-form__cell:nth-child(1) {
+    flex: 0 0 180px;
+}

@@ -58,37 +58,37 @@ module.exports = {
 
     getOne: function (req, res) {
         Account.findOne({login: req.params.login, status: true}).then( acc => {
-            res.locals.user = {
-                login: acc.login,
-                name: acc.name,
-                email: acc.email,
-                department: acc.department
-            };
 
             render(req, res, {
                 viewName: 'user',
                 options: {
                     type: 'edit',
-                    login: acc.login
+                    user: {
+                        login: acc.login,
+                        name: acc.name,
+                        email: acc.email,
+                        phone: acc.phone,
+                        department: acc.department
+                    }
                 }
             });
+
         })
     },
 
     getProfile: function (req, res) {
         Account.findOne({login: res.locals.__user.login, status: true}).then( acc => {
-            res.locals.user = {
-                login: acc.login,
-                name: acc.name,
-                email: acc.email,
-                department: acc.department
-            };
-
             render(req, res, {
                 viewName: 'user',
                 options: {
                     type: 'profile',
-                    login: acc.login
+                    user: {
+                        login: acc.login,
+                        name: acc.name,
+                        email: acc.email,
+                        phone: acc.phone,
+                        department: acc.department
+                    }
                 }
             });
         })
@@ -105,6 +105,7 @@ module.exports = {
                         password: password.createHash(req.body.password),
                         name: req.body.name,
                         email: req.body.email,
+                        phone: req.body.phone,
                         department: req.body.department,
                         status: true
                     });
@@ -121,7 +122,9 @@ module.exports = {
             acc.name = req.body.name || acc.name;
             acc.email = req.body.email || acc.email;
             acc.role = req.body.role || acc.role;
-            acc.status = req.body.status || acc.status
+            acc.status = req.body.status || acc.status;
+            acc.phone = req.body.phone || acc.phone;
+            acc.department = req.body.department || acc.department;
             return acc.save();
         })
         .then( () => {
@@ -135,6 +138,7 @@ module.exports = {
         Account.findOne({ login: res.locals.__user.login }).then( acc => {
             acc.email = req.body.email || acc.email;
             acc.name = req.body.name || acc.name;
+            acc.phone = req.body.phone || acc.phone;
             return acc.save();
         })
         .then( () => {

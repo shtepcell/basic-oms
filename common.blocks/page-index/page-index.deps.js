@@ -55,6 +55,17 @@
             block: 'handbook-table',
             mod: 'type',
             val: 'cities'
+        },
+        {
+            block: 'ultra-form'
+        },
+        {
+            block: 'ultra-form',
+            elem: 'cell'
+        },
+        {
+            block: 'ultra-form',
+            elem: 'row'
         }
     ]
 })
