@@ -57,6 +57,11 @@
             val: 'cities'
         },
         {
+            block: 'handbook-table',
+            mod: 'type',
+            val: 'providers'
+        },
+        {
             block: 'ultra-form'
         },
         {
@@ -71,6 +76,12 @@
             block: 'inline-form',
             mods: {
                 type:  'cities'
+            }
+        },
+        {
+            block: 'inline-form',
+            mods: {
+                type:  'providers'
             }
         }
     ]
