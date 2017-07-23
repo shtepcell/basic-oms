@@ -143,7 +143,7 @@ block('navigator').content()(function() {
                         block: 'navigator',
                         elem: 'dropdown'
                     },
-                    url: '/admin/users'
+                    url: '/admin/services'
                 }
             ]
         })
