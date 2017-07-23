@@ -67,6 +67,11 @@
             val: 'providers'
         },
         {
+            block: 'handbook-table',
+            mod: 'type',
+            val: 'services'
+        },
+        {
             block: 'ultra-form'
         },
         {
@@ -93,6 +98,12 @@
             block: 'inline-form',
             mods: {
                 type:  'providers'
+            }
+        },
+        {
+            block: 'inline-form',
+            mods: {
+                type:  'services'
             }
         }
     ]
