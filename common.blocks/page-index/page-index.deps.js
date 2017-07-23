@@ -62,6 +62,11 @@
             val: 'client-types'
         },
         {
+            block: 'handbook-table',
+            mod: 'type',
+            val: 'providers'
+        },
+        {
             block: 'ultra-form'
         },
         {
@@ -82,6 +87,12 @@
             block: 'inline-form',
             mods: {
                 type:  'client-types'
+            }
+        },
+        {
+            block: 'inline-form',
+            mods: {
+                type:  'providers'
             }
         }
     ]
