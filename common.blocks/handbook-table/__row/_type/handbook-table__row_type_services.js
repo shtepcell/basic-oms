@@ -48,6 +48,10 @@ provide(Row.declMod({ modName : 'type', modVal : 'services' }, {
                 name: inputName.getVal()
             }
 
+    },
+
+    _getConfirmText: function() {
+        return 'Вы уверены, что хотите удалить услугу: ' + this.params.cellsData.name + ' (тип ' + this.params.cellsData.type + ' ) ?';
     }
 }, 
 {}));
