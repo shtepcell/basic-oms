@@ -1,6 +1,7 @@
 const Auth = require('./controllers/auth');
 const Account = require('./controllers/account');
 const City = require('./controllers/city');
+const ClientType = require('./controllers/clientType');
 
 var Render = require('./render'),
     render = Render.render;
@@ -51,4 +52,11 @@ module.exports = function (app) {
 
     app.post('/admin/cities/change', City.edit);
     app.post('/admin/cities/add', City.create);
+
+    app.route('/admin/client-types')
+        .get(ClientType.getPage)
+        .delete(ClientType.delete);
+
+    app.post('/admin/client-types/change', ClientType.edit);
+    app.post('/admin/client-types/add', ClientType.create);
 }
