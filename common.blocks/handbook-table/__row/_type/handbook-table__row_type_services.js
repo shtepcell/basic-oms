@@ -3,11 +3,11 @@ modules.define(
     ['select', 'input'], 
     function(provide, Select, Input, Row) {
 
-provide(Row.declMod({ modName : 'type', modVal : 'cities' }, {
+provide(Row.declMod({ modName : 'type', modVal : 'services' }, {
 
     _validate: function() {
-        var select = this.findChildElem('city-type'),
-            inputName = this.findChildElem('city-name'),
+        var select = this.findChildElem('service-type'),
+            inputName = this.findChildElem('service-name'),
             inputVal,
             err = false;
 
@@ -26,10 +26,10 @@ provide(Row.declMod({ modName : 'type', modVal : 'cities' }, {
             return;
         }
 
-        if (select.getVal().indexOf(['г.', 'пгт.', 'с.']) !== -1)
+        if (['0', '1', '2', '3'].indexOf(select.getVal()) == -1)
         { 
             select.setMod('errored');
-            this._errorText += 'Ошибка выбора типа населенного пункта\n';
+            this._errorText += 'Ошибка выбора типа услуги\n';
             err = true
         }
 
@@ -38,7 +38,7 @@ provide(Row.declMod({ modName : 'type', modVal : 'cities' }, {
         if (inputVal.length <= 0 || inputVal.length >= 25) 
         {
             inputName.setMod('errored');
-            this._errorText += 'Название города не может быть пустым или длиннее 25 символов\n';
+            this._errorText += 'Название услуги не может быть пустым или длиннее 25 символов\n';
             err = true
         }
         
@@ -51,7 +51,7 @@ provide(Row.declMod({ modName : 'type', modVal : 'cities' }, {
     },
 
     _getConfirmText: function() {
-        return 'Вы уверены, что хотите удалить населенный пункт: ' + this.params.cellsData.type + ' ' + this.params.cellsData.name + '?';
+        return 'Вы уверены, что хотите удалить услугу: ' + this.params.cellsData.name + ' (тип ' + this.params.cellsData.type + ' ) ?';
     }
 }, 
 {}));

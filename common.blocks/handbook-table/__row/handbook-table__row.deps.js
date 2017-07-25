@@ -64,6 +64,14 @@
                 tech: 'bemhtml'
             },
             {
+                block: 'handbook-table',
+                elem: 'row',
+                mods: {
+                    type: 'services'
+                },
+                tech: 'bemhtml'
+            },
+            {
                 block: 'select',
                 elem: 'row',
                 mods: {
