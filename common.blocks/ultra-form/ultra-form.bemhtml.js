@@ -6,5 +6,6 @@ block('ultra-form')(
             method: ctx.method,
             action: ctx.action
         }
-    })
+    }),
+    js()(true)
 )

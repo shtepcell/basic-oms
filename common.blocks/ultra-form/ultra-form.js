@@ -21,9 +21,8 @@ modules.define('ultra-form',
 
                     this._domEvents(this).on('submit', function(e) {
                         var popup = this._popup;
-
+                        var url = this.domElem[0].action;
                         e.preventDefault();
-                        console.log('asdasdasd');
                         data = this._validate() || {};
                         popup.setModalSectionContent('Сохранение...');
 
@@ -47,13 +46,18 @@ modules.define('ultra-form',
                         if (!this._errorText) {
                             this._abortSaving();
                             this.xhr = $.ajax({
-                                url: _this.params.reqUrl || '/nothing',
+                                url: url,
                                 type: 'POST',
                                 dataType: 'json',
                                 data: data,
                                 timeout: 5000,
                                 error: function(err) {
-                                    var errText = err.responseJSON && err.responseJSON.errText ? '\n' + err.responseJSON.errText : ''
+
+                                    var errText =  '';
+
+                                    err.responseJSON.forEach( item => {
+                                        errText += item.errText + ' ';
+                                    });
 
                                     popup.setModalSectionContent('Ошибка!', undefined, 'Не удается сохранить.' + errText);
                                     popup.show();
@@ -108,6 +112,13 @@ modules.define('ultra-form',
             })
         },
 
-        _validate: function() { }
+        _validate: function() {
+            var _data = this.domElem.serializeArray() || [];
+            var data = {};
+            _data.forEach( item => {
+                data[item.name] = item.value;
+            })
+            return data;
+        }
     }));
 });
