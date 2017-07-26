@@ -95,41 +95,55 @@ module.exports = {
     },
 
     create: function (req, res) {
-        req.body.login = req.body.login.toLowerCase();
 
-        Account.findOne({login: req.body.login.toLowerCase()})
+        var reqData = req.body,
+            errors = [];
+
+        reqData.login = reqData.login.toLowerCase();
+
+        Account.findOne({login: reqData.login})
             .then( a => {
-                if (!a && validate(req.body)) {
+
+                if( a ) errors.push({errText: 'Пользователь с таким логином уже существует!'})
+
+                errors = validate(reqData, errors);
+
+                if(errors.length === 0) {
                     var acc = new Account({
-                        login: req.body.login.toLowerCase(),
-                        password: password.createHash(req.body.password),
-                        name: req.body.name,
-                        email: req.body.email,
-                        phone: req.body.phone,
-                        department: req.body.department,
+                        login: reqData.login,
+                        password: password.createHash(reqData.password),
+                        name: reqData.name,
+                        email: reqData.email,
+                        phone: reqData.phone,
+                        department: reqData.department,
                         status: true
                     });
                     logger.info(`Created user ${ acc.login }`, res.locals.__user);
                     return acc.save();
-                } else logger.warn(`Try to create an existing account ${req.body.login}`); // TODO: Отображение ошибок в интерфейсе
+                } else res.status(400).send(errors);
+
             })
             .catch( err => logger.error(err))
-            .then( () => res.redirect('/admin/users'))
+            .then( acc => {
+                if(acc) res.send({ok: 'ok'});
+            })
     },
 
     edit: function (req, res) {
         Account.findOne({ login: req.params.login }).then( acc => {
-            acc.name = req.body.name || acc.name;
-            acc.email = req.body.email || acc.email;
-            acc.role = req.body.role || acc.role;
-            acc.status = req.body.status || acc.status;
-            acc.phone = req.body.phone || acc.phone;
-            acc.department = req.body.department || acc.department;
+            var reqData = req.body;
+            acc.name = reqData.name || acc.name;
+            acc.email = reqData.email || acc.email;
+            acc.role = reqData.role || acc.role;
+            acc.status = reqData.status || acc.status;
+            acc.phone = reqData.phone || acc.phone;
+            acc.department = reqData.department || acc.department;
             return acc.save();
         })
-        .then( () => {
+        .then( a => {
             logger.info(`Edit account ${req.params.login}`, res.locals.__user);
-            res.redirect('/admin/users/'+req.params.login)
+            if(a)
+                res.send({ok: 'ok'});
         })
         .catch( err => logger.error(err) );
     },
@@ -141,9 +155,10 @@ module.exports = {
             acc.phone = req.body.phone || acc.phone;
             return acc.save();
         })
-        .then( () => {
+        .then( a => {
             logger.info(`Edit profile ${res.locals.__user.login}`, res.locals.__user);
-            res.redirect('/profile');
+            if(a)
+                res.send({ok: 'ok'});
         })
         .catch( err => logger.error(err) );
 
@@ -156,11 +171,12 @@ module.exports = {
                     acc.password = password.createHash(req.body.password);
                     return acc.save();
                 } else {
-                    res.send('Пароли не совпадают') // TODO: отображение ошибок в интерфейсе
+                    res.status(400).send([{errText: 'Пароли не совпадают!'}]);
                 }
-        }).then( () => {
+        }).then( a => {
             logger.info(`Edit password ${req.params.login}`, res.locals.__user);
-            res.redirect(`/admin/users/${req.params.login}`);
+            if(a)
+                res.send({ok: 'ok'});
         })
         .catch( err => logger.error(err) );
 
@@ -177,15 +193,16 @@ module.exports = {
                     acc.password = password.createHash(req.body.password);
                     return acc.save();
                 } else {
-                    res.send('Пароли не совпадают') // TODO: отображение ошибок в интерфейсе
+                    res.status(400).send([{errText: 'Пароли не совпадают!'}]);
                 }
             } else {
-                res.send('Неверующий текущий пароль') // TODO: отображение ошибок в интерфейсе
+                res.status(400).send([{errText: 'Неверный пароль!'}]);
             }
         })
-        .then( () => {
+        .then( a => {
+            if(a)
+                res.send({ok: 'ok'});
             logger.info(`Edit profile password`, res.locals.__user);
-            res.redirect(`/profile`);
         })
         .catch( err => logger.error(err) );
 
@@ -204,6 +221,11 @@ module.exports = {
     }
 };
 
-function validate(user) {
-    return /^[a-zA-Z][a-zA-Z0-9]+$/.test(user.login) && user.password === user.passwordRep;
+function validate(user, errs) {
+
+    if( !/^[a-zA-Z][a-zA-Z0-9]+$/.test(user.login) ) errs.push({errText: 'Неверный формат логина'});
+
+    if( user.password != user.passwordRep ) errs.push({errText: 'Пароли не совпадают'});
+
+    return errs;
 }

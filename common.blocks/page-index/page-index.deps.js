@@ -83,6 +83,10 @@
             elem: 'row'
         },
         {
+            block: 'ultra-form',
+            elem: 'label'
+        },
+        {
             block: 'inline-form',
             mods: {
                 type:  'cities'
