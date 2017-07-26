@@ -140,9 +140,10 @@ module.exports = {
             acc.department = reqData.department || acc.department;
             return acc.save();
         })
-        .then( () => {
+        .then( a => {
             logger.info(`Edit account ${req.params.login}`, res.locals.__user);
-            res.send({ok: 'ok'});
+            if(a)
+                res.send({ok: 'ok'});
         })
         .catch( err => logger.error(err) );
     },
@@ -154,9 +155,10 @@ module.exports = {
             acc.phone = req.body.phone || acc.phone;
             return acc.save();
         })
-        .then( () => {
+        .then( a => {
             logger.info(`Edit profile ${res.locals.__user.login}`, res.locals.__user);
-            res.redirect('/profile');
+            if(a)
+                res.send({ok: 'ok'});
         })
         .catch( err => logger.error(err) );
 
@@ -169,11 +171,12 @@ module.exports = {
                     acc.password = password.createHash(req.body.password);
                     return acc.save();
                 } else {
-                    res.send('Пароли не совпадают') // TODO: отображение ошибок в интерфейсе
+                    res.status(400).send([{errText: 'Пароли не совпадают!'}]);
                 }
-        }).then( () => {
+        }).then( a => {
             logger.info(`Edit password ${req.params.login}`, res.locals.__user);
-            res.redirect(`/admin/users/${req.params.login}`);
+            if(a)
+                res.send({ok: 'ok'});
         })
         .catch( err => logger.error(err) );
 
@@ -190,15 +193,16 @@ module.exports = {
                     acc.password = password.createHash(req.body.password);
                     return acc.save();
                 } else {
-                    res.send('Пароли не совпадают') // TODO: отображение ошибок в интерфейсе
+                    res.status(400).send([{errText: 'Пароли не совпадают!'}]);
                 }
             } else {
-                res.send('Неверующий текущий пароль') // TODO: отображение ошибок в интерфейсе
+                res.status(400).send([{errText: 'Неверный пароль!'}]);
             }
         })
-        .then( () => {
+        .then( a => {
+            if(a)
+                res.send({ok: 'ok'});
             logger.info(`Edit profile password`, res.locals.__user);
-            res.redirect(`/profile`);
         })
         .catch( err => logger.error(err) );
 
