@@ -109,6 +109,12 @@
             mods: {
                 type:  'services'
             }
+        },
+        {
+            block: 'ultra-table',
+            mods: {
+                theme: 'common'
+            }
         }
     ]
 })

@@ -1,4 +1,6 @@
 const Account = require('../server/models/Account');
+const DepartmentType = require('../server/models/DepartmentType');
+const initList = require('./initList');
 const password = require('../server/controllers/password');
 
 Account.find().then( acc => {
@@ -14,6 +16,21 @@ Account.find().then( acc => {
         console.log('Created default admin');
         return admin.save()
     }
+
 }).then(() => {
-    process.exit();
+ // TODO: Нормальная иницализация
+    return DepartmentType.find().then( types => {
+        if( types.length == 0) {
+            for (var i = 0; i < initList.departmentTypes.length; i++) {
+                var _type = new DepartmentType({
+                    name: initList.departmentTypes[i].name,
+                    id: initList.departmentTypes[i].id
+                });
+                _type.save();
+            }
+        }
+    })
+
+}).then( () => {
+    process.exit(0);
 });

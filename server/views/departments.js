@@ -1,15 +1,11 @@
 module.exports = function(opt, data) {
-    var opt = opt || {},
-        pagerId;
+    var opt = opt || {};
 
-    var users = data.users;
-
-    if (opt.pagers && opt.pagers.length)
-        pagerId = opt.pagers[0];
+    var deps = data.departments;
 
     return {
         view: 'page-index',
-        title: 'Пользователи СУЗ',
+        title: 'Подразделения СУЗ',
         meta: {
             description: 'СУЗ 2.0',
             og: {
@@ -36,13 +32,13 @@ module.exports = function(opt, data) {
                     block: 'button',
                     elem: 'add'
                 },
-                url: '/admin/users/add',
+                url: '/admin/departments/add',
                 icon: {
                     block: 'icon',
                     url: '/add.svg',
                     mix: 'button__icon'
                 },
-                text: 'Создать пользователя'
+                text: 'Создать отдел'
             },
             {
                 block: 'ultra-table',
@@ -52,33 +48,23 @@ module.exports = function(opt, data) {
                 },
                 fields: [
                     {
-                        name: 'Логин',
-                        field: 'login'
-                    },
-                    {
-                        name: 'Ф.И.О.',
+                        name: 'Название отдела',
                         field: 'name'
                     },
                     {
-                        name: 'E-mail',
-                        field: 'email'
+                        name: 'Тип отдела',
+                        field: 'name'
                     },
                     {
-                        name: 'Телефон',
-                        field: 'phone'
+                        name: 'Начальник отдела',
+                        field: 'name'
                     },
                     {
-                        name: 'Отдел',
-                        field: 'department'
+                        name: 'Кол-во сотрудников',
+                        field: 'name'
                     }
                 ],
-                data: users
-            },
-            {
-                block: 'pager',
-                attrs: {
-                    id: pagerId
-                }
+                data: deps
             }
         ]
     };
