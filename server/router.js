@@ -3,8 +3,8 @@ const Auth = require('./controllers/auth'),
     City = require('./controllers/city'),
     ClientType = require('./controllers/clientType'),
     Provider = require('./controllers/provider'),
-    Service = require('./controllers/service');
-
+    Service = require('./controllers/service'),
+    Client = require('./controllers/client');
 var Render = require('./render'),
     render = Render.render;
 
@@ -75,4 +75,12 @@ module.exports = function (app) {
 
     app.post('/admin/services/change', Service.edit);
     app.post('/admin/services/add', Service.create);
+
+    app.route('/admin/clients')
+        .get(Client.getPage)
+        .delete(Client.delete);
+
+    app.post('/admin/clients/change', Client.edit);
+    app.post('/admin/clients/add', Client.create);
+    
 }
