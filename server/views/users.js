@@ -72,6 +72,8 @@ module.exports = function(opt, data) {
                         field: 'department'
                     }
                 ],
+                url: '/admin/users/',
+                template: 'login',
                 data: users
             },
             {

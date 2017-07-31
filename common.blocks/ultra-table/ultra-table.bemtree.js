@@ -19,6 +19,8 @@ block('ultra-table').content()(function() {
         },
         {
             block: 'tbody',
+            url:  this.ctx.url,
+            template:  this.ctx.template,
             datasets: datasets,
             data: _data
         }

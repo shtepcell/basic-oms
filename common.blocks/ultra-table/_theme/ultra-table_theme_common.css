@@ -6,9 +6,6 @@
     border-spacing: 0;
     font-family: sans-serif;
 }
-.ultra-table_theme_common th.login {
-    width: 30px;
-}
 .ultra-table_theme_common th {
     border-bottom: 2px solid #ddd;
 }
@@ -17,4 +14,12 @@
     padding-bottom: 5px;
     padding-top: 5px;
     text-align: center;
+}
+.ultra-table_theme_common .tbody  tr {
+    cursor: pointer;
+    transition: all 0.1s;
+}
+.ultra-table_theme_common .tbody tr:hover {
+    transform: scale(1.015);
+    background: #fafafa;
 }
