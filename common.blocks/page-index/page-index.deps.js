@@ -109,6 +109,12 @@
             mods: {
                 type:  'services'
             }
+        },
+        {
+            block: 'inline-form',
+            mods: {
+                type:  'clients'
+            }
         }
     ]
 })
