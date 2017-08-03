@@ -16,10 +16,7 @@ module.exports = function(opt, data) {
         page: [
             {
                 block: 'title',
-                mods: {
-                    type: 'user'
-                },
-                type: 'list'
+                content: 'Список отделов'
             },
             {
                 block: 'button',
@@ -32,7 +29,7 @@ module.exports = function(opt, data) {
                     block: 'button',
                     elem: 'add'
                 },
-                url: '/admin/departments/add',
+                url: '/admin/departments/create',
                 icon: {
                     block: 'icon',
                     url: '/add.svg',
@@ -53,17 +50,15 @@ module.exports = function(opt, data) {
                     },
                     {
                         name: 'Тип отдела',
-                        field: 'name'
-                    },
-                    {
-                        name: 'Начальник отдела',
-                        field: 'name'
+                        field: 'type'
                     },
                     {
                         name: 'Кол-во сотрудников',
                         field: 'name'
                     }
                 ],
+                url: '/admin/departments/',
+                template: '_id',
                 data: deps
             }
         ]

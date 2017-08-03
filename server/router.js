@@ -49,9 +49,13 @@ module.exports = function (app) {
     app.post('/admin/users/:login/password', Account.passEdit);
 
     app.get('/admin/departments', Department.getAll);
-    // app.route('/admin/departments/:id')
+    app.get('/admin/departments/create', Department.getPageCreate);
+    app.post('/admin/departments/create', Department.create);
+
+    app.get('/admin/departments/:id', Department.getOne);
+    app.post('/admin/departments/:id', Department.edit);
+
     // .get(Department.get)
-    // .post(Department.edit)
     // .delete(Department.delete);
 
     app.route('/admin/cities')

@@ -8,9 +8,15 @@ var schema = mongoose.Schema( {
         required:  true
     },
     type: {
-        type : mongoose.Schema.Types.ObjectId, ref: 'DepartmentTypes',
-        required:  true
-    }
+        type: String,
+        required: true
+    },
+    cities : [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'City'
+        }
+    ]
 });
 
 var department = mongoose.model('Department', schema);
