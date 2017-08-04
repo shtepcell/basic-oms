@@ -34,14 +34,7 @@ module.exports = function (app) {
     app.get('/admin/users', Account.getPage);
 
 
-    app.get('/admin/users/add', function (req, res) {
-        render(req, res, {
-            viewName: 'user',
-            options: {
-                type: 'create'
-            }
-        });
-    });
+    app.get('/admin/users/add', Account.getPageCreate);
     app.post('/admin/users/add', Account.create);
 
     app.get('/admin/users/:login', Account.getOne);

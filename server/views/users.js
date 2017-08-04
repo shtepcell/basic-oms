@@ -3,7 +3,6 @@ module.exports = function(opt, data) {
         pagerId;
 
     var users = data.users;
-
     if (opt.pagers && opt.pagers.length)
         pagerId = opt.pagers[0];
 
@@ -69,7 +68,7 @@ module.exports = function(opt, data) {
                     },
                     {
                         name: 'Отдел',
-                        field: 'department'
+                        field: ['department', 'name']
                     }
                 ],
                 url: '/admin/users/',

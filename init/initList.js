@@ -1,29 +1,29 @@
 var list = {};
 
-list.departmentTypes = [
+list.departments = [
     {
         name: 'Администрация',
-        id: 'admin'
+        type: 'admin'
     },
     {
         name: 'B2B',
-        id: 'b2b'
+        type: 'b2b'
     },
     {
         name: 'B2O',
-        id: 'b2o'
+        type: 'b2o'
     },
     {
         name: 'B2C',
-        id: 'b2c'
+        type: 'b2c'
     },
     {
         name: 'ГУС',
-        id: 'gus'
+        type: 'gus'
     },
     {
         name: 'Сетевой',
-        id: 'net'
+        type: 'net'
     }
 ]
 

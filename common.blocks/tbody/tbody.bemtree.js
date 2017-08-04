@@ -6,8 +6,6 @@ block('tbody').content()(function() {
         template = this.ctx.template,
         ret = [];
 
-
-
     if( !!data && !!datasets ) {
 
         if( !!url )
@@ -18,10 +16,16 @@ block('tbody').content()(function() {
                 block: 'tbody',
                 elem: 'tr',
                 content: datasets.map( i => {
+                    if(Array.isArray(i)) {
+                        var result = item;
+                        for (var j = 0; j < i.length; j++) {
+                            result = result[i[j]];
+                        }
+                    }
                     return {
                         block: 'tbody',
                         elem: 'td',
-                        content: item[i]
+                        content: result || item[i]
                     }
                 }),
                 attrs: {
