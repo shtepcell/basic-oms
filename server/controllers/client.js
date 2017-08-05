@@ -45,10 +45,9 @@ module.exports = {
         ClientType.find({}).select({ shortName: 1, _id: 1 })
             .then( types => {
                 res.locals.clientTypeArr = types;
-                return Client.paginate({}, { page: pageNumber, limit: perPage});
+                return Client.paginate({}, { page: pageNumber, limit: perPage, populate: 'type'});
             })
             .then((clients) => {
-
                 if (!clients.docs.length)
                 {
                     if (pageNumber !== 1) {
