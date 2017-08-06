@@ -1,7 +1,6 @@
 'use strict';
 
 const Department = require('../models/Department');
-
 const Render = require('../render'),
     render = Render.render;
 
@@ -9,22 +8,18 @@ const logger = require('./logger');
 
 module.exports = {
 
-    getAll: function (req, res) {
-        Department.find().then( deps => {
-            res.locals.departments = deps;
-            render(req, res, {
-                viewName: 'departments/list'
-            });
-        })
+    getAll: async (req, res) => {
+        res.locals.departments = await Department.find();
+        render(req, res, {
+            viewName: 'departments/list'
+        });
     },
 
-    getOne: function (req, res) {
-        Department.findOne({ _id: req.params.id}).then( dep => {
-            res.locals.department = dep;
-            render(req, res, {
-                viewName: 'departments/item'
-            });
-        })
+    getOne: async (req, res) => {
+        res.locals.department = await Department.findOne({ _id: req.params.id});
+        render(req, res, {
+            viewName: 'departments/item'
+        });
     },
 
     getPageCreate: function (req, res) {
@@ -33,57 +28,62 @@ module.exports = {
         });
     },
 
-    create: function (req, res) {
-        var reqData = req.body,
-            errors = [];
+    create: async (req, res) => {
+        var reqData = req.body;
+        var dep = await Department.findOne({name: reqData.name});
 
-        Department.findOne({name: reqData.name})
-            .then( dep => {
+        if(dep != null) {
+            res.status(400).send({errText: 'Отдел с таким названием уже существует!'})
+            return;
+        }
 
-                if( dep ) errors.push({errText: 'Отдел с таким названием уже существует!'})
-
-                if(errors.length === 0) {
-                    var department = new Department({
-                        name: reqData.name,
-                        type: reqData.type
-                    });
-
-                    logger.info(`Created department ${ department.name }`, res.locals.__user);
-                    return department.save();
-                } else res.status(400).send(errors);
-
-            })
-            .then( dep => {
-                if(dep) res.send({ok: 'ok'});
-            })
-            .catch( err => logger.error(err))
+        dep = new Department({
+            name: reqData.name,
+            type: reqData.type
+        });
+        var done = await saver(dep);
+        if(!!done) {
+            logger.info(`Created Department [${ done.type }] ${ done.name }`, res.locals.__user);
+            res.send({ created: true });
+        } else res.status(400).send({ errText: `Произошла ошибка при сохранении.
+            Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
     },
 
-    edit: function (req, res) {
+    edit: async (req, res) => {
         var reqData = req.body,
             errors = [];
 
-        Department.findOne({name: reqData.name})
-            .then( dep => {
+        var dep = await Department.findOne({name: reqData.name});
 
-                if( dep && req.params.id != dep._id) errors.push({errText: 'Отдел с таким названием уже существует!'})
+        if( dep && req.params.id != dep._id) {
+            res.status(400).send({errText: 'Отдел с таким названием уже существует!'})
+            return;
+        }
 
-                if(errors.length === 0) {
+        dep = await Department.findOne({_id: req.params.id});
+        var oldDep = {
+            name: dep.name,
+            type: dep.type
+        };
 
-                    return Department.findOne({_id: req.params.id}).then( department => {
-                        department.name = reqData.name || department.name;
-                        department.type = reqData.type || department.type;
-                        logger.info(`Edit department ${ department.name }`, res.locals.__user);
-                        return department.save();
-                    })
+        dep.name = reqData.name || dep.name;
+        dep.type = reqData.type || dep.type;
 
-                } else res.status(400).send(errors);
+        var done = await saver(dep);
+        if(!!done) {
+            logger.info(`Edit Department [${ oldDep.type }] ${ oldDep.name } --> [${ done.type }] ${ done.name }`, res.locals.__user);
+            res.send({ created: true });
+        } else res.status(400).send({ errText: `Произошла ошибка при сохранении.
+            Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
 
-            })
-            .then( dep => {
-                if(dep) res.send({ok: 'ok'});
-            })
-            .catch( err => logger.error(err))
     }
-
 };
+
+function saver(obj) {
+    try {
+        return obj.save();
+    } catch (err) {
+        logger.error(err.message);
+        return false;
+    }
+}

@@ -53,13 +53,14 @@ modules.define('ultra-form',
                                 timeout: 5000,
                                 error: function(err) {
 
-                                    var errText =  '';
+                                    var errText = err.responseJSON && err.responseJSON.errText ? '\n' + err.responseJSON.errText : ''
 
-                                    err.responseJSON.forEach( item => {
-                                        errText += item.errText + ' ';
-                                    });
-
-                                    popup.setModalSectionContent('Ошибка!', undefined, 'Не удается сохранить.' + errText);
+                                    if(err.responseJSON.length)
+                                        err.responseJSON.forEach( item => {
+                                            errText += item.errText + ' ';
+                                        });
+                                    else errText = err.responseJSON.errText;
+                                    popup.setModalSectionContent('Ошибка!', undefined, 'Не удается сохранить. ' + errText);
                                     popup.show();
                                 },
                                 success: function(res) {
