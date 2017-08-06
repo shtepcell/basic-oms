@@ -10,15 +10,14 @@ const View = require('../views');
 
 module.exports = {
 
-    isLoggedIn: function (req, res, next) {
+    isLoggedIn: async (req, res, next) => {
         if (req.session.__user) {
-            Account.findOne({login: req.session.__user}).then( acc => {
-                res.locals.__user = {
-                    login: acc.login,
-                    name: acc.name
-                };
-                next();
-            })
+            var acc = await Account.findOne({login: req.session.__user});
+            res.locals.__user = {
+                login: acc.login,
+                name: acc.name
+            };
+            next();
         } else {
             if(req.path != '/login') {
                 var rstr = '/login' + ( (req.originalUrl.length>1) ? '?trg='+encodeURIComponent(req.originalUrl) : '' );
@@ -32,21 +31,21 @@ module.exports = {
         res.redirect('/login')
     },
 
-    checkAuthorisation: function (req, res) {
-        Account.findOne({
+    checkAuthorisation: async (req, res) => {
+        var acc = await Account.findOne({
             login: req.body.login,
             password: password.createHash(req.body.password),
             status: true
-        }).then( acc => {
-            if (acc) {
-                req.session.__user = acc.login;
-                logger.info(`Success authorization by : ${acc.login}`);
-                var url = req.query.trg || '/';
-                res.redirect(url);
-            } else {
-                logger.warn(`Fail authorization.`);
-                res.status(401).redirect(req.originalUrl);
-            }
         })
+        
+        if (acc) {
+            req.session.__user = acc.login;
+            logger.info(`Success authorization by : ${acc.login}`);
+            var url = req.query.trg || '/';
+            res.redirect(url);
+        } else {
+            logger.warn(`Fail authorization.`);
+            res.status(401).redirect(req.originalUrl);
+        }
     }
 }

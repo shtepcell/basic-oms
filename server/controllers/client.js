@@ -1,35 +1,15 @@
 'use strict';
 
-const Client = require('../models/Client'), 
+const Client = require('../models/Client'),
     ClientType = require('../models/ClientType'),
     Render = require('../render'),
     render = Render.render;
 
+const logger = require('./logger');
+
 module.exports = {
-    getAll: function (req, res) {
-        Client.find({}).populate('type')
-            .then( clients => {
-                res.locals.clients = clients;
 
-                return ClientType.find({}).select({ shortName: 1, _id: 1 });
-            })
-            .then( types => {
-                res.locals.clientTypeArr = types;
-
-                render(req, res, {
-                    viewName: 'handbook',
-                    options: {
-                        title: 'Справочник клиентов',
-                        handbookType: 'clients',
-                        reqUrl: '/admin/clients/add'
-                    }
-                });
-            })
-            .catch( err => {
-                res.send(500);
-            });
-    },
-    getPage: function (req, res) {
+    getPage: async (req, res) => {
         var pagerId = 'clients',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
@@ -42,219 +22,182 @@ module.exports = {
         else
             res.redirect(req.path);
 
-        ClientType.find({}).select({ shortName: 1, _id: 1 })
-            .then( types => {
-                res.locals.clientTypeArr = types;
-                return Client.paginate({}, { page: pageNumber, limit: perPage, populate: 'type'});
-            })
-            .then((clients) => {
-                if (!clients.docs.length)
-                {
-                    if (pageNumber !== 1) {
-                        res.redirect(req.path);
-                    } else {
-                        render(req, res, {
-                            viewName: 'handbook',
-                            options: {
-                                title: 'Справочник клиентов',
-                                handbookType: 'clients',
-                                reqUrl: '/admin/clients/add'
-                            }
-                        });
-                    }
-                    return;
-                }
+        res.locals.clientTypeArr = await ClientType.find({}).select({ shortName: 1, _id: 1 })
+        var clients = await Client.paginate({}, { page: pageNumber, limit: perPage, populate: 'type'});
 
-                res.locals.clients = clients.docs;
-                res.locals.pagers = {};
-                res.locals.pagers[pagerId] = {
-                    pageNumber: +pageNumber,
-                    records: clients.total,
-                    perPage: clients.limit
-                };
+        if (!clients.docs.length)
+        {
+            if (pageNumber !== 1) {
+                res.redirect(req.path);
+            } else {
                 render(req, res, {
                     viewName: 'handbook',
                     options: {
                         title: 'Справочник клиентов',
                         handbookType: 'clients',
-                        pagers: pagers,
                         reqUrl: '/admin/clients/add'
                     }
                 });
-            })
-            .catch((err) => {
-                console.log('errr', err);
-                // TODO: что делаем при ошибке?
-                res.send(500);
-            });
-    },
-    create: function (req, res) {
-        var obj = {
-                name: req.body.name,
-                typeId: req.body.typeId
-            };
+            }
+        }
 
-        if (isErrorValidateClient(obj.name)) {
-            res.status(400).send({ errText: 'Ошибка валидации' });
+        res.locals.clients = clients.docs;
+        res.locals.pagers = {};
+        res.locals.pagers[pagerId] = {
+            pageNumber: +pageNumber,
+            records: clients.total,
+            perPage: clients.limit
+        };
+        render(req, res, {
+            viewName: 'handbook',
+            options: {
+                title: 'Справочник клиентов',
+                handbookType: 'clients',
+                pagers: pagers,
+                reqUrl: '/admin/clients/add'
+            }
+        });
+    },
+
+    create: async (req, res) => {
+        var obj = {
+            name: req.body.name,
+            typeId: req.body.typeId
+        };
+
+        var errors = [];
+
+        var client = await Client.findOne({ name: obj.name, type: obj.typeId })
+
+        if (client != null) {
+            res.status(400).send({ errText: 'Такой клиент уже существует в системе' });
             return;
         }
 
-        Client.findOne({ name: obj.name, type: obj.typeId })
-            .then( client => {
-                if (client != null) {
-                    throw new Error('Такой клиент уже есть в базе.');
-                    return;
-                } 
+        var cT = await ClientType.findOne({ _id: obj.typeId });
+        cT.using(true);
 
-                return ClientType.findByIdAndUpdate(
-                    obj.typeId,
-                    { usage: true }
-                );
-            })
-            .then((cT, err) => {
-                if (err) {
-                    throw new Error('Невозможно обновить тип клиента');
-                    return; 
-                }
-                
-                if (!cT) {
-                    throw new Error('Такой тип клиента не существует');
-                    return;
-                }
+        if (!cT) {
+            res.status(400).send({ errText: 'Не существует такого типа клиента в системе' });;
+            return;
+        }
 
-                var newClient = new Client({
-                    name: obj.name,
-                    type: obj.typeId
-                });;
+        var newClient = new Client({
+            name: obj.name,
+            type: obj.typeId
+        });
 
-                return newClient.save();
-            })
-            .then(() => {
-                res.send({ created: true});
-            })
-            .catch( err => {
-                console.log('errr', err);
-                var errMessage = err.message ? err.message : 'Не удается сохранить';
-                res.status(400).send({ errText: errMessage });
-            });
+        var done;
+
+        try {
+            done = await newClient.save();
+        } catch (err) {
+            done = false;
+            logger.error(err.message);
+        }
+
+        if(!!done) {
+            logger.info(`Created Client [${ done.type }] ${ done.name } `, res.locals.__user);
+            res.send({ created: true});
+        } else res.status(400).send({ errText: `Произошла ошибка при сохранении.
+            Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
+
     },
-    edit: function (req, res) {
+
+    edit: async (req, res) => {
         var reqData = req.body,
             clientType = reqData.obj.type,
             prevClientType;
 
-        if (isErrorValidateClient(reqData.obj.name)) {
-            res.status(400).send({ errText: 'Ошибка валидации' });
+
+        var client = await Client.findOne({ name: reqData.obj.name, type: clientType});
+
+        if (client != null && client._id != reqData.obj._id) {
+            res.status(400).send({ errText: 'Такой клиент уже существует в системе' });
             return;
         }
 
-        Client.findOne({ name: reqData.obj.name, type: clientType})
-            .then( client => {
-                if (client != null) {
-                    throw new Error('Такой клиент уже есть в базе.');
-                    return;
-                } 
+        var cT = await ClientType.findOne({ _id: clientType });
 
-                return ClientType.findByIdAndUpdate(
-                    clientType,
-                    { usage: true }
-                );
-            })
-            .then( (cT, err) => {
-                if (!cT) {
-                    throw new Error('Такой тип клиента не существует');
-                    return;
-                }
+        if (!cT) {
+            res.status(400).send({ errText: 'Такой тип клиента не существует' });
+            return;
+        }
 
-                return Client.findByIdAndUpdate(
-                    reqData.obj._id,
-                    { name: reqData.obj.name, type: clientType}
-                );
-            })
-            .then( client => {
-                if (client == null) {
-                    throw new Error('Невозможно изменить несуществующего клиента.');
-                    return;
-                }
+        client = await Client.findOne({ _id: reqData.obj._id }).populate('type');
 
-                prevClientType = client.type;
+        if(client == null) {
+            res.status(400).send({ errText: 'Попытка редактирования несуществующего клиента' });
+            return;
+        }
 
-                return Client.find({ type: prevClientType })
-                    .count();
-            })
-            .then( count => {
-                if (count === 0) {
-                    return ClientType.findByIdAndUpdate(prevClientType, { usage: false });
-                } else {
-                    return new Promise((resolve, reject) => {
-                        resolve({ edit: true});
-                    });
-                }
-            })
-            .then( data => {
-                if (!data) {
-                    throw new Error('Запись успешно изменена, однако в системе случилась непредвиденная ошибка!');
-                    return;
-                }
+        var oldClient = {
+            name: client.name,
+            type: client.type
+        };
+        var oldCT = client.type;
 
-                var resData = data.edit ? { ok: true} : { ok: true, editedUsage: true };
-                res.send(resData);
-            })
-            .catch( err => {
-                console.log('errr', err);
-                var errMessage = err.message ? err.message : 'Не удается изменить клиента';
-                res.status(400).send({ errText: errMessage });
-            });
+        client.name = reqData.obj.name;
+        client.type = clientType;
+
+        var done;
+
+        try {
+            done = await client.save();
+        } catch (err) {
+            done = false;
+            logger.error(err.message);
+        }
+
+        if (!!done) {
+            cT.using(true);
+            oldCT.using(false);
+            logger.info(`Edit Client [${ oldClient.type.shortName }] ${ oldClient.name } --> [${ done.type.shortName }] ${ done.name } `, res.locals.__user);
+            res.send({ ok: 'ok' });
+        } else {
+            res.status(400).send({ errText: `Произошла ошибка при сохранении.
+                Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
+        }
+
     },
-    delete: function (req, res) {
-        var clientType;
 
-        Client.findById(req.body.obj._id)
-            .then(client => {
-                if (client == null) {
-                    throw new Error('Невозможно удалить несуществующего клиента.');
-                    return;
-                }
+    delete: async (req, res) => {
 
-                clientType = client.type;
+        var client = await Client.findById(req.body.obj._id).populate('type'),
+            _client = {
+                name: client.name,
+                type: client.type
+            };
 
-                if (client.isUsed()) {
-                    throw new Error('Невозможно удалить клиента, использующегося в системе.');
-                    return;
-                }
+        if (client == null) {
+            res.status(400).send({ errText: 'Попытка удаления несуществующего клиента' });
+            return;
+        }
 
-                return Client.deleteOne(client);
-            })
-            .then( ok => {
-                return Client.find({ type: clientType })
-                        .count();
-            })
-            .then( count => {
-                if (count === 0) {
-                    return ClientType.findByIdAndUpdate(clientType, { usage: false });
-                } else {
-                    return new Promise((resolve, reject) => {
-                        resolve({ delete: true});
-                    });
-                }
-            })
-            .then( data => {
-                if (!data) {
-                    throw new Error('Запись успешно удалена, однако в системе случилась непредвиденная ошибка!');
-                    return;
-                }
+        var clientType = client.type;
 
-                var resData = data.delete ? { ok: true} : { ok: true, editedUsage: true };
-                res.send(resData);
-            })
-            .catch( err => {
-                console.log('errr', err);
-                var errMessage = err.message ? err.message : 'Не удается удалить';
-                res.status(400).send({ errText: errMessage });
-            });
+        if (client.isUsed()) {
+            res.status(400).send({ errText: 'Невозможно удалить клиента, использующегося в системе.' });
+            return;
+        }
+
+        var done;
+
+        try {
+            done = await client.remove();
+        } catch (err) {
+            done = false;
+            logger.error(err.message);
+        }
+
+        if (!!done) {
+            clientType.using(false);
+            logger.info(`Delete Client [${ done.type.shortName }] ${ done.name } `, res.locals.__user);
+            res.send({ ok: 'ok' });
+        } else {
+            res.status(400).send({ errText: `Произошла ошибка при сохранении.
+                Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
+        }
+
     }
 };
-
-function isErrorValidateClient(name, typeId) {
-    return name.length == 0 || name.length >= 25;
-}

@@ -1,7 +1,7 @@
 block('handbook-table').elem('row')(
     content()(function () {
         var content = this.ctx.content;
-        console.log('==========ROW==========', content);
+        // console.log('==========ROW==========', content);
         if (!Array.isArray(content))
             content = [].concat(content);
 
