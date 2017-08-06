@@ -27,7 +27,8 @@ function render(req, res, data, context) {
 
     if (data.viewName) {
         opt = data.options;
-        data = View[data.viewName](opt);
+        locals = res.locals;
+        data = View[data.viewName](opt, locals);
     }
 
     if(!data.view) data = View[data]();

@@ -1,1 +1,0 @@
-block('table').tag()('table')

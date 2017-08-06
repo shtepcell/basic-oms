@@ -1,1 +1,1 @@
-block('tbody').tag()('tbody');
+block('tbody').tag()('tbody')

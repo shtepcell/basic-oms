@@ -21,7 +21,8 @@ var schema = mongoose.Schema( {
 	email : String,
 	phone : String,
 	department : {
-		type : Number,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Department',
 		required : true
 	},
 	status : {

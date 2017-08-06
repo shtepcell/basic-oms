@@ -1,0 +1,1 @@
+block('thead').tag()('thead');

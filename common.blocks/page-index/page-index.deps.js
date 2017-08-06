@@ -120,6 +120,12 @@
             mods: {
                 type:  'clients'
             }
+        },
+        {
+            block: 'ultra-table',
+            mods: {
+                theme: 'common'
+            }
         }
     ]
 })

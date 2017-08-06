@@ -1,6 +1,8 @@
-module.exports = function(opt) {
+module.exports = function(opt, data) {
     var user = opt.user;
     var hasInfo = !!user;
+    var deps = data.departments;
+
     if(!hasInfo) {
         user = {}
     }
@@ -161,21 +163,13 @@ module.exports = function(opt) {
                             type: 'select'
                         },
                         disabled: opt.type == 'profile',
-                        val: user.department || 'Без отдела',
-                        data: [
-                            {
-                                text: 'Первый',
-                                val: 1
-                            },
-                            {
-                                text: 'Второй',
-                                val: 2
-                            },
-                            {
-                                text: 'Третий',
-                                val: 3
+                        val: '' + user.department || 'Без отдела',
+                        data: deps.map( item => {
+                            return {
+                                text: item.name,
+                                val: '' + item._id
                             }
-                        ]
+                        })
                     }
                 ]
             },
