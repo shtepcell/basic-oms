@@ -19,7 +19,8 @@ modules.define('handbook-table__row',
                                 edited: true,
                                 type: this._block().getMod('type')
                             },
-                            cellsData: this.params.cellsData
+                            cellsData: this.params.cellsData,
+                            blockParams: this._block().params.blockParams
                         });
 
                     BEMDOM.update(this.domElem, $(content).html());
