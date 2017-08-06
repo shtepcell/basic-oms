@@ -13,3 +13,8 @@
     min-height: 100px;
     width: 300px;
 }
+
+.inline-form__client-type
+{
+    min-width: 100px;
+}

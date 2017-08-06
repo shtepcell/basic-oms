@@ -72,6 +72,14 @@
                 tech: 'bemhtml'
             },
             {
+                block: 'handbook-table',
+                elem: 'row',
+                mods: {
+                    type: 'clients'
+                },
+                tech: 'bemhtml'
+            },
+            {
                 block: 'select',
                 elem: 'row',
                 mods: {

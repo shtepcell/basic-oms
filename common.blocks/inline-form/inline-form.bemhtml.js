@@ -1,7 +1,10 @@
 block('inline-form')(
-    content()(
-        {
+    content()(function() {
+        var _this = this;
+
+        return {
             elem: 'controls',
+            data: _this.ctx.localParams,
             content: [
                 {
                     block: 'button',
@@ -17,15 +20,15 @@ block('inline-form')(
                     }
                 }
             ]
-        }
-    ),
+        };
+    }),
     tag()('form'),
     js()(function() {
         var url = (this.ctx.js && this.ctx.js.reqUrl) || (this.ctx.attrs && this.ctx.attrs.method);
 
-        return {
+        return Object.assign(this.ctx.js || {}, {
             reqUrl: url || '/nothing'
-        }
+        })
     })
 );
 
