@@ -139,8 +139,8 @@ module.exports = {
             });
     },
     edit: function (req, res) {
-        var reqData = { obj: {name: 'NEST2', typeId: '5973e2c2b82e324bbcf24fd8', _id: '597a79e150e9cf826f5dc5cc'}},// req.body,
-            clientType = reqData.obj.typeId,
+        var reqData = req.body,
+            clientType = reqData.obj.type,
             prevClientType;
 
         if (isErrorValidateClient(reqData.obj.name)) {
