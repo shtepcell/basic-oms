@@ -1,24 +1,14 @@
 'use strict';
 
-const Service = require('../models/Service'), 
+const Service = require('../models/Service'),
     Render = require('../render'),
     render = Render.render;
 
+const logger = require('./logger');
+
 module.exports = {
-    getAll: function (req, res) {
-        Service.find({}).then( services => {
-            res.locals.services = services;
-            render(req, res, {
-                viewName: 'handbook',
-                options: {
-                    title: 'Справочник услуг',
-                    handbookType: 'services',
-                    reqUrl: '/admin/services/add'
-                }
-            });
-        });
-    },
-    getPage: function (req, res) {
+
+    getPage: async (req, res) => {
         var pagerId = 'services',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
@@ -31,129 +21,140 @@ module.exports = {
         else
             res.redirect(req.path);
 
-        Service.paginate({}, { page: pageNumber, limit: perPage})
-            .then((services) => {
-                if (!services.docs.length)
-                {
-                    if (pageNumber !== 1) {
-                        res.redirect(req.path);
-                    } else {
-                        render(req, res, {
-                            viewName: 'handbook',
-                            options: {
-                                title: 'Справочник услуг',
-                                handbookType: 'services',
-                                reqUrl: '/admin/services/add'
-                            }
-                        });
-                    }
-                    return;
-                }
+        var services = await Service.paginate({}, { page: pageNumber, limit: perPage});
 
-                res.locals.services = services.docs;
-                res.locals.pagers = {};
-                res.locals.pagers[pagerId] = {
-                    pageNumber: +pageNumber,
-                    records: services.total,
-                    perPage: services.limit
-                };
+        if (!services.docs.length)
+        {
+            if (pageNumber !== 1) {
+                res.redirect(req.path);
+            } else {
                 render(req, res, {
                     viewName: 'handbook',
                     options: {
                         title: 'Справочник услуг',
                         handbookType: 'services',
-                        pagers: pagers,
                         reqUrl: '/admin/services/add'
                     }
                 });
-            })
-            .catch((err) => {
-                console.log('errr', err);
-                // TODO: что делаем при ошибке?
-            });
-    },
-    create: function (req, res) {
-        var obj = {
-                name: req.body.name,
-                type: req.body.type
-            };
-
-        if (isErrorValidateService(obj.name, obj.type)) {
-            res.status(400).send({ errText: 'Ошибка валидации' });
+            }
             return;
         }
 
-        Service.findOne({ name: obj.name, type: obj.type })
-            .then(service => {
-                var newService;
-
-                if (service != null) {
-                    res.status(400).send({ errText: 'Услуга с таким названием уже есть в базе.' });
-                    return;
-                } 
-
-                newService = new Service({
-                    name: obj.name,
-                    type: obj.type
-                });
-                return newService.save();
-            })
-            .then(() => {
-                res.send({ created: true});
-            });
+        res.locals.services = services.docs;
+        res.locals.pagers = {};
+        res.locals.pagers[pagerId] = {
+            pageNumber: +pageNumber,
+            records: services.total,
+            perPage: services.limit
+        };
+        render(req, res, {
+            viewName: 'handbook',
+            options: {
+                title: 'Справочник услуг',
+                handbookType: 'services',
+                pagers: pagers,
+                reqUrl: '/admin/services/add'
+            }
+        });
     },
-    edit: function (req, res) {
+
+    create: async (req, res) => {
+        var obj = {
+            name: req.body.name,
+            type: req.body.type
+        };
+
+        var service = await Service.findOne({ name: obj.name, type: obj.type })
+
+        var newService;
+
+        if (service != null) {
+            res.status(400).send({ errText: 'Услуга с таким названием уже есть в базе.' });
+            return;
+        }
+
+        newService = new Service({
+            name: obj.name,
+            type: obj.type
+        });
+
+        var done = await saver(newService);
+        if(!!done) {
+            logger.info(`Created Service ${ done.type } ${ done.name } `, res.locals.__user);
+            res.send({ created: true });
+        } else res.status(400).send({ errText: `Произошла ошибка при сохранении.
+            Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
+
+    },
+
+    edit: async (req, res) => {
         var reqData = req.body;
 
-        if (isErrorValidateService(reqData.obj.name, reqData.obj.type)) {
-            res.status(400).send({ errText: 'Ошибка валидации' });
+        var service = await Service.findOne({ name: reqData.obj.name, type: reqData.obj.type})
+
+        if (service != null) {
+            res.status(400).send({ errText: 'Эта услуга уже есть в базе.' });
             return;
         }
 
-        Service.findOne({ name: reqData.obj.name, type: reqData.obj.type})
-            .then(service => {
-                if (service != null) {
-                    res.status(400).send({ errText: 'Услуга с таким названием уже есть в базе.' });
-                    return;
-                } 
+        service = await Service.findOne({ _id: reqData.obj._id });
 
-                Service.findByIdAndUpdate(
-                    reqData.obj._id,
-                    { name: reqData.obj.name, type: reqData.obj.type},
-                    function(err, service) {
-                        if (err) return; //TODO что делаем при ошибке?
-                        if (service == null) {
-                            res.status(400).send({ errText: 'Невозможно изменить несуществующую услугу.' });
-                        } else {
-                            res.send({ ok: 'ok' });
-                        }
-                    });
-            });
+        if(service == null) {
+            res.status(400).send({ errText: 'Невозможно изменить несуществующую услугу.' });
+            return;
+        }
+        var oldService = {
+            name: service.name,
+            type: service.type
+        };
+        service.name = reqData.obj.name;
+        service.type = reqData.obj.type;
+
+        var done = await saver(service);
+        if(!!done) {
+            logger.info(`Edit Service [${ oldService.type }] ${ oldService.name } --> [${ done.type }] ${ done.name } `, res.locals.__user);
+            res.send({ created: true });
+        } else res.status(400).send({ errText: `Произошла ошибка при сохранении.
+            Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
+
     },
-    delete: function (req, res) {
-        Service.findById(req.body.obj._id)
-            .then(service => {
-                if (service == null) {
-                    res.status(400).send({ errText: 'Невозможно удалить несуществующую услугу.' });
-                    return;
-                }
+    delete: async (req, res) => {
+        var service = await Service.findById(req.body.obj._id)
 
-                if (service.isUsed()) {
-                    res.status(400).send({ errText: 'Невозможно удалить услугу, использующуюся в системе.' });
-                    return;
-                }
+        if (service == null) {
+            res.status(400).send({ errText: 'Невозможно удалить несуществующую услугу.' });
+            return;
+        }
 
-                Service.deleteOne(service, function(err, ok) {
-                    if (err) {
-                        //TODO что делаем при ошибке?
-                        return;
-                    }
-                    res.send({ ok: 'ok' });
-                });
-            })
+        if (service.isUsed()) {
+            res.status(400).send({ errText: 'Невозможно удалить услугу, использующуюся в системе.' });
+            return;
+        }
+
+        var done;
+
+        try {
+            done = await service.remove();
+        } catch (err) {
+            done = false;
+            logger.error(err.message);
+        }
+
+        if (!!done) {
+            logger.info(`Delete Service ${ done.type } ${ done.name }`, res.locals.__user);
+            res.send({ ok: 'ok' });
+        } else {
+            res.status(400).send({ errText: `Произошла ошибка при сохранении.
+                Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
+        }
     }
 };
 
-function isErrorValidateService(name, type) {
-    return name.length == 0 || name.length >= 25 || ['0', '1', '2', '3'].indexOf(type) == -1;
+function saver(obj) {
+    try {
+        return obj.save();
+    } catch (err) {
+        logger.error(err.message);
+        return false;
+    }
 }

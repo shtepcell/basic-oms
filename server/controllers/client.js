@@ -87,14 +87,7 @@ module.exports = {
             type: obj.typeId
         });
 
-        var done;
-
-        try {
-            done = await newClient.save();
-        } catch (err) {
-            done = false;
-            logger.error(err.message);
-        }
+        var done = await saver(newClient);
 
         if(!!done) {
             logger.info(`Created Client [${ done.type }] ${ done.name } `, res.locals.__user);
@@ -140,14 +133,7 @@ module.exports = {
         client.name = reqData.obj.name;
         client.type = clientType;
 
-        var done;
-
-        try {
-            done = await client.save();
-        } catch (err) {
-            done = false;
-            logger.error(err.message);
-        }
+        var done = await saver(client);
 
         if (!!done) {
             cT.using(true);
@@ -201,3 +187,12 @@ module.exports = {
 
     }
 };
+
+function saver(obj) {
+    try {
+        return obj.save();
+    } catch (err) {
+        logger.error(err.message);
+        return false;
+    }
+}

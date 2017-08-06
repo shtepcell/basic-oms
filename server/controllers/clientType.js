@@ -79,14 +79,7 @@ module.exports = {
 
         newClientType = new ClientType(obj);
 
-        var done;
-
-        try {
-            done = await newClientType.save();
-        } catch (err) {
-            done = false;
-            logger.error(err.message);
-        }
+        var done = await saver(newClientType);
 
         if(!!done) {
             logger.info(`Created Client Type [${ done.shortName }] ${ done.name } `, res.locals.__user);
@@ -121,14 +114,7 @@ module.exports = {
         clientType.name = reqData.obj.name;
         clientType.shortName = reqData.obj.shortName;
 
-        var done;
-
-        try {
-            done = await clientType.save();
-        } catch (err) {
-            done = false;
-            logger.error(err.message);
-        }
+        var done = await saver(clientType);
 
         if (!!done) {
             logger.info(`Edit Client Type [${ oldClientType.shortName }] ${ oldClientType.name } --> [${ done.shortName }] ${ done.name } `, res.locals.__user);
@@ -163,3 +149,12 @@ module.exports = {
 
     }
 };
+
+function saver(obj) {
+    try {
+        return obj.save();
+    } catch (err) {
+        logger.error(err.message);
+        return false;
+    }
+}
