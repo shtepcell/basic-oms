@@ -72,6 +72,11 @@
             val: 'services'
         },
         {
+            block: 'handbook-table',
+            mod: 'type',
+            val: 'clients'
+        },
+        {
             block: 'ultra-form'
         },
         {
