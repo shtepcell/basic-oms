@@ -10,8 +10,31 @@ block('tbody').content()(function() {
 
         if( !!url )
 
-        ret = data.map( item => {
+            ret = data.map( item => {
 
+                return {
+                    block: 'tbody',
+                    elem: 'tr',
+                    content: datasets.map( i => {
+                        if(Array.isArray(i)) {
+                            var result = item;
+                            for (var j = 0; j < i.length; j++) {
+                                result = result[i[j]];
+                            }
+                        }
+                        return {
+                            block: 'tbody',
+                            elem: 'td',
+                            content: result || item[i]
+                        }
+                    }),
+                    attrs: {
+                        onclick: `location='${url}${item[template]}'`
+                    }
+                }
+
+            })
+        else ret = data.map( item => {
             return {
                 block: 'tbody',
                 elem: 'tr',
@@ -27,10 +50,7 @@ block('tbody').content()(function() {
                         elem: 'td',
                         content: result || item[i]
                     }
-                }),
-                attrs: {
-                    onclick: `location='${url}${item[template]}'`
-                }
+                })
             }
 
         })

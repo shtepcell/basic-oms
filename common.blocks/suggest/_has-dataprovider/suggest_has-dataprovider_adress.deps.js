@@ -1,0 +1,3 @@
+({
+    shouldDeps : 'adress-provider'
+})

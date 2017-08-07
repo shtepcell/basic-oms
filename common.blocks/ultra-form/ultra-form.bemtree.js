@@ -19,8 +19,18 @@ block('ultra-form').content()(function () {
             };
 
         } else {
-
-            if(item.mods.type === 'select')
+            if(item.mods.type === 'suggest')
+                input = {
+                    block : 'suggest',
+                    mods : {
+                        theme : 'islands',
+                        size : 'm',
+                        'has-dataprovider' : item.mods['has-dataprovider']
+                    },
+                    name: item.name,
+                    dataprovider: item.dataprovider
+                }
+            else if(item.mods.type === 'select')
                 input = {
                     block: 'select',
                     mods: {

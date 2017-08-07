@@ -6,7 +6,7 @@ const Auth = require('./controllers/auth'),
     Service = require('./controllers/service'),
     Client = require('./controllers/client'),
     Department = require('./controllers/departments');
-    
+
 var Render = require('./render'),
     render = Render.render;
 
@@ -48,6 +48,7 @@ module.exports = function (app) {
 
     app.get('/admin/departments/:id', Department.getOne);
     app.post('/admin/departments/:id', Department.edit);
+    app.post('/admin/departments/:id/city', Department.addCity);
 
     // .get(Department.get)
     // .delete(Department.delete);

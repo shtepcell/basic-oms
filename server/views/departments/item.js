@@ -1,7 +1,11 @@
 module.exports = function(opt, data) {
 
     var dep = data.department;
-
+    var ownCity = dep.cities || [];
+    var cities = data.cities.map( item => {
+        return `${item.type} ${item.name}`;
+    });
+    console.log(ownCity);
     return {
         view: 'page-index',
         title: 'Создание отдела',
@@ -68,6 +72,44 @@ module.exports = function(opt, data) {
                         ]
                     }
                 ]
+            },
+            {
+                block: 'title',
+                elem: 'part',
+                content: 'Привязанные города'
+            },
+            {
+                block: 'ultra-form',
+                action: '/admin/departments/'+dep._id+'/city',
+                method: 'POST',
+                text: 'Добавить',
+                fields: [
+                    {
+                        name: 'city',
+                        desc: 'Название города',
+                        mods: {
+                            type: 'suggest',
+                            'has-dataprovider' : 'adress'
+                        },
+                        dataprovider : {
+                            data : cities
+                        }
+                    }
+                ]
+            },
+            {
+                block: 'ultra-table',
+                mods: {
+                    'static' : true,
+                    theme: 'common'
+                },
+                fields: [
+                    {
+                        name: 'Название города',
+                        field: 'name'
+                    }
+                ],
+                data: ownCity
             }
         ]
     }

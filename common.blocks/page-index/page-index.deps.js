@@ -126,6 +126,18 @@
             mods: {
                 theme: 'common'
             }
+        },
+        {
+            block: 'suggest',
+            mods: {
+                theme: 'islands',
+                size: 'l',
+                'has-dataprovider': 'adress'
+            }
+        },
+        {
+            block: 'title',
+            elem: 'part'
         }
     ]
 })
