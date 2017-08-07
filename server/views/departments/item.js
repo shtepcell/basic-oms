@@ -5,7 +5,6 @@ module.exports = function(opt, data) {
     var cities = data.cities.map( item => {
         return `${item.type} ${item.name}`;
     });
-    console.log(ownCity);
     return {
         view: 'page-index',
         title: 'Создание отдела',

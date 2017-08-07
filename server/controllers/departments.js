@@ -102,6 +102,11 @@ module.exports = {
             return;
         }
 
+        if(dep.cities.indexOf(city[0]._id) != -1) {
+            res.status(400).send({errText: 'Этот город уже привязан к этому отделу.'})
+            return;
+        }
+
         if(dep.cities) {
             dep.cities.push(city[0]);
         } else {
@@ -110,7 +115,7 @@ module.exports = {
 
         var done = await saver(dep);
         if(!!done) {
-            logger.info(`Add City ${city.name} to Department ${ done.name }`, res.locals.__user);
+            logger.info(`Add City ${city[0].name} to Department ${ done.name }`, res.locals.__user);
             res.send({ created: true });
         } else res.status(400).send({ errText: `Произошла ошибка при сохранении.
             Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
