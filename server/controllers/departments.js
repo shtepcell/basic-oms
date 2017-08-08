@@ -110,11 +110,12 @@ module.exports = {
         if(dep.cities) {
             dep.cities.push(city[0]);
         } else {
-            dep.cities = [city];
+            dep.cities = [city[0]];
         }
 
         var done = await saver(dep);
         if(!!done) {
+            city[0].using(true);
             logger.info(`Add City ${city[0].name} to Department ${ done.name }`, res.locals.__user);
             res.send({ created: true });
         } else res.status(400).send({ errText: `Произошла ошибка при сохранении.

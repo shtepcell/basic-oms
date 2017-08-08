@@ -24,5 +24,18 @@ schema.methods.isUsed = function() {
 	return !!this.usage;
 }
 
+schema.methods.using = function (flag) {
+    if (flag) {
+        this.usage = true;
+        this.save();
+    } else {
+        Department.find({cities: this}).then( deps => {
+            if(deps.length == 0) {
+                this.usage = false;
+                return this.save();
+            }
+        })
+    }
+}
 var city = mongoose.model('City', schema);
 module.exports = city;

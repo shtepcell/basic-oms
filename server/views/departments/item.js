@@ -3,7 +3,8 @@ module.exports = function(opt, data) {
     var dep = data.department;
     var ownCity = dep.cities || [];
     var cities = data.cities.map( item => {
-        return `${item.type} ${item.name}`;
+        if( !item.usage )
+            return `${item.type} ${item.name}`;
     });
     return {
         view: 'page-index',
