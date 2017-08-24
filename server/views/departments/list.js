@@ -16,6 +16,7 @@ module.exports = function(opt, data) {
         page: [
             {
                 block: 'title',
+                elem: 'part',
                 content: 'Список отделов'
             },
             {

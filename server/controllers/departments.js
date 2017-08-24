@@ -120,6 +120,21 @@ module.exports = {
             res.send({ created: true });
         } else res.status(400).send({ errText: `Произошла ошибка при сохранении.
             Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
+    },
+
+    deleteCity: async (req, res) => {
+
+        var dep = await Department.findOne({_id: req.params.id});
+        var city = await City.findOne({_id: req.params.city});
+
+        if(dep && city) {
+            var indx = dep.cities.indexOf( req.params.city );
+            if(indx >= 0) dep.cities.splice(indx, 1);
+        }
+        console.log(dep);
+        var done = await saver(dep);
+        if(!!done)
+        res.send({ok: 'ok'});
     }
 };
 

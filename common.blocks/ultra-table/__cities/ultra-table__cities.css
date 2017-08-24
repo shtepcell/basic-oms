@@ -1,0 +1,11 @@
+.ultra-table__cities {
+    width: 500px;
+    margin-top: 1em;
+    font-size: 10pt;
+    font-family: sans-serif;
+}
+.ultra-table__cities td {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    text-align: center;
+}

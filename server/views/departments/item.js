@@ -6,6 +6,46 @@ module.exports = function(opt, data) {
         if( !item.usage )
             return `${item.type} ${item.name}`;
     });
+
+    var citiesTable = [
+        {
+            block: 'title',
+            elem: 'part',
+            content: 'Привязанные города'
+        },
+        {
+            block: 'ultra-form',
+            action: '/admin/departments/'+dep._id+'/city',
+            method: 'POST',
+            text: 'Добавить',
+            fields: [
+                {
+                    name: 'city',
+                    desc: 'Название города',
+                    mods: {
+                        type: 'suggest',
+                        'has-dataprovider' : 'adress'
+                    },
+                    dataprovider : {
+                        data : cities
+                    }
+                }
+            ]
+        },
+        {
+            block: 'ultra-table',
+            elem: 'cities',
+            fields: [
+                {
+                    name: 'Название города',
+                    field: 'name'
+                }
+            ],
+            data: ownCity
+    }];
+
+    if(dep.type != 'gus') citiesTable = [];
+
     return {
         view: 'page-index',
         title: 'Создание отдела',
@@ -73,44 +113,7 @@ module.exports = function(opt, data) {
                     }
                 ]
             },
-            {
-                block: 'title',
-                elem: 'part',
-                content: 'Привязанные города'
-            },
-            {
-                block: 'ultra-form',
-                action: '/admin/departments/'+dep._id+'/city',
-                method: 'POST',
-                text: 'Добавить',
-                fields: [
-                    {
-                        name: 'city',
-                        desc: 'Название города',
-                        mods: {
-                            type: 'suggest',
-                            'has-dataprovider' : 'adress'
-                        },
-                        dataprovider : {
-                            data : cities
-                        }
-                    }
-                ]
-            },
-            {
-                block: 'ultra-table',
-                mods: {
-                    'static' : true,
-                    theme: 'common'
-                },
-                fields: [
-                    {
-                        name: 'Название города',
-                        field: 'name'
-                    }
-                ],
-                data: ownCity
-            }
+            citiesTable
         ]
     }
 };

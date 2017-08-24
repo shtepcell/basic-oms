@@ -4,7 +4,7 @@ node_modules/
 .project
 .svn
 npm-debug.log
-
+package-lock.json
 static/index.min.*
 
 # bem

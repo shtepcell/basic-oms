@@ -49,6 +49,8 @@ module.exports = function (app) {
     app.get('/admin/departments/:id', Department.getOne);
     app.post('/admin/departments/:id', Department.edit);
     app.post('/admin/departments/:id/city', Department.addCity);
+    app.post('/admin/departments/:id/delete/:city', Department.deleteCity);
+
 
     // .get(Department.get)
     // .delete(Department.delete);

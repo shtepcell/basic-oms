@@ -123,6 +123,10 @@
         },
         {
             block: 'ultra-table',
+            elem: 'cities'
+        },
+        {
+            block: 'ultra-table',
             mods: {
                 theme: 'common'
             }
@@ -138,6 +142,10 @@
         {
             block: 'title',
             elem: 'part'
+        },
+        {
+            block: 'ultra-table',
+            elem: 'delete'
         }
     ]
 })
