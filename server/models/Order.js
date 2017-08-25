@@ -22,7 +22,7 @@ var schema = mongoose.Schema({
         data: Date
     },
     client: {
-        name: String,
+        type: String,
         required: true // TODO: Клиент привязка
     },
     init: {

@@ -1,127 +1,252 @@
-module.exports = function () {
-    return {
-        'id': {
+var allFields = {
+    init: [
+        {
+            index: 'id',
             name: 'Номер заказа',
-            type: 'default'
+            value: 'id'
         },
-        'status': {
-            name: 'Текущий статус',
-            type: 'default'
-        },
-        'service.name': {
-            name: 'Услуга',
-            type: 'Service'
-        },
-        'service.options': {
-            name: 'Параметры услуги',
-            maxLenght: 50,
-            type: 'String'
-        },
-        'client.name': {
-            name: 'Клиент',
-            type: 'Client'
-        },
-        'init.reqData': {
-            name: 'Требуемая дата организации',
+        {
+            index: 'date',
+            name: 'Дата инициации заказа',
             type: 'Date'
         },
-        'init.contract': {
-            name: 'Номер договора',
+        {
+            index: 'status',
+            name: 'Текущий статус',
+            type: 'default',
+            value: 'status'
+        },
+        {
+            index: 'relation',
+            name: 'Связанная заявка',
+            type: 'String',
+            fill: true,
+            value: 'relation'
+        },
+        {
+            index: 'initiator-name',
+            name: 'Ф.И.О. инициатора',
+            type: 'default',
+            fill: true
+        },
+        {
+            index: 'initiator-dep',
+            name: 'Подразделение-инициатор',
+            type: 'default',
+            fill: true
+        },
+        {
+            index: 'date-request',
+            name: 'Требуемая дата организации',
+            type: 'Date',
+            fill: true
+        },
+        {
+            index: 'cms',
+            name: 'Номер сервиса в CMS',
             maxLenght: 50,
-            type: 'String'
-        },
-        'gzp.need': {
-            name: 'Необходимость в ГЗП',
-            type: 'Boolean'
-        },
-        'gzp.capability': {
-            name: 'Техническая возможность',
-            type: 'Boolean'
-        },
-        'gzp.time': {
-            name: 'Срок организации',
-            date: 'Date'
-        },
-        'gzp.cost.once': {
-            name: 'Одноразовая стоимость организации',
-            type: 'Number'
-        },
-        'gzp.cost.monthly': {
-            name: 'Ежемесячная стоимость организации',
-            type: 'Number'
-        },
-        'stop.capability': {
-            name: 'Техническая возможность',
-            type: 'Boolean'
-        },
-        'stop.provider': {
-            name: 'Провайдер',
-            type: 'Provider'
-        },
-        'stop.contact': {
-            name: 'Контакт с провайдером',
             type: 'String',
-            maxLenght: 50
+            fill: true
         },
-        'stop.devices': {
-            name: 'Оборудование',
+        {
+            index: 'cost-once',
+            name: 'Ожидаемый единовр. доход (руб)',
+            maxLenght: 50,
             type: 'String',
-            maxLenght: 50
+            fill: true
         },
-        'stop.add_devices': {
-            name: 'Дополнительное оборудование',
+        {
+            index: 'cost-monthly',
+            name: 'Ожидаемый ежемес. доход (руб)',
+            maxLenght: 50,
             type: 'String',
-            maxLenght: 50
+            fill: true
         },
-        'stop.interfaces': {
-            name: 'Интерфейсы',
-            type: 'String',
-            maxLenght: 50
-        },
-        'stop.time': {
-            name: 'Срок организации',
-            type: 'String',
-            maxLenght: 50
-        },
-        'stop.add_info': {
+        {
+            index: 'add_info',
             name: 'Дополнительная информация',
             type: 'String',
-            maxLenght: 50
+            fill: true
         },
-        'stop.organization_info': {
-            name: 'Информация об организации',
+        {
+            index: 'service',
+            name: 'Услуга',
+            type: 'Service',
+            fill: true
+        },
+        {
+            index: 'options',
+            name: 'Параметры услуги',
+            maxLenght: 50,
             type: 'String',
-            maxLenght: 50
+            fill: true
         },
-        'stop.cost.once': {
-            name: 'Одноразовая стоимость организации',
-            type: 'Number'
+        {
+            index: 'client',
+            name: 'Клиент',
+            type: 'Client',
+            fill: true
         },
-        'stop.cost.monthly': {
-            name: 'Ежемесячная стоимость организации',
-            type: 'Number',
-            maxLenght: 50
-        },
-        'address.city': {
-            name: 'Город',
-            type: 'City'
-        },
-        'address.street': {
-            name: 'Улица',
-            type: 'Street'
-        },
-        'address.adds': {
-            name: 'д./кв. и т.д',
+        {
+            index: 'contact',
+            name: 'Контактные данные клиента',
             type: 'String',
-            maxLenght: 50
+            fill: true
         },
-        'close.file': {
-            name: 'Договор',
-            type: 'File'
+        {
+            index: 'ip',
+            name: 'Необходимость выделения IP-адресов',
+            type: 'Boolean',
+            fill: true
         },
-        'close.date': {
-            name: 'Дата подписания договора',
-            type: 'Date'
-        },
-    }
-};
+        {
+            index: 'pool',
+            name: 'Необходимый пул адресов',
+            type: 'String',
+            fill: true
+        }
+    ]
+    // gzp: {
+    //     'date-work': {
+    //         name: 'Дата проработки заказа',
+    //         type: 'Date'
+    //     },
+    //     'date-work-control': {
+    //         name: 'Контрольная дата проработки заказа',
+    //         type: 'Date'
+    //     },
+    //     'date-build': {
+    //         name: 'Дата организации заказа',
+    //         type: 'Date'
+    //     },
+    //     'date-build-control': {
+    //         name: 'Контрольная дата организации заказа',
+    //         type: 'Date'
+    //     },
+    //     need: {
+    //         name: 'Необходимость в ГЗП',
+    //         type: 'Boolean',
+    //         fill: true
+    //     },
+    //     capability: {
+    //         name: 'Техническая возможность',
+    //         type: 'Boolean',
+    //         fill: true
+    //     },
+    //     time: {
+    //         name: 'Срок организации',
+    //         date: 'Date',
+    //         fill: true
+    //     },
+    //     cost: {
+    //         once: {
+    //             name: 'Одноразовая стоимость организации',
+    //             type: 'Number',
+    //             fill: true
+    //         },
+    //         monthly: {
+    //             name: 'Ежемесячная стоимость организации',
+    //             type: 'Number',
+    //             fill: true
+    //         }
+    //     }
+    // },
+    // stop: {
+    //     capability: {
+    //         name: 'Техническая возможность',
+    //         type: 'Boolean',
+    //         fill: true
+    //     },
+    //     provider: {
+    //         name: 'Провайдер',
+    //         type: 'Provider',
+    //         fill: true
+    //     },
+    //     contact: {
+    //         name: 'Контакт с провайдером',
+    //         type: 'String',
+    //         maxLenght: 50,
+    //         fill: true
+    //     },
+    //     devices: {
+    //         name: 'Оборудование',
+    //         type: 'String',
+    //         maxLenght: 50,
+    //         fill: true
+    //     },
+    //     add_devices: {
+    //         name: 'Дополнительное оборудование',
+    //         type: 'String',
+    //         maxLenght: 50,
+    //         fill: true
+    //     },
+    //     interfaces: {
+    //         name: 'Интерфейсы',
+    //         type: 'String',
+    //         maxLenght: 50,
+    //         fill: true
+    //     },
+    //     time: {
+    //         name: 'Срок организации',
+    //         type: 'String',
+    //         maxLenght: 50,
+    //         fill: true
+    //     },
+    //     add_info: {
+    //         name: 'Дополнительная информация',
+    //         type: 'String',
+    //         maxLenght: 50,
+    //         fill: true
+    //     },
+    //     organization_info: {
+    //         name: 'Информация об организации',
+    //         type: 'String',
+    //         maxLenght: 50,
+    //         fill: true
+    //     },
+    //     cost: {
+    //         once: {
+    //             name: 'Одноразовая стоимость организации',
+    //             type: 'Number',
+    //             fill: true
+    //         },
+    //         monthly: {
+    //             name: 'Ежемесячная стоимость организации',
+    //             type: 'Number',
+    //             fill: true
+    //         }
+    //     }
+    // },
+    // address: {
+    //     city: {
+    //         name: 'Город',
+    //         type: 'City',
+    //         fill: true
+    //     },
+    //     street: {
+    //         name: 'Улица',
+    //         type: 'Street',
+    //         fill: true
+    //     },
+    //     adds: {
+    //         name: 'д./кв. и т.д',
+    //         type: 'String',
+    //         maxLenght: 50,
+    //         fill: true
+    //     }
+    // },
+    // close: {
+    //     file: {
+    //         name: 'Договор',
+    //         type: 'File',
+    //         fill: true
+    //     },
+    //     date: {
+    //         name: 'Дата подписания договора',
+    //         type: 'Date',
+    //         fill: true
+    //     }
+    // }
+}
+
+module.exports = allFields;

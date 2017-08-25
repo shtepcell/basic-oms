@@ -92,6 +92,12 @@
             elem: 'label'
         },
         {
+            block: 'ultra-form',
+            mods: {
+                theme: 'order'
+            }
+        },
+        {
             block: 'inline-form',
             mods: {
                 type:  'cities'

@@ -5,7 +5,8 @@ const Auth = require('./controllers/auth'),
     Provider = require('./controllers/provider'),
     Service = require('./controllers/service'),
     Client = require('./controllers/client'),
-    Department = require('./controllers/departments');
+    Department = require('./controllers/departments'),
+    Order = require('./controllers/order');
 
 var Render = require('./render'),
     render = Render.render;
@@ -25,6 +26,9 @@ module.exports = function (app) {
     app.get('/', function (req, res) {
         render(req, res, 'main');
     });
+
+    // *************************************************************
+    app.get('/init', Order.getPageInit);
 
     app.get('/profile', Account.getProfile);
     app.post('/profile', Account.selfEdit);

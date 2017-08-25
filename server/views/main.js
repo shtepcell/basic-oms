@@ -11,7 +11,22 @@ module.exports = function(opt){
             }
         },
         page: [
-            'Main page'
+            'Main page',
+            {
+                block: 'button-panel',
+                content: [
+                    {
+                        block: 'button',
+                        mods: {
+                            theme: 'islands',
+                            size: 'm',
+                            type: 'link'
+                        },
+                        url: '/init',
+                        text: 'Инициация заявки'
+                    }
+                ]
+            }
         ]
     };
 };

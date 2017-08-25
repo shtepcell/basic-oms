@@ -8,6 +8,7 @@ const Service = require('../models/Service');
 const City = require('../models/City');
 // const Street = require('../models/Street');
 
+const fields = require('./fields');
 
 
 const Render = require('../render'),
@@ -19,6 +20,7 @@ module.exports = {
 
     getPageInit: async (req, res) => {
         res.locals.services = await Service.find();
+        res.locals.template = fields.init;
         
         render(req, res, {
             viewName: 'orders/init'

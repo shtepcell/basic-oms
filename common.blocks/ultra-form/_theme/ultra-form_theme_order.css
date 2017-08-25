@@ -1,0 +1,15 @@
+.ultra-form_theme_order .ultra-form__row:nth-child(n+1) {
+    background-color: #dfdfdf;
+}
+.ultra-form_theme_order .ultra-form__row:nth-child(2n) {
+    background-color: #fff;
+}
+
+.ultra-form_theme_order .ultra-form__cell {
+    padding: 3px 25px 3px 3px;
+    flex: 0 1 100%;
+}
+
+.ultra-form_theme_order .ultra-form__cell:nth-child(1) {
+    flex: 0 0 350px;
+}
