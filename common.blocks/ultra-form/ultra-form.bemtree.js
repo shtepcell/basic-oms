@@ -19,46 +19,66 @@ block('ultra-form').content()(function () {
             };
 
         } else {
-            if(item.mods.type === 'suggest')
-                input = {
-                    block : 'suggest',
-                    mods : {
-                        theme : 'islands',
-                        size : 'm',
-                        'has-dataprovider' : item.mods['has-dataprovider']
-                    },
-                    name: item.name,
-                    dataprovider: item.dataprovider
-                }
-            else if(item.mods.type === 'select')
-                input = {
-                    block: 'select',
-                    mods: {
-                        mode: 'radio',
-                        theme: 'islands',
-                        size: 'm',
-                    },
-                    val: item.val,
-                    options: item.data,
-                    name: item.name
-                }
-            else input = {
-                block: 'input',
-                mods: {
-                    type: item.mods.type,
-                    theme: 'islands',
-                    width: 'available',
-                    size: 'm'
-                },
-                mix: {
-                    elem: 'control'
-                },
-                required: item.required,
-                val: item.val,
-                name: item.name,
-                maxLenght: item.mods.maxLenght
+            switch (item.mods.type) {
+                case 'suggest':
+                    input = {
+                        block : 'suggest',
+                        mods : {
+                            theme : 'islands',
+                            size : 'm',
+                            'has-dataprovider' : item.mods['has-dataprovider']
+                        },
+                        name: item.name,
+                        dataprovider: item.dataprovider
+                    }
+                    break;
+                case 'select':
+                    input = {
+                        block: 'select',
+                        mods: {
+                            mode: 'radio',
+                            width: 'available',
+                            theme: 'islands',
+                            size: 'm',
+                        },
+                        val: item.val,
+                        options: item.data,
+                        name: item.name
+                    }
+                    break;
+                case 'date':
+                    input = {
+                        block: 'input',
+                        mods: {
+                            theme: 'islands',
+                            width: 'available',
+                            size: 'm'
+                        },
+                        mix: {
+                            elem: 'control'
+                        },
+                        type: 'date'
+                    }
+                    break;
+                default:
+                    input = {
+                        block: 'input',
+                        mods: {
+                            type: item.mods.type,
+                            theme: 'islands',
+                            width: 'available',
+                            size: 'm'
+                        },
+                        mix: {
+                            elem: 'control'
+                        },
+                        required: item.required,
+                        val: item.val,
+                        name: item.name,
+                        maxLenght: item.mods.maxLenght
+                    }
+                    break;
             }
-
         }
 
         if(!item.hidden)

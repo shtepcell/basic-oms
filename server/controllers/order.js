@@ -20,8 +20,8 @@ module.exports = {
 
     getPageInit: async (req, res) => {
         res.locals.services = await Service.find();
-        res.locals.template = fields.init;
-        
+        res.locals.template = await fields.getInitField();
+
         render(req, res, {
             viewName: 'orders/init'
         });

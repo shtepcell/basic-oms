@@ -1,7 +1,6 @@
 module.exports = function(opt, data) {
 
     console.log(data.template);
-    var fields = parseTemplate(data.template);
 
     return {
         view: 'page-index',
@@ -22,23 +21,8 @@ module.exports = function(opt, data) {
                 mods: {
                     theme: 'order'
                 },
-                fields: fields
+                fields: data.template
             }
         ]
     }
 };
-
-function parseTemplate(template) {
-    var fields = [];
-    template.forEach( item => {
-        if(item.fill)
-            fields.push({
-                name: item.index,
-                desc: item.name,
-                mods: {
-                    type: 'text'
-                }
-            })
-    });
-    return fields;
-}
