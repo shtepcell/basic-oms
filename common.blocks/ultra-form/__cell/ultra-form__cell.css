@@ -9,3 +9,6 @@
 .ultra-form__cell .select {
     vertical-align: middle;
 }
+.ultra-form__cell.ultra-form__required {
+    background: orange;
+}

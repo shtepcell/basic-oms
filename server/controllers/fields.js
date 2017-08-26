@@ -287,6 +287,7 @@ module.exports = {
                         ret.push({
                             name: item.index,
                             desc: item.name,
+                            required: item.required,
                             mods: {
                                 type: 'suggest',
                                 'has-dataprovider' : 'adress'
@@ -300,6 +301,7 @@ module.exports = {
                         ret.push({
                             name: item.index,
                             desc: item.name,
+                            required: item.required,
                             mods: {
                                 type: 'select'
                             },
@@ -310,6 +312,7 @@ module.exports = {
                         ret.push({
                             name: item.index,
                             desc: item.name,
+                            required: item.required,
                             mods: {
                                 type: 'text'
                             }
@@ -319,6 +322,7 @@ module.exports = {
                         ret.push({
                             name: item.index,
                             desc: item.name,
+                            required: item.required,
                             mods: {
                                 type: 'date'
                             }
@@ -328,6 +332,7 @@ module.exports = {
                         ret.push({
                             name: item.index,
                             desc: item.name,
+                            required: item.required,
                             mods: {
                                 type: 'select'
                             },

@@ -23,6 +23,7 @@ block('ultra-form').content()(function () {
                 case 'suggest':
                     input = {
                         block : 'suggest',
+                        required: item.required,
                         mods : {
                             theme : 'islands',
                             size : 'm',
@@ -94,6 +95,7 @@ block('ultra-form').content()(function () {
                     },
                     {
                         elem: 'cell',
+                        mix: (item.required)?{block: 'ultra-form',elem: 'required'}:{},
                         content: input
                     }
                 ]
