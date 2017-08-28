@@ -58,6 +58,7 @@ block('ultra-form').content()(function () {
                         mix: {
                             elem: 'control'
                         },
+                        name: item.name,
                         type: 'date'
                     }
                     break;

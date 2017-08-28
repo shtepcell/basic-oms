@@ -3,7 +3,7 @@ const Client = require('../models/Client');
 const City = require('../models/City');
 
 var allFields = {
-    init: [
+    info: [
         {
             index: 'id',
             name: 'Номер заказа',
@@ -124,13 +124,35 @@ var allFields = {
             index: 'ip',
             name: 'Необходимость выделения IP-адресов',
             type: 'bool',
-            fill: true
+            fill: true,
+            default: '0'
         },
         {
             index: 'pool',
             name: 'Необходимый пул адресов',
             type: 'text',
             fill: true
+        },
+        {
+            index: 'pre',
+            name: 'Направить на проработку',
+            type: 'stage-select',
+            fill: true,
+            onlyInit: true,
+            data: [
+                {
+                    text: 'только ГЗП',
+                    val: 'gzp-pre'
+                },
+                {
+                    text: 'только STOP/VSAT',
+                    val: 'stop-pre'
+                },
+                {
+                    text: 'ГЗП и STOP',
+                    val: 'all-pre'
+                }
+            ]
         }
     ]
     // gzp: {
@@ -270,16 +292,16 @@ module.exports = {
         data.services = services.map( item => {
             return {
                 text: item.name,
-                val: item._id
+                val: ''+item._id
             }
         });
-        data.clients = clients.map( item => ` [${item.type.shortName}] ${item.name}` );
+        data.clients = clients.map( item => `[${item.type.shortName}] ${item.name}` );
 
-        var init = allFields.init;
+        var info = allFields.info;
 
         var ret = [];
 
-        init.forEach( item => {
+        info.forEach( item => {
 
             if(item.fill) {
                 switch (item.type) {
@@ -305,7 +327,20 @@ module.exports = {
                             mods: {
                                 type: 'select'
                             },
+                            val: '' + data[item.data][0].val,
                             data: data[item.data]
+                        })
+                        break;
+                    case 'stage-select':
+                        ret.push({
+                            name: item.index,
+                            desc: item.name,
+                            required: item.required,
+                            mods: {
+                                type: 'select'
+                            },
+                            val: '' + item.data[0].val,
+                            data: item.data
                         })
                         break;
                     case 'text':
@@ -336,14 +371,15 @@ module.exports = {
                             mods: {
                                 type: 'select'
                             },
+                            val: item.default || '1',
                             data: [
                                 {
                                     text: 'Да',
-                                    val: true
+                                    val: '1'
                                 },
                                 {
                                     text: 'Нет',
-                                    val: false
+                                    val: '0'
                                 }
                             ]
                         })

@@ -150,6 +150,10 @@
             elem: 'part'
         },
         {
+            block: 'title',
+            elem: 'main'
+        },
+        {
             block: 'ultra-table',
             elem: 'delete'
         }

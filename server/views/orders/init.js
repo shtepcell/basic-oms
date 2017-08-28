@@ -1,6 +1,6 @@
 module.exports = function(opt, data) {
 
-    console.log(data.template);
+    // console.log(data.template);
 
     return {
         view: 'page-index',
@@ -13,6 +13,11 @@ module.exports = function(opt, data) {
             }
         },
         page: [
+            {
+                block: 'title',
+                elem: 'main',
+                content: 'Инициация заказа'
+            },
             {
                 block: 'ultra-form',
                 action: '/init',

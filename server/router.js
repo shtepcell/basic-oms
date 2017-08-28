@@ -29,6 +29,8 @@ module.exports = function (app) {
 
     // *************************************************************
     app.get('/init', Order.getPageInit);
+    app.post('/init', Order.init);
+
 
     app.get('/profile', Account.getProfile);
     app.post('/profile', Account.selfEdit);
