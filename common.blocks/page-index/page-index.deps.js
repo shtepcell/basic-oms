@@ -138,6 +138,12 @@
             }
         },
         {
+            block: 'ultra-table',
+            mods: {
+                theme: 'order'
+            }
+        },
+        {
             block: 'suggest',
             mods: {
                 theme: 'islands',
@@ -156,6 +162,10 @@
         {
             block: 'ultra-table',
             elem: 'delete'
+        },
+        {
+            block: 'wrap',
+            elem: 'main'
         }
     ]
 })

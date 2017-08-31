@@ -12,10 +12,11 @@ module.exports = {
 
     isLoggedIn: async (req, res, next) => {
         if (req.session.__user) {
-            var acc = await Account.findOne({login: req.session.__user});
+            var acc = await Account.findOne({login: req.session.__user}).populate('department');
             res.locals.__user = {
                 login: acc.login,
-                name: acc.name
+                name: acc.name,
+                department: acc.department
             };
             next();
         } else {
@@ -37,7 +38,7 @@ module.exports = {
             password: password.createHash(req.body.password),
             status: true
         })
-        
+
         if (acc) {
             req.session.__user = acc.login;
             logger.info(`Success authorization by : ${acc.login}`);

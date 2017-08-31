@@ -83,6 +83,8 @@ var schema = mongoose.Schema({
     // history: []
 });
 
+var deepPopulate = require('mongoose-deep-populate')(mongoose);
+schema.plugin(deepPopulate);
 
 var order;
 
@@ -97,7 +99,7 @@ schema.statics.getNextId = async () => {
 };
 
 schema.statics.create = async(ordr) => {
-    var id = await mongoose.model('Order', schema).getNextId();
+    var id = await order.getNextId();
     ordr.id = id;
     return ordr.save();
 }

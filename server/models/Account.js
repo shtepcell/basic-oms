@@ -31,6 +31,9 @@ var schema = mongoose.Schema( {
 	}
 });
 
+var deepPopulate = require('mongoose-deep-populate')(mongoose);
+
+schema.plugin(deepPopulate);
 schema.plugin(mongoosePaginate);
 
 schema.methods.remove = function () {

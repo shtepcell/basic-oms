@@ -10,20 +10,20 @@ const City = require('../models/City');
 
 const fields = require('./fields');
 
-var stages = [
-    'init',
-    'client-match',
-    'client-notify',
-    'all-pre',
-    'gzp-pre',
-    'gzp-build',
-    'install-devices',
-    'stop-pre',
-    'stop-build',
-    'network',
-    'succes',
-    'reject'
-];
+var stages = {
+    'init': 'Инициация заказа',
+    'client-match': 'Согласование с клиентом',
+    'client-notify': 'Уведомление клиента',
+    'all-pre': 'Проработка по ГЗП/STOP',
+    'gzp-pre': 'Проработка по ГЗП',
+    'gzp-build': 'Организация ГЗП',
+    'install-devices': 'Установка оборудования',
+    'stop-pre': 'Проработка по STOP/VSAT',
+    'stop-build': 'Организация STOP/VSAT',
+    'network': 'Настройка сети',
+    'succes': 'Завершение обработки',
+    'reject': 'Отклонение'
+};
 
 const Render = require('../render'),
     render = Render.render;
@@ -40,7 +40,67 @@ module.exports = {
             viewName: 'orders/init'
         });
     },
+    getMainPage: async (req, res) => {
 
+        var pagerId = 'first',
+            pagers = [],
+            pageNumber = req.query['pager' + pagerId] || 1,
+            perPage = 1; // TODO брать из конфига?
+
+        if (!!(+pageNumber) && (+pageNumber) > 0) {
+            pageNumber = +pageNumber;
+            pagers[0] = pagerId;
+        }
+        else
+            res.redirect(req.path);
+
+        var query;
+        var dep = res.locals.__user.department.type;
+        var cities = res.locals.__user.department.cities;
+        cities = cities.map( item => {
+            return {
+                'info.city' : item
+            }
+        });
+        var view = 'main';
+        switch (dep) {
+            case 'b2b':
+                query = {'$or': [{status: 'client-match'}, {status: 'client-notify'}]};
+                view = 'mains/b2b';
+                break;
+            case 'gus':
+                if(cities.length == 0) {
+                    // TODO: Сделать страницу для ошибок
+                    query = {status: 'gzp-pre'};
+                    view = 'mains/gus';
+                } else {
+                    query = {status: 'gzp-pre', '$or': cities};
+                    view = 'mains/gus';
+                }
+
+                break;
+            default:
+            break;
+        }
+
+        var docs = await Order.paginate(query, { page: pageNumber, limit: perPage, populate: 'info.client info.service info.city'});
+        
+        res.locals.pagers = {};
+        res.locals.pagers[pagerId] = {
+            pageNumber: +pageNumber,
+            records: docs.total,
+            perPage: docs.limit
+        };
+
+        res.locals.orders = docs.docs;
+        render(req, res, {
+            viewName: view,
+            options: {
+                pagers: pagers
+            }
+        });
+
+    },
     init: async (req, res) => {
 
         var data = req.body;

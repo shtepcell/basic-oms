@@ -23,9 +23,7 @@ module.exports = function (app) {
 
     app.get('/logout', Auth.logout);
 
-    app.get('/', function (req, res) {
-        render(req, res, 'main');
-    });
+    app.get('/', Order.getMainPage);
 
     // *************************************************************
     app.get('/init', Order.getPageInit);
