@@ -25,6 +25,8 @@ module.exports = function (app) {
 
     app.get('/', Order.getMainPage);
 
+    app.get('/search', Order.search);
+
     // *************************************************************
     app.get('/init', Order.getPageInit);
     app.post('/init', Order.init);

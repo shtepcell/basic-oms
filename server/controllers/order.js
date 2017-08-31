@@ -84,7 +84,7 @@ module.exports = {
         }
 
         var docs = await Order.paginate(query, { page: pageNumber, limit: perPage, populate: 'info.client info.service info.city'});
-        
+
         res.locals.pagers = {};
         res.locals.pagers[pagerId] = {
             pageNumber: +pageNumber,
@@ -155,6 +155,12 @@ module.exports = {
 
         Order.create(ordr);
         res.send({created: true})
+    },
+    search: async (req, res) => {
+
+        render(req, res, {
+            viewName: 'search'
+        });
     }
 };
 

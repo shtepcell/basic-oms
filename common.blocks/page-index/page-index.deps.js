@@ -166,6 +166,9 @@
         {
             block: 'wrap',
             elem: 'main'
+        },
+        {
+            block: 'searcher'
         }
     ]
 })
