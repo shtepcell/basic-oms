@@ -23,32 +23,6 @@
             }
         },
         {
-            block: 'table',
-            mods: {
-                users: true
-            }
-        },
-        {
-            block: 'table',
-            elem: 'common'
-        },
-        {
-            block: 'button',
-            mods: {
-                theme: 'islands',
-                size: 'm',
-                type: 'link'
-            }
-        },
-        {
-            block: 'select',
-            mods: {
-                mode: 'radio',
-                theme: 'islands',
-                size: 'm'
-            }
-        },
-        {
             block: 'pager'
         },
         {
@@ -78,24 +52,6 @@
         },
         {
             block: 'ultra-form'
-        },
-        {
-            block: 'ultra-form',
-            elem: 'cell'
-        },
-        {
-            block: 'ultra-form',
-            elem: 'row'
-        },
-        {
-            block: 'ultra-form',
-            elem: 'label'
-        },
-        {
-            block: 'ultra-form',
-            mods: {
-                theme: 'order'
-            }
         },
         {
             block: 'inline-form',
@@ -128,22 +84,6 @@
             }
         },
         {
-            block: 'ultra-table',
-            elem: 'cities'
-        },
-        {
-            block: 'ultra-table',
-            mods: {
-                theme: 'common'
-            }
-        },
-        {
-            block: 'ultra-table',
-            mods: {
-                theme: 'order'
-            }
-        },
-        {
             block: 'suggest',
             mods: {
                 theme: 'islands',
@@ -160,8 +100,7 @@
             elem: 'main'
         },
         {
-            block: 'ultra-table',
-            elem: 'delete'
+            block: 'ultra-table'
         },
         {
             block: 'wrap',
@@ -169,6 +108,9 @@
         },
         {
             block: 'searcher'
+        },
+        {
+            block: 'button-panel'
         }
     ]
 })

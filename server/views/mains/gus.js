@@ -29,43 +29,44 @@ module.exports = function(opt, data){
                         content: 'Заявки для проработки отделом GUS'
                     },
                     {
-                    block: 'ultra-table',
-                    mods: {
-                        'static' : true,
-                        theme: 'order'
+                        block: 'ultra-table',
+                        mods: {
+                            'static' : true,
+                            theme: 'order'
+                        },
+                        fields: [
+                            {
+                                name: 'ID',
+                                field: 'id'
+                            },
+                            {
+                                name: 'Клиент',
+                                field: ['info', 'client', 'name']
+                            },
+                            {
+                                name: 'Город',
+                                field: ['info', 'city', 'name']
+                            },
+                            {
+                                name: 'Этап',
+                                field: 'status'
+                            },
+                            {
+                                name: 'Услуга',
+                                field: ['info', 'service', 'name']
+                            }
+                        ],
+                        url: '/orders/',
+                        template: 'id',
+                        data: orders
                     },
-                    fields: [
-                        {
-                            name: 'ID',
-                            field: 'id'
-                        },
-                        {
-                            name: 'Клиент',
-                            field: ['info', 'client', 'name']
-                        },
-                        {
-                            name: 'Город',
-                            field: ['info', 'city', 'name']
-                        },
-                        {
-                            name: 'Этап',
-                            field: 'status'
-                        },
-                        {
-                            name: 'Услуга',
-                            field: ['info', 'service', 'name']
+                    {
+                        block: 'pager',
+                        attrs: {
+                            id: pagerId
                         }
-                    ],
-                    url: '/orders/',
-                    template: 'id',
-                    data: orders
-                },
-                {
-                    block: 'pager',
-                    attrs: {
-                        id: pagerId
                     }
-                }]
+                ]
             }
         ]
     };

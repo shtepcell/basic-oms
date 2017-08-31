@@ -25,23 +25,8 @@ module.exports = function(opt, data) {
                 type: 'list'
             },
             {
-                block: 'button',
-                mods: {
-                    theme: 'islands',
-                    size: 'm',
-                    type: 'link'
-                },
-                mix: {
-                    block: 'button',
-                    elem: 'add'
-                },
-                url: '/admin/users/add',
-                icon: {
-                    block: 'icon',
-                    url: '/add.svg',
-                    mix: 'button__icon'
-                },
-                text: 'Создать пользователя'
+                block: 'button-panel',
+                type: 'users'
             },
             {
                 block: 'ultra-table',

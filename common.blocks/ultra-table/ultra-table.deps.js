@@ -1,14 +1,16 @@
 ({
     shouldDeps: [
-        'thead',
-        'tbody',
         {
-            block: 'tbody',
-            elem: 'tr'
+            block: 'ultra-table',
+            elems: ['cities', 'delete']
         },
         {
-            block: 'tbody',
-            elem: 'td'
-        }
+            block: 'ultra-table',
+            mods: {
+                theme: ['common', 'order']
+            }
+        },
+        'thead',
+        'tbody'
     ]
 })
