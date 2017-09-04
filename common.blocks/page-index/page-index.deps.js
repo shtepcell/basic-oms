@@ -111,6 +111,10 @@
         },
         {
             block: 'button-panel'
+        },
+        {
+            block: 'order',
+            elem: 'button'
         }
     ]
 })

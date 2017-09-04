@@ -56,7 +56,7 @@ module.exports = function(opt, data){
                                 field: ['info', 'service', 'name']
                             }
                         ],
-                        url: '/orders/',
+                        url: '/order/',
                         template: 'id',
                         data: orders
                     },

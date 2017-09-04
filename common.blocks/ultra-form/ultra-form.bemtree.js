@@ -3,7 +3,6 @@ block('ultra-form').content()(function () {
         data = this.data,
         fields = ctx.fields;
 
-
     var ret = [];
 
     ret = fields.map( item => {
@@ -104,26 +103,27 @@ block('ultra-form').content()(function () {
         return _item;
     })
 
-    ret.push({
-            elem: 'row',
-            content: {
-                elem: 'cell',
+    if(!this.ctx.escapeButton)
+        ret.push({
+                elem: 'row',
                 content: {
-                    block: 'button',
-                    mods: {
-                        theme: 'islands',
-                        size: 'm',
-                        type: 'submit'
-                    },
-                    mix: {
+                    elem: 'cell',
+                    content: {
                         block: 'button',
-                        elem: 'create'
-                    },
-                    text: this.ctx.text
+                        mods: {
+                            theme: 'islands',
+                            size: 'm',
+                            type: 'submit'
+                        },
+                        mix: {
+                            block: 'button',
+                            elem: 'create'
+                        },
+                        text: this.ctx.text
+                    }
                 }
-            }
 
-        });
+            });
 
     return ret;
 

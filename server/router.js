@@ -31,6 +31,18 @@ module.exports = function (app) {
     app.get('/init', Order.getPageInit);
     app.post('/init', Order.init);
 
+    app.get('/order/:id', function (req, res) {
+        res.redirect(`/order/${req.params.id}/info`)
+    });
+
+    app.get('/order/:id/info', Order.getOrderInfo);
+    app.get('/order/:id/gzp', Order.getOrderGZP);
+    app.get('/order/:id/stop', Order.getOrderSTOP);
+    app.get('/order/:id/history', Order.getOrderHistory);
+
+    app.post('/order/:id/gzp', Order.endPre);
+
+    app.post('/order/:id', Order.changeStatus);
 
     app.get('/profile', Account.getProfile);
     app.post('/profile', Account.selfEdit);

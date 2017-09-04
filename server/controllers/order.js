@@ -156,6 +156,89 @@ module.exports = {
         Order.create(ordr);
         res.send({created: true})
     },
+
+    getOrderInfo: async (req, res) => {
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.client info.client.type info.service info.city');
+        res.locals.order = order;
+        res.locals.template = await fields.getInfo(order);
+
+        render(req, res, {
+            viewName: 'orders/order',
+            options: {
+                tab: 'info'
+            }
+        });
+    },
+
+    getOrderGZP: async (req, res) => {
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.client info.client.type info.service info.city');
+        res.locals.order = order;
+        var access = (res.locals.__user.department.type == 'gus' && res.locals.__user.department.cities.indexOf(order.info.city._id) >= 0);
+        res.locals.template = await fields.getGZP(order, access);
+
+        render(req, res, {
+            viewName: 'orders/order',
+            options: {
+                tab: 'gzp',
+                access: access
+            }
+        });
+    },
+
+    getOrderSTOP: async (req, res) => {
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.client info.client.type info.service info.city');
+        res.locals.order = order;
+        res.locals.template = await fields.getInfo(order);
+
+        render(req, res, {
+            viewName: 'orders/order',
+            options: {
+                tab: 'stop'
+            }
+        });
+    },
+
+    getOrderHistory: async (req, res) => {
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.client info.client.type info.service info.city');
+        res.locals.order = order;
+        res.locals.template = await fields.getInfo(order);
+
+        render(req, res, {
+            viewName: 'orders/order',
+            options: {
+                tab: 'history'
+            }
+        });
+    },
+
+    endPre: async (req, res) => {
+
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.client info.client.type info.service info.city');
+
+        console.log(req.body);
+
+        order.gzp = req.body;
+
+        if(order.status == 'gzp-pre') order.status = 'client-match';
+        // else Проверить на наличие всех прработок если это all-pre
+
+        order.save();
+        res.send({created: true})
+    },
+
+    changeStatus: async (req, res) => {
+        var reqData = req.body;
+
+        if(reqData.to) {
+            var order = await Order.findOne({id: req.params.id});
+
+            order.status = reqData.to;
+
+            order.save();
+        }
+        res.redirect(req.url);
+    },
+
     search: async (req, res) => {
 
         render(req, res, {

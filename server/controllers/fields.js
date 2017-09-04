@@ -3,29 +3,30 @@ const Client = require('../models/Client');
 const City = require('../models/City');
 
 var allFields = {
-    info: [
+    'info': [
         {
             index: 'id',
             name: 'Номер заказа',
-            value: 'id'
+            val: 'id'
         },
         {
             index: 'date',
             name: 'Дата инициации заказа',
-            type: 'date'
+            type: 'date',
+            val: ['history']
         },
         {
             index: 'status',
             name: 'Текущий статус',
             type: 'default',
-            value: 'status'
+            val: 'status'
         },
         {
             index: 'relation',
             name: 'Связанная заявка',
             type: 'text',
             fill: true,
-            value: 'relation'
+            val:  ['info', 'relation']
         },
         {
             index: 'initiator-name',
@@ -48,27 +49,31 @@ var allFields = {
             name: 'Номер сервиса в CMS',
             maxLenght: 50,
             type: 'text',
-            fill: true
+            fill: true,
+            val:  ['info', 'relation']
         },
         {
             index: 'cost-once',
             name: 'Ожидаемый единовр. доход (руб)',
             maxLenght: 50,
             type: 'text',
-            fill: true
+            fill: true,
+            val:  ['info', 'cost-once']
         },
         {
             index: 'cost-monthly',
             name: 'Ожидаемый ежемес. доход (руб)',
             maxLenght: 50,
             type: 'text',
-            fill: true
+            fill: true,
+            val:  ['info', 'cost-monthly']
         },
         {
             index: 'add_info',
             name: 'Дополнительная информация',
             type: 'text',
-            fill: true
+            fill: true,
+            val:  ['info', 'add_info']
         },
         {
             index: 'client',
@@ -76,13 +81,17 @@ var allFields = {
             type: 'suggest',
             data: 'clients',
             fill: true,
-            required: true
+            required: true,
+            val: function (order) {
+                return `[${order.info.client.type.shortName}] ${order.info.client.name}`
+            }
         },
         {
             index: 'contact',
             name: 'Контактные данные клиента',
             type: 'text',
-            fill: true
+            fill: true,
+            val:  ['info', 'contact']
         },
         {
             index: 'service',
@@ -90,14 +99,16 @@ var allFields = {
             type: 'select',
             data: 'services',
             fill: true,
-            required: true
+            required: true,
+            val:  ['info', 'service', 'name']
         },
         {
             index: 'options',
             name: 'Параметры услуги',
             maxLenght: 50,
             type: 'text',
-            fill: true
+            fill: true,
+            val:  ['info', 'options']
         },
         {
             index: 'city',
@@ -105,33 +116,42 @@ var allFields = {
             type: 'suggest',
             data: 'cities',
             fill: true,
-            required: true
+            required: true,
+            val:  ['info', 'city', 'name']
         },
         {
             index: 'street',
             name: 'Улица',
             type: 'text',
-            fill: true
+            fill: true,
+            val: ['info', 'street']
         },
         {
             index: 'adds',
             name: 'д./кв. и т.д',
             type: 'text',
             maxLenght: 50,
-            fill: true
+            fill: true,
+            val: ['info', 'adds']
         },
         {
             index: 'ip',
             name: 'Необходимость выделения IP-адресов',
             type: 'bool',
             fill: true,
-            default: '0'
+            default: '0',
+            val: function (order) {
+                if(order.info.ip) {
+                    return 'Да';
+                } else return 'Нет';
+            }
         },
         {
             index: 'pool',
             name: 'Необходимый пул адресов',
             type: 'text',
-            fill: true
+            fill: true,
+            val: ['info', 'pool']
         },
         {
             index: 'pre',
@@ -154,52 +174,59 @@ var allFields = {
                 }
             ]
         }
-    ]
-    // gzp: {
-    //     'date-work': {
-    //         name: 'Дата проработки заказа',
-    //         type: 'date'
-    //     },
-    //     'date-work-control': {
-    //         name: 'Контрольная дата проработки заказа',
-    //         type: 'date'
-    //     },
-    //     'date-build': {
-    //         name: 'Дата организации заказа',
-    //         type: 'date'
-    //     },
-    //     'date-build-control': {
-    //         name: 'Контрольная дата организации заказа',
-    //         type: 'date'
-    //     },
-    //     need: {
-    //         name: 'Необходимость в ГЗП',
-    //         type: 'Boolean',
-    //         fill: true
-    //     },
-    //     capability: {
-    //         name: 'Техническая возможность',
-    //         type: 'Boolean',
-    //         fill: true
-    //     },
-    //     time: {
-    //         name: 'Срок организации',
-    //         date: 'date',
-    //         fill: true
-    //     },
-    //     cost: {
-    //         once: {
-    //             name: 'Одноразовая стоимость организации',
-    //             type: 'Number',
-    //             fill: true
-    //         },
-    //         monthly: {
-    //             name: 'Ежемесячная стоимость организации',
-    //             type: 'Number',
-    //             fill: true
-    //         }
-    //     }
-    // },
+    ],
+    gzp: [
+        {
+            index: 'date-work',
+            name: 'Дата проработки заказа',
+            type: 'date'
+        },
+        {
+            index: 'date-work-control',
+            name: 'Контрольная дата проработки заказа',
+            type: 'date'
+        },
+        {
+            index: 'date-build',
+            name: 'Дата организации заказа',
+            type: 'date'
+        },
+        {
+            index: 'date-build-control',
+            name: 'Контрольная дата организации заказа',
+            type: 'date'
+        },
+        {
+            index: 'need',
+            name: 'Необходимость в ГЗП',
+            type: 'bool',
+            fill: true
+        },
+        {
+            index: 'capability',
+            name: 'Техническая возможность',
+            type: 'bool',
+            fill: true
+        },
+        {
+            index: 'time',
+            name: 'Срок организации',
+            type: 'text',
+            fill: true
+        },
+        {
+            index: 'cost-once',
+            name: 'Одноразовая стоимость организации',
+            type: 'text',
+            fill: true
+        },
+        {
+            index: 'cost-monthly',
+            name: 'Ежемесячная стоимость организации',
+            type: 'text',
+            fill: true
+        }
+    ],
     // stop: {
     //     capability: {
     //         name: 'Техническая возможность',
@@ -278,9 +305,181 @@ var allFields = {
         //         fill: true
         //     }
         // }
+};
+
+function getVal (order, path) {
+    if(Array.isArray(path)) {
+        var result = order;
+        for (var j = 0; j < path.length; j++) {
+            result = result[path[j]];
+        }
+        return result;
+    } else {
+        return order[path];
+    }
+}
+
+function retField(item, data) {
+    switch (item.type) {
+        case 'suggest':
+            return {
+                name: item.index,
+                desc: item.name,
+                required: item.required,
+                mods: {
+                    type: 'suggest',
+                    'has-dataprovider' : 'adress'
+                },
+                dataprovider : {
+                    data : data[item.data]
+                }
+            }
+            break;
+        case 'select':
+            return {
+                name: item.index,
+                desc: item.name,
+                required: item.required,
+                mods: {
+                    type: 'select'
+                },
+                val: '' + data[item.data][0].val,
+                data: data[item.data]
+            }
+            break;
+        case 'stage-select':
+            return {
+                name: item.index,
+                desc: item.name,
+                required: item.required,
+                mods: {
+                    type: 'select'
+                },
+                val: '' + item.data[0].val,
+                data: item.data
+            }
+            break;
+        case 'text':
+            return {
+                name: item.index,
+                desc: item.name,
+                required: item.required,
+                mods: {
+                    type: 'text'
+                }
+            }
+            break;
+        case 'date':
+            return {
+                name: item.index,
+                desc: item.name,
+                required: item.required,
+                mods: {
+                    type: 'date'
+                }
+            }
+            break;
+        case 'bool':
+            return {
+                name: item.index,
+                desc: item.name,
+                required: item.required,
+                mods: {
+                    type: 'select'
+                },
+                val: item.default || '1',
+                data: [
+                    {
+                        text: 'Да',
+                        val: '1'
+                    },
+                    {
+                        text: 'Нет',
+                        val: '0'
+                    }
+                ]
+            }
+            break;
+        default:
+            console.log('Нет поля type:', item);
+            break;
+    }
 }
 
 module.exports = {
+    getInfo: async (order) => {
+        var info = allFields.info;
+        var ret = [];
+
+        info.forEach( item => {
+            if(!item.onlyInit)
+                if(typeof item.val == 'function') {
+                    var val = item.val(order);
+                    ret.push({
+                        desc: item.name,
+                        disabled: true,
+                        val: val
+                    })
+                } else {
+                    var val = getVal(order, item.val);
+                    ret.push({
+                        desc: item.name,
+                        disabled: true,
+                        val: val
+                    })
+                }
+        });
+
+        return ret;
+    },
+
+    getGZP: async (order, access) => {
+        var info = allFields.gzp;
+        var ret = [];
+
+        info.forEach( item => {
+            if(access) {
+                if(item.fill)
+                    ret.push(retField(item));
+                else if(typeof item.val == 'function') {
+                    var val = item.val(order);
+                    ret.push({
+                        desc: item.name,
+                        disabled: true,
+                        val: val
+                    })
+                } else {
+                    var val = getVal(order, item.val);
+                    ret.push({
+                        desc: item.name,
+                        disabled: true,
+                        val: val
+                    })
+                }
+            } else {
+
+                if(!item.onlyInit)
+                    if(typeof item.val == 'function') {
+                        var val = item.val(order);
+                        ret.push({
+                            desc: item.name,
+                            disabled: true,
+                            val: val
+                        })
+                    } else {
+                        var val = getVal(order, item.val);
+                        ret.push({
+                            desc: item.name,
+                            disabled: true,
+                            val: val
+                        })
+                    }
+            }
+        });
+
+        return ret;
+    },
+
     getInitField: async (isFill) => {
         var services = await Service.find();
         var clients = await Client.find().populate('type');
@@ -304,90 +503,7 @@ module.exports = {
         info.forEach( item => {
 
             if(item.fill) {
-                switch (item.type) {
-                    case 'suggest':
-                        ret.push({
-                            name: item.index,
-                            desc: item.name,
-                            required: item.required,
-                            mods: {
-                                type: 'suggest',
-                                'has-dataprovider' : 'adress'
-                            },
-                            dataprovider : {
-                                data : data[item.data]
-                            }
-                        })
-                        break;
-                    case 'select':
-                        ret.push({
-                            name: item.index,
-                            desc: item.name,
-                            required: item.required,
-                            mods: {
-                                type: 'select'
-                            },
-                            val: '' + data[item.data][0].val,
-                            data: data[item.data]
-                        })
-                        break;
-                    case 'stage-select':
-                        ret.push({
-                            name: item.index,
-                            desc: item.name,
-                            required: item.required,
-                            mods: {
-                                type: 'select'
-                            },
-                            val: '' + item.data[0].val,
-                            data: item.data
-                        })
-                        break;
-                    case 'text':
-                        ret.push({
-                            name: item.index,
-                            desc: item.name,
-                            required: item.required,
-                            mods: {
-                                type: 'text'
-                            }
-                        })
-                        break;
-                    case 'date':
-                        ret.push({
-                            name: item.index,
-                            desc: item.name,
-                            required: item.required,
-                            mods: {
-                                type: 'date'
-                            }
-                        })
-                        break;
-                    case 'bool':
-                        ret.push({
-                            name: item.index,
-                            desc: item.name,
-                            required: item.required,
-                            mods: {
-                                type: 'select'
-                            },
-                            val: item.default || '1',
-                            data: [
-                                {
-                                    text: 'Да',
-                                    val: '1'
-                                },
-                                {
-                                    text: 'Нет',
-                                    val: '0'
-                                }
-                            ]
-                        })
-                        break;
-                    default:
-                        console.log('Нет поля type:', item);
-                        break;
-                }
+                ret.push(retField(item, data));
             }
         })
 

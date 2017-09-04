@@ -44,16 +44,14 @@ var schema = mongoose.Schema({
         adds: String,
         ip: Boolean,
         pool: String
-    }
-    // gzp: {
-    //     need: Boolean,
-    //     capability: Boolean,
-    //     time: Number,
-    //     cost: {
-    //         once: Number,
-    //         monthly: Number
-    //     }
-    // },
+    },
+    gzp: {
+        need: Boolean,
+        capability: Boolean,
+        time: Number,
+        'cost-once': String,
+        'cost-monthly': String
+    },
     // stop: {
     //     capability: Boolean,
     //     provider: {
