@@ -7,7 +7,7 @@ module.exports = function(opt, data){
     var users = data.users;
     if (opt.pagers && opt.pagers.length)
         pagerId = opt.pagers[0];
-
+        
     return {
         view: 'page-index',
         title: 'Главная страница',

@@ -74,7 +74,7 @@ module.exports = {
                     query = {status: 'gzp-pre'};
                     view = 'mains/gus';
                 } else {
-                    query = {status: 'gzp-pre', '$or': cities};
+                    query = {'$or': [{status: 'gzp-pre'}, {status: 'all-pre'}], '$or': cities};
                     view = 'mains/gus';
                 }
 
@@ -85,28 +85,37 @@ module.exports = {
 
         var docs = await Order.paginate(query, { page: pageNumber, limit: perPage, populate: 'info.client info.service info.city'});
 
-        res.locals.pagers = {};
-        res.locals.pagers[pagerId] = {
-            pageNumber: +pageNumber,
-            records: docs.total,
-            perPage: docs.limit
-        };
-
-        res.locals.orders = docs.docs;
-        render(req, res, {
-            viewName: view,
-            options: {
-                pagers: pagers
+        if (!docs.docs.length)
+        {
+            if (pageNumber !== 1) {
+                res.redirect(req.path);
+            } else {
+                render(req, res, {
+                    viewName: view
+                });
             }
-        });
+        } else {
+            res.locals.pagers = {};
+            res.locals.pagers[pagerId] = {
+                pageNumber: +pageNumber,
+                records: docs.total,
+                perPage: docs.limit
+            };
+            res.locals.orders = docs.docs;
+            render(req, res, {
+                viewName: view,
+                options: {
+                    pagers: pagers
+                }
+            });
+        }
 
     },
     init: async (req, res) => {
 
         var data = req.body;
-
-        // data['date-request'] TODO: TO DATE FORMAT
-
+        data['date-request'] = new Date(data['date-request']);
+        
         var order = {
             status: data.pre,
             info: data

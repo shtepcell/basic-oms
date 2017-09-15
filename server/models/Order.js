@@ -20,9 +20,10 @@ var schema = mongoose.Schema({
     info: {
         relation: String,
         cms: String,
-        reqData: Date,
+        'date-request': Date,
         'cost-once': String,
         'cost-monthly': String,
+        add_info: String,
         client: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Client',
