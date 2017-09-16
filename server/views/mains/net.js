@@ -1,9 +1,10 @@
 module.exports = function(opt, data){
     var orders = data.orders;
-    
+
     var opt = opt || {},
         pagerId;
 
+    var users = data.users;
     if (opt.pagers && opt.pagers.length)
         pagerId = opt.pagers[0];
 
@@ -19,17 +20,13 @@ module.exports = function(opt, data){
         },
         page: [
             {
-                block: 'button-panel',
-                type: 'b2b'
-            },
-            {
                 block: 'wrap',
                 elem: 'main',
                 content: [
                     {
                         block: 'title',
                         elem: 'part',
-                        content: 'Заявки для проработки отделом B2B'
+                        content: 'Заявки для проработки сетевым отделом'
                     },
                     {
                         block: 'ultra-table',
@@ -58,19 +55,19 @@ module.exports = function(opt, data){
                                 name: 'Услуга',
                                 field: ['info', 'service', 'name']
                             }
-                    ],
-                    url: '/order/',
-                    template: 'id',
-                    data: orders
-                },
-                {
-                    block: 'pager',
-                    attrs: {
-                        id: pagerId
+                        ],
+                        url: '/order/',
+                        template: 'id',
+                        data: orders
+                    },
+                    {
+                        block: 'pager',
+                        attrs: {
+                            id: pagerId
+                        }
                     }
-                }]
-            },
-
+                ]
+            }
         ]
     };
 };

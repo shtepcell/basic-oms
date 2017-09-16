@@ -68,6 +68,10 @@ module.exports = {
                 query = {'$or': [{status: 'client-match'}, {status: 'client-notify'}]};
                 view = 'mains/b2b';
                 break;
+            case 'net':
+                query = {status: 'network'};
+                view = 'mains/net';
+                break;
             case 'gus':
                 if(cities.length == 0) {
                     // TODO: Сделать страницу для ошибок
@@ -189,9 +193,9 @@ module.exports = {
     getOrderGZP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
         res.locals.order = order;
+
         var access = (res.locals.__user.department.type == 'gus' && res.locals.__user.department.cities.indexOf(order.info.city._id) >= 0);
         res.locals.template = await fields.getGZP(order, access);
-
         var actions = await fields.getActions(order, res.locals.__user, 'gzp');
 
         render(req, res, {
@@ -277,9 +281,10 @@ module.exports = {
                 break;
         }
 
-        order.save();
+        order.save()
 
-        res.redirect(req.url);
+        res.send(true)
+
     },
 
     search: async (req, res) => {

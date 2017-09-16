@@ -18,7 +18,10 @@ modules.define('order__button',
                 type: 'POST',
                 dataType: 'json',
                 data: data,
-                timeout: 5000
+                timeout: 5000,
+                success: function () {
+                    window.location.reload();
+                }
             });
         }
     }));

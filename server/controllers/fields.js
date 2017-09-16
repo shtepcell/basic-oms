@@ -58,6 +58,7 @@ var allFields = {
             maxLenght: 50,
             type: 'text',
             fill: true,
+            required: true,
             val:  ['info', 'cost-once']
         },
         {
@@ -66,6 +67,7 @@ var allFields = {
             maxLenght: 50,
             type: 'text',
             fill: true,
+            required: true,
             val:  ['info', 'cost-monthly']
         },
         {
@@ -99,7 +101,6 @@ var allFields = {
             type: 'select',
             data: 'services',
             fill: true,
-            required: true,
             val:  ['info', 'service', 'name']
         },
         {
@@ -124,6 +125,7 @@ var allFields = {
             name: 'Улица',
             type: 'text',
             fill: true,
+            required: true,
             val: ['info', 'street']
         },
         {
@@ -132,6 +134,7 @@ var allFields = {
             type: 'text',
             maxLenght: 50,
             fill: true,
+            required: true,
             val: ['info', 'adds']
         },
         {
