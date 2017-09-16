@@ -31,12 +31,12 @@ var allFields = {
         {
             index: 'initiator-name',
             name: 'Ф.И.О. инициатора',
-            type: 'default'
+            val: ['info', 'initiator', 'name']
         },
         {
             index: 'initiator-dep',
             name: 'Подразделение-инициатор',
-            type: 'default'
+            val: ['info', 'initiator', 'department', 'name']
         },
         {
             index: 'date-request',
@@ -200,31 +200,44 @@ var allFields = {
             index: 'need',
             name: 'Необходимость в ГЗП',
             type: 'bool',
-            fill: true
+            fill: true,
+            val: function (order) {
+                if(order.gzp.need) {
+                    return 'Да';
+                } else return 'Нет';
+            }
         },
         {
             index: 'capability',
             name: 'Техническая возможность',
             type: 'bool',
-            fill: true
+            fill: true,
+            val: function (order) {
+                if(order.gzp.capability) {
+                    return 'Да';
+                } else return 'Нет';
+            }
         },
         {
             index: 'time',
             name: 'Срок организации',
             type: 'text',
-            fill: true
+            fill: true,
+            val: ['gzp', 'time']
         },
         {
             index: 'cost-once',
             name: 'Одноразовая стоимость организации',
             type: 'text',
-            fill: true
+            fill: true,
+            val: ['gzp', 'cost-once']
         },
         {
             index: 'cost-monthly',
             name: 'Ежемесячная стоимость организации',
             type: 'text',
-            fill: true
+            fill: true,
+            val: ['gzp', 'cost-monthly']
         }
     ],
     // stop: {
@@ -406,7 +419,97 @@ function retField(item, data) {
     }
 }
 
+var actions = {
+    info: [
+        {
+            text: 'Отправить на проработку по ГЗП',
+            to: 'start-pre-gzp',
+            condition: function (user, order) {
+                var access = (order.info.initiator.department._id == user.department._id + '');
+                if(order.status == 'client-match' && access && !order.gzp) {
+                    return true;
+                } else return false;
+            }
+        },
+        {
+            text: 'Отправить на проработку по STOP/VSAT',
+            to: 'start-pre-stop',
+            condition: function (user, order) {
+                var access = (order.info.initiator.department._id == user.department._id + '');
+                if(order.status == 'client-match' && access && !order.stop) {
+                    return true;
+                } else return false;
+            }
+        },
+        {
+            text: 'Отправить на организацию по ГЗП',
+            to: 'start-gzp-build',
+            condition: function (user, order) {
+                var access = (order.info.initiator.department._id == user.department._id + '');
+                if(order.status == 'client-match' && access && order.gzp) {
+                    return true;
+                } else return false;
+            }
+        },
+        {
+            text: 'Отправить на организацию по STOP/VSAT',
+            to: 'start-stop-build',
+            condition: function (user, order) {
+                var access = (order.info.initiator.department._id == user.department._id + '');
+                if(order.status == 'client-match' && access && order.stop) {
+                    return true;
+                } else return false;
+            }
+        },
+        {
+            text: 'Настройка сети завершена',
+            to: 'end-network',
+            condition: function (user, order) {
+                if(order.status == 'network' && user.department.type == 'net')
+                    return true;
+                else return false;
+            }
+        }
+    ],
+    gzp: [
+        {
+            text: 'Организация завершена',
+            to: 'end-build',
+            condition: function (user, order) {
+                if( order.status == 'gzp-build' &&
+                    user.department.type == 'gus' &&
+                    user.department.cities.indexOf(order.info.city._id) >= 0 ) {
+                        return true;
+                    }
+                else return false;
+            }
+        }
+    ]
+};
+
 module.exports = {
+
+    getActions: async (order, user, page) => {
+        var ret = [];
+
+        actions[page].forEach( item => {
+            if( item.condition(user, order) ) {
+                ret.push({
+                    block: 'order',
+                    elem: 'button',
+                    js: {
+                        data: {
+                            to: item.to
+                        },
+                        url: `/order/${order.id}/action`
+                    },
+                    text: item.text
+                })
+            }
+        })
+        return ret;
+    },
+
     getInfo: async (order) => {
         var info = allFields.info;
         var ret = [];
@@ -437,8 +540,9 @@ module.exports = {
         var info = allFields.gzp;
         var ret = [];
 
+        console.log( order);
         info.forEach( item => {
-            if(access) {
+            if(access && !order.gzp.complete) {
                 if(item.fill)
                     ret.push(retField(item));
                 else if(typeof item.val == 'function') {

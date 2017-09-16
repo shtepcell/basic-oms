@@ -2,7 +2,10 @@ module.exports = function(opt, data) {
 
     // console.log(data.template);
     var type = {};
-    var controls = [];
+    var actions = opt.actions;
+
+    var controls = actions;
+    
     switch (opt.tab) {
         case 'info':
             type = {
@@ -11,20 +14,6 @@ module.exports = function(opt, data) {
                 action: `/order/${data.order.id}/${opt.tab}`,
                 info: 'action'
             };
-
-            controls = [
-                {
-                    block: 'order',
-                    elem: 'button',
-                    js: {
-                        data: {
-                            to: 'stop-pre'
-                        },
-                        url: type.url
-                    },
-                    text: 'Отправить на проработку по STOP/VSAT'
-                }
-            ]
             break;
         case 'gzp':
             type = {
@@ -105,7 +94,7 @@ module.exports = function(opt, data) {
                 action: type.action,
                 method: 'POST',
                 text: 'Завершить проработку',
-                escapeButton: !opt.access,
+                escapeButton: !opt.access || data.order.gzp.complete,
                 mods: {
                     theme: 'order'
                 },

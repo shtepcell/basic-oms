@@ -18,6 +18,11 @@ var schema = mongoose.Schema({
         data: Date
     },
     info: {
+        initiator: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Account',
+            required : true
+        },
         relation: String,
         cms: String,
         'date-request': Date,
@@ -47,6 +52,7 @@ var schema = mongoose.Schema({
         pool: String
     },
     gzp: {
+        complete: Boolean,
         need: Boolean,
         capability: Boolean,
         time: Number,

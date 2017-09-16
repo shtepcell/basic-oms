@@ -35,14 +35,14 @@ module.exports = function (app) {
         res.redirect(`/order/${req.params.id}/info`)
     });
 
+    app.post('/order/:id/action', Order.changeStatus)
+
     app.get('/order/:id/info', Order.getOrderInfo);
     app.get('/order/:id/gzp', Order.getOrderGZP);
     app.get('/order/:id/stop', Order.getOrderSTOP);
     app.get('/order/:id/history', Order.getOrderHistory);
 
     app.post('/order/:id/gzp', Order.endPre);
-
-    app.post('/order/:id', Order.changeStatus);
 
     app.get('/profile', Account.getProfile);
     app.post('/profile', Account.selfEdit);
