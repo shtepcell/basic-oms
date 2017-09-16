@@ -27,6 +27,11 @@ module.exports = function (app) {
 
     app.get('/search', Order.search);
 
+    app.get('/dev', function (req, res) {
+        render(req, res, {
+            viewName: 'dev'
+        })
+    })
     // *************************************************************
     app.get('/init', Order.getPageInit);
     app.post('/init', Order.init);
