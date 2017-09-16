@@ -45,7 +45,7 @@ module.exports = {
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
-            perPage = 1; // TODO брать из конфига?
+            perPage = 20; // TODO брать из конфига?
 
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;

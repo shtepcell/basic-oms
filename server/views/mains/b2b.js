@@ -1,6 +1,9 @@
 module.exports = function(opt, data){
     var orders = data.orders;
 
+    if (opt.pagers && opt.pagers.length)
+        pagerId = opt.pagers[0];
+        
     return {
         view: 'page-index',
         title: 'Главная страница',
@@ -26,38 +29,45 @@ module.exports = function(opt, data){
                         content: 'Заявки для проработки отделом B2B'
                     },
                     {
-                    block: 'ultra-table',
-                    mods: {
-                        'static' : true,
-                        theme: 'order'
-                    },
-                    fields: [
-                        {
-                            name: 'ID',
-                            field: 'id'
+                        block: 'ultra-table',
+                        mods: {
+                            'static' : true,
+                            theme: 'order'
                         },
-                        {
-                            name: 'Клиент',
-                            field: ['info', 'client', 'name']
-                        },
-                        {
-                            name: 'Город',
-                            field: ['info', 'city', 'name']
-                        },
-                        {
-                            name: 'Этап',
-                            field: 'status'
-                        },
-                        {
-                            name: 'Услуга',
-                            field: ['info', 'service', 'name']
-                        }
+                        fields: [
+                            {
+                                name: 'ID',
+                                field: 'id'
+                            },
+                            {
+                                name: 'Клиент',
+                                field: ['info', 'client', 'name']
+                            },
+                            {
+                                name: 'Город',
+                                field: ['info', 'city', 'name']
+                            },
+                            {
+                                name: 'Этап',
+                                field: 'status'
+                            },
+                            {
+                                name: 'Услуга',
+                                field: ['info', 'service', 'name']
+                            }
                     ],
                     url: '/order/',
                     template: 'id',
                     data: orders
+                },
+                {
+                    block: 'pager',
+                    attrs: {
+                        id: pagerId
+                    }
                 }]
-            }
+            },
+
         ]
     };
 };

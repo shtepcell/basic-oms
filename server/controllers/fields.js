@@ -542,7 +542,7 @@ module.exports = {
 
         console.log( order);
         info.forEach( item => {
-            if(access && !order.gzp.complete) {
+            if(access && order.status == 'gzp-pre') {
                 if(item.fill)
                     ret.push(retField(item));
                 else if(typeof item.val == 'function') {

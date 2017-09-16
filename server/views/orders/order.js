@@ -5,7 +5,7 @@ module.exports = function(opt, data) {
     var actions = opt.actions;
 
     var controls = actions;
-    
+
     switch (opt.tab) {
         case 'info':
             type = {
@@ -94,7 +94,7 @@ module.exports = function(opt, data) {
                 action: type.action,
                 method: 'POST',
                 text: 'Завершить проработку',
-                escapeButton: !opt.access || data.order.gzp.complete,
+                escapeButton: !opt.access || data.order.status != 'gzp-pre',
                 mods: {
                     theme: 'order'
                 },
