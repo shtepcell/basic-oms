@@ -567,6 +567,16 @@ var actions = {
                     }
                 else return false;
             }
+        },
+        {
+            text: 'Оборудование установлено',
+            to: 'end-install-devices',
+            condition: function (user, order) {
+                if(order.status == 'install-devices' && user.department.type == 'gus' &&
+                    user.department.cities.indexOf(order.info.city._id) >= 0 )
+                    return true;
+                else return false;
+            }
         }
     ],
     stop: [

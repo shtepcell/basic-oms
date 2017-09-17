@@ -83,7 +83,7 @@ module.exports = {
                     view = 'mains/gus';
                 } else {
                     query =
-                        {'$or': [{status: 'gzp-pre'}, {status: 'all-pre'}, {status: 'gzp-build'}]},
+                        {'$or': [{status: 'gzp-pre'}, {status: 'all-pre'}, {status: 'gzp-build'}, {status: 'install-devices'}]},
                         {'$or': cities};
                     view = 'mains/gus';
                 }
@@ -202,11 +202,11 @@ module.exports = {
         res.locals.order = order;
 
         var access = false;
-        if (res.locals.__user.department.type == 'gus' && res.locals.__user.department.cities.indexOf(order.info.city._id) >= 0) {
+        if ( (order.status == 'gzp-pre' || order.status == 'all-pre') && (res.locals.__user.department.type == 'gus' && res.locals.__user.department.cities.indexOf(order.info.city._id) >= 0)) {
             access = 'gzp';
         }
         res.locals.template = await fields.getGZP(order, access);
-        
+
         var actions = await fields.getActions(order, res.locals.__user, 'gzp');
 
         render(req, res, {
@@ -320,8 +320,16 @@ module.exports = {
                 order.date['gzp-build'] = new Date();
                 break;
             case 'start-gzp-build':
-                order.status = 'gzp-build';
+                if(order.gzp.need) {
+                    order.status = 'gzp-build';
+                } else {
+                    order.status = 'install-devices';
+                }
                 order.date['client-match'] = new Date();
+                break;
+            case 'end-install-devices':
+                order.status = 'network';
+                order.date['gzp-build'] = new Date();
                 break;
         }
 
