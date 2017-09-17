@@ -17,6 +17,7 @@ module.exports = function (app) {
         res.send('ok');
     });
 
+    app.get('/login', Auth.getLogin);
     app.post('/login', Auth.checkAuthorisation);
 
     app.all('*', Auth.isLoggedIn);
@@ -24,6 +25,7 @@ module.exports = function (app) {
     app.get('/logout', Auth.logout);
 
     app.get('/', Order.getMainPage);
+
 
     app.get('/search', Order.search);
 

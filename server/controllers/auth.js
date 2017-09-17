@@ -9,6 +9,11 @@ const Render = require('../render'),
 const View = require('../views');
 
 module.exports = {
+    getLogin: async (req, res) => {
+        if(req.session.__user) {
+            res.redirect('/');
+        } else render(req, res, 'login');
+    },
 
     isLoggedIn: async (req, res, next) => {
         if (req.session.__user) {
@@ -20,10 +25,11 @@ module.exports = {
             };
             next();
         } else {
-            if(req.path != '/login') {
-                var rstr = '/login' + ( (req.originalUrl.length>1) ? '?trg='+encodeURIComponent(req.originalUrl) : '' );
-                res.redirect(rstr);
-            } else render(req, res, 'login');
+            res.redirect('/login')
+            // if(req.path != '/login') {
+            //     var rstr = '/login' + ( (req.originalUrl.length>1) ? '?trg='+encodeURIComponent(req.originalUrl) : '' );
+            //     res.redirect(rstr);
+            // } else render(req, res, 'login');
         }
     },
 
