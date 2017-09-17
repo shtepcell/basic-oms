@@ -25,6 +25,10 @@ module.exports = function(opt, data){
                 elem: 'main',
                 content: [
                     {
+                        block: 'button-panel',
+                        type: 'b2b'
+                    },
+                    {
                         block: 'title',
                         elem: 'part',
                         content: 'Заявки для проработки отделом B2O'

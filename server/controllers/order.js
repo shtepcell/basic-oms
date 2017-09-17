@@ -33,12 +33,17 @@ const logger = require('./logger');
 module.exports = {
 
     getPageInit: async (req, res) => {
-        res.locals.services = await Service.find();
-        res.locals.template = await fields.getInitField();
+        if(res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o') {
 
-        render(req, res, {
-            viewName: 'orders/init'
-        });
+            res.locals.services = await Service.find();
+            res.locals.template = await fields.getInitField();
+
+            render(req, res, {
+                viewName: 'orders/init'
+            });
+        } else {
+            return render(req, res, { view: '404' });
+        }
     },
     getMainPage: async (req, res) => {
 
