@@ -56,6 +56,7 @@ module.exports = {
 
         var query;
         var dep = res.locals.__user.department.type;
+        var _dep = res.locals.__user.department._id;
         var cities = res.locals.__user.department.cities;
         cities = cities.map( item => {
             return {
@@ -65,11 +66,31 @@ module.exports = {
         var view = 'main';
         switch (dep) {
             case 'b2b':
-                query = {'$or': [{status: 'client-match'}, {status: 'client-notify'}]};
+                query = {
+                    '$and': [
+                        {
+                            '$or': [
+                                {status: 'client-match'},
+                                {status: 'client-notify'}
+                            ]
+                        },
+                        {
+                            'info.department': _dep
+                        }
+                    ]
+                };
+
                 view = 'mains/b2b';
                 break;
             case 'b2o':
-                query = {'$or': [{status: 'stop-build'}, {status: 'stop-pre'}, {status: 'all-pre'}]};
+                query = {
+                    '$or': [
+                        {status: 'stop-build'},
+                        {status: 'stop-pre'},
+                        {status: 'all-pre'},
+                        {'info.department': _dep}
+                    ]
+                };
                 view = 'mains/stop';
                 break;
             case 'net':
@@ -78,23 +99,32 @@ module.exports = {
                 break;
             case 'gus':
                 if(cities.length == 0) {
-                    // TODO: Сделать страницу для ошибок
-                    query = {status: 'gzp-pre'};
-                    view = 'mains/gus';
+                    query = { status: 'lololo' };
                 } else {
-                    query =
-                        {'$or': [{status: 'gzp-pre'}, {status: 'all-pre'}, {status: 'gzp-build'}, {status: 'install-devices'}]},
-                        {'$or': cities};
-                    view = 'mains/gus';
-                }
 
+                    query = {
+                        '$and': [
+                            {
+                                '$or': [
+                                    {status: 'gzp-pre'},
+                                    {status: 'all-pre'},
+                                    {status: 'gzp-build'},
+                                    {status: 'install-devices'}
+                                ]
+                            },
+                            {
+                                '$or': cities
+                            }
+                        ]
+                    };
+                }
+                view = 'mains/gus';
                 break;
             default:
             break;
         }
 
         var docs = await Order.paginate(query, { page: pageNumber, limit: perPage, populate: 'info.client info.service info.city'});
-
         if (!docs.docs.length)
         {
             if (pageNumber !== 1) {
@@ -127,6 +157,7 @@ module.exports = {
         if(data['date-request'])
             data['date-request'] = new Date(data['date-request']);
         data.initiator = await Account.findOne({login: res.locals.__user.login});
+        data.department = await Department.findOne({_id: res.locals.__user.department._id + ''});
 
         var order = {
             status: data.pre,
@@ -330,6 +361,14 @@ module.exports = {
             case 'end-install-devices':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
+                break;
+            case 'start-stop-build':
+                order.status = 'stop-build';
+                order.date['client-match'] = new Date();
+                break;
+            case 'end-build-stop':
+                order.status = 'client-notify';
+                order.date['stop-build'] = new Date();
                 break;
         }
 

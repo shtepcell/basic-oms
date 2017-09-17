@@ -23,6 +23,11 @@ var schema = mongoose.Schema({
             ref: 'Account',
             required : true
         },
+        department: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Department',
+            required : true
+        },
         relation: String,
         cms: String,
         'date-request': Date,
