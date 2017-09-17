@@ -69,7 +69,8 @@ var schema = mongoose.Schema({
         complete: Boolean,
         capability: Boolean,
         provider: {
-            type: String
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Provider'
         },
         contact: String,
         devices: String,

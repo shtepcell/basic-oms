@@ -42,7 +42,7 @@ module.exports = {
                 viewName: 'orders/init'
             });
         } else {
-            return render(req, res, { view: '404' });
+            render(req, res, { view: '404' });
         }
     },
     getMainPage: async (req, res) => {
@@ -164,6 +164,9 @@ module.exports = {
         data.initiator = await Account.findOne({login: res.locals.__user.login});
         data.department = await Department.findOne({_id: res.locals.__user.department._id + ''});
 
+        Object.keys(data).forEach( item => {
+            if(data[item] == '') data[item] = undefined;
+        })
         var order = {
             status: data.pre,
             info: data
@@ -218,144 +221,165 @@ module.exports = {
     },
 
     getOrderInfo: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
-        res.locals.order = order;
-        res.locals.template = await fields.getInfo(order);
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
+        if(order) {
+            res.locals.order = order;
+            res.locals.template = await fields.getInfo(order);
 
-        var actions = await fields.getActions(order, res.locals.__user, 'info');
+            var actions = await fields.getActions(order, res.locals.__user, 'info');
 
-        render(req, res, {
-            viewName: 'orders/order',
-            options: {
-                tab: 'info',
-                actions: actions
-            }
-        });
+            render(req, res, {
+                viewName: 'orders/order',
+                options: {
+                    tab: 'info',
+                    actions: actions
+                }
+            });
+
+        } else render(req, res, { view: '404' });
     },
 
     getOrderGZP: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
-        res.locals.order = order;
-
-        var access = false;
-        if ( (order.status == 'gzp-pre' || order.status == 'all-pre') && (res.locals.__user.department.type == 'gus' && res.locals.__user.department.cities.indexOf(order.info.city._id) >= 0)) {
-            access = 'gzp';
-        }
-        res.locals.template = await fields.getGZP(order, access);
-
-        var actions = await fields.getActions(order, res.locals.__user, 'gzp');
-
-        render(req, res, {
-            viewName: 'orders/order',
-            options: {
-                tab: 'gzp',
-                access: access,
-                actions: actions
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
+        if(order) {
+            res.locals.order = order;
+            var access = false;
+            if ( (order.status == 'gzp-pre' || order.status == 'all-pre') && (res.locals.__user.department.type == 'gus' && res.locals.__user.department.cities.indexOf(order.info.city._id) >= 0)) {
+                access = 'gzp';
             }
-        });
+            res.locals.template = await fields.getGZP(order, access);
+
+            var actions = await fields.getActions(order, res.locals.__user, 'gzp');
+
+            render(req, res, {
+                viewName: 'orders/order',
+                options: {
+                    tab: 'gzp',
+                    access: access,
+                    actions: actions
+                }
+            });
+
+        } else render(req, res, { view: '404' });
     },
 
     getOrderSTOP: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
-        res.locals.order = order;
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
 
-        var actions = await fields.getActions(order, res.locals.__user, 'stop');
-        var access = false;
+        if(order) {
+            res.locals.order = order;
 
-        if(order.status == 'all-pre' || order.status == 'stop-pre') {
-            if(res.locals.__user.department.type == 'b2o') access = 'stop';
-        }
-        res.locals.template = await fields.getSTOP(order, access);
+            var actions = await fields.getActions(order, res.locals.__user, 'stop');
+            var access = false;
 
-        render(req, res, {
-            viewName: 'orders/order',
-            options: {
-                tab: 'stop',
-                access: access,
-                actions: actions
+            if(order.status == 'all-pre' || order.status == 'stop-pre') {
+                if(res.locals.__user.department.type == 'b2o') access = 'stop';
             }
-        });
+            res.locals.template = await fields.getSTOP(order, access);
+
+            render(req, res, {
+                viewName: 'orders/order',
+                options: {
+                    tab: 'stop',
+                    access: access,
+                    actions: actions
+                }
+            });
+
+        } else render(req, res, { view: '404' });
     },
 
     getOrderHistory: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
-        res.locals.order = order;
-        res.locals.template = await fields.getInfo(order);
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
+        if(order) {
+            res.locals.order = order;
+            res.locals.template = await fields.getInfo(order);
 
-        render(req, res, {
-            viewName: 'orders/order',
-            options: {
-                tab: 'history'
-            }
-        });
+            render(req, res, {
+                viewName: 'orders/order',
+                options: {
+                    tab: 'history'
+                }
+            });
+
+        } else render(req, res, { view: '404' });
     },
 
     endPreGZP: async (req, res) => {
 
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
+        if( order ) {
+            order.gzp = req.body;
 
-        order.gzp = req.body;
+            if(order.status == 'gzp-pre') {
+                order.status = 'client-match';
+                order.date['gzp-pre'] = new Date();
+                order.gzp.complete = true;
+            }
 
-        if(order.status == 'gzp-pre') {
-            order.status = 'client-match';
-            order.date['gzp-pre'] = new Date();
-            order.gzp.complete = true;
-        }
+            if(order.status == 'all-pre') {
+                order.status = 'stop-pre';
+                order.date['gzp-pre'] = new Date();
+                order.gzp.complete = true;
+            }
 
-        if(order.status == 'all-pre') {
-            order.status = 'stop-pre';
-            order.date['gzp-pre'] = new Date();
-            order.gzp.complete = true;
-        }
-
-        order.save();
-        res.send({created: true})
+            order.save();
+            res.send({created: true})
+        } else res.send({created: false});
     },
 
     endPreSTOP: async (req, res) => {
 
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
+        if(order) {
+            order.stop = req.body;
+            var prvdr = parseClient(order.stop.provider);
 
-        order.stop = req.body;
+            order.stop.provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
+            console.log(prvdr);
+            if(order.stop.provider) {
+                if(order.status == 'stop-pre') {
+                    order.status = 'client-match';
+                    order.date['stop-pre'] = new Date();
+                    order.stop.complete = true;
+                }
 
-        if(order.status == 'stop-pre') {
-            order.status = 'client-match';
-            order.date['stop-pre'] = new Date();
-            order.stop.complete = true;
-        }
+                if(order.status == 'all-pre') {
+                    order.status = 'gzp-pre';
+                    order.date['stop-pre'] = new Date();
+                    order.stop.complete = true;
+                }
 
-        if(order.status == 'all-pre') {
-            order.status = 'gzp-pre';
-            order.date['stop-pre'] = new Date();
-            order.stop.complete = true;
-        }
+                order.save();
+                res.send({created: true})
 
-        order.save();
-        res.send({created: true})
+            } else res.status(400).send({errText : 'Уточните название провайдера'});
+        } else res.send({created: false})
     },
 
     changeStatus: async (req, res) => {
         var reqData = req.body;
         var order = await Order.findOne({id: req.params.id});
+        if( order) {
 
-        switch (reqData.to) {
-            case 'start-pre-stop':
+            switch (reqData.to) {
+                case 'start-pre-stop':
                 order.status = 'stop-pre';
                 order.date['client-match'] = new Date();
                 break;
-            case 'start-pre-gzp':
+                case 'start-pre-gzp':
                 order.status = 'gzp-pre';
                 order.date['client-match'] = new Date();
                 break;
-            case 'end-network':
+                case 'end-network':
                 order.status = 'client-notify';
                 order.date['network'] = new Date();
                 break;
-            case 'end-build':
+                case 'end-build':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
                 break;
-            case 'start-gzp-build':
+                case 'start-gzp-build':
                 if(order.gzp.need) {
                     order.status = 'gzp-build';
                 } else {
@@ -363,23 +387,24 @@ module.exports = {
                 }
                 order.date['client-match'] = new Date();
                 break;
-            case 'end-install-devices':
+                case 'end-install-devices':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
                 break;
-            case 'start-stop-build':
+                case 'start-stop-build':
                 order.status = 'stop-build';
                 order.date['client-match'] = new Date();
                 break;
-            case 'end-build-stop':
+                case 'end-build-stop':
                 order.status = 'client-notify';
                 order.date['stop-build'] = new Date();
                 break;
-        }
+            }
 
-        order.save()
+            order.save()
+            res.send(true);
 
-        res.send(true)
+        } else res.send(false);
 
     },
 
@@ -393,7 +418,7 @@ module.exports = {
 
 function parseClient(str) {
     var res = { type: '', name: ''};
-    for (var i = 0; i < str.length; i++) {
+    for (var i = 1; i < str.length; i++) {
         if(str[i] === ']') {
             res.name = str.slice(i+2, str.length);
             return res;

@@ -1,6 +1,6 @@
 module.exports = function(opt, data){
     var orders = data.orders;
-    
+
     var opt = opt || {},
         pagerId;
 

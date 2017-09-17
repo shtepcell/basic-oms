@@ -49,7 +49,7 @@ var allFields = {
             val: function (order) {
                 if(order.info['date-request'])
                     return common.dateToStr(order.info['date-request']);
-                else return '';
+                else return null;
             }
         },
         {
@@ -194,7 +194,7 @@ var allFields = {
             val: function (order) {
                 if(order.date['gzp-pre'])
                     return common.dateToStr(order.date['gzp-pre']);
-                else return '';
+                else return null;
             }
         },
         {
@@ -249,9 +249,11 @@ var allFields = {
             required: true,
             fill: true,
             val: function (order) {
-                if(order.gzp.need) {
-                    return 'Да';
-                } else return 'Нет';
+                if(order.gzp.complete)
+                    if(order.gzp.need) {
+                        return 'Да';
+                    } else return 'Нет';
+                else return null;
             }
         },
         {
@@ -261,9 +263,11 @@ var allFields = {
             required: true,
             fill: true,
             val: function (order) {
-                if(order.gzp.capability) {
-                    return 'Да';
-                } else return 'Нет';
+                if(order.gzp.complete)
+                    if(order.gzp.capability) {
+                        return 'Да';
+                    } else return 'Нет';
+                else return null;
             }
         },
         {
@@ -300,24 +304,86 @@ var allFields = {
     ],
     stop: [
         {
+            index: 'date-work',
+            name: 'Фактическая дата проработки заказа',
+            type: 'date',
+            val: function (order) {
+                if(order.date['stop-pre'])
+                    return common.dateToStr(order.date['stop-pre']);
+                else return null;
+            }
+        },
+        {
+            index: 'date-work-control',
+            name: 'Контрольная дата проработки заказа',
+            type: 'date',
+            val: function (order) {
+                if(order.date['client-match']) {
+                    var d = new Date(order.date['client-match'].setDate(order.date['client-match'].getDate() + 3));
+                    return common.dateToStr(d);
+                } else {
+                    var d = new Date(order.date['init'].setDate(order.date['init'].getDate() + 3))
+                    return common.dateToStr(d);
+                }
+            }
+        },
+        {
+            index: 'date-build',
+            name: 'Фактическая дата организации сервиса',
+            type: 'date',
+            val: function (order) {
+                if(order.date['stop-build'])
+                    return common.dateToStr(order.date['stop-build']);
+                else return null;
+            }
+        },
+        {
+            index: 'date-network',
+            name: 'Фактическая дата активации сервиса',
+            type: 'date',
+            val: function (order) {
+                if(order.date['network'])
+                    return common.dateToStr(order.date['network']);
+                else return null;
+            }
+        },
+        {
+            index: 'date-build-control',
+            name: 'Контрольная дата активации сервиса',
+            type: 'date',
+            val: function (order) {
+                if(order.date['client-match'] && order.date['stop-pre']) {
+                    var d = new Date(order.date['client-match'].setDate(order.date['client-match'].getDate() + order.stop.time));
+                    return common.dateToStr(d);
+                }
+            }
+        },
+        {
             index: 'capability',
             name: 'Техническая возможность',
             type: 'bool',
             fill: true,
             required: true,
             val: function (order) {
-                if(order.gzp.capability) {
-                    return 'Да';
-                } else return 'Нет';
+                if(order.stop.complete)
+                    if(order.stop.capability) {
+                        return 'Да';
+                    } else return 'Нет';
+                else return null;
             }
         },
-        // {
-        //     index: 'provider',
-        //     name: 'Провайдер',
-        //     type: 'Provider',
-        //     fill: true,
-        //     val: ['stop', 'provider', 'name']
-        // },
+        {
+            index: 'provider',
+            name: 'Провайдер',
+            type: 'suggest',
+            data: 'providers',
+            fill: true,
+            val: function (order) {
+                if(order.stop.complete)
+                    return `[${order.stop.provider.type}] ${order.stop.provider.name}`
+                else return null;
+            }
+        },
         {
             index: 'contact',
             name: 'Контакт с провайдером',
@@ -410,6 +476,7 @@ function getVal (order, path) {
         for (var j = 0; j < path.length; j++) {
             result = result[path[j]];
         }
+        if(result == '') result == null;
         return result;
     } else {
         return order[path];
@@ -693,11 +760,15 @@ module.exports = {
     getSTOP: async (order, access) => {
         var stop = allFields.stop;
         var ret = [];
-
+        var prvdrs = await Provider.find();
+        var data = {};
+        data.providers = prvdrs.map( item => {
+            return `[${item.type}] ${item.name}`
+        });
         stop.forEach( item => {
             if(!!access && (order.status == 'stop-pre' || order.status == 'all-pre') ) {
                 if(item.fill)
-                    ret.push(retField(item));
+                    ret.push(retField(item, data));
                 else if(typeof item.val == 'function') {
                     var val = item.val(order);
                     ret.push({

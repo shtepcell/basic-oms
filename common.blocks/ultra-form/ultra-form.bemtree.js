@@ -100,8 +100,14 @@ block('ultra-form').content()(function () {
                     }
                 ]
             };
+
+        if(item.val == null && item.disabled) {
+            _item = undefined;
+        }
+
         return _item;
     })
+
     if(this.ctx.escapeButton === undefined)
         ret.push({
                 elem: 'row',
