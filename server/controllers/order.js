@@ -171,7 +171,10 @@ module.exports = {
 
         var ordr = new Order({
             status: order.status,
-            info: order.info
+            info: order.info,
+            date: {
+                init: new Date()
+            }
          });
 
         Order.create(ordr);
@@ -250,11 +253,13 @@ module.exports = {
 
         if(order.status == 'gzp-pre') {
             order.status = 'client-match';
+            order.date['gzp-pre'] = new Date();
             order.gzp.complete = true;
         }
 
-        if(orer.status == 'all-pre') {
+        if(order.status == 'all-pre') {
             order.status = 'stop-pre';
+            order.date['gzp-pre'] = new Date();
             order.gzp.complete = true;
         }
 
@@ -270,11 +275,13 @@ module.exports = {
 
         if(order.status == 'stop-pre') {
             order.status = 'client-match';
+            order.date['stop-pre'] = new Date();
             order.stop.complete = true;
         }
 
         if(order.status == 'all-pre') {
             order.status = 'gzp-pre';
+            order.date['stop-pre'] = new Date();
             order.stop.complete = true;
         }
 
@@ -288,23 +295,24 @@ module.exports = {
 
         switch (reqData.to) {
             case 'start-pre-stop':
-                if(!order.stop) {
-                    order.status = 'stop-pre'
-                };
+                order.status = 'stop-pre';
+                order.date['client-match'] = new Date();
                 break;
             case 'start-pre-gzp':
-                if(!order.gzp) {
-                    order.status = 'gzp-pre';
-                }
+                order.status = 'gzp-pre';
+                order.date['client-match'] = new Date();
                 break;
             case 'end-network':
                 order.status = 'client-notify';
+                order.date['network'] = new Date();
                 break;
             case 'end-build':
                 order.status = 'network';
+                order.date['gzp-build'] = new Date();
                 break;
             case 'start-gzp-build':
                 order.status = 'gzp-build';
+                order.date['client-match'] = new Date();
                 break;
         }
 

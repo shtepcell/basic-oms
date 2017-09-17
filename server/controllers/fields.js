@@ -461,7 +461,7 @@ var actions = {
             to: 'start-pre-gzp',
             condition: function (user, order) {
                 var access = (order.info.initiator.department._id == user.department._id + '');
-                if(order.status == 'client-match' && access && !order.gzp) {
+                if(order.status == 'client-match' && access && !order.gzp.complete) {
                     return true;
                 } else return false;
             }
@@ -481,7 +481,7 @@ var actions = {
             to: 'start-gzp-build',
             condition: function (user, order) {
                 var access = (order.info.initiator.department._id == user.department._id + '');
-                if(order.status == 'client-match' && access && order.gzp) {
+                if(order.status == 'client-match' && access && order.gzp.complete) {
                     return true;
                 } else return false;
             }
@@ -587,7 +587,7 @@ module.exports = {
     getGZP: async (order, access) => {
         var info = allFields.gzp;
         var ret = [];
-        if(order.gzp.complete)
+        
         info.forEach( item => {
             if(access && order.status == 'gzp-pre') {
                 if(item.fill)

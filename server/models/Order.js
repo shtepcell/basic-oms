@@ -74,6 +74,19 @@ var schema = mongoose.Schema({
         organization_info: String,
         'cost-once': String,
         'cost-monthly': String
+    },
+    date: {
+        init: Date,
+        'client-match': Date,
+        'client-notify': Date,
+        'gzp-pre': Date,
+        'gzp-build': Date,
+        'install-devices': Date,
+        'stop-pre': Date,
+        'stop-build': Date,
+        'network': Date,
+        'succes': Date,
+        'reject': Date
     }
     // history: []
 });
