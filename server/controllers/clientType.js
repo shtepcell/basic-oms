@@ -14,7 +14,7 @@ module.exports = {
         var pagerId = 'client-types',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
-            perPage = 2; // TODO брать из конфига?
+            perPage = 30; // TODO брать из конфига?
 
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
