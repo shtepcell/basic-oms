@@ -1,6 +1,6 @@
 modules.define(
-    'inline-form', 
-    ['select', 'input'], 
+    'inline-form',
+    ['select', 'input'],
     function(provide, Select, Input, BEMDOM) {
 
 provide(BEMDOM.declMod({ modName : 'type', modVal : 'cities' }, {
@@ -26,8 +26,8 @@ provide(BEMDOM.declMod({ modName : 'type', modVal : 'cities' }, {
             return;
         }
 
-        if (['г.', 'пгт.', 'с.'].indexOf(select.getVal()) == -1)
-        { 
+        if (['г.', 'пгт.', 'с.', 'пос.'].indexOf(select.getVal()) == -1)
+        {
             select.setMod('errored');
             this._errorText += 'Ошибка выбора типа населенного пункта\n';
             err = true
@@ -35,20 +35,20 @@ provide(BEMDOM.declMod({ modName : 'type', modVal : 'cities' }, {
 
         inputVal = inputName.getVal();
 
-        if (inputVal.length <= 0 || inputVal.length >= 25) 
+        if (inputVal.length <= 0 || inputVal.length >= 25)
         {
             inputName.setMod('errored');
             this._errorText += 'Название города не может быть пустым или длиннее 25 символов\n';
             err = true
         }
-        
+
         if (!err)
             return {
                 type: select.getVal(),
                 name: inputName.getVal()
             }
     }
-}, 
+},
 {}));
 
 });

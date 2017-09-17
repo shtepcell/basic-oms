@@ -129,12 +129,14 @@ module.exports = {
 
         if(dep && city) {
             var indx = dep.cities.indexOf( req.params.city );
-            if(indx >= 0) dep.cities.splice(indx, 1);
+            if(indx >= 0)  {
+                dep.cities.splice(indx, 1);
+            }
         }
-        console.log(dep);
+        city.using(false);
         var done = await saver(dep);
         if(!!done)
-        res.send({ok: 'ok'});
+            res.send({ok: 'ok'});
     }
 };
 

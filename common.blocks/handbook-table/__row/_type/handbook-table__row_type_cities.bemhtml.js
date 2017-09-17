@@ -10,7 +10,7 @@ block('handbook-table').elem('row').elemMod('type', 'cities')(
                 block: 'handbook-table',
                 elem: 'cell',
                 content: this.ctx.cellsData.type
-            }, 
+            },
             {
                 block: 'handbook-table',
                 elem: 'cell',
@@ -41,10 +41,14 @@ block('handbook-table').elem('row').elemMod('type', 'cities').elemMod('edited', 
                         {
                             val: 'пгт.',
                             text: 'пгт.'
-                        }, 
+                        },
                         {
                             val: 'с.',
                             text: 'с.'
+                        },
+                        {
+                            val: 'пос.',
+                            text: 'пос.'
                         }],
                     name: 'lalalal',
                     val: this.ctx.cellsData.type,

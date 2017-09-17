@@ -10,10 +10,14 @@ block('inline-form').mod('type', 'cities').elem('controls').def()(function() {
                 {
                     val: 'пгт.',
                     text: 'пгт.'
-                }, 
+                },
                 {
                     val: 'с.',
                     text: 'с.'
+                },
+                {
+                    val: 'пос.',
+                    text: 'пос.'
                 }],
             name: 'type',
             val: 'г.',

@@ -10,7 +10,7 @@ var schema = mongoose.Schema( {
 	},
 	type : {
 		type: String,
-		enum: ['г.', 'пгт.', 'с.'],
+		enum: ['г.', 'пгт.', 'с.', 'пос.'],
 		required : true
 	},
 	usage : {
@@ -29,12 +29,8 @@ schema.methods.using = function (flag) {
         this.usage = true;
         this.save();
     } else {
-        Department.find({cities: this}).then( deps => {
-            if(deps.length == 0) {
-                this.usage = false;
-                return this.save();
-            }
-        })
+        this.usage = false;
+        return this.save();
     }
 }
 var city = mongoose.model('City', schema);
