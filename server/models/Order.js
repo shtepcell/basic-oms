@@ -57,7 +57,8 @@ var schema = mongoose.Schema({
         capability: Boolean,
         time: Number,
         'cost-once': String,
-        'cost-monthly': String
+        'cost-monthly': String,
+        add_info: String
     },
     stop: {
         complete: Boolean,

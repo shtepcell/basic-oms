@@ -3,7 +3,6 @@ module.exports = function(opt, data) {
     // console.log(data.template);
     var type = {};
     var actions = opt.actions;
-    opt.access = true;
 
     var controls = actions;
     switch (opt.tab) {
@@ -94,7 +93,7 @@ module.exports = function(opt, data) {
                 action: type.action,
                 method: 'POST',
                 text: 'Завершить проработку',
-                escapeButton: opt.access && ((data.order.status == 'gzp-pre' && opt.tab == 'gzp') || (data.order.status == 'stop-pre' && opt.tab == 'stop')),
+                escapeButton: (opt.access == 'stop' && opt.tab == 'stop') || (opt.access == 'gzp' && opt.tab == 'gzp') ,
                 mods: {
                     theme: 'order'
                 },

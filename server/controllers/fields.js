@@ -2,7 +2,7 @@ const Service = require('../models/Service');
 const Client = require('../models/Client');
 const City = require('../models/City');
 const Provider = require('../models/Provider');
-
+const common = require('./common');
 var allFields = {
     'info': [
         {
@@ -14,7 +14,9 @@ var allFields = {
             index: 'date',
             name: 'Дата инициации заказа',
             type: 'date',
-            val: ['history']
+            val: function (order) {
+                return common.dateToStr(order.date.init);
+            }
         },
         {
             index: 'status',
@@ -43,7 +45,12 @@ var allFields = {
             index: 'date-request',
             name: 'Требуемая дата организации',
             type: 'date',
-            fill: true
+            fill: true,
+            val: function (order) {
+                if(order.info['date-request'])
+                    return common.dateToStr(order.info['date-request']);
+                else return '';
+            }
         },
         {
             index: 'cms',
@@ -182,23 +189,58 @@ var allFields = {
     gzp: [
         {
             index: 'date-work',
-            name: 'Дата проработки заказа',
-            type: 'date'
+            name: 'Фактическая дата проработки заказа',
+            type: 'date',
+            val: function (order) {
+                if(order.date['gzp-pre'])
+                    return common.dateToStr(order.date['gzp-pre']);
+                else return '';
+            }
         },
         {
             index: 'date-work-control',
             name: 'Контрольная дата проработки заказа',
-            type: 'date'
+            type: 'date',
+            val: function (order) {
+                if(order.date['client-match']) {
+                    var d = new Date(order.date['client-match'].setDate(order.date['client-match'].getDate() + 3));
+                    return common.dateToStr(d);
+                } else {
+                    var d = new Date(order.date['init'].setDate(order.date['init'].getDate() + 3))
+                    return common.dateToStr(d);
+                }
+            }
         },
         {
             index: 'date-build',
-            name: 'Дата организации заказа',
-            type: 'date'
+            name: 'Фактическая дата организации сервиса',
+            type: 'date',
+            val: function (order) {
+                if(order.date['gzp-build'])
+                    return common.dateToStr(order.date['gzp-build']);
+                else return null;
+            }
+        },
+        {
+            index: 'date-network',
+            name: 'Фактическая дата активации сервиса',
+            type: 'date',
+            val: function (order) {
+                if(order.date['network'])
+                    return common.dateToStr(order.date['network']);
+                else return null;
+            }
         },
         {
             index: 'date-build-control',
-            name: 'Контрольная дата организации заказа',
-            type: 'date'
+            name: 'Контрольная дата активации сервиса',
+            type: 'date',
+            val: function (order) {
+                if(order.date['client-match'] && order.date['gzp-pre']) {
+                    var d = new Date(order.date['client-match'].setDate(order.date['client-match'].getDate() + order.gzp.time));
+                    return common.dateToStr(d);
+                }
+            }
         },
         {
             index: 'need',
@@ -242,11 +284,18 @@ var allFields = {
         },
         {
             index: 'cost-monthly',
-            name: 'Ежемесячная стоимость организации',
+            name: 'Операционные затраты ежемесячные',
             type: 'text',
             required: true,
             fill: true,
             val: ['gzp', 'cost-monthly']
+        },
+        {
+            index: 'add_info',
+            name: 'Дополнительная информация',
+            type: 'text',
+            fill: true,
+            val: ['gzp', 'add_info']
         }
     ],
     stop: [
@@ -471,7 +520,7 @@ var actions = {
             to: 'start-pre-stop',
             condition: function (user, order) {
                 var access = (order.info.initiator.department._id == user.department._id + '');
-                if(order.status == 'client-match' && access && !order.stop) {
+                if(order.status == 'client-match' && access && !order.stop.complete) {
                     return true;
                 } else return false;
             }
@@ -491,7 +540,7 @@ var actions = {
             to: 'start-stop-build',
             condition: function (user, order) {
                 var access = (order.info.initiator.department._id == user.department._id + '');
-                if(order.status == 'client-match' && access && order.stop) {
+                if(order.status == 'client-match' && access && order.stop.complete) {
                     return true;
                 } else return false;
             }
@@ -587,9 +636,9 @@ module.exports = {
     getGZP: async (order, access) => {
         var info = allFields.gzp;
         var ret = [];
-        
+
         info.forEach( item => {
-            if(access && order.status == 'gzp-pre') {
+            if(!!access && (order.status == 'all-pre' || order.status == 'gzp-pre')) {
                 if(item.fill)
                     ret.push(retField(item));
                 else if(typeof item.val == 'function') {
@@ -631,12 +680,12 @@ module.exports = {
         return ret;
     },
 
-    getSTOP: async (order) => {
+    getSTOP: async (order, access) => {
         var stop = allFields.stop;
         var ret = [];
 
         stop.forEach( item => {
-            if(order.status == 'stop-pre') {
+            if(!!access && (order.status == 'stop-pre' || order.status == 'all-pre') ) {
                 if(item.fill)
                     ret.push(retField(item));
                 else if(typeof item.val == 'function') {

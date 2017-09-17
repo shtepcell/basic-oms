@@ -69,7 +69,7 @@ module.exports = {
                 view = 'mains/b2b';
                 break;
             case 'b2o':
-                query = {'$or': [{status: 'stop-build'}, {status: 'stop-pre'}]};
+                query = {'$or': [{status: 'stop-build'}, {status: 'stop-pre'}, {status: 'all-pre'}]};
                 view = 'mains/stop';
                 break;
             case 'net':
@@ -201,8 +201,12 @@ module.exports = {
         var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
         res.locals.order = order;
 
-        var access = (res.locals.__user.department.type == 'gus' && res.locals.__user.department.cities.indexOf(order.info.city._id) >= 0);
+        var access = false;
+        if (res.locals.__user.department.type == 'gus' && res.locals.__user.department.cities.indexOf(order.info.city._id) >= 0) {
+            access = 'gzp';
+        }
         res.locals.template = await fields.getGZP(order, access);
+        
         var actions = await fields.getActions(order, res.locals.__user, 'gzp');
 
         render(req, res, {
@@ -218,15 +222,20 @@ module.exports = {
     getOrderSTOP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
         res.locals.order = order;
-        res.locals.template = await fields.getSTOP(order);
 
         var actions = await fields.getActions(order, res.locals.__user, 'stop');
+        var access = false;
+
+        if(order.status == 'all-pre' || order.status == 'stop-pre') {
+            if(res.locals.__user.department.type == 'b2o') access = 'stop';
+        }
+        res.locals.template = await fields.getSTOP(order, access);
 
         render(req, res, {
             viewName: 'orders/order',
             options: {
                 tab: 'stop',
-                access: true,
+                access: access,
                 actions: actions
             }
         });
