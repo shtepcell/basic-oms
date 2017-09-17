@@ -1,6 +1,7 @@
 const Service = require('../models/Service');
 const Client = require('../models/Client');
 const City = require('../models/City');
+const Provider = require('../models/Provider');
 
 var allFields = {
     'info': [
@@ -203,6 +204,7 @@ var allFields = {
             index: 'need',
             name: 'Необходимость в ГЗП',
             type: 'bool',
+            required: true,
             fill: true,
             val: function (order) {
                 if(order.gzp.need) {
@@ -214,6 +216,7 @@ var allFields = {
             index: 'capability',
             name: 'Техническая возможность',
             type: 'bool',
+            required: true,
             fill: true,
             val: function (order) {
                 if(order.gzp.capability) {
@@ -225,6 +228,7 @@ var allFields = {
             index: 'time',
             name: 'Срок организации',
             type: 'text',
+            required: true,
             fill: true,
             val: ['gzp', 'time']
         },
@@ -232,6 +236,7 @@ var allFields = {
             index: 'cost-once',
             name: 'Одноразовая стоимость организации',
             type: 'text',
+            required: true,
             fill: true,
             val: ['gzp', 'cost-once']
         },
@@ -239,76 +244,103 @@ var allFields = {
             index: 'cost-monthly',
             name: 'Ежемесячная стоимость организации',
             type: 'text',
+            required: true,
             fill: true,
             val: ['gzp', 'cost-monthly']
         }
     ],
-    // stop: {
-    //     capability: {
-    //         name: 'Техническая возможность',
-    //         type: 'Boolean',
-    //         fill: true
-    //     },
-    //     provider: {
-    //         name: 'Провайдер',
-    //         type: 'Provider',
-    //         fill: true
-    //     },
-    //     contact: {
-    //         name: 'Контакт с провайдером',
-    //         type: 'text',
-    //         maxLenght: 50,
-    //         fill: true
-    //     },
-    //     devices: {
-    //         name: 'Оборудование',
-    //         type: 'text',
-    //         maxLenght: 50,
-    //         fill: true
-    //     },
-    //     add_devices: {
-    //         name: 'Дополнительное оборудование',
-    //         type: 'text',
-    //         maxLenght: 50,
-    //         fill: true
-    //     },
-    //     interfaces: {
-    //         name: 'Интерфейсы',
-    //         type: 'text',
-    //         maxLenght: 50,
-    //         fill: true
-    //     },
-    //     time: {
-    //         name: 'Срок организации',
-    //         type: 'text',
-    //         maxLenght: 50,
-    //         fill: true
-    //     },
-    //     add_info: {
-    //         name: 'Дополнительная информация',
-    //         type: 'text',
-    //         maxLenght: 50,
-    //         fill: true
-    //     },
-    //     organization_info: {
-    //         name: 'Информация об организации',
-    //         type: 'text',
-    //         maxLenght: 50,
-    //         fill: true
-    //     },
-    //     cost: {
-    //         once: {
-    //             name: 'Одноразовая стоимость организации',
-    //             type: 'Number',
-    //             fill: true
-    //         },
-    //         monthly: {
-    //             name: 'Ежемесячная стоимость организации',
-    //             type: 'Number',
-    //             fill: true
-    //         }
-    //     }
-    // },
+    stop: [
+        {
+            index: 'capability',
+            name: 'Техническая возможность',
+            type: 'bool',
+            fill: true,
+            required: true,
+            val: function (order) {
+                if(order.gzp.capability) {
+                    return 'Да';
+                } else return 'Нет';
+            }
+        },
+        // {
+        //     index: 'provider',
+        //     name: 'Провайдер',
+        //     type: 'Provider',
+        //     fill: true,
+        //     val: ['stop', 'provider', 'name']
+        // },
+        {
+            index: 'contact',
+            name: 'Контакт с провайдером',
+            type: 'text',
+            maxLenght: 50,
+            fill: true,
+            val: ['stop', 'contact']
+        },
+        {
+            index: 'devices',
+            name: 'Оборудование',
+            type: 'text',
+            maxLenght: 50,
+            fill: true,
+            val: ['stop', 'devices']
+        },
+        {
+            index: 'add_devices',
+            name: 'Дополнительное оборудование',
+            type: 'text',
+            maxLenght: 50,
+            fill: true,
+            val: ['stop', 'add_devices']
+        },
+        {
+            index: 'interfaces',
+            name: 'Интерфейсы',
+            type: 'text',
+            maxLenght: 50,
+            fill: true,
+            val: ['stop', 'interfaces']
+        },
+        {
+            index: 'time',
+            name: 'Срок организации',
+            type: 'text',
+            required: true,
+            maxLenght: 50,
+            fill: true,
+            val: ['stop', 'time']
+        },
+        {
+            index: 'add_info',
+            name: 'Дополнительная информация',
+            type: 'text',
+            maxLenght: 50,
+            fill: true,
+            val: ['stop', 'add_info']
+        },
+        {
+            index: 'organization_info',
+            name: 'Информация об организации',
+            type: 'text',
+            maxLenght: 50,
+            fill: true,
+            val: ['stop', 'organization_info']
+        },
+        {
+            index: 'cost-once',
+            name: 'Одноразовая стоимость организации',
+            type: 'text',
+            fill: true,
+            val: ['stop', 'cost-once']
+        },
+        {
+            index: 'cost-monthly',
+            name: 'Ежемесячная стоимость организации',
+            type: 'text',
+            fill: true,
+            val: ['stop', 'cost-monthly']
+        }
+    ]
         // close: {
         //     file: {
         //         name: 'Договор',
@@ -487,6 +519,19 @@ var actions = {
                 else return false;
             }
         }
+    ],
+    stop: [
+        {
+            text: 'Организация завершена',
+            to: 'end-build-stop',
+            condition: function (user, order) {
+                if( order.status == 'stop-build' &&
+                    user.department.type == 'b2o') {
+                        return true;
+                    }
+                else return false;
+            }
+        }
     ]
 };
 
@@ -542,8 +587,7 @@ module.exports = {
     getGZP: async (order, access) => {
         var info = allFields.gzp;
         var ret = [];
-
-        console.log( order);
+        if(order.gzp.complete)
         info.forEach( item => {
             if(access && order.status == 'gzp-pre') {
                 if(item.fill)
@@ -584,6 +628,52 @@ module.exports = {
             }
         });
 
+        return ret;
+    },
+
+    getSTOP: async (order) => {
+        var stop = allFields.stop;
+        var ret = [];
+
+        stop.forEach( item => {
+            if(order.status == 'stop-pre') {
+                if(item.fill)
+                    ret.push(retField(item));
+                else if(typeof item.val == 'function') {
+                    var val = item.val(order);
+                    ret.push({
+                        desc: item.name,
+                        disabled: true,
+                        val: val
+                    })
+                } else {
+                    var val = getVal(order, item.val);
+                    ret.push({
+                        desc: item.name,
+                        disabled: true,
+                        val: val
+                    })
+                }
+            } else {
+
+                if(!item.onlyInit)
+                    if(typeof item.val == 'function') {
+                        var val = item.val(order);
+                        ret.push({
+                            desc: item.name,
+                            disabled: true,
+                            val: val
+                        })
+                    } else {
+                        var val = getVal(order, item.val);
+                        ret.push({
+                            desc: item.name,
+                            disabled: true,
+                            val: val
+                        })
+                    }
+            }
+        });
         return ret;
     },
 

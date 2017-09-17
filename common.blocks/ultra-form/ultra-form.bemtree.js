@@ -102,8 +102,29 @@ block('ultra-form').content()(function () {
             };
         return _item;
     })
+    if(this.ctx.escapeButton === undefined)
+        ret.push({
+                elem: 'row',
+                content: {
+                    elem: 'cell',
+                    content: {
+                        block: 'button',
+                        mods: {
+                            theme: 'islands',
+                            size: 'm',
+                            type: 'submit'
+                        },
+                        mix: {
+                            block: 'button',
+                            elem: 'create'
+                        },
+                        text: this.ctx.text
+                    }
+                }
 
-    if(!this.ctx.escapeButton)
+            });
+
+    if(this.ctx.escapeButton)
         ret.push({
                 elem: 'row',
                 content: {

@@ -68,6 +68,10 @@ module.exports = {
                 query = {'$or': [{status: 'client-match'}, {status: 'client-notify'}]};
                 view = 'mains/b2b';
                 break;
+            case 'b2o':
+                query = {'$or': [{status: 'stop-build'}, {status: 'stop-pre'}]};
+                view = 'mains/stop';
+                break;
             case 'net':
                 query = {status: 'network'};
                 view = 'mains/net';
@@ -211,7 +215,7 @@ module.exports = {
     getOrderSTOP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
         res.locals.order = order;
-        res.locals.template = await fields.getInfo(order);
+        res.locals.template = await fields.getSTOP(order);
 
         var actions = await fields.getActions(order, res.locals.__user, 'stop');
 
@@ -219,6 +223,7 @@ module.exports = {
             viewName: 'orders/order',
             options: {
                 tab: 'stop',
+                access: true,
                 actions: actions
             }
         });
@@ -237,11 +242,9 @@ module.exports = {
         });
     },
 
-    endPre: async (req, res) => {
+    endPreGZP: async (req, res) => {
 
         var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
-
-        console.log(req.body);
 
         order.gzp = req.body;
 
@@ -249,7 +252,31 @@ module.exports = {
             order.status = 'client-match';
             order.gzp.complete = true;
         }
-        // else Проверить на наличие всех прработок если это all-pre
+
+        if(orer.status == 'all-pre') {
+            order.status = 'stop-pre';
+            order.gzp.complete = true;
+        }
+
+        order.save();
+        res.send({created: true})
+    },
+
+    endPreSTOP: async (req, res) => {
+
+        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city');
+
+        order.stop = req.body;
+
+        if(order.status == 'stop-pre') {
+            order.status = 'client-match';
+            order.stop.complete = true;
+        }
+
+        if(order.status == 'all-pre') {
+            order.status = 'gzp-pre';
+            order.stop.complete = true;
+        }
 
         order.save();
         res.send({created: true})

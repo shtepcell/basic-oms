@@ -59,32 +59,22 @@ var schema = mongoose.Schema({
         'cost-once': String,
         'cost-monthly': String
     },
-    // stop: {
-    //     capability: Boolean,
-    //     provider: {
-    //         type: String
-    //     },
-    //     contact: String,
-    //     devices: String,
-    //     add_devices: String,
-    //     interfaces: String,
-    //     time: Number,
-    //     add_info: String,
-    //     organization_info: String,
-    //     cost: {
-    //         once: Number,
-    //         monthly: Number
-    //     }
-    // },
-    // address: {
-    //     city: String, //TODO: привязка к городу
-    //     street: String, //TODO: привязка к удице
-    //     adds: String
-    // },
-    // close: {
-    //     file: String,
-    //     date: Date
-    // },
+    stop: {
+        complete: Boolean,
+        capability: Boolean,
+        provider: {
+            type: String
+        },
+        contact: String,
+        devices: String,
+        add_devices: String,
+        interfaces: String,
+        time: Number,
+        add_info: String,
+        organization_info: String,
+        'cost-once': String,
+        'cost-monthly': String
+    }
     // history: []
 });
 

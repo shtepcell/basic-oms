@@ -47,7 +47,9 @@ module.exports = function (app) {
     app.get('/order/:id/stop', Order.getOrderSTOP);
     app.get('/order/:id/history', Order.getOrderHistory);
 
-    app.post('/order/:id/gzp', Order.endPre);
+    app.post('/order/:id/gzp', Order.endPreGZP);
+    app.post('/order/:id/stop', Order.endPreSTOP);
+
 
     app.get('/profile', Account.getProfile);
     app.post('/profile', Account.selfEdit);
