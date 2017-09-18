@@ -398,7 +398,7 @@ module.exports = {
                 order.date['client-match'] = new Date();
                 break;
                 case 'end-build-stop':
-                order.status = 'client-notify';
+                order.status = 'network';
                 order.date['stop-build'] = new Date();
                 break;
             }
