@@ -336,10 +336,9 @@ module.exports = {
         var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
         if(order) {
             order.stop = req.body;
-            var prvdr = parseClient(order.stop.provider);
+            var prvdr = parseClient(req.body.provider);
 
             order.stop.provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
-            console.log(prvdr);
             if(order.stop.provider) {
                 if(order.status == 'stop-pre') {
                     order.status = 'client-match';
