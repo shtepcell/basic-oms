@@ -146,6 +146,9 @@ module.exports = {
                 records: docs.total,
                 perPage: docs.limit
             };
+            docs.docs.forEach( item => {
+                item.status = stages[item.status];
+            });
             res.locals.orders = docs.docs;
             render(req, res, {
                 viewName: view,

@@ -3,6 +3,22 @@ const Client = require('../models/Client');
 const City = require('../models/City');
 const Provider = require('../models/Provider');
 const common = require('./common');
+
+var stages = {
+    'init': 'Инициация заказа',
+    'client-match': 'Согласование с клиентом',
+    'client-notify': 'Уведомление клиента',
+    'all-pre': 'Проработка по ГЗП/STOP',
+    'gzp-pre': 'Проработка по ГЗП',
+    'gzp-build': 'Организация ГЗП',
+    'install-devices': 'Установка оборудования',
+    'stop-pre': 'Проработка по STOP/VSAT',
+    'stop-build': 'Организация STOP/VSAT',
+    'network': 'Настройка сети',
+    'succes': 'Завершение обработки',
+    'reject': 'Отклонение'
+};
+
 var allFields = {
     'info': [
         {
@@ -22,7 +38,9 @@ var allFields = {
             index: 'status',
             name: 'Текущий статус',
             type: 'default',
-            val: 'status'
+            val: function (order) {
+                return stages[order.status];
+            }
         },
         {
             index: 'relation',
