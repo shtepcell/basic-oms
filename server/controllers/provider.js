@@ -60,7 +60,7 @@ module.exports = {
 
     create: async (req, res) => {
         var obj = {
-            name: req.body.name,
+            name: req.body.name.trim(),
             type: req.body.type
         };
 
@@ -90,7 +90,7 @@ module.exports = {
         var reqData = req.body,
             hasClone = false;
 
-        var prvdr = await Provider.findOne({ name: reqData.obj.name, type: reqData.obj.type})
+        var prvdr = await Provider.findOne({ name: reqData.obj.name.trim(), type: reqData.obj.type})
 
         if (prvdr != null && prvdr._id != reqData.obj._id) {
             res.status(400).send({ errText: 'Провайдер с таким названием уже есть в базе.' });
@@ -108,7 +108,7 @@ module.exports = {
             name: prvdr.name,
             type: prvdr.type
         };
-        prvdr.name = reqData.obj.name;
+        prvdr.name = reqData.obj.name.trim();
         prvdr.type = reqData.obj.type;
 
         var done = await saver(prvdr);

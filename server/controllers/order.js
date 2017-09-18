@@ -162,14 +162,18 @@ module.exports = {
     init: async (req, res) => {
 
         var data = req.body;
+
+        Object.keys(data).forEach( item => {
+            data[item] = data[item].trim();
+            if(data[item] == '') data[item] = undefined;
+        });
+
         if(data['date-request'])
             data['date-request'] = new Date(data['date-request']);
         data.initiator = await Account.findOne({login: res.locals.__user.login});
         data.department = await Department.findOne({_id: res.locals.__user.department._id + ''});
 
-        Object.keys(data).forEach( item => {
-            if(data[item] == '') data[item] = undefined;
-        })
+
         var order = {
             status: data.pre,
             info: data
@@ -312,6 +316,10 @@ module.exports = {
 
         var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
         if( order ) {
+            Object.keys(req.body).forEach( item => {
+                req.body[item] = req.body[item].trim();
+                if(req.body[item] == '') req.body[item] = undefined;
+            });
             order.gzp = req.body;
 
             if(order.status == 'gzp-pre') {
@@ -335,6 +343,10 @@ module.exports = {
 
         var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
         if(order) {
+            Object.keys(req.body).forEach( item => {
+                req.body[item] = req.body[item].trim();
+                if(req.body[item] == '') req.body[item] = undefined;
+            });
             order.stop = req.body;
             var prvdr = parseClient(req.body.provider);
 

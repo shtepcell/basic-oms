@@ -61,7 +61,7 @@ module.exports = {
 
     create: async (req, res) => {
         var obj = {
-            name: req.body.name,
+            name: req.body.name.trim(),
             typeId: req.body.typeId
         };
 
@@ -103,7 +103,7 @@ module.exports = {
             prevClientType;
 
 
-        var client = await Client.findOne({ name: reqData.obj.name, type: clientType});
+        var client = await Client.findOne({ name: reqData.obj.name.trim(), type: clientType});
 
         if (client != null && client._id != reqData.obj._id) {
             res.status(400).send({ errText: 'Такой клиент уже существует в системе' });
@@ -130,7 +130,7 @@ module.exports = {
         };
         var oldCT = client.type;
 
-        client.name = reqData.obj.name;
+        client.name = reqData.obj.name.trim();
         client.type = clientType;
 
         var done = await saver(client);

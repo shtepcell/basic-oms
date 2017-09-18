@@ -61,7 +61,7 @@ module.exports = {
 
     create: async (req, res) => {
         var obj = {
-            name: req.body.name,
+            name: req.body.name.trim(),
             type: req.body.type
         };
 
@@ -88,7 +88,7 @@ module.exports = {
     edit: async (req, res) => {
         var reqData = req.body;
 
-        var city = await City.findOne({ name: reqData.obj.name, type: reqData.obj.type})
+        var city = await City.findOne({ name: reqData.obj.name.trim(), type: reqData.obj.type})
 
         if (city != null && city._id != reqData.obj._id ) {
             res.status(400).send({ errText: 'Город с таким названием уже есть в базе.' });
@@ -104,7 +104,7 @@ module.exports = {
 
         var oldCity = { name: city.name, type: city.type };
 
-        city.name = reqData.obj.name;
+        city.name = reqData.obj.name.trim();
         city.type = reqData.obj.type;
 
         var done = await saver(city);
