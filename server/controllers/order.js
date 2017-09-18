@@ -200,7 +200,9 @@ module.exports = {
 
         order.info.service = await Service.findOne({ _id: order.info.service });
 
-        var tmpCity = await City.find({ name: order.info.city });
+        order.info.city = parserCity(order.info.city);
+
+        var tmpCity = await City.find({ type: order.info.city.type, name: order.info.city.name });
 
         if(tmpCity.length == 0) {
             res.status(400).send({ errText: 'Такого города не существует.' });
@@ -223,7 +225,8 @@ module.exports = {
             }
          });
 
-        Order.create(ordr);
+        var done = await Order.create(ordr);
+        logger.info(`Init Order #${ done.id } | ${ done.status } | ${ done.info.client.name } | ${done.info.city.type} ${done.info.city.name}`, res.locals.__user);
         res.send({created: true})
     },
 
@@ -334,7 +337,9 @@ module.exports = {
                 order.gzp.complete = true;
             }
 
-            order.save();
+            var done = await order.save();
+            if(done)
+                logger.info(`End pre-gzp order #${ done.id }`, res.locals.__user);
             res.send({created: true})
         } else res.send({created: false});
     },
@@ -364,7 +369,9 @@ module.exports = {
                     order.stop.complete = true;
                 }
 
-                order.save();
+                var done = await order.save();
+                if(done)
+                    logger.info(`End pre-stop order #${ done.id }`, res.locals.__user);
                 res.send({created: true})
 
             } else res.status(400).send({errText : 'Уточните название провайдера'});
@@ -415,7 +422,9 @@ module.exports = {
                 break;
             }
 
-            order.save()
+            var done = await order.save();
+            if(done)
+                logger.info(`${reqData.to} order #${ done.id }`, res.locals.__user);
             res.send(true);
 
         } else res.send(false);
@@ -439,4 +448,15 @@ function parseClient(str) {
         } else res.type += ''+str[i];
     }
     return 'err';
+}
+
+function parserCity(str) {
+    var res = { type: '', name: ''};
+    for (var i = 0; i < str.length; i++) {
+        if(str[i] === '.') {
+            res.type += '.';
+            res.name = str.slice(i+2, str.length);
+            return res;
+        } else res.type += ''+str[i];
+    }
 }

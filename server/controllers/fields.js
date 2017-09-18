@@ -144,7 +144,9 @@ var allFields = {
             data: 'cities',
             fill: true,
             required: true,
-            val:  ['info', 'city', 'name']
+            val: function (order) {
+                return `${order.info.city.type} ${order.info.city.name}`
+            }
         },
         {
             index: 'street',
@@ -831,7 +833,7 @@ module.exports = {
         var cities = await City.find();
 
         var data = {};
-        data.cities = cities.map( item => `${item.name}` );
+        data.cities = cities.map( item => `${item.type} ${item.name}` );
 
         data.services = services.map( item => {
             return {
