@@ -35,10 +35,10 @@ provide(BEMDOM.declMod({ modName : 'type', modVal : 'cities' }, {
 
         inputVal = inputName.getVal();
 
-        if (inputVal.length <= 0 || inputVal.length >= 25)
+        if (inputVal.length <= 0 || inputVal.length >= 50)
         {
             inputName.setMod('errored');
-            this._errorText += 'Название города не может быть пустым или длиннее 25 символов\n';
+            this._errorText += 'Название города не может быть пустым или длиннее 50 символов\n';
             err = true
         }
 

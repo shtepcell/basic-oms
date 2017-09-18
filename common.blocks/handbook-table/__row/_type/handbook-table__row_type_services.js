@@ -1,6 +1,6 @@
 modules.define(
-    'handbook-table__row', 
-    ['select', 'input'], 
+    'handbook-table__row',
+    ['select', 'input'],
     function(provide, Select, Input, Row) {
 
 provide(Row.declMod({ modName : 'type', modVal : 'services' }, {
@@ -27,7 +27,7 @@ provide(Row.declMod({ modName : 'type', modVal : 'services' }, {
         }
 
         if (['0', '1', '2', '3'].indexOf(select.getVal()) == -1)
-        { 
+        {
             select.setMod('errored');
             this._errorText += 'Ошибка выбора типа услуги\n';
             err = true
@@ -35,13 +35,13 @@ provide(Row.declMod({ modName : 'type', modVal : 'services' }, {
 
         inputVal = inputName.getVal();
 
-        if (inputVal.length <= 0 || inputVal.length >= 25) 
+        if (inputVal.length <= 0 || inputVal.length >= 50)
         {
             inputName.setMod('errored');
-            this._errorText += 'Название услуги не может быть пустым или длиннее 25 символов\n';
+            this._errorText += 'Название услуги не может быть пустым или длиннее 50 символов\n';
             err = true
         }
-        
+
         if (!err)
             return {
                 type: select.getVal(),
@@ -53,7 +53,7 @@ provide(Row.declMod({ modName : 'type', modVal : 'services' }, {
     _getConfirmText: function() {
         return 'Вы уверены, что хотите удалить услугу: ' + this.params.cellsData.name + ' (тип ' + this.params.cellsData.type + ' ) ?';
     }
-}, 
+},
 {}));
 
 });

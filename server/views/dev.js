@@ -1,5 +1,4 @@
 module.exports = function(opt, data){
-
     return {
         view: 'page-index',
         title: 'Разработка',
@@ -15,6 +14,10 @@ module.exports = function(opt, data){
                 block: 'title',
                 elem: 'main',
                 content: 'Список изменений СУЗ'
+            },
+            {
+                tag: 'div',
+                content: '18.09.2017 8:46 - Увеличил ограничения по количеству символов в справочниках'
             },
             {
                 tag: 'div',

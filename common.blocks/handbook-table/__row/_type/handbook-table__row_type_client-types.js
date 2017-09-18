@@ -1,6 +1,6 @@
 modules.define(
-    'handbook-table__row', 
-    ['input'], 
+    'handbook-table__row',
+    ['input'],
     function(provide, Input, Row) {
 
 provide(Row.declMod({ modName : 'type', modVal : 'client-types' }, {
@@ -29,22 +29,22 @@ provide(Row.declMod({ modName : 'type', modVal : 'client-types' }, {
 
         inputShortNameVal = inputShortName.getVal();
 
-        if (inputShortNameVal.length <= 0 || inputShortNameVal.length >= 25)
-        { 
+        if (inputShortNameVal.length <= 0 || inputShortNameVal.length >= 50)
+        {
             inputShortName.setMod('errored');
-            this._errorText += 'Абревиатура не может быть пустой или длиннее 25 символов\n';
+            this._errorText += 'Абревиатура не может быть пустой или длиннее 50 символов\n';
             err = true
         }
 
         inputNameVal = inputName.getVal();
 
-        if (inputNameVal.length <= 0 || inputNameVal.length >= 25) 
+        if (inputNameVal.length <= 0 || inputNameVal.length >= 50)
         {
             inputName.setMod('errored');
-            this._errorText += 'Название типа клиента не может быть пустым или длиннее 25 символов\n';
+            this._errorText += 'Название типа клиента не может быть пустым или длиннее 50 символов\n';
             err = true
         }
-        
+
         if (!err)
             return {
                 shortName: inputShortNameVal,
@@ -56,7 +56,7 @@ provide(Row.declMod({ modName : 'type', modVal : 'client-types' }, {
     _getConfirmText: function() {
         return 'Вы уверены, что хотите удалить данный тип клиента: ' + this.params.cellsData.name + ' (' + this.params.cellsData.shortName + ') ?';
     }
-}, 
+},
 {}));
 
 });

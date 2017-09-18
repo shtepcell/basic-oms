@@ -1,6 +1,6 @@
 modules.define(
-    'inline-form', 
-    ['select', 'input'], 
+    'inline-form',
+    ['select', 'input'],
     function(provide, Select, Input, BEMDOM) {
 
 provide(BEMDOM.declMod({ modName : 'type', modVal : 'services' }, {
@@ -27,7 +27,7 @@ provide(BEMDOM.declMod({ modName : 'type', modVal : 'services' }, {
         }
 
         if (['0', '1', '2', '3'].indexOf(select.getVal()) == -1)
-        { 
+        {
             select.setMod('errored');
             this._errorText += 'Ошибка выбора услуги\n';
             err = true
@@ -35,20 +35,20 @@ provide(BEMDOM.declMod({ modName : 'type', modVal : 'services' }, {
 
         inputVal = inputName.getVal();
 
-        if (inputVal.length <= 0 || inputVal.length >= 25) 
+        if (inputVal.length <= 0 || inputVal.length >= 50)
         {
             inputName.setMod('errored');
-            this._errorText += 'Название услуги не может быть пустым или длиннее 25 символов\n';
+            this._errorText += 'Название услуги не может быть пустым или длиннее 50 символов\n';
             err = true
         }
-        
+
         if (!err)
             return {
                 type: select.getVal(),
                 name: inputName.getVal()
             }
     }
-}, 
+},
 {}));
 
 });

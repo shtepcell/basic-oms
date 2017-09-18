@@ -1,6 +1,6 @@
 modules.define(
-    'inline-form', 
-    ['select', 'input'], 
+    'inline-form',
+    ['select', 'input'],
     function(provide, Select, Input, BEMDOM) {
 
 provide(BEMDOM.declMod({ modName : 'type', modVal : 'providers' }, {
@@ -27,7 +27,7 @@ provide(BEMDOM.declMod({ modName : 'type', modVal : 'providers' }, {
         }
 
         if (['STOP', 'VSAT'].indexOf(select.getVal()) == -1)
-        { 
+        {
             select.setMod('errored');
             this._errorText += 'Ошибка выбора типа провайдера\n';
             err = true
@@ -35,20 +35,20 @@ provide(BEMDOM.declMod({ modName : 'type', modVal : 'providers' }, {
 
         inputVal = inputName.getVal();
 
-        if (inputVal.length <= 0 || inputVal.length >= 25) 
+        if (inputVal.length <= 0 || inputVal.length >= 100)
         {
             inputName.setMod('errored');
-            this._errorText += 'Название провайдера не может быть пустым или длиннее 25 символов\n';
+            this._errorText += 'Название провайдера не может быть пустым или длиннее 100 символов\n';
             err = true
         }
-        
+
         if (!err)
             return {
                 type: select.getVal(),
                 name: inputName.getVal()
             }
     }
-}, 
+},
 {}));
 
 });

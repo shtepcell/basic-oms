@@ -1,6 +1,6 @@
 modules.define(
-    'handbook-table__row', 
-    ['select', 'input'], 
+    'handbook-table__row',
+    ['select', 'input'],
     function(provide, Select, Input, Row) {
 
 provide(Row.declMod({ modName : 'type', modVal : 'clients' }, {
@@ -34,7 +34,7 @@ provide(Row.declMod({ modName : 'type', modVal : 'clients' }, {
 
         index = clientTypesArr.indexOf(select.getVal());
         if (index === -1)
-        { 
+        {
             select.setMod('errored');
             this._errorText += 'Ошибка выбора типа клиента\n';
             err = true
@@ -42,13 +42,13 @@ provide(Row.declMod({ modName : 'type', modVal : 'clients' }, {
 
         inputVal = inputName.getVal();
 
-        if (inputVal.length <= 0 || inputVal.length >= 25) 
+        if (inputVal.length <= 0 || inputVal.length >= 350)
         {
             inputName.setMod('errored');
-            this._errorText += 'Название клиента не может быть пустым или длиннее 25 символов\n';
+            this._errorText += 'Название клиента не может быть пустым или длиннее 350 символов\n';
             err = true
         }
-        
+
         if (!err)
             return {
                 type: select.params.clientTypes[index],
@@ -60,7 +60,7 @@ provide(Row.declMod({ modName : 'type', modVal : 'clients' }, {
     _getConfirmText: function() {
         return 'Вы уверены, что хотите удалить клиента: [' + this.params.cellsData.type.shortName + '] ' + this.params.cellsData.name + '?'
     }
-}, 
+},
 {}));
 
 });
