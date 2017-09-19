@@ -522,15 +522,11 @@ function calculateCS(order) {
             time = 2;
             break;
         case 'network':
+            date = order.date['client-match'];
             var gzp = order.date['gzp-build'];
             var stop = order.date['stop-build'];
-            time = 1;
-            if(!!gzp) {
-                date = gzp;
-            }
-            if(!!stop) {
-                date = stop;
-            }
+            if(!!gzp)  time = order.gzp.time;
+            if(!!stop) time = order.stop.time;
             break;
         case 'gzp-pre':
             var d = order.date['client-match'];
@@ -550,7 +546,15 @@ function calculateCS(order) {
             break;
         case 'install-devices':
             date = order.date['client-match'];
-            time = 1;
+            time = order.gzp.time;
+            break;
+        case 'gzp-build':
+            date = order.date['client-match'];
+            time = order.gzp.time;
+            break;
+        case 'stop-build':
+            date = order.date['client-match'];
+            time = order.gzp.time;
             break;
         default:
             return '';
