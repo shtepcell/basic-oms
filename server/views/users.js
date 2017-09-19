@@ -41,7 +41,7 @@ module.exports = function(opt, data) {
                     },
                     {
                         name: 'Ф.И.О.',
-                        getContent: (item) => `${item.login}`
+                        getContent: (item) => `${item.name}`
                     },
                     {
                         name: 'E-mail',
