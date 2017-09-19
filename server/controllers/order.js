@@ -363,6 +363,10 @@ module.exports = {
                 req.body[item] = req.body[item].trim();
                 if(req.body[item] == '') req.body[item] = undefined;
             });
+            if(isNaN(req.body.time)) {
+                res.status(400).send({ errText: 'Срок организации должен быть числом' });
+                return;
+            }
             order.gzp = req.body;
 
             if(order.status == 'gzp-pre') {
@@ -376,6 +380,8 @@ module.exports = {
                 order.date['gzp-pre'] = new Date();
                 order.gzp.complete = true;
             }
+
+
 
             var done = await order.save();
             if(done)
@@ -392,6 +398,11 @@ module.exports = {
                 req.body[item] = req.body[item].trim();
                 if(req.body[item] == '') req.body[item] = undefined;
             });
+            
+            if(isNaN(req.body.time)) {
+                res.status(400).send({ errText: 'Срок организации должен быть числом' });
+                return;
+            }
             order.stop = req.body;
             var prvdr = parseClient(req.body.provider);
 

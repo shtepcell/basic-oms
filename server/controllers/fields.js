@@ -251,7 +251,7 @@ var allFields = {
             type: 'date',
             val: function (order) {
                 if(!order.date['gzp-build']) return null;
-                
+
                 if(order.date['network'])
                     return common.dateToStr(order.date['network']);
                 else return null;
@@ -410,6 +410,7 @@ var allFields = {
             type: 'suggest',
             data: 'providers',
             fill: true,
+            required: true,
             val: function (order) {
                 if(order.stop.complete)
                     return `[${order.stop.provider.type}] ${order.stop.provider.name}`
@@ -420,6 +421,7 @@ var allFields = {
             index: 'contact',
             name: 'Контакт с провайдером',
             type: 'text',
+            required: true,
             maxLenght: 50,
             fill: true,
             val: ['stop', 'contact']
@@ -476,6 +478,7 @@ var allFields = {
         {
             index: 'cost-once',
             name: 'Одноразовая стоимость организации',
+            required: true,
             type: 'text',
             fill: true,
             val: ['stop', 'cost-once']
@@ -483,6 +486,7 @@ var allFields = {
         {
             index: 'cost-monthly',
             name: 'Ежемесячная стоимость организации',
+            required: true,
             type: 'text',
             fill: true,
             val: ['stop', 'cost-monthly']
