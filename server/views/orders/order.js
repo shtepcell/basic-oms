@@ -33,6 +33,21 @@ module.exports = function(opt, data) {
         default:
             break;
     }
+    var alert = [];
+
+    if(opt.access != 'stop' && opt.tab == 'stop' && !data.order.date['stop-pre']) {
+        alert = {
+            tag:'h3',
+            content: 'Заявка еще не проработана по STOP/VSAT.'
+        }
+    }
+
+    if(opt.access != 'gzp' && opt.tab == 'gzp' && !data.order.date['gzp-pre']) {
+        alert = {
+            tag:'h3',
+            content: 'Заявка еще не проработана по ГЗП.'
+        }
+    }
 
     return {
         view: 'page-index',
@@ -88,6 +103,7 @@ module.exports = function(opt, data) {
                     }
                 ]
             },
+            alert,
             {
                 block: 'ultra-form',
                 action: type.action,

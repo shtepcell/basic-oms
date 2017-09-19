@@ -41,7 +41,12 @@ module.exports = function(opt, data){
                             },
                             {
                                 name: 'Клиент',
-                                getContent: (order) => `[${order.info.client.type.shortName}] ${order.info.client.name}`
+                                getContent: (order) => {
+                                    var name = order.info.client.name;
+                                    if(name.length >= 60) name = name.substring(0, 57) + '...';
+
+                                    return `[${order.info.client.type.shortName}] ${name}`
+                                }
                             },
                             {
                                 name: 'Статус',

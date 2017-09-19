@@ -222,6 +222,10 @@ var allFields = {
             name: 'Контрольная дата проработки заказа',
             type: 'date',
             val: function (order) {
+
+                if(order.status != 'gzp-pre' && order.status != 'all-pre' && !order.date['gzp-pre']) return null;
+
+
                 if(order.date['client-match']) {
                     var d = new Date(order.date['client-match'].setDate(order.date['client-match'].getDate() + 3));
                     return common.dateToStr(d);
@@ -338,6 +342,9 @@ var allFields = {
             name: 'Контрольная дата проработки заказа',
             type: 'date',
             val: function (order) {
+
+                if(order.status != 'stop-pre' && order.status != 'all-pre' && !order.date['stop-pre']) return null;
+
                 if(order.date['client-match']) {
                     var d = new Date(order.date['client-match'].setDate(order.date['client-match'].getDate() + 3));
                     return common.dateToStr(d);
@@ -362,6 +369,9 @@ var allFields = {
             name: 'Фактическая дата активации сервиса',
             type: 'date',
             val: function (order) {
+
+                if(!order.date['stop-build']) return null;
+
                 if(order.date['network'])
                     return common.dateToStr(order.date['network']);
                 else return null;
