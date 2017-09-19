@@ -250,6 +250,8 @@ var allFields = {
             name: 'Фактическая дата активации сервиса',
             type: 'date',
             val: function (order) {
+                if(!order.date['gzp-build']) return null;
+                
                 if(order.date['network'])
                     return common.dateToStr(order.date['network']);
                 else return null;

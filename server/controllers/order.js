@@ -107,7 +107,15 @@ module.exports = {
                         {status: 'stop-build'},
                         {status: 'stop-pre'},
                         {status: 'all-pre'},
-                        {'info.department': _dep}
+                        {
+                            '$and': [
+                                {'info.department': _dep},
+                                {'$or': [
+                                    {status: 'client-match'},
+                                    {status: 'client-notify'}
+                                ]}
+                            ]
+                        }
                     ]
                 };
                 view = 'mains/stop';
