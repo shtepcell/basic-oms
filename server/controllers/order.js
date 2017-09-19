@@ -25,6 +25,20 @@ var stages = {
     'reject': 'Отклонение'
 };
 
+var cs = {
+    'client-match': 10,
+    'client-notify': 3,
+    'all-pre': 3,
+    'gzp-pre': 3,
+    'gzp-build': 3,
+    'install-devices': 1,
+    'stop-pre': 3,
+    'stop-build': 3,
+    'network': 1,
+}
+
+var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider`;
+
 const Render = require('../render'),
     render = Render.render;
 
@@ -129,7 +143,24 @@ module.exports = {
             break;
         }
 
-        var docs = await Order.paginate(query, { page: pageNumber, limit: perPage, populate: 'info.client info.service info.city'});
+        var docs = await Order.paginate(query, { page: pageNumber, limit: perPage, populate: [
+            {
+                path: 'info.client',
+                model: 'Client',
+                populate: {
+                    path: 'type',
+                    model: 'ClientType'
+                }
+            },
+            {
+                path: 'info.service',
+                model: 'Service'
+            },
+            {
+                path: 'info.city',
+                model: 'City'
+            }
+        ]});
         if (!docs.docs.length)
         {
             if (pageNumber !== 1) {
@@ -147,6 +178,7 @@ module.exports = {
                 perPage: docs.limit
             };
             docs.docs.forEach( item => {
+                item.cs = calculateCS(item);
                 item.status = stages[item.status];
             });
             res.locals.orders = docs.docs;
@@ -231,7 +263,7 @@ module.exports = {
     },
 
     getOrderInfo: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
+        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
         if(order) {
             res.locals.order = order;
             res.locals.template = await fields.getInfo(order);
@@ -250,7 +282,7 @@ module.exports = {
     },
 
     getOrderGZP: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
+        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
         if(order) {
             res.locals.order = order;
             var access = false;
@@ -274,7 +306,7 @@ module.exports = {
     },
 
     getOrderSTOP: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
+        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
 
         if(order) {
             res.locals.order = order;
@@ -300,7 +332,7 @@ module.exports = {
     },
 
     getOrderHistory: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
+        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
         if(order) {
             res.locals.order = order;
             res.locals.template = await fields.getInfo(order);
@@ -317,7 +349,7 @@ module.exports = {
 
     endPreGZP: async (req, res) => {
 
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
+        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
         if( order ) {
             Object.keys(req.body).forEach( item => {
                 req.body[item] = req.body[item].trim();
@@ -346,7 +378,7 @@ module.exports = {
 
     endPreSTOP: async (req, res) => {
 
-        var order = await Order.findOne({id: req.params.id}).deepPopulate('info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider');
+        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
         if(order) {
             Object.keys(req.body).forEach( item => {
                 req.body[item] = req.body[item].trim();
@@ -459,4 +491,72 @@ function parserCity(str) {
             return res;
         } else res.type += ''+str[i];
     }
+}
+
+function calculateCS(order) {
+    var date;
+    var time;
+
+    switch (order.status) {
+        case 'client-match':
+            var gzp = order.date['gzp-pre'];
+            var stop = order.date['stop-pre'];
+            time = 10;
+            if(!!gzp && !!stop) {
+                if(gzp > stop) {
+                    date = gzp;
+                } else {
+                    date = stop;
+                }
+            } else {
+                if(!!gzp) {
+                    date = gzp;
+                }
+                if(!!stop) {
+                    date = stop;
+                }
+            }
+            break;
+        case 'client-notify':
+            date = order.date['network'];
+            time = 2;
+            break;
+        case 'network':
+            var gzp = order.date['gzp-build'];
+            var stop = order.date['stop-build'];
+            time = 1;
+            if(!!gzp) {
+                date = gzp;
+            }
+            if(!!stop) {
+                date = stop;
+            }
+            break;
+        case 'gzp-pre':
+            var d = order.date['client-match'];
+            if(d) date = d;
+            else  date = order.date['init'];
+            time = 3;
+            break;
+        case 'stop-pre':
+            var d = order.date['client-match'];
+            if(d) date = d;
+            else  date = order.date['init'];
+            time = 3;
+            break;
+        case 'all-pre':
+            date = order.date['init'];
+            time = 3;
+            break;
+        case 'install-devices':
+            date = order.date['client-match'];
+            time = 1;
+            break;
+        default:
+            return '';
+
+    }
+    var d = Math.abs(date - new Date());
+    var diffDays = Math.ceil(d / (1000 * 3600 * 24));
+    return time - diffDays + 1;
 }

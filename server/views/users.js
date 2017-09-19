@@ -37,23 +37,23 @@ module.exports = function(opt, data) {
                 fields: [
                     {
                         name: 'Логин',
-                        field: 'login'
+                        getContent: (item) => `${item.login}`
                     },
                     {
                         name: 'Ф.И.О.',
-                        field: 'name'
+                        getContent: (item) => `${item.login}`
                     },
                     {
                         name: 'E-mail',
-                        field: 'email'
+                        getContent: (item) => `${item.email}`
                     },
                     {
                         name: 'Телефон',
-                        field: 'phone'
+                        getContent: (item) => `${item.phone}`
                     },
                     {
                         name: 'Отдел',
-                        field: ['department', 'name']
+                        getContent: (item) => `${item.department.name}`
                     }
                 ],
                 url: '/admin/users/',

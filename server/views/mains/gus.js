@@ -7,7 +7,7 @@ module.exports = function(opt, data){
     var users = data.users;
     if (opt.pagers && opt.pagers.length)
         pagerId = opt.pagers[0];
-        
+
     return {
         view: 'page-index',
         title: 'Главная страница',
@@ -37,23 +37,27 @@ module.exports = function(opt, data){
                         fields: [
                             {
                                 name: 'ID',
-                                field: 'id'
+                                getContent: (order) => `${order.id}`
                             },
                             {
                                 name: 'Клиент',
-                                field: ['info', 'client', 'name']
+                                getContent: (order) => `[${order.info.client.type.shortName}] ${order.info.client.name}`
                             },
                             {
-                                name: 'Город',
-                                field: ['info', 'city', 'name']
-                            },
-                            {
-                                name: 'Этап',
-                                field: 'status'
+                                name: 'Статус',
+                                getContent: (order) => `${order.status}`
                             },
                             {
                                 name: 'Услуга',
-                                field: ['info', 'service', 'name']
+                                getContent: (order) => `${order.info.service.name}`
+                            },
+                            {
+                                name: 'КС',
+                                getContent: (order) => `${order.cs}`
+                            },
+                            {
+                                name: 'Адресс',
+                                getContent: (order) => `${order.info.city.type} ${order.info.city.name}, ${order.info.street}, ${order.info.adds}`
                             }
                         ],
                         url: '/order/',

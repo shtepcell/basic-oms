@@ -47,15 +47,15 @@ module.exports = function(opt, data) {
                 fields: [
                     {
                         name: 'Название отдела',
-                        field: 'name'
+                        getContent: (item) => `${item.name}`
                     },
                     {
                         name: 'Тип отдела',
-                        field: 'type'
+                        getContent: (item) => `${item.type}`
                     },
                     {
                         name: 'Кол-во сотрудников',
-                        field: 'name'
+                        getContent: (item) => `Не доступно`
                     }
                 ],
                 url: '/admin/departments/',

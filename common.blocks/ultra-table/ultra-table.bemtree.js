@@ -8,7 +8,7 @@ block('ultra-table').content()(function() {
 
     _fields.forEach( item => {
         titles.push(item.name);
-        datasets.push(item.field)
+        datasets.push(item.getContent)
     });
 
 

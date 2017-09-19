@@ -38,7 +38,7 @@ module.exports = function(opt, data) {
             fields: [
                 {
                     name: 'Название города',
-                    field: 'name'
+                    getContent: (item) => `${item.type} ${item.name}`
                 }
             ],
             data: ownCity

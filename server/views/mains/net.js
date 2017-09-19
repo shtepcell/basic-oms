@@ -37,23 +37,32 @@ module.exports = function(opt, data){
                         fields: [
                             {
                                 name: 'ID',
-                                field: 'id'
+                                getContent: (order) => `${order.id}`
                             },
                             {
                                 name: 'Клиент',
-                                field: ['info', 'client', 'name']
+                                getContent: (order) => {
+                                    var name = order.info.client.name;
+                                    if(name.length >= 60) name = name.substring(0, 57) + '...';
+
+                                    return `[${order.info.client.type.shortName}] ${name}`
+                                }
                             },
                             {
-                                name: 'Город',
-                                field: ['info', 'city', 'name']
-                            },
-                            {
-                                name: 'Этап',
-                                field: 'status'
+                                name: 'Статус',
+                                getContent: (order) => `${order.status}`
                             },
                             {
                                 name: 'Услуга',
-                                field: ['info', 'service', 'name']
+                                getContent: (order) => `${order.info.service.name}`
+                            },
+                            {
+                                name: 'КС',
+                                getContent: (order) => `${order.cs}`
+                            },
+                            {
+                                name: 'Адресс',
+                                getContent: (order) => `${order.info.city.type} ${order.info.city.name}, ${order.info.street}, ${order.info.adds}`
                             }
                         ],
                         url: '/order/',

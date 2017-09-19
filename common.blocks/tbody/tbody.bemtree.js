@@ -8,53 +8,26 @@ block('tbody').content()(function() {
 
     if( !!data && !!datasets ) {
 
-        if( !!url )
 
-            ret = data.map( item => {
-
-                return {
-                    block: 'tbody',
-                    elem: 'tr',
-                    content: datasets.map( i => {
-                        if(Array.isArray(i)) {
-                            var result = item;
-                            for (var j = 0; j < i.length; j++) {
-                                result = result[i[j]];
-                            }
-                        }
-                        return {
-                            block: 'tbody',
-                            elem: 'td',
-                            content: result || item[i]
-                        }
-                    }),
-                    attrs: {
-                        onclick: `location='${url}${item[template]}'`
-                    }
-                }
-
-            })
-        else ret = data.map( item => {
+        ret = data.map( item => {
+            var attrs = {};
             return {
                 block: 'tbody',
                 elem: 'tr',
                 content: datasets.map( i => {
-                    if(Array.isArray(i)) {
-                        var result = item;
-                        for (var j = 0; j < i.length; j++) {
-                            result = result[i[j]];
-                        }
-                    }
+
+                    if( !!url )
+                        attrs.onclick = `location='${url}${item[template]}'`;
+
                     return {
                         block: 'tbody',
                         elem: 'td',
-                        content: result || item[i]
+                        content: i(item),
+                        attrs: attrs
                     }
-                })
+                }),
             }
-
         })
-
     }
 
     return ret;
