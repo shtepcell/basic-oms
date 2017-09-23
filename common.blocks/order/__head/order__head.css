@@ -1,0 +1,16 @@
+.order__head {
+    width: 100%;
+    min-height: 150px;
+    box-shadow: 0 4px 1px rgba(0,0,0,0.1);
+}
+
+.order__head-wrapper {
+    position: relative;
+    top: -2.5em;
+    text-align: center;
+}
+
+.order__head-container {
+    display: inline-block;
+    width: 1150px;
+}

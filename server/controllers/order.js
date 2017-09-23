@@ -398,7 +398,7 @@ module.exports = {
                 req.body[item] = req.body[item].trim();
                 if(req.body[item] == '') req.body[item] = undefined;
             });
-            
+
             if(isNaN(req.body.time)) {
                 res.status(400).send({ errText: 'Срок организации должен быть числом' });
                 return;
@@ -480,6 +480,16 @@ module.exports = {
 
         } else res.send(false);
 
+    },
+    getSome: async (req, res) => {
+        res.locals.order = await Order.findOne({id: 2}).deepPopulate(populateQuery);
+
+        render(req, res, {
+            viewName: 'test',
+            options: {
+                tab: 'info'
+            }
+        });
     },
 
     search: async (req, res) => {
