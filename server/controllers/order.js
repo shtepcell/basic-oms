@@ -272,17 +272,15 @@ module.exports = {
 
     getOrderInfo: async (req, res) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
+
         if(order) {
             res.locals.order = order;
-            res.locals.template = await fields.getInfo(order);
-
-            var actions = await fields.getActions(order, res.locals.__user, 'info');
+            res.locals.dataset = await getData();
 
             render(req, res, {
                 viewName: 'orders/order',
                 options: {
-                    tab: 'info',
-                    actions: actions
+                    tab: 'info'
                 }
             });
 
@@ -291,22 +289,15 @@ module.exports = {
 
     getOrderGZP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
+        res.locals.dataset = await getData();
+
         if(order) {
             res.locals.order = order;
-            var access = false;
-            if ( (order.status == 'gzp-pre' || order.status == 'all-pre') && (res.locals.__user.department.type == 'gus' && res.locals.__user.department.cities.indexOf(order.info.city._id) >= 0)) {
-                access = 'gzp';
-            }
-            res.locals.template = await fields.getGZP(order, access);
-
-            var actions = await fields.getActions(order, res.locals.__user, 'gzp');
 
             render(req, res, {
                 viewName: 'orders/order',
                 options: {
-                    tab: 'gzp',
-                    access: access,
-                    actions: actions
+                    tab: 'gzp'
                 }
             });
 
@@ -315,24 +306,15 @@ module.exports = {
 
     getOrderSTOP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
+        res.locals.dataset = await getData();
 
         if(order) {
             res.locals.order = order;
 
-            var actions = await fields.getActions(order, res.locals.__user, 'stop');
-            var access = false;
-
-            if(order.status == 'all-pre' || order.status == 'stop-pre') {
-                if(res.locals.__user.department.type == 'b2o') access = 'stop';
-            }
-            res.locals.template = await fields.getSTOP(order, access);
-
             render(req, res, {
                 viewName: 'orders/order',
                 options: {
-                    tab: 'stop',
-                    access: access,
-                    actions: actions
+                    tab: 'stop'
                 }
             });
 
@@ -356,7 +338,6 @@ module.exports = {
     },
 
     endPreGZP: async (req, res) => {
-
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
         if( order ) {
             Object.keys(req.body).forEach( item => {
@@ -381,17 +362,14 @@ module.exports = {
                 order.gzp.complete = true;
             }
 
-
-
             var done = await order.save();
             if(done)
                 logger.info(`End pre-gzp order #${ done.id }`, res.locals.__user);
-            res.send({created: true})
-        } else res.send({created: false});
+            res.status(200).send({created: true})
+        } else res.status(400).send({created: false});
     },
 
     endPreSTOP: async (req, res) => {
-
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
         if(order) {
             Object.keys(req.body).forEach( item => {
@@ -403,10 +381,13 @@ module.exports = {
                 res.status(400).send({ errText: 'Срок организации должен быть числом' });
                 return;
             }
+
             order.stop = req.body;
+            console.log(req.body);
             var prvdr = parseClient(req.body.provider);
 
             order.stop.provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
+
             if(order.stop.provider) {
                 if(order.status == 'stop-pre') {
                     order.status = 'client-match';
@@ -419,7 +400,6 @@ module.exports = {
                     order.date['stop-pre'] = new Date();
                     order.stop.complete = true;
                 }
-
                 var done = await order.save();
                 if(done)
                     logger.info(`End pre-stop order #${ done.id }`, res.locals.__user);
@@ -480,16 +460,6 @@ module.exports = {
 
         } else res.send(false);
 
-    },
-    getSome: async (req, res) => {
-        res.locals.order = await Order.findOne({id: 2}).deepPopulate(populateQuery);
-
-        render(req, res, {
-            viewName: 'test',
-            options: {
-                tab: 'info'
-            }
-        });
     },
 
     search: async (req, res) => {
@@ -592,4 +562,33 @@ function calculateCS(order) {
     var d = Math.abs(date - new Date());
     var diffDays = Math.ceil(d / (1000 * 3600 * 24));
     return time - diffDays + 1;
+}
+
+var getData = async () => {
+    var clients = await Client.find().populate('type');
+    var providers = await Provider.find();
+    var cities = await City.find();
+    var services = await Service.find();
+
+
+    clients = clients.map( i => `[${i.type.shortName}] ${i.name}`);
+
+    providers = providers.map( i => `[${i.type}] ${i.name}`);
+
+    cities = cities.map( i => `${i.type} ${i.name}`);
+
+    services = services.map( i => {
+        return {
+            val: `${i.name}`,
+            text: `${i.name}`
+        }
+    });
+
+    return {
+        clients: clients,
+        providers: providers,
+        cities: cities,
+        services: services
+    }
+
 }

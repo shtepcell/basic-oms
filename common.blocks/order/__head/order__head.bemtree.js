@@ -1,8 +1,25 @@
 block('order').elem('head').content()(function () {
+    var order = this.ctx.order;
+    var pause = null;
+
+
+    if(!order.pause) pause = {
+        elem: 'head-cell',
+        mix: {
+            elem: 'pause'
+        },
+        content: [
+            {
+                elem: 'cell-data',
+                content: 'На паузе'
+            }
+        ]
+    };
+
     var ret = [
         {
             elem: 'head-cell',
-            content: 'Заявка №' + this.ctx.order.id,
+            content: 'Заявка №' + order.id,
             mix: {
                 elem: 'title'
             }
@@ -15,7 +32,7 @@ block('order').elem('head').content()(function () {
             content: [
                 {
                     elem: 'cell-data',
-                    content: 'КС: 12 дней'
+                    content: `КС: ${order.cs} дней`
                 }
             ]
         },
@@ -33,7 +50,7 @@ block('order').elem('head').content()(function () {
                             },
                             {
                                 elem: 'cell-data',
-                                content: this.ctx.order.status
+                                content: order.status
                             }
                         ]
                     },
@@ -46,7 +63,7 @@ block('order').elem('head').content()(function () {
                             },
                             {
                                 elem: 'cell-data',
-                                content: '123123'
+                                content: order.info.cms
                             }
                         ]
                     },
@@ -59,31 +76,15 @@ block('order').elem('head').content()(function () {
                             },
                             {
                                 elem: 'cell-data',
-                                content: 'Федеральное государственное бюджетное военное образовательное учреждение высшего образования "Черноморское высшее военно-морское ордена Красной Звезды училище имени П.С. Нахимова" Министерства обороны Российской Федерации (г. Севастополь)'
-                                // content: `[${this.ctx.order.info.client.type.shortName}] ${this.ctx.order.info.client.name}`
+                                content: `[${order.info.client.type.shortName}] ${order.info.client.name}`
                             }
                         ]
                     }
                 ]
             }
         },
-        {
-            elem: 'head-cell',
-            mix: {
-                elem: 'pause'
-            },
-            content: [
-                {
-                    elem: 'cell-data',
-                    content: 'На паузе'
-                }
-            ]
-        }
+        pause
     ]
-    // ret.forEach( (item, i) => {
-    //     if(item.content[1].content == null) {
-    //         ret[i] = undefined;
-    //     }
-    // })
+
     return ret;
 })

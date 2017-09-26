@@ -26,7 +26,7 @@ module.exports = function (app) {
 
     app.get('/', Order.getMainPage);
 
-    app.get('/status', Order.getSome);
+    // app.get('/status', Order.getSome);
 
     app.get('/search', Order.search);
 
@@ -43,6 +43,7 @@ module.exports = function (app) {
         res.redirect(`/order/${req.params.id}/info`)
     });
 
+    // app.post('/order/:id', Order.submit);
     app.post('/order/:id/action', Order.changeStatus)
 
     app.get('/order/:id/info', Order.getOrderInfo);

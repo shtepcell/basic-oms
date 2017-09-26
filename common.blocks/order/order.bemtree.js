@@ -1,9 +1,10 @@
 block('order').content()(function () {
+    var tab = this.ctx.tab;
+
     return [
         {
             elem: 'head',
-            order: this.ctx.order,
-            tab: this.ctx.tab
+            order: this.ctx.order
         },
         {
             block: 'control-group',
@@ -17,9 +18,10 @@ block('order').content()(function () {
                     mods: {
                         theme: 'islands',
                         size: 'l',
-                        type: 'link'
+                        type: 'link',
+                        view: (tab=='info')?'action':null
                     },
-                    // url: type.url + '/info',
+                    url: `/order/${this.ctx.order.id}/info`,
                     text: 'Инфо'
                 },
                 {
@@ -27,9 +29,10 @@ block('order').content()(function () {
                     mods: {
                         theme: 'islands',
                         size: 'l',
-                        type: 'link'
+                        type: 'link',
+                        view: (tab=='gzp')?'action':null
                     },
-                    // url: type.url + '/gzp',
+                    url: `/order/${this.ctx.order.id}/gzp`,
                     text: 'ГЗП'
                 },
                 {
@@ -37,9 +40,10 @@ block('order').content()(function () {
                     mods: {
                         theme: 'islands',
                         size: 'l',
-                        type: 'link'
+                        type: 'link',
+                        view: (tab=='stop')?'action':null
                     },
-                    // url: type.url + '/stop',
+                    url: `/order/${this.ctx.order.id}/stop`,
                     text: 'STOP'
                 },
                 {
@@ -47,17 +51,23 @@ block('order').content()(function () {
                     mods: {
                         theme: 'islands',
                         size: 'l',
-                        type: 'link'
+                        type: 'link',
+                        view: (tab=='history')?'action':null
                     },
-                    // url: type.url + '/stop',
+                    url: `/order/${this.ctx.order.id}/info`,
                     text: 'Журнал'
                 }
             ]
         },
         {
             elem: 'body',
+            action: this.ctx.action,
             order: this.ctx.order,
-            tab: this.ctx.tab
+            tab: this.ctx.tab,
+            user: this.ctx.user,
+            admin: this.ctx.admin,
+            dataset: this.ctx.dataset,
+            js: true
         }
     ]
 })
