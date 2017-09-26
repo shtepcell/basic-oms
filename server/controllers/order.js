@@ -25,18 +25,6 @@ var stages = {
     'reject': 'Отклонение'
 };
 
-var cs = {
-    'client-match': 10,
-    'client-notify': 3,
-    'all-pre': 3,
-    'gzp-pre': 3,
-    'gzp-build': 3,
-    'install-devices': 1,
-    'stop-pre': 3,
-    'stop-build': 3,
-    'network': 1,
-}
-
 var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider`;
 
 const Render = require('../render'),
@@ -272,10 +260,12 @@ module.exports = {
 
     getOrderInfo: async (req, res) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
+        order.cs = calculateCS(order);
+        order.stage = stages[order.status];
+        res.locals.dataset = await getData();
 
         if(order) {
             res.locals.order = order;
-            res.locals.dataset = await getData();
 
             render(req, res, {
                 viewName: 'orders/order',
@@ -289,6 +279,8 @@ module.exports = {
 
     getOrderGZP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
+        order.cs = calculateCS(order);
+        order.stage = stages[order.status];
         res.locals.dataset = await getData();
 
         if(order) {
@@ -306,6 +298,8 @@ module.exports = {
 
     getOrderSTOP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
+        order.cs = calculateCS(order);
+        order.stage = stages[order.status];
         res.locals.dataset = await getData();
 
         if(order) {
@@ -323,6 +317,7 @@ module.exports = {
 
     getOrderHistory: async (req, res) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
+        order.cs = calculateCS(order);
         if(order) {
             res.locals.order = order;
             res.locals.template = await fields.getInfo(order);
@@ -556,9 +551,9 @@ function calculateCS(order) {
             time = order.gzp.time;
             break;
         default:
-            return '';
-
+            date = 0;
     }
+    if(date == 0) return '';
     var d = Math.abs(date - new Date());
     var diffDays = Math.ceil(d / (1000 * 3600 * 24));
     return time - diffDays + 1;

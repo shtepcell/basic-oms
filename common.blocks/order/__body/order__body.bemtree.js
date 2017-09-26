@@ -15,6 +15,11 @@ block('order').elem('body').content()(function () {
                 },
                 {
                     name: 'Связанные заявки',
+                    field: {
+                        name: 'relation',
+                        type: 'text',
+                        placeholder: '#1234 #4321'
+                    },
                     val:  order.info.relation,
                     access: (adminEdit)
                 },
@@ -40,7 +45,8 @@ block('order').elem('body').content()(function () {
                     val: order.info.contact,
                     field: {
                         name: 'contact',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: '+765432109'
                     },
                     access: (adminEdit)
                 },
@@ -49,8 +55,8 @@ block('order').elem('body').content()(function () {
                     val: order.info.service.name,
                     field: {
                         name: 'service',
-                        type: 'suggest',
-                        dataset: 'services'
+                        type: 'select',
+                        dataset: 'services',
                     },
                     access: (adminEdit)
                 },
@@ -59,7 +65,8 @@ block('order').elem('body').content()(function () {
                     val:  order.info.options,
                     field: {
                         name: 'options',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: '10 мБит/с'
                     },
                     access: (adminEdit)
                 },
@@ -69,7 +76,9 @@ block('order').elem('body').content()(function () {
                     field: {
                         name: 'city',
                         type: 'suggest',
-                        dataset: 'cities'
+                        dataset: 'cities',
+                        placeholder: 'г. Симферополь',
+                        required: true
                     },
                     access: (adminEdit)
                 },
@@ -78,7 +87,9 @@ block('order').elem('body').content()(function () {
                     val: `${order.info.street}`,
                     field: {
                         name: 'street',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'ул. Пушкина',
+                        required: true
                     },
                     access: (adminEdit)
                 },
@@ -87,7 +98,9 @@ block('order').elem('body').content()(function () {
                     val: `${order.info.adds}`,
                     field: {
                         name: 'adds',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'д. Колотушкина, кв.15',
+                        required: true
                     },
                     access: (adminEdit)
                 },
@@ -105,7 +118,8 @@ block('order').elem('body').content()(function () {
                     val: order.info.pool,
                     field: {
                         name: 'pool',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: '/24'
                     },
                     access: (adminEdit)
                 },
@@ -114,7 +128,8 @@ block('order').elem('body').content()(function () {
                     val: order.info['cost-once'],
                     field: {
                         name: 'cost-once',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: '12345'
                     },
                     access: (adminEdit)
                 },
@@ -123,7 +138,8 @@ block('order').elem('body').content()(function () {
                     val: order.info['cost-monthly'],
                     field: {
                         name: 'cost-monthly',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: '123'
                     },
                     access: (adminEdit)
                 },
@@ -132,7 +148,8 @@ block('order').elem('body').content()(function () {
                     val: order.info.add_info,
                     field: {
                         name: 'add_info',
-                        type: 'text'
+                        type: 'text',
+                        placeholder: 'Возможно завтра будет дождь...'
                     },
                     access: (adminEdit)
                 }
@@ -225,7 +242,8 @@ block('order').elem('body').content()(function () {
                         user.department.cities.indexOf(order.info.city._id) >= 0)),
                     field: {
                         type: 'text',
-                        name: 'time'
+                        name: 'time',
+                        placeholder: '50'
                     },
                     val: order.gzp.time
                 },
@@ -235,7 +253,8 @@ block('order').elem('body').content()(function () {
                         user.department.cities.indexOf(order.info.city._id) >= 0)),
                     field: {
                         type: 'text',
-                        name: 'cost-once'
+                        name: 'cost-once',
+                        placeholder: '12345'
                     },
                     val: order.gzp['cost-once']
                 },
@@ -245,7 +264,8 @@ block('order').elem('body').content()(function () {
                         user.department.cities.indexOf(order.info.city._id) >= 0)),
                     field: {
                         type: 'text',
-                        name: 'cost-monthly'
+                        name: 'cost-monthly',
+                        placeholder: '12345'
                     },
                     val: order.gzp['cost-monthly']
                 },
@@ -256,7 +276,8 @@ block('order').elem('body').content()(function () {
                         user.department.cities.indexOf(order.info.city._id) >= 0)),
                     field: {
                         type: 'text',
-                        name: 'add_info'
+                        name: 'add_info',
+                        placeholder: 'Клиент хочет чтобы все было красиво и аккуратно'
                     },
                     val: order.gzp.add_info
                 }
@@ -338,7 +359,8 @@ block('order').elem('body').content()(function () {
                         type: 'suggest',
                         dataset: 'providers',
                         name: 'provider',
-                        required: true
+                        required: true,
+                        placeholder: '[STOP] Ростелеком'
                     },
                     val: function (order) {
                         if(order.stop.complete)
@@ -351,7 +373,9 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit || ((order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o')),
                     field: {
                         type: 'text',
-                        name: 'contact'
+                        name: 'contact',
+                        required: true,
+                        placeholder: '+79788477422'
                     },
                     val: order.stop.contact
                 },
@@ -360,7 +384,8 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit || ((order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o')),
                     field: {
                         type: 'text',
-                        name: 'devices'
+                        name: 'devices',
+                        placeholder: 'Кабель, шурупы'
                     },
                     val: order.stop.devices
                 },
@@ -369,7 +394,8 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit || ((order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o')),
                     field: {
                         type: 'text',
-                        name: 'add_devices'
+                        name: 'add_devices',
+                        placeholder: 'Молоток, перчатки'
                     },
                     val: order.stop.add_devices
                 },
@@ -378,7 +404,8 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit || ((order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o')),
                     field: {
                         type: 'text',
-                        name: 'interfaces'
+                        name: 'interfaces',
+                        placeholder: 'RJ-45'
                     },
                     val: order.stop.interfaces
                 },
@@ -387,7 +414,8 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit || ((order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o')),
                     field: {
                         type: 'text',
-                        name: 'time'
+                        name: 'time',
+                        placeholder: '111'
                     },
                     val: order.stop.time
                 },
@@ -396,7 +424,8 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit || ((order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o')),
                     field: {
                         type: 'text',
-                        name: 'add_info'
+                        name: 'add_info',
+                        placeholder: 'Провайдер конечно хуже чем мы, но другого выхода нет'
                     },
                     val: order.stop.add_info
                 },
@@ -405,7 +434,9 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit || ((order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o')),
                     field: {
                         type: 'text',
-                        name: 'organization_info'
+                        name: 'organization_info',
+                        placeholder: 'Так себе организация'
+
                     },
                     val: order.stop.organization_info
                 },
@@ -414,7 +445,8 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit || ((order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o')),
                     field: {
                         type: 'text',
-                        name: 'cost-once'
+                        name: 'cost-once',
+                        placeholder: '1000'
                     },
                     val: order.stop['cost-once']
                 },
@@ -423,7 +455,8 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit || ((order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o')),
                     field: {
                         type: 'text',
-                        name: 'cost-monthly'
+                        name: 'cost-monthly',
+                        placeholder: '100'
                     },
                     val: order.stop['cost-monthly']
                 }
@@ -449,7 +482,8 @@ block('order').elem('body').content()(function () {
                             width: 'available',
                             theme: 'islands',
                             size: 'l'
-                        }
+                        },
+                        placeholder: item.field.placeholder
                     }
                     break;
                 case 'select':
@@ -494,6 +528,7 @@ block('order').elem('body').content()(function () {
                             size : 'l',
                             'has-dataprovider' : 'adress'
                         },
+                        placeholder: item.field.placeholder,
                         name: item.field.name,
                         dataprovider: {
                             data: dataset[item.field.dataset]

@@ -100,40 +100,61 @@ block('order').elem('actions').content()(function () {
             if( item.condition(user, order) ) {
                 ret.push({
                     block: 'order',
-                    elem: 'button',
-                    js: {
-                        data: {
-                            to: item.to
+                    elem: 'action',
+                    content: {
+                        block: 'order',
+                        elem: 'button',
+
+                        js: {
+                            data: {
+                                to: item.to
+                            },
+                            url: `/order/${order.id}/action`
                         },
-                        url: `/order/${order.id}/action`
-                    },
-                    text: item.text
+                        text: item.text
+                    }
                 })
             }
         })
 
         if( tab == 'stop' && (order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o') {
                 ret.push({
-                    block: 'button',
-                    mods: {
-                        theme: 'islands',
-                        size: 'l',
-                        type: 'submit'
-                    },
-                    text: 'Проработка завершена'
+                    block: 'order',
+                    elem: 'action',
+                    content: {
+                        block: 'button',
+                        mix: {
+                            block: 'order',
+                            elem: 'action'
+                        },
+                        mods: {
+                            theme: 'islands',
+                            size: 'l',
+                            type: 'submit'
+                        },
+                        text: 'Проработка завершена'
+                    }
                 })
             }
 
         if( tab == 'gzp' && (order.status == 'gzp-pre' || order.status == 'all-pre') && user.department.type == 'gus' &&
             user.department.cities.indexOf(order.info.city._id) >= 0) {
                 ret.push({
-                    block: 'button',
-                    mods: {
-                        theme: 'islands',
-                        size: 'l',
-                        type: 'submit'
-                    },
-                    text: 'Проработка завершена'
+                    block: 'order',
+                    elem: 'action',
+                    content: {
+                        block: 'button',
+                        mix: {
+                            block: 'order',
+                            elem: 'action'
+                        },
+                        mods: {
+                            theme: 'islands',
+                            size: 'l',
+                            type: 'submit'
+                        },
+                        text: 'Проработка завершена'
+                    }
                 })
             }
         return ret;

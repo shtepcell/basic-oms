@@ -26,13 +26,18 @@ block('order').elem('head').content()(function () {
         },
         {
             elem: 'head-cell',
-            mix: {
-                elem: 'right'
-            },
+            mix: [
+                {
+                    elem: 'right'
+                },
+                {
+                    elem: (order.cs >= 0)?'green':'red'
+                }
+            ],
             content: [
                 {
                     elem: 'cell-data',
-                    content: `КС: ${order.cs} дней`
+                    content: `КС: ${order.cs} д.`
                 }
             ]
         },
@@ -50,7 +55,7 @@ block('order').elem('head').content()(function () {
                             },
                             {
                                 elem: 'cell-data',
-                                content: order.status
+                                content: order.stage
                             }
                         ]
                     },

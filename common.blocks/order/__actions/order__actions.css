@@ -1,0 +1,9 @@
+.order__actions > .order__action {
+    height: 50px;
+    padding-top: 1em;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+.order__action {
+    display: inline-block;
+}

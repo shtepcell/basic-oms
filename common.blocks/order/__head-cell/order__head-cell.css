@@ -27,7 +27,12 @@
     background-color: #53aa5e;
     text-align: center;
 }
-
+.order__green {
+    background: #53aa5e
+}
+.order__red {
+    background: red;
+}
 .order__pause {
     width: 50px;
     position: absolute;
