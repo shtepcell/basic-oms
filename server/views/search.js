@@ -19,7 +19,8 @@ module.exports = function(opt, data){
         page: [
             {
                 block: 'searcher',
-                data: data.data
+                data: data.data,
+                query: data.query
             },
             {
                 block: 'ultra-table',

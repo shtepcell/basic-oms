@@ -46,13 +46,18 @@ morgan.token('user', function(req, res) {
     else return 'guest'
 });
 
+morgan.token('smart-url', function(req, res) {
+    if(req.originalUrl.length > 90) return req.originalUrl.substring(0, 70) + '.-.-.-.' + req.originalUrl.substring(req.originalUrl.length-20, req.originalUrl.length);
+    return req.originalUrl;
+});
+
 app
     .disable('x-powered-by')
     .enable('trust proxy')
     .use(compression())
     .use(favicon(path.join(staticFolder, 'favicon.ico')))
     .use(serveStatic(staticFolder))
-    .use(morgan('[HTTP] :date[web] <:user> :method :url :status :res[header] - :response-time ms'))
+    .use(morgan('[HTTP] :date[web] <:user> :method :smart-url :status :res[header] - :response-time ms'))
     .use(cookieParser())
     .use(bodyParser.urlencoded({ extended: true }))
     .use(expressSession({

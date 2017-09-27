@@ -458,7 +458,17 @@ module.exports = {
     },
 
     search: async (req, res) => {
+        // console.log(req.query);
+        // var params = req.params.
         res.locals.data = await getData();
+
+        if( req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
+        if( req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
+        if( req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
+        if( req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
+
+        res.locals.query = req.query;
+
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
