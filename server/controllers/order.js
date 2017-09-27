@@ -458,12 +458,60 @@ module.exports = {
     },
 
     search: async (req, res) => {
+        res.locals.data = await getData();
+        var pagerId = 'first',
+            pagers = [],
+            pageNumber = req.query['pager' + pagerId] || 1,
+            perPage = 20; // TODO брать из конфига?
+
+        if (!!(+pageNumber) && (+pageNumber) > 0) {
+            pageNumber = +pageNumber;
+            pagers[0] = pagerId;
+        }
+        else
+            res.redirect(req.path);
+
+        var docs = await Order.paginate({}, { page: pageNumber, limit: perPage, populate: [
+            {
+                path: 'info.client',
+                model: 'Client',
+                populate: {
+                    path: 'type',
+                    model: 'ClientType'
+                }
+            },
+            {
+                path: 'info.service',
+                model: 'Service'
+            },
+            {
+                path: 'info.city',
+                model: 'City'
+            }
+        ]});
+
+        docs.docs.forEach( item => {
+            item.cs = calculateCS(item);
+            item.status = stages[item.status];
+        });
+
+        res.locals.pagers = {};
+        res.locals.pagers[pagerId] = {
+            pageNumber: +pageNumber,
+            records: docs.total,
+            perPage: docs.limit
+        };
+
+        res.locals.orders = docs.docs;
 
         render(req, res, {
-            viewName: 'search'
+            viewName: 'search',
+            options: {
+                pagers: pagers
+            }
         });
     }
-};
+}
 
 function parseClient(str) {
     var res = { type: '', name: ''};

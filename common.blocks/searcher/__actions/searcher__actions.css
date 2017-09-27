@@ -1,0 +1,10 @@
+.searcher__actions {
+    line-height: 35px;
+}
+.searcher__actions .link {
+    color: grey;
+}
+.searcher__actions .button {
+    width: 300px;
+    float: right;
+}

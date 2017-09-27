@@ -1,3 +1,7 @@
 .searcher__cell {
-
+    flex: 3 1 30px;
+}
+.searcher__cell > .select {
+    line-height: normal;
+    padding-bottom: 1px;
 }

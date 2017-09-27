@@ -2,7 +2,7 @@
     shouldDeps: [
         {
             block: 'searcher',
-            elems: ['cell', 'row', 'label']
+            elems: ['cell', 'row', 'label', 'group', 'actions']
         },
         {
             block: 'input',
