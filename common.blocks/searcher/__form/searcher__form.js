@@ -11,12 +11,22 @@ provide(bemDom.declElem('searcher', 'form',
         },
         _onSubmit: function (e) {
             e.preventDefault();
+            var data = {
+                pagerfirst: 1,
+                id: '',
+                cms: '',
+                func: [],
+                pre: [],
+                build: [],
+                final: [],
+                client: '',
+                service: '',
+                city: ''
+            };
 
             var arr = this.domElem.serializeArray();
-            var data = {};
             arr.forEach( item => {
-                if(item.value.length > 0)
-                    data[item.name] = item.value;
+                data[item.name] = item.value;
             });
 
             var checkboxs = this.findChildBlocks(bemDom.declBlock('checkbox-group', {}));
@@ -27,7 +37,7 @@ provide(bemDom.declElem('searcher', 'form',
                     data[s.domElem[0].name] = val;
                 }
             })
-            
+
             location.change({ params: data});
         }
     })

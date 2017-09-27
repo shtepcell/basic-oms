@@ -19,6 +19,7 @@ module.exports = {
         if (req.session.__user) {
             var acc = await Account.findOne({login: req.session.__user}).populate('department');
             res.locals.__user = {
+                _id: acc._id,
                 login: acc.login,
                 name: acc.name,
                 department: acc.department

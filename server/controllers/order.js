@@ -14,7 +14,7 @@ var stages = {
     'init': 'Инициация заказа',
     'client-match': 'Согласование с клиентом',
     'client-notify': 'Уведомление клиента',
-    'all-pre': 'Проработка по ГЗП/STOP',
+    'all-pre': 'Проработка по ГЗП и STOP/VSAT',
     'gzp-pre': 'Проработка по ГЗП',
     'gzp-build': 'Организация ГЗП',
     'install-devices': 'Установка оборудования',
@@ -469,6 +469,8 @@ module.exports = {
 
         res.locals.query = req.query;
 
+        var query = await makeQuery(req, res);
+        query.special = undefined;
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
@@ -481,7 +483,7 @@ module.exports = {
         else
             res.redirect(req.path);
 
-        var docs = await Order.paginate({}, { page: pageNumber, limit: perPage, populate: [
+        var docs = await Order.paginate(query, { page: pageNumber, limit: perPage, populate: [
             {
                 path: 'info.client',
                 model: 'Client',
@@ -543,6 +545,97 @@ function parserCity(str) {
             return res;
         } else res.type += ''+str[i];
     }
+}
+
+var makeQuery = async (req, res) => {
+    var qr = {};
+    var query = req.query;
+    var status = [];
+    if(query.id) {
+        return {id: query.id};
+    }
+    if(query.cms) {
+        return {cms: query.cms};
+    }
+    if(query.func) {
+        if(query.func.indexOf('1') >= 0) {
+            qr['info.initiator'] = '' + res.locals.__user._id;
+        }
+        if(query.func.indexOf('2') >= 0) {
+            qr['special'] = true;
+        }
+        if(query.func.indexOf('3') >= 0) {
+            qr['pause.status'] = true;
+        }
+    }
+    if(query.pre) {
+        if(query.pre.indexOf('1') >= 0) {
+            status.push({status: 'gzp-pre'});
+            status.push({status: 'all-pre'});
+        }
+        if(query.pre.indexOf('2') >= 0) {
+            status.push({status: 'stop-pre'});
+            if(status.indexOf({status: 'all-pre'}) < 0) {
+                status.push({status: 'all-pre'});
+            }
+        }
+        if(query.pre.indexOf('3') >= 0) {
+            status.push({status: 'client-match'});
+        }
+    }
+    if(query.build) {
+        if(query.build.indexOf('1') >= 0) {
+            status.push({status: 'gzp-build'});
+        }
+        if(query.build.indexOf('2') >= 0) {
+            status.push({status: 'install-devices'});
+        }
+        if(query.build.indexOf('3') >= 0) {
+            status.push({status: 'stop-build'});
+        }
+        if(query.build.indexOf('4') >= 0) {
+            status.push({status: 'network'});
+        }
+        if(query.build.indexOf('5') >= 0) {
+            status.push({status: 'client-notify'});
+        }
+    }
+
+    if(query.final) {
+        if(query.final.indexOf('1') >= 0) {
+            status.push({ '$and' : [
+                {status: 'succes'},
+                {'date.gzp-build': {$ne:null}}
+            ]});
+        }
+        if(query.final.indexOf('2') >= 0) {
+            status.push({ '$and' : [
+                {status: 'succes'},
+                {'date.stop-build': {$ne:null} }
+            ]});
+        }
+        if(query.final.indexOf('3') >= 0) {
+            status.push({status: 'reject'});
+        }
+    }
+
+    if(status.length > 0)
+        qr['$or'] = status;
+
+    if(query.client) {
+        var clnt = parseClient(query.client);
+        clnt = await Client.findOne({name: clnt.name});
+        qr['$and'] = [{'info.client': clnt._id}];
+    }
+
+    if(query.city) {
+        var city = parserCity(query.city);
+        city = await City.findOne({name: city.name});
+        if(qr['$and']) {
+            qr['$and'].push({'info.city': city._id})
+        } else qr['$and'] = [{'info.city': city._id}];
+    }
+    return qr;
 }
 
 function calculateCS(order) {
