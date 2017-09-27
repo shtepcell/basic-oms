@@ -23,52 +23,64 @@ module.exports = function(opt, data){
                 query: data.query
             },
             {
-                block: 'ultra-table',
-                mods: {
-                    'static' : true,
-                    theme: 'order'
-                },
-                fields: [
+                block: 'searcher',
+                elem: 'wrap',
+                content: [
                     {
-                        name: 'ID',
-                        getContent: (order) => `${order.id}`
+                        block: 'searcher',
+                        elem: 'title',
+                        content: 'Результаты поиска :'
                     },
                     {
-                        name: 'Клиент',
-                        getContent: (order) => {
-                            var name = order.info.client.name;
-                            if(name.length >= 60) name = name.substring(0, 57) + '...';
+                        block: 'ultra-table',
+                        mods: {
+                            'static' : true,
+                            theme: 'order'
+                        },
+                        fields: [
+                            {
+                                name: 'ID',
+                                getContent: (order) => `${order.id}`
+                            },
+                            {
+                                name: 'Клиент',
+                                getContent: (order) => {
+                                    var name = order.info.client.name;
+                                    if(name.length >= 60) name = name.substring(0, 57) + '...';
 
-                            return `[${order.info.client.type.shortName}] ${name}`
+                                    return `[${order.info.client.type.shortName}] ${name}`
+                                }
+                            },
+                            {
+                                name: 'Статус',
+                                getContent: (order) => `${order.status}`
+                            },
+                            {
+                                name: 'Услуга',
+                                getContent: (order) => `${order.info.service.name}`
+                            },
+                            {
+                                name: 'КС',
+                                getContent: (order) => `${order.cs}`
+                            },
+                            {
+                                name: 'Адресс',
+                                getContent: (order) => `${order.info.city.type} ${order.info.city.name}, ${order.info.street}, ${order.info.adds}`
+                            }
+                        ],
+                        url: '/order/',
+                        template: 'id',
+                        data: orders
+                    },
+                    {
+                        block: 'pager',
+                        attrs: {
+                            id: pagerId
                         }
-                    },
-                    {
-                        name: 'Статус',
-                        getContent: (order) => `${order.status}`
-                    },
-                    {
-                        name: 'Услуга',
-                        getContent: (order) => `${order.info.service.name}`
-                    },
-                    {
-                        name: 'КС',
-                        getContent: (order) => `${order.cs}`
-                    },
-                    {
-                        name: 'Адресс',
-                        getContent: (order) => `${order.info.city.type} ${order.info.city.name}, ${order.info.street}, ${order.info.adds}`
                     }
-                ],
-                url: '/order/',
-                template: 'id',
-                data: orders
-            },
-            {
-                block: 'pager',
-                attrs: {
-                    id: pagerId
-                }
+                ]
             }
+
         ]
     };
 };

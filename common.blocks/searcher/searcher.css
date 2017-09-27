@@ -5,3 +5,14 @@
     margin: 20px 20px 30px 20px;
     padding: 1em 1em 1em 1em;
 }
+.searcher__title {
+    font-family: sans-serif;
+    margin-left: 1em;
+    margin-bottom: 1em;
+    font-size: 14pt;
+}
+.searcher__wrap {
+    margin-left: 3em;
+    margin-right: 3em;
+
+}

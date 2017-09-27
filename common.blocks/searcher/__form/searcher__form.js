@@ -17,28 +17,17 @@ provide(bemDom.declElem('searcher', 'form',
             arr.forEach( item => {
                 if(item.value.length > 0)
                     data[item.name] = item.value;
-                if(item.name == 'func' || item.name == 'pre' || item.name == 'build' || item.name == 'final') {
-                    data[item.name] = 'ready';
-                }
             });
+
             var checkboxs = this.findChildBlocks(bemDom.declBlock('checkbox-group', {}));
             checkboxs.forEach( item => {
                 let val = item.getVal();
                 if(val.length > 0) {
-                    if(data.func && data.func == 'ready') {
-                        data.func = val;
-                    }
-                    if(data.pre && data.pre == 'ready') {
-                        data.pre = val;
-                    }
-                    if(data.build && data.build == 'ready') {
-                        data.build = val;
-                    }
-                    if(data.final && data.final == 'ready') {
-                        data.final = val;
-                    }
+                    var s = item.findChildElem(bemDom.declElem('checkbox', 'control', {}));
+                    data[s.domElem[0].name] = val;
                 }
             })
+            
             location.change({ params: data});
         }
     })
