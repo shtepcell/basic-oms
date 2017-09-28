@@ -378,7 +378,6 @@ module.exports = {
             }
 
             order.stop = req.body;
-            console.log(req.body);
             var prvdr = parseClient(req.body.provider);
 
             order.stop.provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
@@ -658,6 +657,7 @@ module.exports = {
 
     search: async (req, res) => {
         res.locals.data = await getData();
+        res.locals.err = {};
 
         if( req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
         if( req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
@@ -666,6 +666,9 @@ module.exports = {
 
         res.locals.query = req.query;
 
+        if(req.query.id && isNaN(req.query.id)) {
+            res.locals.err.id = 'ID должен быть числом';
+        }
         var query = await makeQuery(req, res);
         query.special = undefined;
         var pagerId = 'first',
@@ -820,17 +823,37 @@ var makeQuery = async (req, res) => {
         qr['$or'] = status;
 
     if(query.client) {
-        var clnt = parseClient(query.client);
-        clnt = await Client.findOne({name: clnt.name});
-        qr['$and'] = [{'info.client': clnt._id}];
+        var clnt = query.client;
+        var rgx =  new RegExp('' + clnt + '', 'i');
+        clnt = await Client.find({name: {$regex: rgx}});
+        if(clnt.length > 0) {
+            var _q = [];
+            clnt.forEach( itm => {
+                _q.push({'info.client': itm._id});
+            })
+            qr['$and'] = [{'$or': _q}];
+        } else {
+            qr['$and'] = [{'asdasd': 'asdasdasd'}]
+        }
     }
 
     if(query.city) {
-        var city = parserCity(query.city);
-        city = await City.findOne({name: city.name});
-        if(qr['$and']) {
-            qr['$and'].push({'info.city': city._id})
-        } else qr['$and'] = [{'info.city': city._id}];
+        // var city = parserCity(query.city);
+        var city = query.city;
+
+        var rgx =  new RegExp('' + city + '', 'i');
+        city = await City.find({name: {$regex: rgx}});
+        if(city.length > 0) {
+            var _q = [];
+            city.forEach( itm => {
+                _q.push({'info.city': itm._id});
+            })
+            if(qr['$and']) {
+                qr['$and'].push({'$or': _q})
+            } else qr['$and'] = [{'$or': _q}];
+        } else {
+            qr['$and'] = [{'asdasd': 'asdasdasd'}]
+        }
     }
     return qr;
 }
@@ -914,11 +937,11 @@ var getData = async () => {
     var services = await Service.find();
 
 
-    clients = clients.map( i => `[${i.type.shortName}] ${i.name}`);
+    clients = clients.map( i => `${i.name}`);
 
     providers = providers.map( i => `[${i.type}] ${i.name}`);
 
-    cities = cities.map( i => `${i.type} ${i.name}`);
+    cities = cities.map( i => `${i.name}`);
 
     services = services.map( i => {
         return {
