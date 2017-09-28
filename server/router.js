@@ -26,7 +26,7 @@ module.exports = function (app) {
 
     app.get('/', Order.getMainPage);
 
-    // app.get('/status', Order.getSome);
+    app.get('/status', Order.getStat);
 
     app.get('/search', Order.search);
 

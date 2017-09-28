@@ -1,0 +1,6 @@
+.status__column-title {
+    display: flex;
+    justify-content: center;
+    font-size: 14pt;
+    margin-bottom: 15px;
+}

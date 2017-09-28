@@ -1,0 +1,19 @@
+.status__column-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+.status__column-data > .status__row {
+    width: 80%;
+    font-size: 10pt;
+    /*border: 1px solid;*/
+    line-height: 25px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 3 1px rgba(0,0,0,0.2);
+
+}
+.status__column-data > .status__row:nth-child(2n+1) {
+    /*background: #EFE;*/
+}

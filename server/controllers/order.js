@@ -457,9 +457,206 @@ module.exports = {
 
     },
 
+    getStat: async (req, res) => {
+        var deps = await Department.find();
+        var orders = await Order.find().populate('info.initiator');
+
+        orders = orders.map( item => {
+            var wrkr;
+
+            switch (item.status) {
+                case 'gzp-pre':
+                    deps.forEach( i => {
+                        if(i.type == 'gus') {
+                            if(i.cities.indexOf(item.info.city) >= 0) {
+                                item.worker = i;
+                                return;
+                            }
+                        }
+                    })
+                    break;
+                case 'stop-pre':
+                    deps.forEach( i => {
+                        if(i.type == 'b2o') {
+                            item.worker = i;
+                        }
+                    })
+                    break;
+                case 'all-pre':
+                    item.worker = [];
+                    deps.forEach( i => {
+                        if(i.type == 'gus') {
+                            if(i.cities.indexOf(item.info.city) >= 0) {
+                                item.worker.push(i);
+                                return;
+                            }
+                        }
+                        if(i.type == 'b2o') {
+                            item.worker.push(i);
+                        }
+                    })
+                    break;
+                case 'client-notify':
+                    deps.forEach( i => {
+                        if(item.info.initiator.department == ''+i._id) {
+                            item.worker = i;
+                            return;
+                        }
+                    })
+                    break;
+
+                case 'client-match':
+                    deps.forEach( i => {
+                        if(item.info.initiator.department ==''+i._id) {
+                            item.worker = i;
+                            return;
+                        }
+                    })
+                    break;
+
+                case 'network':
+                    deps.forEach( i => {
+                        if(i.type == 'net') {
+                            item.worker = i;
+                        }
+                    })
+                    break;
+
+                case 'gzp-build':
+                    deps.forEach( i => {
+                        if(i.type == 'gus') {
+                            if(i.cities.indexOf(item.info.city) >= 0) {
+                                item.worker = i;
+                                return;
+                            }
+                        }
+                    })
+                    break;
+
+                case 'install-devices':
+                    deps.forEach( i => {
+                        if(i.type == 'gus') {
+                            if(i.cities.indexOf(item.info.city) >= 0) {
+                                item.worker = i;
+                                return;
+                            }
+                        }
+                    })
+                    break;
+
+                case 'stop-build':
+                    deps.forEach( i => {
+                        if(i.type == 'b2o') {
+                            item.worker = i;
+                        }
+                    });
+                    break;
+
+            }
+            return {
+                status: item.status,
+                cs: calculateCS(item),
+                pause: item.pause,
+                worker: item.worker
+            }
+        });
+        // console.log(orders);
+
+        var stages = {
+            pre: {
+                all: 0,
+                bad: 0
+            },
+            build: {
+                all: 0,
+                bad: 0
+            },
+            succes: {
+                all: 0
+            },
+            reject: {
+                all: 0
+            }
+        };
+
+        var dprtmts = {};
+
+        orders.forEach( item => {
+            var pre = ['gzp-pre', 'stop-pre', 'all-pre', 'client-match'];
+            var build = ['gzp-build', 'stop-build', 'install-devices', 'client-notify', 'network'];
+
+            if(pre.indexOf(item.status) >= 0) {
+                stages.pre.all++;
+                if(item.cs < 0) stages.pre.bad++;
+            }
+
+            if(build.indexOf(item.status) >= 0) {
+                stages.build.all++;
+                if(item.cs < 0) stages.build.bad++;
+            }
+            if(item.worker) {
+                if(item.worker.length) {
+                    item.worker.forEach( i => {
+                        if(!dprtmts[i._id]) {
+                            dprtmts[i._id] = {
+                                pre: {
+                                    all: 0,
+                                    bad: 0
+                                },
+                                build: {
+                                    all: 0,
+                                    bad: 0
+                                }
+                            }
+                        }
+                        if(pre.indexOf(item.status) >= 0) {
+                            dprtmts[i._id].pre.all++;
+                            if(item.cs < 0) dprtmts[i._id].pre.bad++;
+                        }
+
+                    })
+
+                } else {
+                    if(!dprtmts[item.worker._id])
+                        dprtmts[item.worker._id] = {
+                            pre: {
+                                all: 0,
+                                bad: 0
+                            },
+                            build: {
+                                all: 0,
+                                bad: 0
+                            }
+                        }
+                    if(pre.indexOf(item.status) >= 0) {
+                        dprtmts[item.worker._id].pre.all++;
+                        if(item.cs < 0) dprtmts[item.worker._id].pre.bad++;
+                    }
+
+                    if(build.indexOf(item.status) >= 0) {
+                        dprtmts[item.worker._id].build.all++;
+                        if(item.cs < 0) dprtmts[item.worker._id].build.bad++;
+                    }
+                }
+
+            }
+
+            if(item.status == 'succes') stages.succes.all++;
+            if(item.status == 'reject') stages.reject.all++;
+
+        })
+        res.locals.deps = deps;
+        res.locals.statistics = {
+            all: orders.length,
+            stages: stages,
+            deps : dprtmts
+        };
+        render(req, res, {
+            viewName: 'status'
+        });
+    },
+
     search: async (req, res) => {
-        // console.log(req.query);
-        // var params = req.params.
         res.locals.data = await getData();
 
         if( req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]

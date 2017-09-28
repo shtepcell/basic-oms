@@ -118,6 +118,10 @@
         {
             block: 'order',
             elem: 'button'
+        },
+        {
+            block: 'status',
+            elems: ['common']
         }
     ]
 })

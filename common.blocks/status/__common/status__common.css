@@ -1,0 +1,6 @@
+.status__common {
+    width: 350px;
+    flex: 1 1 100%;
+    margin-bottom: 1em;
+    font-size: 14pt;
+}
