@@ -926,7 +926,7 @@ function calculateCS(order) {
             break;
         case 'stop-build':
             date = order.date['client-match'];
-            time = order.gzp.time;
+            time = order.stop.time;
             break;
         default:
             date = 0;

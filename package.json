@@ -88,8 +88,8 @@
     "watch": "chokidar '*.blocks/**' --initial -c 'enb make && notify -t bem-express -m Built'",
     "test": "npm run lint && npm run make",
     "lint": "eslint . && bemhint . && stylelint *.blocks/**/*.css",
-    "pro": "./node_modules/.bin/forever -a --minUptime 1000 --spinSleepTime 3000 -l forever.log -o forever.log -e forever.log start server",
-    "prostop": "./node_modules/.bin/forever stop server"
+    "pro": "./node_modules/.bin/forever -a --minUptime 1000 --spinSleepTime 3000 -l forever.log -o forever.log -e errors.log start server/index.js",
+    "prostop": "./node_modules/.bin/forever stop  server/index.js"
   },
   "private": true
 }
