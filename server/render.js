@@ -8,7 +8,7 @@ var fs = require('fs'),
 
     isDev = process.env.NODE_ENV === 'development',
     templates = getTemplates(),
-    useCache = !isDev,
+    useCache = false,
     cacheTTL = config.cacheTTL,
     cache = {};
 
