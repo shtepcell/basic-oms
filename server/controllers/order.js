@@ -244,7 +244,6 @@ module.exports = {
 
         order.info.city = tmpCity[0];
         order.info.pre = undefined;
-
         var ordr = new Order({
             status: order.status,
             info: order.info,
@@ -254,8 +253,14 @@ module.exports = {
          });
 
         var done = await Order.create(ordr);
-        logger.info(`Init Order #${ done.id } | ${ done.status } | ${ done.info.client.name } | ${done.info.city.type} ${done.info.city.name}`, res.locals.__user);
-        res.send({created: true})
+        if(done) {
+            service.usage = true;
+            service.save();
+            clnt[0].usage = true;
+            clnt[0].save();
+            logger.info(`Init Order #${ done.id } | ${ done.status } | ${ done.info.client.name } | ${done.info.city.type} ${done.info.city.name}`, res.locals.__user);
+            res.send({created: true})
+        } else res.send({errText: 'Что-то пошло не так'});
     },
 
     getOrderInfo: async (req, res) => {
@@ -380,7 +385,9 @@ module.exports = {
             order.stop = req.body;
             var prvdr = parseClient(req.body.provider);
 
-            order.stop.provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
+            var provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
+
+            order.stop.provider = provider;
 
             if(order.stop.provider) {
                 if(order.status == 'stop-pre') {
@@ -395,12 +402,20 @@ module.exports = {
                     order.stop.complete = true;
                 }
                 var done = await order.save();
-                if(done)
+                if(done) {
+                    provider.usage = true;
+                    provider.save();
                     logger.info(`End pre-stop order #${ done.id }`, res.locals.__user);
-                res.send({created: true})
+                    res.send({created: true})
+                }
 
             } else res.status(400).send({errText : 'Уточните название провайдера'});
         } else res.send({created: false})
+    },
+
+    endClientNotify: async (req, res) => {
+        var reqData = req.body;
+        var order = await Order.findOne({id: req.params.id});
     },
 
     changeStatus: async (req, res) => {
@@ -410,41 +425,41 @@ module.exports = {
 
             switch (reqData.to) {
                 case 'start-pre-stop':
-                order.status = 'stop-pre';
-                order.date['client-match'] = new Date();
-                break;
+                    order.status = 'stop-pre';
+                    order.date['client-match'] = new Date();
+                    break;
                 case 'start-pre-gzp':
-                order.status = 'gzp-pre';
-                order.date['client-match'] = new Date();
-                break;
+                    order.status = 'gzp-pre';
+                    order.date['client-match'] = new Date();
+                    break;
                 case 'end-network':
-                order.status = 'client-notify';
-                order.date['network'] = new Date();
-                break;
+                    order.status = 'client-notify';
+                    order.date['network'] = new Date();
+                    break;
                 case 'end-build':
-                order.status = 'network';
-                order.date['gzp-build'] = new Date();
-                break;
+                    order.status = 'network';
+                    order.date['gzp-build'] = new Date();
+                    break;
                 case 'start-gzp-build':
-                if(order.gzp.need) {
-                    order.status = 'gzp-build';
-                } else {
-                    order.status = 'install-devices';
-                }
-                order.date['client-match'] = new Date();
-                break;
+                    if(order.gzp.need) {
+                        order.status = 'gzp-build';
+                    } else {
+                        order.status = 'install-devices';
+                    }
+                    order.date['client-match'] = new Date();
+                    break;
                 case 'end-install-devices':
-                order.status = 'network';
-                order.date['gzp-build'] = new Date();
-                break;
+                    order.status = 'network';
+                    order.date['gzp-build'] = new Date();
+                    break;
                 case 'start-stop-build':
-                order.status = 'stop-build';
-                order.date['client-match'] = new Date();
-                break;
+                    order.status = 'stop-build';
+                    order.date['client-match'] = new Date();
+                    break;
                 case 'end-build-stop':
-                order.status = 'network';
-                order.date['stop-build'] = new Date();
-                break;
+                    order.status = 'network';
+                    order.date['stop-build'] = new Date();
+                    break;
             }
 
             var done = await order.save();

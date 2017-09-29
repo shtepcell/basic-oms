@@ -116,6 +116,26 @@ block('order').elem('actions').content()(function () {
                 })
             }
         })
+        
+        if( tab == 'info' && order.status == 'client-notify' && user.department._id == ''+order.info.initiator.department._id ) {
+                ret.push({
+                    block: 'order',
+                    elem: 'action',
+                    content: {
+                        block: 'button',
+                        mix: {
+                            block: 'order',
+                            elem: 'action'
+                        },
+                        mods: {
+                            theme: 'islands',
+                            size: 'l',
+                            type: 'submit'
+                        },
+                        text: 'Заказ выполнен'
+                    }
+                })
+            }
 
         if( tab == 'stop' && (order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o') {
                 ret.push({

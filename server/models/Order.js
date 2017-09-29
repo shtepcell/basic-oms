@@ -54,7 +54,9 @@ var schema = mongoose.Schema({
         street: String,
         adds: String,
         ip: Boolean,
-        pool: String
+        pool: String,
+        order: String,
+        'date-sign': Date
     },
     gzp: {
         complete: Boolean,

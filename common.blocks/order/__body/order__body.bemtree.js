@@ -152,6 +152,24 @@ block('order').elem('body').content()(function () {
                         placeholder: 'Возможно завтра будет дождь...'
                     },
                     access: (adminEdit)
+                },
+                {
+                    name: 'Договор',
+                    val: order.info.order,
+                    field: {
+                        name: 'order',
+                        type: 'file'
+                    },
+                    access: (adminEdit || order.status == 'client-notify')
+                },
+                {
+                    name: 'Дата подписания акта',
+                    val: order.info['date-sign'],
+                    field: {
+                        name: 'date-sign',
+                        type: 'date'
+                    },
+                    access: (adminEdit || order.status == 'client-notify')
                 }
             ]
             break;
@@ -534,6 +552,33 @@ block('order').elem('body').content()(function () {
                             data: dataset[item.field.dataset]
                         }
                     }
+                    break;
+                case 'date':
+                    input = {
+                        block: 'input',
+                        mods: {
+                            theme: 'islands',
+                            width: 'available',
+                            size: 'm'
+                        },
+                        mix: {
+                            elem: 'control'
+                        },
+                        name: item.name,
+                        type: 'date'
+                    };
+                    break;
+                case 'file':
+                    input = {
+                        block: 'attach',
+                        name: item.field.name,
+                        mods: {
+                            theme: 'islands',
+                            size: 'l'
+                        },
+                        button: 'Выберите файл',
+                        noFileText: 'Файл не выбран'
+                    };
                     break;
             }
 
