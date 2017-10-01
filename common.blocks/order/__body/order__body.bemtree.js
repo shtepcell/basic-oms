@@ -567,18 +567,20 @@ block('order').elem('body').content()(function () {
                 case 'date':
                     input = {
                         block: 'input',
-                        required: item.field.required,
                         mods: {
-                            theme: 'islands',
-                            width: 'available',
-                            size: 'm'
+                            'has-calendar': true,
+                            size: 'm',
+                            theme: 'islands'
                         },
-                        mix: {
-                            elem: 'control'
-                        },
+                        required: item.field.required,
                         name: item.field.name,
-                        type: 'date'
-                    };
+                        weekdays: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
+                        months: ['Январь', 'Февраль', 'Март',
+                            'Апрель', 'Май', 'Июнь',
+                            'Июль', 'Август', 'Сентябрь',
+                            'Октябрь', 'Ноябрь', 'Декабрь'],
+                        val: item.val
+                    }
                     break;
                 case 'file':
                     input = {
@@ -637,7 +639,7 @@ block('order').elem('body').content()(function () {
                             }
                         ]
                     })
-                } else 
+                } else
                     ret.push({
                         elem: 'body-row',
                         content: [

@@ -198,8 +198,15 @@ module.exports = {
             if(data[item] == '') data[item] = undefined;
         });
 
-        if(data['date-request'])
-            data['date-request'] = new Date(data['date-request']);
+        if(data['date-request']) {
+            var date = parseDate(data['date-request']);
+
+            if(!!!date) {
+                res.status(400).send({ errText: 'Некорректный формат даты' });
+                return;
+            }
+            data['date-request'] = date;
+        }
         data.initiator = await Account.findOne({login: res.locals.__user.login});
         data.department = await Department.findOne({_id: res.locals.__user.department._id + ''});
 
@@ -228,7 +235,8 @@ module.exports = {
 
         order.info.client = clnt[0];
 
-        order.info.service = await Service.findOne({ _id: order.info.service });
+        var service = await Service.findOne({ _id: order.info.service });
+        order.info.service = service;
 
         order.info.city = parserCity(order.info.city);
 
@@ -430,22 +438,30 @@ module.exports = {
                     _dir = `${(i)*1000}-${(i+1)*1000}`;
                 }
             }
-
-            var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-            req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function(err) {
-                if (err) {
-                    return res.status(500).send(err);
-                }
-            });
-            if(!!!reqData['date-sign']) {
-                res.status(400).send({errText: 'Дата подписания - обязательна!'})
-                return;
-            }
             if(!!!req.files.order) {
                 res.status(400).send({errText: 'Договор - обязателен!'})
                 return;
             }
-            order.info['date-sign'] = new Date(reqData['date-sign']);
+            if(!!!reqData['date-sign']) {
+                res.status(400).send({errText: 'Дата подписания - обязательна!'})
+                return;
+            }
+            var date = parseDate(reqData['date-sign'])
+            if(!!!date) {
+                res.status(400).send({errText: 'Неверный формат даты'})
+                return;
+            }
+            var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
+            req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function(err) {
+                if (err) {
+                    logger.error(err);
+                    return res.status(500).send(err);
+                }
+            });
+
+            order.info['date-sign'] = date;
+
+            console.log(order.info['date-sign']);
             order.info.order = `${req.files.order.name}`;
             order.status = 'succes';
             order.date['succes'] = new Date();
@@ -1013,6 +1029,15 @@ function calculateCS(order) {
     var d = Math.abs(date - new Date());
     var diffDays = Math.ceil(d / (1000 * 3600 * 24));
     return time - diffDays + 1;
+}
+
+function parseDate (date) {
+    date = date.split('.');
+    if(date.length == 3) {
+        if(date[1] >= 0 && date[1] <= 11 && date[0] > 0 &&  date[0] <= 31)
+            return new Date(date[2], date[1]-1, date[0]);
+        else return false
+    } else return false;
 }
 
 var getData = async () => {
