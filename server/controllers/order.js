@@ -41,7 +41,7 @@ module.exports = {
 
             res.locals.services = await Service.find();
             res.locals.template = await fields.getInitField();
-
+            res.locals.dataset = await getData();
             render(req, res, {
                 viewName: 'orders/init'
             });
@@ -216,12 +216,12 @@ module.exports = {
             info: data
         };
 
-        var clnt = parseClient(order.info.client);
+        var clnt = order.info.client;
         if(clnt == 'err') {
-            res.status(400).send({ errText: 'Введите коректное название клиента. Например [QW] Qwerty' });
+            res.status(400).send({ errText: 'Введите коректное название клиента. Например Apple' });
             return;
         }
-        clnt = await Client.find({ name: clnt.name }); //TODO: Find by type too
+        clnt = await Client.find({name: clnt});
 
         if(clnt.length == 0) {
             res.status(400).send({ errText: 'Такого клиента не существует.' });

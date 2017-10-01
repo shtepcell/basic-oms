@@ -59,7 +59,7 @@ block('navigator').content()(function() {
         }
     ]
 
-    if(this.data.locals.__user) {
+    if(this.data.locals.__user.department.type == 'admin') {
         nav.push({
             block: 'dropdown',
             mods: {

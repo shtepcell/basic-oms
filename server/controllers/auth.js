@@ -12,7 +12,9 @@ module.exports = {
     getLogin: async (req, res) => {
         if(req.session.__user) {
             res.redirect('/');
-        } else render(req, res, 'login');
+        } else render(req, res, {
+            viewName: 'login'
+        })
     },
 
     isLoggedIn: async (req, res, next) => {
@@ -26,12 +28,18 @@ module.exports = {
             };
             next();
         } else {
-            res.redirect('/login')
-            // if(req.path != '/login') {
-            //     var rstr = '/login' + ( (req.originalUrl.length>1) ? '?trg='+encodeURIComponent(req.originalUrl) : '' );
-            //     res.redirect(rstr);
-            // } else render(req, res, 'login');
+            if(req.path != '/login') {
+                res.locals.trg = '/login?trg=' + encodeURIComponent(req.originalUrl);
+            }
+            render(req, res, {
+                viewName: 'login'
+            })
         }
+    },
+
+    isAdmin: function (req, res, next) {
+        if(res.locals.__user.department.type == 'admin') next();
+        else res.status(403).send('Доступ только для администраторов')
     },
 
     logout: function(req, res) {

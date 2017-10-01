@@ -1,4 +1,4 @@
-module.exports = function (opt) {
+module.exports = function (opt, data) {
 
     return {
         view: 'page-index',
@@ -19,7 +19,8 @@ module.exports = function (opt) {
             },
             {
                 block: 'form',
-                elem: 'login'
+                elem: 'login',
+                url: data.trg
             }
         ]
     };

@@ -857,7 +857,7 @@ module.exports = {
                 val: ''+item._id
             }
         });
-        data.clients = clients.map( item => `[${item.type.shortName}] ${item.name}` );
+        data.clients = clients.map( item => `${item.name}` );
 
         var info = allFields.info;
 

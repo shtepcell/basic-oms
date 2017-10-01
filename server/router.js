@@ -65,7 +65,7 @@ module.exports = function (app) {
     app.post('/profile', Account.selfEdit);
     app.post('/profile/password', Account.selfPassEdit);
 
-    // app.all('/admin/*', Auth.isAdmin);
+    app.all('/admin/*', Auth.isAdmin);
 
     app.get('/admin/users', Account.getPage);
 

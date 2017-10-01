@@ -1,8 +1,10 @@
 block('form').elem('login')(
     tag()('form'),
-    attrs()({
-        method: 'POST',
-        action: '/login'
+    attrs()(function () {
+        return {
+            method: 'POST',
+            action: this.ctx.url || '/login'
+        }
     }),
     content()(function () {
         return [

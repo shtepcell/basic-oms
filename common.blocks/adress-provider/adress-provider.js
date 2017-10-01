@@ -27,7 +27,8 @@ provide(inherit(DataProvider, {
 
     _buildQuery : function(val) {
         if(!val.length) return null;
-        return new RegExp('' + val + '', 'i');
+        if(!/[^a-zA-ZА-Яа-я0-9\s]/.test(val))
+            return new RegExp('' + val + '', 'i');
     }
 }));
 
