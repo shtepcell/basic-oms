@@ -4,6 +4,7 @@
     border-radius: 0.7em;
     margin: 20px 20px 30px 20px;
     padding: 1em 1em 1em 1em;
+    min-width: 1040px;
 }
 .searcher__title {
     font-family: sans-serif;
@@ -14,5 +15,4 @@
 .searcher__wrap {
     margin-left: 3em;
     margin-right: 3em;
-
 }
