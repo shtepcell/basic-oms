@@ -1,6 +1,6 @@
 modules.define('order__body',
-    ['i-bem-dom', 'jquery', 'dom', 'b-modal-dynamic-popup', 'input'],
-    function (provide, BEMDOM, $, dom, bModalDynPopup, Input) {
+    ['i-bem-dom', 'jquery', 'dom', 'b-modal-dynamic-popup', 'input', 'attach'],
+    function (provide, BEMDOM, $, dom, bModalDynPopup, Input, Attach) {
     provide(BEMDOM.declElem('order', 'body', {
         onSetMod: {
             js: {
@@ -25,6 +25,8 @@ modules.define('order__body',
 
                         e.preventDefault();
                         data = this._validate() || {};
+                        var _file = data.file;
+                        data = data.data;
                         popup.setModalSectionContent('Сохранение...');
 
                         this._reinitPopupEvents();
@@ -50,6 +52,8 @@ modules.define('order__body',
                                 url: url,
                                 type: 'POST',
                                 dataType: 'json',
+                                contentType: (_file)?false:undefined,
+                                processData: (_file)?false:undefined,
                                 data: data,
                                 timeout: 5000,
                                 error: function(err) {
@@ -115,13 +119,23 @@ modules.define('order__body',
         },
 
         _validate: function() {
-            var _data = this.domElem.serializeArray() || [];
-
+            var form = this.domElem[0];
+            var _data = this.domElem.serializeArray();
             var data = {};
-            _data.forEach( item => {
-                data[item.name] = item.value;
-            })
-            return data;
+
+            var file = this.findChildBlock(Attach);
+            if(file) {
+                var s = file.findChildElem('control');
+                data = new FormData(form);
+            } else {
+                _data.forEach( item => {
+                    data[item.name] = item.value;
+                })
+            }
+            return {
+                data: data,
+                file: !!file
+            };
         }
     }));
 });

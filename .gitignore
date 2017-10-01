@@ -7,6 +7,8 @@ forever.log
 npm-debug.log
 package-lock.json
 static/index.min.*
+static/files
+
 errors.log
 
 # bem

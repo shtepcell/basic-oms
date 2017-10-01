@@ -20,7 +20,7 @@ modules.define('b-modal-dynamic-popup',
 
             loading: {
                 true: function(modName, modVal) {
-                    console.log(this._elem('body'), 'loading');
+                    // console.log(this._elem('body'), 'loading');
                     BEMDOM.append(this._elem('body').domElem, BEMHTML.apply({
                         block: 'b-modal-dynamic-popup',
                         elem: 'loader'
@@ -60,7 +60,7 @@ modules.define('b-modal-dynamic-popup',
                     this._emit('CANCEL');
                 });
             }
-            console.log(footer, btns);
+            // console.log(footer, btns);
         },
 
         show: function() {

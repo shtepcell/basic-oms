@@ -8,11 +8,15 @@ const Auth = require('./controllers/auth'),
     Department = require('./controllers/departments'),
     Order = require('./controllers/order');
 
+const fileUpload = require('express-fileupload');
+const mkdirp = require('mkdirp-promise');
+
 var Render = require('./render'),
     render = Render.render;
 
 module.exports = function (app) {
 
+    app.use(fileUpload());
     app.get('/ping/', function(req, res) {
         res.send('ok');
     });
@@ -50,6 +54,7 @@ module.exports = function (app) {
     app.get('/order/:id/gzp', Order.getOrderGZP);
     app.get('/order/:id/stop', Order.getOrderSTOP);
     app.get('/order/:id/history', Order.getOrderHistory);
+    app.get('/order/:id/file/:file', Order.getFile);
 
     app.post('/order/:id/info', Order.endClientNotify);
     app.post('/order/:id/gzp', Order.endPreGZP);

@@ -116,7 +116,7 @@ block('order').elem('actions').content()(function () {
                 })
             }
         })
-        
+
         if( tab == 'info' && order.status == 'client-notify' && user.department._id == ''+order.info.initiator.department._id ) {
                 ret.push({
                     block: 'order',

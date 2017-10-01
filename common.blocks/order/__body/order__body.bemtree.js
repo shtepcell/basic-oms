@@ -88,6 +88,7 @@ block('order').elem('body').content()(function () {
                     field: {
                         name: 'street',
                         type: 'text',
+                        required: true,
                         placeholder: 'ул. Пушкина',
                         required: true
                     },
@@ -128,6 +129,7 @@ block('order').elem('body').content()(function () {
                     val: order.info['cost-once'],
                     field: {
                         name: 'cost-once',
+                        required: true,
                         type: 'text',
                         placeholder: '12345'
                     },
@@ -138,6 +140,7 @@ block('order').elem('body').content()(function () {
                     val: order.info['cost-monthly'],
                     field: {
                         name: 'cost-monthly',
+                        required: true,
                         type: 'text',
                         placeholder: '123'
                     },
@@ -160,16 +163,16 @@ block('order').elem('body').content()(function () {
                         name: 'order',
                         type: 'file'
                     },
-                    access: (adminEdit || order.status == 'client-notify')
+                    access: (adminEdit || (order.status == 'client-notify' && order.info.initiator.department._id == user.department._id + ''))
                 },
                 {
                     name: 'Дата подписания акта',
-                    val: order.info['date-sign'],
+                    val: dateToStr(order.info['date-sign']),
                     field: {
                         name: 'date-sign',
                         type: 'date'
                     },
-                    access: (adminEdit || order.status == 'client-notify')
+                    access: (adminEdit || (order.status == 'client-notify' && order.info.initiator.department._id == user.department._id + ''))
                 }
             ]
             break;
@@ -261,6 +264,7 @@ block('order').elem('body').content()(function () {
                     field: {
                         type: 'text',
                         name: 'time',
+                        required: true,
                         placeholder: '50'
                     },
                     val: order.gzp.time
@@ -272,6 +276,7 @@ block('order').elem('body').content()(function () {
                     field: {
                         type: 'text',
                         name: 'cost-once',
+                        required: true,
                         placeholder: '12345'
                     },
                     val: order.gzp['cost-once']
@@ -283,6 +288,7 @@ block('order').elem('body').content()(function () {
                     field: {
                         type: 'text',
                         name: 'cost-monthly',
+                        required: true,
                         placeholder: '12345'
                     },
                     val: order.gzp['cost-monthly']
@@ -433,6 +439,7 @@ block('order').elem('body').content()(function () {
                     field: {
                         type: 'text',
                         name: 'time',
+                        required: true,
                         placeholder: '111'
                     },
                     val: order.stop.time
@@ -464,6 +471,7 @@ block('order').elem('body').content()(function () {
                     field: {
                         type: 'text',
                         name: 'cost-once',
+                        required: true,
                         placeholder: '1000'
                     },
                     val: order.stop['cost-once']
@@ -474,6 +482,7 @@ block('order').elem('body').content()(function () {
                     field: {
                         type: 'text',
                         name: 'cost-monthly',
+                        required: true,
                         placeholder: '100'
                     },
                     val: order.stop['cost-monthly']
@@ -496,6 +505,7 @@ block('order').elem('body').content()(function () {
                     input = {
                         block: 'input',
                         name: item.field.name,
+                        required: item.field.required,
                         mods: {
                             width: 'available',
                             theme: 'islands',
@@ -541,6 +551,7 @@ block('order').elem('body').content()(function () {
                 case 'suggest':
                     input = {
                         block : 'suggest',
+                        required: item.field.required,
                         mods : {
                             theme : 'islands',
                             size : 'l',
@@ -556,6 +567,7 @@ block('order').elem('body').content()(function () {
                 case 'date':
                     input = {
                         block: 'input',
+                        required: item.field.required,
                         mods: {
                             theme: 'islands',
                             width: 'available',
@@ -564,7 +576,7 @@ block('order').elem('body').content()(function () {
                         mix: {
                             elem: 'control'
                         },
-                        name: item.name,
+                        name: item.field.name,
                         type: 'date'
                     };
                     break;
@@ -600,23 +612,49 @@ block('order').elem('body').content()(function () {
             })
         } else {
             if(item.val != null) {
-                ret.push({
-                    elem: 'body-row',
-                    content: [
-                        {
-                            elem: 'body-row-name',
-                            content: item.name
-                        },
-                        {
-                            elem: 'body-row-data',
-                            content: item.val
-                        },
-                        {
-                            elem: 'body-row-symbol'
-                        }
-                    ]
-                })
-            }
+
+                if(item.field && item.field.type == 'file') {
+                    ret.push ({
+                        elem: 'body-row',
+                        content: [
+                            {
+                                elem: 'body-row-name',
+                                content: item.name
+                            },
+                            {
+                                elem: 'body-row-data',
+                                content: [
+                                    {
+                                        block: 'link',
+                                        mods : { theme : 'islands', size : 'm'},
+                                        url: `/order/${order.id}/file/${item.val}`,
+                                        content : item.val
+                                    }
+                                ]
+                            },
+                            {
+                                elem: 'body-row-symbol'
+                            }
+                        ]
+                    })
+                } else 
+                    ret.push({
+                        elem: 'body-row',
+                        content: [
+                            {
+                                elem: 'body-row-name',
+                                content: item.name
+                            },
+                            {
+                                elem: 'body-row-data',
+                                content: item.val
+                            },
+                            {
+                                elem: 'body-row-symbol'
+                            }
+                        ]
+                    })
+                }
         }
 
 

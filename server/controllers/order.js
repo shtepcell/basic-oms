@@ -7,8 +7,10 @@ const Provider = require('../models/Provider');
 const Service = require('../models/Service');
 const City = require('../models/City');
 // const Street = require('../models/Street');
-
+const mkdirp = require('mkdirp-promise');
+var fileSystem = require('fs');
 const fields = require('./fields');
+var path = require('path');
 
 var stages = {
     'init': 'Инициация заказа',
@@ -21,7 +23,7 @@ var stages = {
     'stop-pre': 'Проработка по STOP/VSAT',
     'stop-build': 'Организация STOP/VSAT',
     'network': 'Настройка сети',
-    'succes': 'Завершение обработки',
+    'succes': 'Включен',
     'reject': 'Отклонение'
 };
 
@@ -381,6 +383,10 @@ module.exports = {
                 res.status(400).send({ errText: 'Срок организации должен быть числом' });
                 return;
             }
+            if(!req.body.provider) {
+                res.status(400).send({ errText: 'Провайдер - обязательное поле!' });
+                return;
+            }
 
             order.stop = req.body;
             var prvdr = parseClient(req.body.provider);
@@ -416,6 +422,63 @@ module.exports = {
     endClientNotify: async (req, res) => {
         var reqData = req.body;
         var order = await Order.findOne({id: req.params.id});
+        if(order.status == 'client-notify') {
+            var id = order.id;
+            var _dir;
+            for (var i = 0; i < 1000; i++) {
+                if(id > i*1000) {
+                    _dir = `${(i)*1000}-${(i+1)*1000}`;
+                }
+            }
+
+            var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
+            req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function(err) {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+            });
+            if(!!!reqData['date-sign']) {
+                res.status(400).send({errText: 'Дата подписания - обязательна!'})
+                return;
+            }
+            if(!!!req.files.order) {
+                res.status(400).send({errText: 'Договор - обязателен!'})
+                return;
+            }
+            order.info['date-sign'] = new Date(reqData['date-sign']);
+            order.info.order = `${req.files.order.name}`;
+            order.status = 'succes';
+            order.date['succes'] = new Date();
+            var done = await order.save();
+            if(done) {
+                logger.info(`End client-notify order #${ done.id }`, res.locals.__user);
+                res.send({created: true});
+            } else res.send({created: false})
+        }
+    },
+
+    getFile: async (req, res) => {
+        var order = await Order.findOne({id: req.params.id});
+
+        if(order) {
+            var id = order.id;
+            var _dir;
+            for (var i = 0; i < 1000; i++) {
+                if(id > i*1000) {
+                    _dir = `${(i)*1000}-${(i+1)*1000}`;
+                }
+            }
+            var filePath = `./static/files/${_dir}/${order.id}/${req.params.file}`;
+            var options = {
+                root: './',
+                dotfiles: 'deny',
+                headers: {
+                   'x-timestamp': Date.now(),
+                   'x-sent': true
+               }
+            }
+            res.sendFile(filePath, options);
+        }
     },
 
     changeStatus: async (req, res) => {
