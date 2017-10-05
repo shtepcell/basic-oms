@@ -10,9 +10,7 @@ block('order').elem('actions').content()(function () {
                     to: 'start-pre-gzp',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');
-                        if(order.status == 'client-match' && access && !order.gzp.complete) {
-                            return true;
-                        } else return false;
+                        return (order.status == 'client-match' && access && !order.gzp.complete);
                     }
                 },
                 {
@@ -20,9 +18,7 @@ block('order').elem('actions').content()(function () {
                     to: 'start-pre-stop',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');
-                        if(order.status == 'client-match' && access && !order.stop.complete) {
-                            return true;
-                        } else return false;
+                        return (order.status == 'client-match' && access && !order.stop.complete)
                     }
                 },
                 {
@@ -30,9 +26,7 @@ block('order').elem('actions').content()(function () {
                     to: 'start-gzp-build',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');
-                        if(order.status == 'client-match' && access && order.gzp.complete) {
-                            return true;
-                        } else return false;
+                        return (order.status == 'client-match' && access && order.gzp.complete)
                     }
                 },
                 {
@@ -40,25 +34,21 @@ block('order').elem('actions').content()(function () {
                     to: 'start-stop-build',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');
-                        if(order.status == 'client-match' && access && order.stop.complete) {
-                            return true;
-                        } else return false;
+                        return (order.status == 'client-match' && access && order.stop.complete);
                     }
                 },
                 {
                     text: 'Настройка сети завершена',
                     to: 'end-network',
                     condition: function (user, order) {
-                        if(order.status == 'network' && user.department.type == 'net')
-                            return true;
-                        else return false;
+                        return (order.status == 'network' && user.department.type == 'net');
                     }
                 },
                 {
                     text: 'Отклонить заявку',
                     to: 'reject',
                     condition: function (user, order) {
-                        return ((order.info.initiator.department._id == user.department._id + '' || user.department.type == 'admin') && order.status != 'reject') 
+                        return ((order.info.initiator.department._id == user.department._id + '' || user.department.type == 'admin') && order.status != 'reject')
                     }
                 }
             ],
@@ -67,22 +57,20 @@ block('order').elem('actions').content()(function () {
                     text: 'Организация завершена',
                     to: 'end-build',
                     condition: function (user, order) {
-                        if( order.status == 'gzp-build' &&
+                        return ( order.status == 'gzp-build' &&
                             user.department.type == 'gus' &&
-                            user.department.cities.indexOf(order.info.city._id) >= 0 ) {
-                                return true;
-                            }
-                        else return false;
+                            user.department.cities.indexOf(order.info.city._id) >= 0 );
                     }
                 },
                 {
                     text: 'Оборудование установлено',
                     to: 'end-install-devices',
                     condition: function (user, order) {
-                        if(order.status == 'install-devices' && user.department.type == 'gus' &&
-                            user.department.cities.indexOf(order.info.city._id) >= 0 )
-                            return true;
-                        else return false;
+                        return (
+                            order.status == 'install-devices' &&
+                             user.department.type == 'gus' &&
+                            user.department.cities.indexOf(order.info.city._id) >= 0
+                        );
                     }
                 }
             ],
@@ -91,11 +79,8 @@ block('order').elem('actions').content()(function () {
                     text: 'Организация завершена',
                     to: 'end-build-stop',
                     condition: function (user, order) {
-                        if( order.status == 'stop-build' &&
-                            user.department.type == 'b2o') {
-                                return true;
-                            }
-                        else return false;
+                        return (order.status == 'stop-build' &&
+                            user.department.type == 'b2o')
                     }
                 }
             ]
