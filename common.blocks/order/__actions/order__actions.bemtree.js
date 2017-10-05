@@ -53,6 +53,13 @@ block('order').elem('actions').content()(function () {
                             return true;
                         else return false;
                     }
+                },
+                {
+                    text: 'Отклонить заявку',
+                    to: 'reject',
+                    condition: function (user, order) {
+                        return (order.info.initiator.department._id == user.department._id + '' && order.status != 'reject') 
+                    }
                 }
             ],
             gzp: [

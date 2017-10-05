@@ -24,7 +24,7 @@ var stages = {
     'stop-build': 'Организация STOP/VSAT',
     'network': 'Настройка сети',
     'succes': 'Включен',
-    'reject': 'Отклонение'
+    'reject': 'Заявка отклонена'
 };
 
 var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider`;
@@ -461,7 +461,7 @@ module.exports = {
 
             order.info['date-sign'] = date;
 
-            console.log(order.info['date-sign']);
+            // console.log(order.info['date-sign']);
             order.info.order = `${req.files.order.name}`;
             order.status = 'succes';
             order.date['succes'] = new Date();
@@ -503,6 +503,9 @@ module.exports = {
         if( order) {
 
             switch (reqData.to) {
+                case 'reject':
+                    order.status = 'reject';
+                    break;
                 case 'start-pre-stop':
                     order.status = 'stop-pre';
                     order.date['client-match'] = new Date();
@@ -839,6 +842,7 @@ function parserCity(str) {
             return res;
         } else res.type += ''+str[i];
     }
+    return 'err';
 }
 
 var makeQuery = async (req, res) => {
