@@ -776,8 +776,7 @@ module.exports = {
 
         if(Object.keys(req.query).length == 0) {
             if( usr.settings.search.query &&
-                (usr.settings.search.query != '/search' &&
-                usr.settings.search.query != '/search/' )) {
+                usr.settings.search.query.lenght <= 9 ) {
                 res.redirect(usr.settings.search.query);
                 return;
             }
