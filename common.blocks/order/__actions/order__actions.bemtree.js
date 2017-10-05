@@ -58,7 +58,7 @@ block('order').elem('actions').content()(function () {
                     text: 'Отклонить заявку',
                     to: 'reject',
                     condition: function (user, order) {
-                        return (order.info.initiator.department._id == user.department._id + '' && order.status != 'reject') 
+                        return ((order.info.initiator.department._id == user.department._id + '' || user.department.type == 'admin') && order.status != 'reject') 
                     }
                 }
             ],
