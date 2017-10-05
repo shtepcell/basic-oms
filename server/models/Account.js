@@ -28,6 +28,11 @@ var schema = mongoose.Schema( {
 	status : {
 		type : Boolean,
 		required : true
+	},
+	settings: {
+		search: {
+			query: String
+		}
 	}
 });
 

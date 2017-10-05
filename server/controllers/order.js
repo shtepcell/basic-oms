@@ -11,6 +11,7 @@ const mkdirp = require('mkdirp-promise');
 var fileSystem = require('fs');
 const fields = require('./fields');
 var path = require('path');
+var url = require('url');
 
 var stages = {
     'init': 'Инициация заказа',
@@ -752,16 +753,37 @@ module.exports = {
         });
     },
 
+    searchReset: async (req, res) => {
+        var usr = await Account.findOne({_id: res.locals.__user._id});
+        usr.settings.search.query = '/search';
+        var done = await usr.save();
+        if(done) {
+            res.redirect('/search');
+            return;
+        } else return;
+    },
+
     search: async (req, res) => {
         res.locals.data = await getData();
         res.locals.err = {};
 
-        if( req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
-        if( req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
-        if( req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
-        if( req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
+        if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
+        if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
+        if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
+        if(req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
 
+        var usr = await Account.findOne({_id: res.locals.__user._id});
+
+        if(Object.keys(req.query).length == 0) {
+            if( usr.settings.search.query && usr.settings.search.query != '/search' ) {
+                res.redirect(usr.settings.search.query);
+                return;
+            }
+        }
+
+        usr.settings.search.query = req.originalUrl;
         res.locals.query = req.query;
+        usr.save();
 
         if(req.query.id && isNaN(req.query.id)) {
             res.locals.err.id = 'ID должен быть числом';
