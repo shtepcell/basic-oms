@@ -8,10 +8,7 @@ const Service = require('../models/Service');
 const City = require('../models/City');
 // const Street = require('../models/Street');
 const mkdirp = require('mkdirp-promise');
-var fileSystem = require('fs');
 const fields = require('./fields');
-var path = require('path');
-var url = require('url');
 
 var stages = {
     'init': 'Инициация заказа',
@@ -40,8 +37,6 @@ module.exports = {
 
     getPageInit: async (req, res) => {
         if(res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o') {
-
-            res.locals.services = await Service.find();
             res.locals.template = await fields.getInitField();
             res.locals.dataset = await getData();
             render(req, res, {
@@ -56,7 +51,7 @@ module.exports = {
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
-            perPage = 20; // TODO брать из конфига?
+            perPage = 20; // IDEA брать из настроек пользователя
 
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
@@ -191,6 +186,7 @@ module.exports = {
         }
 
     },
+
     init: async (req, res) => {
 
         var data = req.body;
@@ -203,7 +199,7 @@ module.exports = {
         if(data['date-request']) {
             var date = parseDate(data['date-request']);
 
-            if(!!!date) {
+            if(!date) {
                 res.status(400).send({ errText: 'Некорректный формат даты' });
                 return;
             }
@@ -211,7 +207,6 @@ module.exports = {
         }
         data.initiator = await Account.findOne({login: res.locals.__user.login});
         data.department = await Department.findOne({_id: res.locals.__user.department._id + ''});
-
 
         var order = {
             status: data.pre,
@@ -223,19 +218,14 @@ module.exports = {
             res.status(400).send({ errText: 'Введите коректное название клиента. Например Apple' });
             return;
         }
-        clnt = await Client.find({name: clnt});
+        clnt = await Client.findOne({name: clnt});
 
         if(clnt.length == 0) {
             res.status(400).send({ errText: 'Такого клиента не существует.' });
             return;
         }
 
-        if(clnt.length > 1) {
-            res.status(400).send({ errText: 'Клиентов с похожим названием найдено несколько. Пожалуйста уточните.' });
-            return;
-        }
-
-        order.info.client = clnt[0];
+        order.info.client = clnt;
 
         var service = await Service.findOne({ _id: order.info.service });
         order.info.service = service;
@@ -268,8 +258,8 @@ module.exports = {
         if(done) {
             service.usage = true;
             service.save();
-            clnt[0].usage = true;
-            clnt[0].save();
+            clnt.usage = true;
+            clnt.save();
             logger.info(`Init Order #${ done.id } | ${ done.status } | ${ done.info.client.name } | ${done.info.city.type} ${done.info.city.name}`, res.locals.__user);
             res.send({created: true})
         } else res.send({errText: 'Что-то пошло не так'});
@@ -357,7 +347,7 @@ module.exports = {
 
     endPreGZP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
-        if( order ) {
+        if(order) {
             Object.keys(req.body).forEach( item => {
                 req.body[item] = req.body[item].trim();
                 if(req.body[item] == '') req.body[item] = undefined;
@@ -381,10 +371,11 @@ module.exports = {
             }
 
             var done = await order.save();
-            if(done)
+            if(done) {
                 logger.info(`End pre-gzp order #${ done.id }`, res.locals.__user);
-            res.status(200).send({created: true})
-        } else res.status(400).send({created: false});
+                res.status(200).send({created: true})
+            } else res.status(400).send({errText: 'Что-то пошло не так!'});
+        } else res.status(404);
     },
 
     endPreSTOP: async (req, res) => {
@@ -396,11 +387,12 @@ module.exports = {
             });
 
             if(isNaN(req.body.time)) {
-                res.status(400).send({ errText: 'Срок организации должен быть числом' });
+                res.status(400).send({errText: 'Срок организации должен быть числом'});
                 return;
             }
+
             if(!req.body.provider) {
-                res.status(400).send({ errText: 'Провайдер - обязательное поле!' });
+                res.status(400).send({errText: 'Провайдер - обязательное поле!'});
                 return;
             }
 
@@ -409,35 +401,44 @@ module.exports = {
 
             var provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
 
+            if(!provider) {
+                res.status(400).send({errText : 'Такого провайдера не существует!'});
+                return;
+            }
+
             order.stop.provider = provider;
 
-            if(order.stop.provider) {
-                if(order.status == 'stop-pre') {
-                    order.status = 'client-match';
-                    order.date['stop-pre'] = new Date();
-                    order.stop.complete = true;
-                }
+            if(order.status == 'stop-pre') {
+                order.status = 'client-match';
+                order.date['stop-pre'] = new Date();
+                order.stop.complete = true;
+            }
 
-                if(order.status == 'all-pre') {
-                    order.status = 'gzp-pre';
-                    order.date['stop-pre'] = new Date();
-                    order.stop.complete = true;
-                }
-                var done = await order.save();
-                if(done) {
-                    provider.usage = true;
-                    provider.save();
-                    logger.info(`End pre-stop order #${ done.id }`, res.locals.__user);
-                    res.send({created: true})
-                }
+            if(order.status == 'all-pre') {
+                order.status = 'gzp-pre';
+                order.date['stop-pre'] = new Date();
+                order.stop.complete = true;
+            }
 
-            } else res.status(400).send({errText : 'Уточните название провайдера'});
-        } else res.send({created: false})
+            var done = await order.save();
+            if(done) {
+                provider.usage = true;
+                provider.save();
+                logger.info(`End pre-stop order #${ done.id }`, res.locals.__user);
+                res.status(200).send({created: true});
+            } else res.status(400).send({errText: 'Что-то пошло не так!'})
+        } else res.status(404);
     },
 
     endClientNotify: async (req, res) => {
         var reqData = req.body;
         var order = await Order.findOne({id: req.params.id});
+
+        if(!order) {
+            res.status(400).send({errText: 'Ошибка при сохранении!'});
+            return;
+        }
+
         if(order.status == 'client-notify') {
             var id = order.id;
             var _dir;
@@ -446,16 +447,16 @@ module.exports = {
                     _dir = `${(i)*1000}-${(i+1)*1000}`;
                 }
             }
-            if(!!!req.files.order) {
+            if(!req.files.order) {
                 res.status(400).send({errText: 'Договор - обязателен!'})
                 return;
             }
-            if(!!!reqData['date-sign']) {
+            if(!reqData['date-sign']) {
                 res.status(400).send({errText: 'Дата подписания - обязательна!'})
                 return;
             }
             var date = parseDate(reqData['date-sign'])
-            if(!!!date) {
+            if(!date) {
                 res.status(400).send({errText: 'Неверный формат даты'})
                 return;
             }
@@ -468,16 +469,14 @@ module.exports = {
             });
 
             order.info['date-sign'] = date;
-
-            // console.log(order.info['date-sign']);
             order.info.order = `${req.files.order.name}`;
             order.status = 'succes';
-            order.date['succes'] = new Date();
+            order.date['client-notify'] = new Date();
             var done = await order.save();
             if(done) {
                 logger.info(`End client-notify order #${ done.id }`, res.locals.__user);
-                res.send({created: true});
-            } else res.send({created: false})
+                res.status(200).send({created: true});
+            } else res.status(400).send({errText: 'Что-то пошло не так'})
         }
     },
 
@@ -507,60 +506,62 @@ module.exports = {
 
     changeStatus: async (req, res) => {
         var reqData = req.body;
-        var order = await Order.findOne({id: req.params.id});
-        if( order) {
+        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}});
 
-            switch (reqData.to) {
-                case 'delete':
-                    order.status = 'secret';
-                    break;
-                case 'reject':
-                    order.status = 'reject';
-                    break;
-                case 'start-pre-stop':
-                    order.status = 'stop-pre';
-                    order.date['client-match'] = new Date();
-                    break;
-                case 'start-pre-gzp':
-                    order.status = 'gzp-pre';
-                    order.date['client-match'] = new Date();
-                    break;
-                case 'end-network':
-                    order.status = 'client-notify';
-                    order.date['network'] = new Date();
-                    break;
-                case 'end-build':
-                    order.status = 'network';
-                    order.date['gzp-build'] = new Date();
-                    break;
-                case 'start-gzp-build':
-                    if(order.gzp.need) {
-                        order.status = 'gzp-build';
-                    } else {
-                        order.status = 'install-devices';
-                    }
-                    order.date['client-match'] = new Date();
-                    break;
-                case 'end-install-devices':
-                    order.status = 'network';
-                    order.date['gzp-build'] = new Date();
-                    break;
-                case 'start-stop-build':
-                    order.status = 'stop-build';
-                    order.date['client-match'] = new Date();
-                    break;
-                case 'end-build-stop':
-                    order.status = 'network';
-                    order.date['stop-build'] = new Date();
-                    break;
-            }
+        if(!order) {
+            res.status(400).send({errText: 'Изменение несуществующей заявки!'});
+            return;
+        }
+        switch (reqData.to) {
+            case 'delete':
+                order.status = 'secret';
+                break;
+            case 'reject':
+                order.status = 'reject';
+                break;
+            case 'start-pre-stop':
+                order.status = 'stop-pre';
+                order.date['client-match'] = new Date();
+                break;
+            case 'start-pre-gzp':
+                order.status = 'gzp-pre';
+                order.date['client-match'] = new Date();
+                break;
+            case 'end-network':
+                order.status = 'client-notify';
+                order.date['network'] = new Date();
+                break;
+            case 'end-build':
+                order.status = 'network';
+                order.date['gzp-build'] = new Date();
+                break;
+            case 'start-gzp-build':
+                if(order.gzp.need) {
+                    order.status = 'gzp-build';
+                } else {
+                    order.status = 'install-devices';
+                }
+                order.date['client-match'] = new Date();
+                break;
+            case 'end-install-devices':
+                order.status = 'network';
+                order.date['gzp-build'] = new Date();
+                break;
+            case 'start-stop-build':
+                order.status = 'stop-build';
+                order.date['client-match'] = new Date();
+                break;
+            case 'end-build-stop':
+                order.status = 'network';
+                order.date['stop-build'] = new Date();
+                break;
+        }
 
-            var done = await order.save();
-            if(done)
-                logger.info(`${reqData.to} order #${ done.id }`, res.locals.__user);
-            res.send(true);
-
-        } else res.send(false);
+        var done = await order.save();
+        if(done) {
+            logger.info(`${reqData.to} order #${done.id}`, res.locals.__user);
+            res.status(200).send({created: true});
+        } else res.status(400).send({errText: 'Изменение несуществующей заявки!'});
 
     },
 
@@ -625,6 +626,7 @@ module.exports = {
                     deps.forEach( i => {
                         if(i.type == 'net') {
                             item.worker = i;
+                            return;
                         }
                     })
                     break;
@@ -655,6 +657,7 @@ module.exports = {
                     deps.forEach( i => {
                         if(i.type == 'b2o') {
                             item.worker = i;
+                            return;
                         }
                     });
                     break;
@@ -667,7 +670,6 @@ module.exports = {
                 worker: item.worker
             }
         });
-        // console.log(orders);
 
         var stages = {
             pre: {
