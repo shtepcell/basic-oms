@@ -775,8 +775,7 @@ module.exports = {
         var usr = await Account.findOne({_id: res.locals.__user._id});
 
         if(Object.keys(req.query).length == 0) {
-            if( usr.settings.search.query &&
-                usr.settings.search.query.lenght <= 9 ) {
+            if( usr.settings.search.query && usr.settings.search.query != req.originalUrl ) {
                 res.redirect(usr.settings.search.query);
                 return;
             }
