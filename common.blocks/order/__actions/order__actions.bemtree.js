@@ -50,6 +50,13 @@ block('order').elem('actions').content()(function () {
                     condition: function (user, order) {
                         return ((order.info.initiator.department._id == user.department._id + '' || user.department.type == 'admin') && order.status != 'reject')
                     }
+                },
+                {
+                    text: 'Полностью удалить заявку',
+                    to: 'delete',
+                    condition: function (user, order) {
+                        return (user.department.type == 'admin')
+                    }
                 }
             ],
             gzp: [

@@ -25,7 +25,8 @@ var stages = {
     'stop-build': 'Организация STOP/VSAT',
     'network': 'Настройка сети',
     'succes': 'Включен',
-    'reject': 'Заявка отклонена'
+    'reject': 'Заявка отклонена',
+    'secret': 'Заявка удалена'
 };
 
 var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider`;
@@ -275,12 +276,13 @@ module.exports = {
     },
 
     getOrderInfo: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
-        order.cs = calculateCS(order);
-        order.stage = stages[order.status];
-        res.locals.dataset = await getData();
+        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
         if(order) {
+            order.cs = calculateCS(order);
+            order.stage = stages[order.status];
+            res.locals.dataset = await getData();
+
             res.locals.order = order;
 
             render(req, res, {
@@ -294,12 +296,13 @@ module.exports = {
     },
 
     getOrderGZP: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
-        order.cs = calculateCS(order);
-        order.stage = stages[order.status];
-        res.locals.dataset = await getData();
+        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
         if(order) {
+            order.cs = calculateCS(order);
+            order.stage = stages[order.status];
+            res.locals.dataset = await getData();
+
             res.locals.order = order;
 
             render(req, res, {
@@ -313,12 +316,12 @@ module.exports = {
     },
 
     getOrderSTOP: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
-        order.cs = calculateCS(order);
-        order.stage = stages[order.status];
-        res.locals.dataset = await getData();
-
+        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
         if(order) {
+            order.cs = calculateCS(order);
+            order.stage = stages[order.status];
+            res.locals.dataset = await getData();
+
             res.locals.order = order;
 
             render(req, res, {
@@ -332,9 +335,13 @@ module.exports = {
     },
 
     getOrderHistory: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
-        order.cs = calculateCS(order);
+        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+
         if(order) {
+            order.cs = calculateCS(order);
+            order.stage = stages[order.status];
+            res.locals.dataset = await getData();
+
             res.locals.order = order;
             res.locals.template = await fields.getInfo(order);
 
@@ -504,6 +511,9 @@ module.exports = {
         if( order) {
 
             switch (reqData.to) {
+                case 'delete':
+                    order.status = 'secret';
+                    break;
                 case 'reject':
                     order.status = 'reject';
                     break;
@@ -556,7 +566,7 @@ module.exports = {
 
     getStat: async (req, res) => {
         var deps = await Department.find();
-        var orders = await Order.find().populate('info.initiator');
+        var orders = await Order.find({status: {'$ne': 'secret'}}).populate('info.initiator');
 
         orders = orders.map( item => {
             var wrkr;
@@ -868,7 +878,7 @@ function parserCity(str) {
 }
 
 var makeQuery = async (req, res) => {
-    var qr = {};
+    var qr = {status: {'$ne': 'secret'}};
     var query = req.query;
     var status = [];
     if(query.id) {
