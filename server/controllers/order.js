@@ -248,6 +248,7 @@ module.exports = {
         order.info.pre = undefined;
         var ordr = new Order({
             status: order.status,
+            cs: 3,
             info: order.info,
             date: {
                 init: new Date()
@@ -360,6 +361,7 @@ module.exports = {
 
             if(order.status == 'gzp-pre') {
                 order.status = 'client-match';
+                order.cs = 10;
                 order.date['gzp-pre'] = new Date();
                 order.gzp.complete = true;
             }
@@ -410,6 +412,7 @@ module.exports = {
 
             if(order.status == 'stop-pre') {
                 order.status = 'client-match';
+                order.cs = 10;
                 order.date['stop-pre'] = new Date();
                 order.stop.complete = true;
             }
@@ -472,6 +475,7 @@ module.exports = {
             order.info.order = `${req.files.order.name}`;
             order.status = 'succes';
             order.date['client-notify'] = new Date();
+            order.cs = undefined;
             var done = await order.save();
             if(done) {
                 logger.info(`End client-notify order #${ done.id }`, res.locals.__user);
@@ -521,14 +525,17 @@ module.exports = {
                 break;
             case 'start-pre-stop':
                 order.status = 'stop-pre';
+                order.cs = 3;
                 order.date['client-match'] = new Date();
                 break;
             case 'start-pre-gzp':
                 order.status = 'gzp-pre';
+                order.cs = 3;
                 order.date['client-match'] = new Date();
                 break;
             case 'end-network':
                 order.status = 'client-notify';
+                order.cs = 2;
                 order.date['network'] = new Date();
                 break;
             case 'end-build':
@@ -541,6 +548,7 @@ module.exports = {
                 } else {
                     order.status = 'install-devices';
                 }
+                order.cs = order.gzp.time;
                 order.date['client-match'] = new Date();
                 break;
             case 'end-install-devices':
@@ -549,6 +557,7 @@ module.exports = {
                 break;
             case 'start-stop-build':
                 order.status = 'stop-build';
+                order.cs = order.stop.time;
                 order.date['client-match'] = new Date();
                 break;
             case 'end-build-stop':

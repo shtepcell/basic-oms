@@ -6,7 +6,8 @@ const Auth = require('./controllers/auth'),
     Service = require('./controllers/service'),
     Client = require('./controllers/client'),
     Department = require('./controllers/departments'),
-    Order = require('./controllers/order');
+    Order = require('./controllers/order'),
+    Holiday = require('./controllers/holiday');
 
 const fileUpload = require('express-fileupload');
 const mkdirp = require('mkdirp-promise');
@@ -70,7 +71,10 @@ module.exports = function (app) {
 
     app.get('/admin/users', Account.getPage);
 
-
+    app.get('/admin/holiday', Holiday.getAll);
+    app.post('/admin/holiday', Holiday.add);
+    app.post('/admin/holiday/delete', Holiday.delete);
+    
     app.get('/admin/users/add', Account.getPageCreate);
     app.post('/admin/users/add', Account.create);
 

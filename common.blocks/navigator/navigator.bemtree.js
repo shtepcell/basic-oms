@@ -153,6 +153,18 @@ block('navigator').content()(function() {
                         elem: 'dropdown'
                     },
                     url: '/admin/services'
+                },
+                {
+                    block: 'link',
+                    content: 'Выходные',
+                    mods: {
+                        theme: 'islands'
+                    },
+                    mix: {
+                        block: 'navigator',
+                        elem: 'dropdown'
+                    },
+                    url: '/admin/holiday'
                 }
             ]
         })

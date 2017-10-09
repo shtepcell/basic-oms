@@ -9,6 +9,9 @@ var schema = mongoose.Schema({
         required: true,
         unique: true
     },
+    cs: {
+        type: Number
+    },
     status: {
         type: String,
         required: true
