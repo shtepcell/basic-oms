@@ -1,7 +1,25 @@
 block('order').elem('head').content()(function () {
     var order = this.ctx.order;
     var pause = null;
+    var cs = null;
 
+    if(order.cs) {
+        cs = {
+            elem: 'head-cell',
+            mix: [
+                {
+                    elem: 'right'
+                },
+                {
+                    elem: (order.cs >= 0)?'green':'red'
+                }
+            ],
+            content: {
+                elem: 'cell-data',
+                content: `КС: ${order.cs} д.`
+            }
+        }
+    }
 
     if(!order.pause) pause = {
         elem: 'head-cell',
@@ -24,23 +42,7 @@ block('order').elem('head').content()(function () {
                 elem: 'title'
             }
         },
-        {
-            elem: 'head-cell',
-            mix: [
-                {
-                    elem: 'right'
-                },
-                {
-                    elem: (order.cs >= 0)?'green':'red'
-                }
-            ],
-            content: [
-                {
-                    elem: 'cell-data',
-                    content: `КС: ${order.cs} д.`
-                }
-            ]
-        },
+        cs,
         {
             elem: 'head-wrapper',
             content: {

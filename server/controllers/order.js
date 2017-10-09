@@ -173,7 +173,6 @@ module.exports = {
                 perPage: docs.limit
             };
             docs.docs.forEach( item => {
-                item.cs = calculateCS(item);
                 item.status = stages[item.status];
             });
             res.locals.orders = docs.docs;
@@ -270,7 +269,6 @@ module.exports = {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
         if(order) {
-            order.cs = calculateCS(order);
             order.stage = stages[order.status];
             res.locals.dataset = await getData();
 
@@ -290,7 +288,6 @@ module.exports = {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
         if(order) {
-            order.cs = calculateCS(order);
             order.stage = stages[order.status];
             res.locals.dataset = await getData();
 
@@ -309,7 +306,6 @@ module.exports = {
     getOrderSTOP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
         if(order) {
-            order.cs = calculateCS(order);
             order.stage = stages[order.status];
             res.locals.dataset = await getData();
 
@@ -329,7 +325,6 @@ module.exports = {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
         if(order) {
-            order.cs = calculateCS(order);
             order.stage = stages[order.status];
             res.locals.dataset = await getData();
 
@@ -674,7 +669,6 @@ module.exports = {
             }
             return {
                 status: item.status,
-                cs: calculateCS(item),
                 pause: item.pause,
                 worker: item.worker
             }
@@ -843,7 +837,6 @@ module.exports = {
         ]});
 
         docs.docs.forEach( item => {
-            item.cs = calculateCS(item);
             item.status = stages[item.status];
         });
 
@@ -1004,78 +997,6 @@ var makeQuery = async (req, res) => {
         } else qr['$and'] = [{'info.service': service._id}];
     }
     return qr;
-}
-
-function calculateCS(order) {
-    var date;
-    var time;
-
-    switch (order.status) {
-        case 'client-match':
-            var gzp = order.date['gzp-pre'];
-            var stop = order.date['stop-pre'];
-            time = 10;
-            if(!!gzp && !!stop) {
-                if(gzp > stop) {
-                    date = gzp;
-                } else {
-                    date = stop;
-                }
-            } else {
-                if(!!gzp) {
-                    date = gzp;
-                }
-                if(!!stop) {
-                    date = stop;
-                }
-            }
-            break;
-        case 'client-notify':
-            date = order.date['network'];
-            time = 2;
-            break;
-        case 'network':
-            date = order.date['client-match'];
-            var gzp = order.date['gzp-build'];
-            var stop = order.date['stop-build'];
-            if(!!gzp)  time = order.gzp.time;
-            if(!!stop) time = order.stop.time;
-            break;
-        case 'gzp-pre':
-            var d = order.date['client-match'];
-            if(d) date = d;
-            else  date = order.date['init'];
-            time = 3;
-            break;
-        case 'stop-pre':
-            var d = order.date['client-match'];
-            if(d) date = d;
-            else  date = order.date['init'];
-            time = 3;
-            break;
-        case 'all-pre':
-            date = order.date['init'];
-            time = 3;
-            break;
-        case 'install-devices':
-            date = order.date['client-match'];
-            time = order.gzp.time;
-            break;
-        case 'gzp-build':
-            date = order.date['client-match'];
-            time = order.gzp.time;
-            break;
-        case 'stop-build':
-            date = order.date['client-match'];
-            time = order.stop.time;
-            break;
-        default:
-            date = 0;
-    }
-    if(date == 0) return '';
-    var d = Math.abs(date - new Date());
-    var diffDays = Math.ceil(d / (1000 * 3600 * 24));
-    return time - diffDays + 1;
 }
 
 function parseDate (date) {

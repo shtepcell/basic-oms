@@ -61,7 +61,9 @@ module.exports = function(opt, data){
                             },
                             {
                                 name: 'КС',
-                                getContent: (order) => `${order.cs}`
+                                getContent: (order) => {
+                                    return order.cs || '';
+                                }
                             },
                             {
                                 name: 'Адресс',
