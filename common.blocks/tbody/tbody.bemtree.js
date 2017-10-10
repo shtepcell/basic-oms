@@ -8,7 +8,6 @@ block('tbody').content()(function() {
 
     if( !!data && !!datasets ) {
 
-
         ret = data.map( item => {
             var attrs = {};
             return {

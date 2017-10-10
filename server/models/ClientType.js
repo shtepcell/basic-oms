@@ -35,7 +35,6 @@ schema.methods.using = function (flag) {
                 return this.save();
             }
         })
-
     }
 }
 
