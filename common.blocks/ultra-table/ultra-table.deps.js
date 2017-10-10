@@ -2,7 +2,7 @@
     shouldDeps: [
         {
             block: 'ultra-table',
-            elems: ['cities', 'delete']
+            elems: ['cities', 'delete', 'holidays']
         },
         {
             block: 'ultra-table',

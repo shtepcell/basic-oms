@@ -39,6 +39,29 @@ module.exports = function (opt, data) {
                         }
                     }
                 ]
+            },
+            {
+                block: 'ultra-table',
+                elem: 'holidays',
+                fields: [
+                    {
+                        name: 'Дата',
+                        getContent: (item) => {
+                            console.log(item);
+                            var year = item.date.getFullYear();
+                            var month = item.date.getMonth() + 1;
+                            if(month < 10) {
+                                month = '0' + month;
+                            }
+                            var day = item.date.getDate();
+                            if(day < 10) {
+                                day = '0' + day;
+                            }
+                            return `${day}-${month}-${year}`;
+                        }
+                    }
+                ],
+                data: data.holidays
             }
         ]
     }
