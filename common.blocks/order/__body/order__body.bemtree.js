@@ -24,6 +24,16 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit)
                 },
                 {
+                    name: 'Номер CMS',
+                    field: {
+                        name: 'cms',
+                        type: 'text',
+                        placeholder: '12-2222-23'
+                    },
+                    val:  order.info.cms,
+                    access: (adminEdit)
+                },
+                {
                     name: 'Ф.И.О. инициатора',
                     val: order.info.initiator.name
                 },
@@ -31,12 +41,25 @@ block('order').elem('body').content()(function () {
                     name: 'Подразделение-инициатор',
                     val: order.info.initiator.department.name
                 },
+                'separator',
                 {
                     name: 'Требуемая дата организации',
                     val: dateToStr(order.info['date-request']),
                     field: {
                         name: 'date-request',
                         type: 'date'
+                    },
+                    access: (adminEdit)
+                },
+                {
+                    name: 'Клиент',
+                    val: order.info.client.name,
+                    field: {
+                        name: 'client',
+                        type: 'suggest',
+                        dataset: 'clients',
+                        placeholder: 'РНКБ',
+                        required: true
                     },
                     access: (adminEdit)
                 },
@@ -105,6 +128,7 @@ block('order').elem('body').content()(function () {
                     },
                     access: (adminEdit)
                 },
+                'separator',
                 {
                     name: 'Необходимость выделения IP-адресов',
                     val: (order.info.ip)?'Да':'Нет',
@@ -156,6 +180,7 @@ block('order').elem('body').content()(function () {
                     },
                     access: (adminEdit)
                 },
+                'separator',
                 {
                     name: 'Договор',
                     val: order.info.order,
@@ -225,6 +250,7 @@ block('order').elem('body').content()(function () {
                         }
                     }
                 },
+                'separator',
                 {
                     name: 'Необходимость в ГЗП',
                     access: (adminEdit || ((order.status == 'gzp-pre' || order.status == 'all-pre') && user.department.type == 'gus' &&
@@ -269,6 +295,7 @@ block('order').elem('body').content()(function () {
                     },
                     val: order.gzp.time
                 },
+                'separator',
                 {
                     name: 'Одноразовая стоимость организации',
                     access: (adminEdit || ((order.status == 'gzp-pre' || order.status == 'all-pre') && user.department.type == 'gus' &&
@@ -360,6 +387,7 @@ block('order').elem('body').content()(function () {
                         }
                     }
                 },
+                'separator',
                 {
                     name: 'Техническая возможность',
                     access: (adminEdit || ((order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o')),
@@ -444,6 +472,7 @@ block('order').elem('body').content()(function () {
                     },
                     val: order.stop.time
                 },
+                'separator',
                 {
                     name: 'Дополнительная информация',
                     access: (adminEdit || ((order.status == 'stop-pre' || order.status == 'all-pre') && user.department.type == 'b2o')),
@@ -494,7 +523,13 @@ block('order').elem('body').content()(function () {
     var ret = [];
 
     fields.forEach(item => {
-
+        if(item == 'separator') {
+            ret.push({
+                block: 'order',
+                elem: 'separator'
+            });
+            return;
+        }
         item.val = (typeof item.val == 'function')?item.val(order):item.val;
 
         if(item.access) {
@@ -661,6 +696,8 @@ block('order').elem('body').content()(function () {
 
 
     })
+    
+    if(ret.length <= 2) ret = [];
     return [
         ret,
         {

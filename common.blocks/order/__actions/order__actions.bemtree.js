@@ -106,7 +106,8 @@ block('order').elem('actions').content()(function () {
 
                         js: {
                             data: {
-                                to: item.to
+                                to: item.to,
+                                text: item.text
                             },
                             url: `/order/${order.id}/action`
                         },

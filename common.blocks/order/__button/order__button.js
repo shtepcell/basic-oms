@@ -10,19 +10,19 @@ modules.define('order__button',
         },
 
         _onClick: function () {
-            console.log(this.params);
             var data = this.params.data;
-
-            $.ajax({
-                url: this.params.url,
-                type: 'POST',
-                dataType: 'json',
-                data: data,
-                timeout: 5000,
-                success: function () {
-                    window.location.reload();
-                }
-            });
+            if (confirm(`Вы уверены, что хотите ${data.text}?`)) {
+                $.ajax({
+                    url: this.params.url,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: data,
+                    timeout: 5000,
+                    success: function () {
+                        window.location.reload();
+                    }
+                });
+            }
         }
     }));
 });
