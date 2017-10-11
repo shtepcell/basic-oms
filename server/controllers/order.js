@@ -971,7 +971,7 @@ var makeQuery = async (req, res) => {
             qr['info.initiator'] = '' + res.locals.__user._id;
         }
         if(query.func.indexOf('2') >= 0) {
-            qr['special'] = true;
+            qr['cs'] = {'$lte': 0};
         }
         if(query.func.indexOf('3') >= 0) {
             qr['pause.status'] = true;

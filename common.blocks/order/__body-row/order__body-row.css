@@ -22,6 +22,9 @@
 }
 
 .order__body-row-data {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-weight: normal;
     font-size: 11pt;
     flex: 30 1 20px;
