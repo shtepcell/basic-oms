@@ -99,8 +99,16 @@ var schema = mongoose.Schema({
         'network': Date,
         'succes': Date,
         'reject': Date
-    }
-    // history: []
+    },
+    history: [{
+        name: String,
+        date: Date,
+        author: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Account',
+            required : true
+        }
+    }]
 });
 
 var deepPopulate = require('mongoose-deep-populate')(mongoose);

@@ -10,11 +10,20 @@
 }
 
 .order__body-row-name {
+    font-size: 11pt;
+    font-weight:lighter;
+    font-style: italic;
     flex: 30 1 20px;
     text-align: left;
 }
+.order__body-date {
+    font-weight:normal;
+    font-size: 10pt;
+}
 
 .order__body-row-data {
+    font-weight: normal;
+    font-size: 11pt;
     flex: 30 1 20px;
 }
 

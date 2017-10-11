@@ -54,7 +54,7 @@ block('order').content()(function () {
                         type: 'link',
                         view: (tab=='history')?'action':null
                     },
-                    url: `/order/${this.ctx.order.id}/info`,
+                    url: `/order/${this.ctx.order.id}/history`,
                     text: 'Журнал'
                 }
             ]

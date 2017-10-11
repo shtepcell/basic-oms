@@ -5,6 +5,37 @@ block('order').elem('body').content()(function () {
         adminEdit = this.ctx.admin,
         dataset = this.ctx.dataset;
 
+    if(tab == 'history') {
+        var ret = [];
+        if(!order.history) {
+            return [];
+        }
+
+        ret = order.history.map( item => {
+            return {
+                elem: 'body-row',
+                content: [
+                    {
+                        elem: 'body-row-name',
+                        content: `${item.name}`
+                    },
+                    {
+                        elem: 'body-row-name',
+                        mix: {
+                            elem: 'body-date'
+                        },
+                        content: `${dateToExtStr(item.date)}`
+                    },
+                    {
+                        elem: 'body-row-name',
+                        content: `[${item.author.department.name}] ${item.author.name} `
+                    }
+                ]
+            }
+        })
+        return ret;
+    }
+
     var fields;
     switch (tab) {
         case 'info':
@@ -696,7 +727,7 @@ block('order').elem('body').content()(function () {
 
 
     })
-    
+
     if(ret.length <= 2) ret = [];
     return [
         ret,
@@ -722,4 +753,20 @@ function dateToStr (value) {
         }
         return `${day}-${month}-${year}`;
     } else return null;
+}
+
+function dateToExtStr (value = new Date()) {
+    var hour = value.getHours();
+    if(hour < 10) {
+        hour = '0' + hour;
+    }
+    var min = value.getMinutes();
+    if(min < 10) {
+        min = '0' + min;
+    }
+    var sec = value.getSeconds();
+    if(sec < 10) {
+        sec = '0' + sec;
+    }
+    return `${dateToStr(value)} ${hour}:${min}:${sec}`;
 }

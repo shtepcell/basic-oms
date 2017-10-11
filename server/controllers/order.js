@@ -26,7 +26,7 @@ var stages = {
     'secret': 'Заявка удалена'
 };
 
-var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider`;
+var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider history.author history.author.department`;
 
 const Render = require('../render'),
     render = Render.render;
@@ -251,7 +251,14 @@ module.exports = {
             info: order.info,
             date: {
                 init: new Date()
-            }
+            },
+            history: [
+                {
+                    name: 'Инициация заявки',
+                    date: new Date(),
+                    author: data.initiator
+                }
+            ]
          });
 
         var done = await Order.create(ordr);
@@ -366,7 +373,11 @@ module.exports = {
                 order.date['gzp-pre'] = new Date();
                 order.gzp.complete = true;
             }
-
+            order.history.push({
+                name: 'Завершена проработка ГЗП',
+                date: new Date(),
+                author: await Account.findOne({_id: res.locals.__user._id})
+            });
             var done = await order.save();
             if(done) {
                 logger.info(`End pre-gzp order #${ done.id }`, res.locals.__user);
@@ -417,7 +428,11 @@ module.exports = {
                 order.date['stop-pre'] = new Date();
                 order.stop.complete = true;
             }
-
+            order.history.push({
+                name: 'Завершена проработка STOP/VSAT',
+                date: new Date(),
+                author: await Account.findOne({_id: res.locals.__user._id})
+            });
             var done = await order.save();
             if(done) {
                 provider.usage = true;
@@ -471,6 +486,13 @@ module.exports = {
             order.status = 'succes';
             order.date['client-notify'] = new Date();
             order.cs = undefined;
+
+            order.history.push({
+                name: 'Завершено уведомление клиента. Абонент включен.',
+                date: new Date(),
+                author: await Account.findOne({_id: res.locals.__user._id})
+            });
+
             var done = await order.save();
             if(done) {
                 logger.info(`End client-notify order #${ done.id }`, res.locals.__user);
@@ -514,28 +536,60 @@ module.exports = {
         switch (reqData.to) {
             case 'delete':
                 order.status = 'secret';
+                order.cs = null;
+                order.history.push({
+                    name: 'Заявка удалена',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
                 break;
             case 'reject':
                 order.status = 'reject';
+                order.cs = null;
+                order.history.push({
+                    name: 'Заявка отклонена',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
                 break;
             case 'start-pre-stop':
                 order.status = 'stop-pre';
                 order.cs = 3;
                 order.date['client-match'] = new Date();
+                order.history.push({
+                    name: 'Начало проработки STOP/VSAT',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
                 break;
             case 'start-pre-gzp':
                 order.status = 'gzp-pre';
                 order.cs = 3;
                 order.date['client-match'] = new Date();
+                order.history.push({
+                    name: 'Начало проработки ГЗП',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
                 break;
             case 'end-network':
                 order.status = 'client-notify';
                 order.cs = 2;
                 order.date['network'] = new Date();
+                order.history.push({
+                    name: 'Выполнена настройка сети',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
                 break;
             case 'end-build':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
+                order.history.push({
+                    name: 'Строительство ГЗП завершено',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
                 break;
             case 'start-gzp-build':
                 if(order.gzp.need) {
@@ -545,19 +599,39 @@ module.exports = {
                 }
                 order.cs = order.gzp.time;
                 order.date['client-match'] = new Date();
+                order.history.push({
+                    name: 'Начало строительства ГЗП',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
                 break;
             case 'end-install-devices':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
+                order.history.push({
+                    name: 'Установлено оборудование',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
                 break;
             case 'start-stop-build':
                 order.status = 'stop-build';
                 order.cs = order.stop.time;
                 order.date['client-match'] = new Date();
+                order.history.push({
+                    name: 'Начало организации через STOP/VSAT',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
                 break;
             case 'end-build-stop':
                 order.status = 'network';
                 order.date['stop-build'] = new Date();
+                order.history.push({
+                    name: 'Завершена организация через STOP/VSAT',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
                 break;
         }
 
@@ -670,7 +744,8 @@ module.exports = {
             return {
                 status: item.status,
                 pause: item.pause,
-                worker: item.worker
+                worker: item.worker,
+                cs: item.cs
             }
         });
 

@@ -3,7 +3,7 @@ block('order').elem('head').content()(function () {
     var pause = null;
     var cs = null;
 
-    if(order.cs) {
+    if(order.cs != null) {
         cs = {
             elem: 'head-cell',
             mix: [

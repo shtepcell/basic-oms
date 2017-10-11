@@ -10,7 +10,7 @@ Holiday.findOne({date: day}).then( date => {
     if(date) {
         process.exit(0);
     } else {
-        Order.update({cs: {'$ne': null}}, {$inc: { cs: -1 }}).then( d => {
+        Order.updateMany({cs: {'$ne': null}}, {$inc: { cs: -1 }}, {multi: true}).then( d => {
             console.log('Decrement is done!');
             process.exit(0);
         })
