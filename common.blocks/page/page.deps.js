@@ -5,6 +5,7 @@
         },
         'header',
         'body',
-        'footer'
+        'footer',
+        '404'
     ]
 })

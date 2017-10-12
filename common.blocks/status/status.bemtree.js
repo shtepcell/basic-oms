@@ -23,7 +23,7 @@ block('status').content()(function () {
                     content: [
                         {
                             elem: 'label',
-                            content: 'Выполненые :'
+                            content: 'Выполненные :'
                         },
                         {
                             elem: 'data',
@@ -36,7 +36,7 @@ block('status').content()(function () {
                     content: [
                         {
                             elem: 'label',
-                            content: 'Отклоненые :'
+                            content: 'Отклонённые :'
                         },
                         {
                             elem: 'data',

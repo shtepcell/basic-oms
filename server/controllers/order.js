@@ -968,7 +968,10 @@ var makeQuery = async (req, res) => {
     }
     if(query.func) {
         if(query.func.indexOf('1') >= 0) {
-            qr['info.initiator'] = '' + res.locals.__user._id;
+            qr['$or'] = [
+                {'info.initiator': res.locals.__user._id},
+                {'history.author': res.locals.__user._id}
+            ]
         }
         if(query.func.indexOf('2') >= 0) {
             qr['cs'] = {'$lte': 0};
@@ -1028,11 +1031,16 @@ var makeQuery = async (req, res) => {
         }
     }
 
-    if(status.length > 0)
-        qr['$or'] = status;
+    if(status.length > 0) {
+        if(qr['$or']) {
+            qr['$or'] = qr['$or'].concat(status);
+        } else
+            qr['$or'] = status;
+    }
 
     if(query.client) {
         var clnt = query.client;
+        clnt = clnt.trim();
         var rgx =  new RegExp('' + clnt + '', 'i');
         clnt = await Client.find({name: {$regex: rgx}});
         if(clnt.length > 0) {
@@ -1049,7 +1057,7 @@ var makeQuery = async (req, res) => {
     if(query.city) {
         // var city = parserCity(query.city);
         var city = query.city;
-
+        city = city.trim();
         var rgx =  new RegExp('' + city + '', 'i');
         city = await City.find({name: {$regex: rgx}});
         if(city.length > 0) {
