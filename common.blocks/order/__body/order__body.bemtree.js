@@ -681,6 +681,58 @@ block('order').elem('body').content()(function () {
         } else {
             if(item.val != null) {
 
+                if(item.field && item.field.name == 'relation') {
+
+                    var links = [];
+                    var numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+
+                    for (var i = 0; i < item.val.length; i++) {
+
+                        if(item.val[i] == '#') {
+                            var l = '';
+
+                            for (var j = i+1; j < item.val.length; j++) {
+                                if(numbers.indexOf(item.val[j]) >= 0) {
+                                    l += item.val[j];
+                                } else {
+                                    if(l.length > 0) {
+                                        links.push(l);
+                                    }
+                                    j = item.val.length;
+                                }
+                                if(j == item.val.length - 1) {
+                                    links.push(l);
+                                }
+                            }
+                        }
+
+                    }
+
+                    links.forEach( link => {
+                        item.val = item.val.replace('#'+link, `<a class="link link_theme_islands" href="/order/${link}">#${link}</a>`);
+                    })
+
+                    ret.push ({
+                        elem: 'body-row',
+                        content: [
+                            {
+                                elem: 'body-row-name',
+                                content: item.name
+                            },
+                            {
+                                elem: 'body-row-data',
+                                content: {
+                                    html: item.val
+                                }
+
+                            },
+                            {
+                                elem: 'body-row-symbol'
+                            }
+                        ]
+                    })
+                } else {
+
                 if(item.field && item.field.type == 'file') {
                     ret.push ({
                         elem: 'body-row',
@@ -723,6 +775,7 @@ block('order').elem('body').content()(function () {
                         ]
                     })
                 }
+            }
         }
 
 
