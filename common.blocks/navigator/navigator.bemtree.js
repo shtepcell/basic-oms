@@ -26,15 +26,6 @@ block('navigator').content()(function() {
             },
             mix: 'navigator__link',
             url: '/status'
-        },
-        {
-            block: 'link',
-            content: 'Разработка',
-            mods: {
-                theme: 'islands'
-            },
-            mix: 'navigator__link',
-            url: '/dev'
         }
     ];
 
