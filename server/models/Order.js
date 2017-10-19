@@ -21,7 +21,7 @@ var schema = mongoose.Schema({
     },
     pause: {
         status: Boolean,
-        data: Date
+        date: Date
     },
     info: {
         initiator: {
@@ -92,6 +92,7 @@ var schema = mongoose.Schema({
     },
     date: {
         init: Date,
+        pause: Date,
         'cs-gzp-pre': Date,
         'cs-stop-pre': Date,
         'cs-gzp-organization': Date,

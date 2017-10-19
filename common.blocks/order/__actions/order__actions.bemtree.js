@@ -57,6 +57,20 @@ block('order').elem('actions').content()(function () {
                     condition: function (user, order) {
                         return (user.department.type == 'admin')
                     }
+                },
+                {
+                    text: 'Поcтавить на паузу',
+                    to: 'pause',
+                    condition: function (user, order) {
+                        return (!order.pause.status && (user.department.type == 'admin' || order.info.initiator.department._id == user.department._id + ''))
+                    }
+                },
+                {
+                    text: 'Снять с паузы',
+                    to: 'stop-pause',
+                    condition: function (user, order) {
+                        return (order.pause.status && (user.department.type == 'admin' || order.info.initiator.department._id == user.department._id + ''))
+                    }
                 }
             ],
             gzp: [

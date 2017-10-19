@@ -556,6 +556,34 @@ module.exports = {
             return;
         }
         switch (reqData.to) {
+            case 'pause':
+                order.pause = {
+                    status: true,
+                    date: new Date(),
+                    deadline: Math.round((order.deadline - new Date()) / 1000 / 60 / 60 / 24)
+                };
+                order.history.push({
+                    name: 'Постановка на паузу',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
+                break;
+            case 'stop-pause':
+                var start = order.pause.date;
+                var now = new Date();
+                var delta = Math.round((now - start) / 1000 / 60 / 60 / 24);
+                console.log(start);
+                order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + delta);
+                order.pause = {
+                    status: false,
+                    date: undefined
+                };
+                order.history.push({
+                    name: 'Снятие с паузы',
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
+                break;
             case 'delete':
                 order.status = 'secret';
                 order.deadline = null;
@@ -1162,5 +1190,5 @@ var calculateDeadline = async (time) => {
         }
         i++;
     }
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, 0, 0, 0, 0);
 }

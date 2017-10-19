@@ -64,8 +64,13 @@ module.exports = function(opt, data){
                             {
                                 name: 'КС',
                                 getContent: (order) => {
-                                    if(order.deadline != null)
-                                        return Math.round((order.deadline - new Date()) / 1000 / 60 / 60 / 24);
+                                    if(order.pause.deadline) return order.pause.deadline;
+                                    if(order.deadline != null) {
+                                        var now = new Date();
+                                        now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+                                        var val = Math.round((order.deadline - now) / 1000 / 60 / 60 / 24);
+                                        return val;
+                                    }
                                     else return '';
                                 }
                             },

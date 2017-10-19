@@ -4,8 +4,12 @@ block('order').elem('head').content()(function () {
     var cs = null;
 
     if(order.deadline != null) {
-
-        var val = Math.round((order.deadline - new Date()) / 1000 / 60 / 60 / 24);
+        var now = new Date();
+        now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+        var val = Math.round((order.deadline - now) / 1000 / 60 / 60 / 24);
+        if(order.pause.deadline) {
+            val = order.pause.deadline;
+        }
         cs = {
             elem: 'head-cell',
             mix: [
@@ -23,7 +27,7 @@ block('order').elem('head').content()(function () {
         }
     }
 
-    if(!order.pause) pause = {
+    if(order.pause.status) pause = {
         elem: 'head-cell',
         mix: {
             elem: 'pause'
