@@ -241,17 +241,9 @@ block('order').elem('body').content()(function () {
                 {
                     name: 'Контрольная дата проработки заказа',
                     val: (order) => {
-
-                        if(order.status != 'gzp-pre' && order.status != 'all-pre' && !order.date['gzp-pre']) return null;
-
-
-                        if(order.date['client-match']) {
-                            var d = new Date(order.date['client-match'].setDate(order.date['client-match'].getDate() + 3));
-                            return dateToStr(d);
-                        } else {
-                            var d = new Date(order.date['init'].setDate(order.date['init'].getDate() + 3))
-                            return dateToStr(d);
-                        }
+                        var date = dateToStr(order.date['cs-gzp-pre']);
+                        if (date) return date;
+                        else return null;
                     }
                 },
                 {
@@ -274,11 +266,10 @@ block('order').elem('body').content()(function () {
                 },
                 {
                     name: 'Контрольная дата активации сервиса',
-                    val: function (order) {
-                        if(order.date['client-match'] && order.date['gzp-pre']) {
-                            var d = new Date(order.date['client-match'].setDate(order.date['client-match'].getDate(order) + order.gzp.time));
-                            return dateToStr(d);
-                        }
+                    val: (order) => {
+                        var date = dateToStr(order.date['cs-gzp-organization']);
+                        if (date) return date;
+                        else return null;
                     }
                 },
                 'separator',
@@ -377,17 +368,10 @@ block('order').elem('body').content()(function () {
                 },
                 {
                     name: 'Контрольная дата проработки заказа',
-                    val: function (order) {
-
-                        if(order.status != 'stop-pre' && order.status != 'all-pre' && !order.date['stop-pre']) return null;
-
-                        if(order.date['client-match']) {
-                            var d = new Date(order.date['client-match'].setDate(order.date['client-match'].getDate() + 3));
-                            return dateToStr(d);
-                        } else {
-                            var d = new Date(order.date['init'].setDate(order.date['init'].getDate() + 3))
-                            return dateToStr(d);
-                        }
+                    val: (order) => {
+                        var date = dateToStr(order.date['cs-stop-pre']);
+                        if (date) return date;
+                        else return null;
                     }
                 },
                 {
@@ -411,11 +395,10 @@ block('order').elem('body').content()(function () {
                 },
                 {
                     name: 'Контрольная дата активации сервиса',
-                    val: function (order) {
-                        if(order.date['client-match'] && order.date['stop-pre']) {
-                            var d = new Date(order.date['client-match'].setDate(order.date['client-match'].getDate() + order.stop.time));
-                            return dateToStr(d);
-                        }
+                    val: (order) => {
+                        var date = dateToStr(order.date['cs-gzp-organization']);
+                        if (date) return date;
+                        else return null;
                     }
                 },
                 'separator',

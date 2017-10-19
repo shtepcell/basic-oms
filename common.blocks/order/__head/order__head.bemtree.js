@@ -3,7 +3,9 @@ block('order').elem('head').content()(function () {
     var pause = null;
     var cs = null;
 
-    if(order.cs != null) {
+    if(order.deadline != null) {
+
+        var val = Math.round((order.deadline - new Date()) / 1000 / 60 / 60 / 24);
         cs = {
             elem: 'head-cell',
             mix: [
@@ -11,12 +13,12 @@ block('order').elem('head').content()(function () {
                     elem: 'right'
                 },
                 {
-                    elem: (order.cs >= 0)?'green':'red'
+                    elem: (val >= 0)?'green':'red'
                 }
             ],
             content: {
                 elem: 'cell-data',
-                content: `КС: ${order.cs} д.`
+                content: `КС: ${val} д.`
             }
         }
     }

@@ -9,6 +9,9 @@ var schema = mongoose.Schema({
         required: true,
         unique: true
     },
+    deadline: {
+        type: Date
+    },
     cs: {
         type: Number
     },
@@ -89,6 +92,12 @@ var schema = mongoose.Schema({
     },
     date: {
         init: Date,
+        'cs-gzp-pre': Date,
+        'cs-stop-pre': Date,
+        'cs-gzp-organization': Date,
+        'cs-stop-organization': Date,
+        'cs-client-match': Date,
+        'cs-client-notify': Date,
         'client-match': Date,
         'client-notify': Date,
         'gzp-pre': Date,

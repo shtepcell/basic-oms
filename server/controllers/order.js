@@ -9,6 +9,7 @@ const City = require('../models/City');
 // const Street = require('../models/Street');
 const mkdirp = require('mkdirp-promise');
 const fields = require('./fields');
+const Holiday = require('../models/Holiday');
 
 var stages = {
     'init': 'Инициация заказа',
@@ -245,13 +246,32 @@ module.exports = {
 
         order.info.city = tmpCity[0];
         order.info.pre = undefined;
+
+        var kk = {
+            init: new Date()
+        };
+
+        switch (order.status) {
+            case 'all-pre':
+                kk['cs-gzp-pre'] = await calculateDeadline(3);
+                kk['cs-stop-pre'] = await calculateDeadline(3);
+                break;
+            case 'gzp-pre':
+                kk['cs-gzp-pre'] = await calculateDeadline(3);
+                break;
+            case 'stop-pre':
+                kk['cs-stop-pre'] = await calculateDeadline(3);
+                break;
+        }
+
+        console.log(kk);
+
         var ordr = new Order({
             status: order.status,
             cs: 3,
+            deadline: await calculateDeadline(3),
             info: order.info,
-            date: {
-                init: new Date()
-            },
+            date: kk,
             history: [
                 {
                     name: 'Инициация заявки',
@@ -363,8 +383,9 @@ module.exports = {
 
             if(order.status == 'gzp-pre') {
                 order.status = 'client-match';
-                order.cs = 10;
+                order.deadline = await calculateDeadline(10);
                 order.date['gzp-pre'] = new Date();
+                order.date['cs-client-match'] = await calculateDeadline(10);
                 order.gzp.complete = true;
             }
 
@@ -418,7 +439,8 @@ module.exports = {
 
             if(order.status == 'stop-pre') {
                 order.status = 'client-match';
-                order.cs = 10;
+                order.deadline = await calculateDeadline(10);
+                order.date['cs-client-match'] = await calculateDeadline(10);
                 order.date['stop-pre'] = new Date();
                 order.stop.complete = true;
             }
@@ -485,7 +507,7 @@ module.exports = {
             order.info.order = `${req.files.order.name}`;
             order.status = 'succes';
             order.date['client-notify'] = new Date();
-            order.cs = undefined;
+            order.deadline = undefined;
 
             order.history.push({
                 name: 'Завершено уведомление клиента. Абонент включен.',
@@ -536,7 +558,7 @@ module.exports = {
         switch (reqData.to) {
             case 'delete':
                 order.status = 'secret';
-                order.cs = null;
+                order.deadline = null;
                 order.history.push({
                     name: 'Заявка удалена',
                     date: new Date(),
@@ -545,7 +567,7 @@ module.exports = {
                 break;
             case 'reject':
                 order.status = 'reject';
-                order.cs = null;
+                order.deadline = null;
                 order.history.push({
                     name: 'Заявка отклонена',
                     date: new Date(),
@@ -554,7 +576,8 @@ module.exports = {
                 break;
             case 'start-pre-stop':
                 order.status = 'stop-pre';
-                order.cs = 3;
+                order.deadline = await calculateDeadline(3);
+                order.date['cs-stop-pre'] = await calculateDeadline(3);
                 order.date['client-match'] = new Date();
                 order.history.push({
                     name: 'Начало проработки STOP/VSAT',
@@ -564,7 +587,8 @@ module.exports = {
                 break;
             case 'start-pre-gzp':
                 order.status = 'gzp-pre';
-                order.cs = 3;
+                order.deadline = await calculateDeadline(3);
+                order.date['cs-gzp-pre'] = await calculateDeadline(3);
                 order.date['client-match'] = new Date();
                 order.history.push({
                     name: 'Начало проработки ГЗП',
@@ -574,7 +598,8 @@ module.exports = {
                 break;
             case 'end-network':
                 order.status = 'client-notify';
-                order.cs = 2;
+                order.deadline = await calculateDeadline(2);
+                order.date['cs-client-notify'] = await calculateDeadline(2);
                 order.date['network'] = new Date();
                 order.history.push({
                     name: 'Выполнена настройка сети',
@@ -597,7 +622,8 @@ module.exports = {
                 } else {
                     order.status = 'install-devices';
                 }
-                order.cs = order.gzp.time;
+                order.deadline = await calculateDeadline(order.gzp.time);
+                order.date['cs-gzp-organization'] = await calculateDeadline(order.gzp.time + 2);
                 order.date['client-match'] = new Date();
                 order.history.push({
                     name: 'Начало строительства ГЗП',
@@ -616,7 +642,8 @@ module.exports = {
                 break;
             case 'start-stop-build':
                 order.status = 'stop-build';
-                order.cs = order.stop.time;
+                order.deadline = await calculateDeadline(order.stop.time);
+                order.date['cs-stop-organization'] = await calculateDeadline(order.stop.time + 2);
                 order.date['client-match'] = new Date();
                 order.history.push({
                     name: 'Начало организации через STOP/VSAT',
@@ -745,7 +772,7 @@ module.exports = {
                 status: item.status,
                 pause: item.pause,
                 worker: item.worker,
-                cs: item.cs
+                deadline: item.deadline
             }
         });
 
@@ -774,12 +801,12 @@ module.exports = {
 
             if(pre.indexOf(item.status) >= 0) {
                 stages.pre.all++;
-                if(item.cs < 0) stages.pre.bad++;
+                if(item.deadline < new Date()) stages.pre.bad++;
             }
 
             if(build.indexOf(item.status) >= 0) {
                 stages.build.all++;
-                if(item.cs < 0) stages.build.bad++;
+                if(item.deadline < new Date()) stages.build.bad++;
             }
             if(item.worker) {
                 if(item.worker.length) {
@@ -798,7 +825,7 @@ module.exports = {
                         }
                         if(pre.indexOf(item.status) >= 0) {
                             dprtmts[i._id].pre.all++;
-                            if(item.cs < 0) dprtmts[i._id].pre.bad++;
+                            if(item.deadline < new Date()) dprtmts[i._id].pre.bad++;
                         }
 
                     })
@@ -817,12 +844,12 @@ module.exports = {
                         }
                     if(pre.indexOf(item.status) >= 0) {
                         dprtmts[item.worker._id].pre.all++;
-                        if(item.cs < 0) dprtmts[item.worker._id].pre.bad++;
+                        if(item.deadline < new Date()) dprtmts[item.worker._id].pre.bad++;
                     }
 
                     if(build.indexOf(item.status) >= 0) {
                         dprtmts[item.worker._id].build.all++;
-                        if(item.cs < 0) dprtmts[item.worker._id].build.bad++;
+                        if(item.deadline < new Date()) dprtmts[item.worker._id].build.bad++;
                     }
                 }
 
@@ -974,7 +1001,7 @@ var makeQuery = async (req, res) => {
             ]
         }
         if(query.func.indexOf('2') >= 0) {
-            qr['cs'] = {'$lte': 0};
+            qr['deadline'] = {'$lte': new Date()};
         }
         if(query.func.indexOf('3') >= 0) {
             qr['pause.status'] = true;
@@ -1118,4 +1145,22 @@ var getData = async () => {
         services: services
     }
 
+}
+
+var calculateDeadline = async (time) => {
+    var holidays = await Holiday.find();
+    var now = new Date();
+
+    var i = 0;
+
+    while (time > 0) {
+        var day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+        var holi = await Holiday.findOne({date: day});
+
+        if(day.getDay() != 6 && day.getDay() != 0 && holi == null) {
+            time--;
+        }
+        i++;
+    }
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
 }
