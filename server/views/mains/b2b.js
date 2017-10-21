@@ -19,6 +19,11 @@ module.exports = function(opt, data){
         },
         page: [
             {
+                block: 'title',
+                elem: 'main-page',
+                content: 'Главная страница'
+            },
+            {
                 block: 'button-panel',
                 type: 'b2b'
             },
@@ -29,7 +34,7 @@ module.exports = function(opt, data){
                     {
                         block: 'title',
                         elem: 'part',
-                        content: 'Заявки для проработки отделом B2B'
+                        content: 'Список заявок:'
                     },
                     {
                         block: 'ultra-table',

@@ -1,6 +1,8 @@
 .title__part {
-    text-align: center;
-    margin-top: 1em;
+    font-family: sans-serif;
+    margin-left: 1em;
     margin-bottom: 1em;
-    font-size: 14pt;
+    font-style: italic;
+    font-size: 13pt;
+
 }

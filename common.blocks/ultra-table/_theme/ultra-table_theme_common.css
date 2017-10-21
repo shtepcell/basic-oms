@@ -15,6 +15,9 @@
     padding-top: 5px;
     text-align: center;
 }
+.ultra-table_theme_common th {
+    font-weight: normal;
+}
 .ultra-table_theme_common .tbody  tr {
     cursor: pointer;
     transition: all 0.1s;

@@ -1,0 +1,9 @@
+.button-panel {
+    margin-left: 3em;
+}
+.button-panel__text {
+    font-family: sans-serif;
+    font-style: italic;
+    margin-right: 2em;
+    display: inline-block;
+}

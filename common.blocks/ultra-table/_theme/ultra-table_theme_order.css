@@ -1,6 +1,5 @@
 .ultra-table_theme_order {
-    width: 98%;
-    margin-left: 1em;
+    width: 100%;
     border-collapse: collapse;
     font-size: 10pt;
     border-spacing: 0;
@@ -8,6 +7,9 @@
 }
 .ultra-table_theme_order th {
     border-bottom: 2px solid #ddd;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 12pt;
 }
 .ultra-table_theme_order td {
     border-bottom: 1px solid #ddd;

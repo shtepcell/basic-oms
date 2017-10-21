@@ -23,6 +23,10 @@
             }
         },
         {
+            block: 'title',
+            elem: 'main-page'
+        },
+        {
             block: 'pager'
         },
         {

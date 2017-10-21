@@ -20,13 +20,18 @@ module.exports = function(opt, data){
         },
         page: [
             {
+                block: 'title',
+                elem: 'main-page',
+                content: 'Главная страница'
+            },
+            {
                 block: 'wrap',
                 elem: 'main',
                 content: [
                     {
                         block: 'title',
                         elem: 'part',
-                        content: 'Заявки для проработки сетевым отделом'
+                        content: 'Список заявок:'
                     },
                     {
                         block: 'ultra-table',

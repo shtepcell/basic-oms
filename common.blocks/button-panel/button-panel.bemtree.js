@@ -3,19 +3,29 @@ block('button-panel').content()(function () {
     var content = [];
     switch (type) {
         case 'b2b':
-            content = [{
-                block: 'button',
-                mods: {
-                    theme: 'islands',
-                    size: 'm',
-                    type: 'link'
+            content = [
+                {
+                    elem: 'text',
+                    content: 'Доступные действия:'
                 },
-                url: '/init',
-                text: 'Инициация заявки'
-            }];
+                {
+                    block: 'button',
+                    mods: {
+                        theme: 'islands',
+                        size: 'm',
+                        type: 'link'
+                    },
+                    url: '/init',
+                    text: 'Инициация заявки'
+                }
+            ];
             break;
         case 'users':
             content = [
+                {
+                    elem: 'text',
+                    content: 'Доступные действия:'
+                },
                 {
                     block: 'button',
                     mods: {

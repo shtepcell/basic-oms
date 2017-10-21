@@ -21,17 +21,23 @@ module.exports = function(opt, data){
         },
         page: [
             {
+                block: 'title',
+                elem: 'main-page',
+                content: 'Главная страница'
+            },
+            {
+                block: 'button-panel',
+                type: 'b2b'
+            },
+
+            {
                 block: 'wrap',
                 elem: 'main',
                 content: [
                     {
-                        block: 'button-panel',
-                        type: 'b2b'
-                    },
-                    {
                         block: 'title',
                         elem: 'part',
-                        content: 'Заявки для проработки отделом B2O'
+                        content: 'Список заявок:'
                     },
                     {
                         block: 'ultra-table',
