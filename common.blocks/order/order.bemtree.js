@@ -1,6 +1,19 @@
 block('order').content()(function () {
     var tab = this.ctx.tab;
 
+    if(!this.ctx.order) {
+        return [
+            {
+                elem: 'body',
+                action: '/init',
+                tab: 'init',
+                init: true,
+                dataset: this.ctx.dataset,
+                js: true
+            }
+        ]
+    }
+
     return [
         {
             elem: 'head',

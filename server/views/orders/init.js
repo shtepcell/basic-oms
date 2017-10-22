@@ -19,15 +19,23 @@ module.exports = function(opt, data) {
                 content: 'Инициация заказа'
             },
             {
-                block: 'ultra-form',
-                action: '/init',
-                method: 'POST',
-                text: 'Иницировать заявку',
-                mods: {
-                    theme: 'order'
-                },
-                fields: data.template
+                block: 'order',
+                action: `/init`,
+                order: data.order,
+                tab: 'init',
+                user: data.__user,
+                dataset: data.dataset
             }
+            // {
+            //     block: 'ultra-form',
+            //     action: '/init',
+            //     method: 'POST',
+            //     text: 'Иницировать заявку',
+            //     mods: {
+            //         theme: 'order'
+            //     },
+            //     fields: data.template
+            // }
         ]
     }
 };

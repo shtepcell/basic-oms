@@ -4,6 +4,7 @@ block('order').elem('actions').content()(function () {
         tab = this.ctx.tab;
 
         var actions = {
+            init: [],
             info: [
                 {
                     text: 'Отправить на проработку по ГЗП',
@@ -130,7 +131,25 @@ block('order').elem('actions').content()(function () {
                 })
             }
         })
-
+        if( tab == 'init' ) {
+            ret.push({
+                block: 'order',
+                elem: 'action',
+                content: {
+                    block: 'button',
+                    mix: {
+                        block: 'order',
+                        elem: 'action'
+                    },
+                    mods: {
+                        theme: 'islands',
+                        size: 'm',
+                        type: 'submit'
+                    },
+                    text: 'Инициировать заказ'
+                }
+            })
+        }
         if( tab == 'info' && order.status == 'client-notify' && user.department._id == ''+order.info.initiator.department._id ) {
                 ret.push({
                     block: 'order',

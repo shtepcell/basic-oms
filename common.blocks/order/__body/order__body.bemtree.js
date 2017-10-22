@@ -2,6 +2,7 @@ block('order').elem('body').content()(function () {
     var order = this.ctx.order,
         tab = this.ctx.tab,
         user = this.ctx.user,
+        init = this.ctx.init,
         adminEdit = this.ctx.admin,
         dataset = this.ctx.dataset;
 
@@ -37,12 +38,186 @@ block('order').elem('body').content()(function () {
     }
 
     var fields;
+
     switch (tab) {
+        case 'init':
+            fields = [
+                {
+                    name: 'Связанные заявки',
+                    field: {
+                        name: 'relation',
+                        type: 'text',
+                        placeholder: '#1234 #4321'
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Номер CMS',
+                    field: {
+                        name: 'cms',
+                        type: 'text',
+                        placeholder: '12-2222-23'
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Требуемая дата организации',
+                    val: null,
+                    access: true,
+                    field: {
+                        name: 'date-request',
+                        type: 'date'
+                    }
+                },
+                'separator',
+                {
+                    name: 'Клиент',
+                    field: {
+                        name: 'client',
+                        type: 'suggest',
+                        dataset: 'clients',
+                        placeholder: 'РНКБ',
+                        required: true
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Контактные данные клиента',
+                    field: {
+                        name: 'contact',
+                        type: 'text',
+                        placeholder: '+765432109'
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Услуга',
+                    field: {
+                        name: 'service',
+                        type: 'select',
+                        dataset: 'services',
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Параметры услуги',
+                    field: {
+                        name: 'options',
+                        type: 'text',
+                        placeholder: '10 мБит/с'
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Город',
+                    field: {
+                        name: 'city',
+                        type: 'suggest',
+                        dataset: 'cities',
+                        placeholder: 'г. Симферополь',
+                        required: true
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Улица',
+                    field: {
+                        name: 'street',
+                        type: 'text',
+                        required: true,
+                        placeholder: 'ул. Пушкина',
+                        required: true
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'д./кв. и т.д',
+                    field: {
+                        name: 'adds',
+                        type: 'text',
+                        placeholder: 'д. Колотушкина, кв.15',
+                        required: true
+                    },
+                    val: null,
+                    access: true
+                },
+                'separator',
+                {
+                    name: 'Необходимость выделения IP-адресов',
+                    field: {
+                        name: 'ip',
+                        type: 'boolean'
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Необходимый пул адресов',
+                    field: {
+                        name: 'pool',
+                        type: 'text',
+                        placeholder: '/24'
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Ожидаемый единовр. доход (руб)',
+                    field: {
+                        name: 'cost-once',
+                        required: true,
+                        type: 'text',
+                        placeholder: '12345'
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Ожидаемый ежемес. доход (руб)',
+                    field: {
+                        name: 'cost-monthly',
+                        required: true,
+                        type: 'text',
+                        placeholder: '123'
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Дополнительная информация',
+                    field: {
+                        name: 'add_info',
+                        type: 'text',
+                        placeholder: 'Возможно завтра будет дождь...'
+                    },
+                    val: null,
+                    access: true
+                },
+                {
+                    name: 'Отправить на проработку',
+                    field: {
+                        name: 'pre',
+                        type: 'select',
+                        dataset: 'pre'
+                    },
+                    val: null,
+                    access: true
+                }
+            ]
+            break;
         case 'info':
             fields = [
                 {
                     name: 'Дата инициации заказа',
-                    val: dateToStr(order.date.init),
+                    val: dateToStr(order.date.init)
                 },
                 {
                     name: 'Связанные заявки',
@@ -51,7 +226,7 @@ block('order').elem('body').content()(function () {
                         type: 'text',
                         placeholder: '#1234 #4321'
                     },
-                    val:  order.info.relation,
+                    val: order.info.relation,
                     access: (adminEdit)
                 },
                 {
@@ -61,7 +236,7 @@ block('order').elem('body').content()(function () {
                         type: 'text',
                         placeholder: '12-2222-23'
                     },
-                    val:  order.info.cms,
+                    val: order.info.cms,
                     access: (adminEdit)
                 },
                 {
@@ -116,7 +291,7 @@ block('order').elem('body').content()(function () {
                 },
                 {
                     name: 'Параметры услуги',
-                    val:  order.info.options,
+                    val: order.info.options,
                     field: {
                         name: 'options',
                         type: 'text',
@@ -544,6 +719,7 @@ block('order').elem('body').content()(function () {
             });
             return;
         }
+            
         item.val = (typeof item.val == 'function')?item.val(order):item.val;
 
         if(item.access) {

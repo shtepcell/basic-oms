@@ -213,6 +213,10 @@ module.exports = {
             info: data
         };
 
+        if(!order.info.client) {
+            res.status(400).send({ errText: 'Клиент - обязательное поле!' });
+            return;
+        }
         var clnt = order.info.client;
         if(clnt == 'err') {
             res.status(400).send({ errText: 'Введите коректное название клиента. Например Apple' });
@@ -220,7 +224,7 @@ module.exports = {
         }
         clnt = await Client.findOne({name: clnt});
 
-        if(clnt.length == 0) {
+        if(!clnt) {
             res.status(400).send({ errText: 'Такого клиента не существует.' });
             return;
         }
@@ -230,8 +234,16 @@ module.exports = {
         var service = await Service.findOne({ _id: order.info.service });
         order.info.service = service;
 
+        if(!order.info.city) {
+            res.status(400).send({ errText: 'Город указывать обязательно!' });
+            return;
+        }
         order.info.city = parserCity(order.info.city);
 
+        if(order.info.city == 'err') {
+            res.status(400).send({ errText: 'Формат города неверный! Следует писать так - г./c./пос./пгт. Симферополь' });
+            return;
+        }
         var tmpCity = await City.find({ type: order.info.city.type, name: order.info.city.name });
 
         if(tmpCity.length == 0) {
@@ -264,11 +276,8 @@ module.exports = {
                 break;
         }
 
-        console.log(kk);
-
         var ordr = new Order({
             status: order.status,
-            cs: 3,
             deadline: await calculateDeadline(3),
             info: order.info,
             date: kk,
@@ -572,7 +581,6 @@ module.exports = {
                 var start = order.pause.date;
                 var now = new Date();
                 var delta = Math.round((now - start) / 1000 / 60 / 60 / 24);
-                console.log(start);
                 order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + delta);
                 order.pause = {
                     status: false,
@@ -1001,10 +1009,15 @@ function parseClient(str) {
 
 function parserCity(str) {
     var res = { type: '', name: ''};
+    var types = ['г.', 'с.', 'пгт.', 'пос.'];
+
     for (var i = 0; i < str.length; i++) {
         if(str[i] === '.') {
             res.type += '.';
             res.name = str.slice(i+2, str.length);
+            if (res.name.length <= 0 || types.indexOf(res.type) < 0) {
+                return 'err';
+            }
             return res;
         } else res.type += ''+str[i];
     }
@@ -1157,20 +1170,36 @@ var getData = async () => {
 
     providers = providers.map( i => `[${i.type}] ${i.name}`);
 
-    cities = cities.map( i => `${i.name}`);
+    cities = cities.map( i => `${i.type} ${i.name}`);
 
     services = services.map( i => {
         return {
-            val: `${i.name}`,
+            val: `${i._id}`,
             text: `${i.name}`
         }
     });
+
+    var pre = [
+        {
+            text: 'только ГЗП',
+            val: 'gzp-pre'
+        },
+        {
+            text: 'только STOP/VSAT',
+            val: 'stop-pre'
+        },
+        {
+            text: 'Одновременно ГЗП и STOP/VSAT',
+            val: 'all-pre'
+        }
+    ];
 
     return {
         clients: clients,
         providers: providers,
         cities: cities,
-        services: services
+        services: services,
+        pre: pre
     }
 
 }
