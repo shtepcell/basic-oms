@@ -62,6 +62,7 @@ module.exports = function (app) {
     app.post('/order/:id/gzp', Order.endPreGZP);
     app.post('/order/:id/stop', Order.endPreSTOP);
 
+    app.post('/order/:id/:tab/admin', Order.adminEdit);
 
     app.get('/profile', Account.getProfile);
     app.post('/profile', Account.selfEdit);
@@ -74,7 +75,7 @@ module.exports = function (app) {
     app.get('/admin/holiday', Holiday.getAll);
     app.post('/admin/holiday', Holiday.add);
     app.post('/admin/holiday/delete', Holiday.delete);
-    
+
     app.get('/admin/users/add', Account.getPageCreate);
     app.post('/admin/users/add', Account.create);
 

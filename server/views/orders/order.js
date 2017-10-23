@@ -16,7 +16,7 @@ module.exports = function(opt, data) {
                 action: `/order/${data.order.id}/${opt.tab}`,
                 order: data.order,
                 tab: opt.tab,
-                admin: false,
+                admin: opt.admin,
                 user: data.__user,
                 dataset: data.dataset
             }

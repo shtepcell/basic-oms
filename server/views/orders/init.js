@@ -4,9 +4,9 @@ module.exports = function(opt, data) {
 
     return {
         view: 'page-index',
-        title: 'Создание отдела',
+        title: 'Инициация заказа',
         meta: {
-            description: 'Страница создания отдела',
+            description: 'Страница инициации заказа',
             og: {
                 url: 'https://suz.miranda-media.ru',
                 siteName: 'СУЗ 2.0'

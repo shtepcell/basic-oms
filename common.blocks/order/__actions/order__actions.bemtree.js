@@ -1,6 +1,7 @@
 block('order').elem('actions').content()(function () {
     var order = this.ctx.order,
         user = this.ctx.user,
+        adminEdit = this.ctx.admin,
         tab = this.ctx.tab;
 
         var actions = {
@@ -27,7 +28,7 @@ block('order').elem('actions').content()(function () {
                     to: 'start-gzp-build',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');
-                        return (order.status == 'client-match' && access && order.gzp.complete)
+                        return (order.status == 'client-match' && access && order.gzp.complete && order.gzp.capability)
                     }
                 },
                 {
@@ -35,7 +36,7 @@ block('order').elem('actions').content()(function () {
                     to: 'start-stop-build',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');
-                        return (order.status == 'client-match' && access && order.stop.complete);
+                        return (order.status == 'client-match' && access && order.stop.complete && order.stop.capability);
                     }
                 },
                 {
@@ -131,6 +132,24 @@ block('order').elem('actions').content()(function () {
                 })
             }
         })
+
+        if(['info', 'gzp', 'stop'].indexOf(tab) >= 0 && user.department.type == 'admin') {
+            ret.push({
+                block: 'order',
+                elem: 'action',
+                content: {
+                    block: 'button',
+                    mods: {
+                        theme: 'islands',
+                        size: 'm',
+                        type: 'link'
+                    },
+                    url: `/order/${order.id}/${tab}?admin=1`,
+                    text: 'Административная правка'
+                }
+            })
+        }
+
         if( tab == 'init' ) {
             ret.push({
                 block: 'order',
@@ -210,6 +229,29 @@ block('order').elem('actions').content()(function () {
                     }
                 })
             }
+
+        if(adminEdit) {
+            ret = [
+                {
+                    block: 'order',
+                    elem: 'action',
+                    content: {
+                        block: 'button',
+                        mix: {
+                            block: 'order',
+                            elem: 'action'
+                        },
+                        mods: {
+                            theme: 'islands',
+                            size: 'l',
+                            type: 'submit'
+                        },
+                        text: 'Сохранить изменения'
+                    }
+
+                }
+            ]
+        }
         return ret;
 
 })

@@ -247,8 +247,18 @@ module.exports = {
         var tmpCity = await City.find({ type: order.info.city.type, name: order.info.city.name });
 
         if(tmpCity.length == 0) {
-            res.status(400).send({ errText: 'Такого города не существует.' });
-            return;
+            var ct = new City({
+                type: order.info.city.type,
+                name: order.info.city.name,
+                usage: false
+            });
+            let dn = await ct.save();
+            if (dn) {
+                tmpCity[0] = dn;
+            } else {
+                res.status(400).send({ errText: 'Ошибка создания города! Если вы видете эту ошибку - обратитесь к админисратору' });
+                return;
+            }
         }
 
         if(tmpCity.length > 1) {
@@ -313,7 +323,8 @@ module.exports = {
             render(req, res, {
                 viewName: 'orders/order',
                 options: {
-                    tab: 'info'
+                    tab: 'info',
+                    admin: (req.query.admin=='1')
                 }
             });
 
@@ -332,7 +343,8 @@ module.exports = {
             render(req, res, {
                 viewName: 'orders/order',
                 options: {
-                    tab: 'gzp'
+                    tab: 'gzp',
+                    admin: (req.query.admin=='1')
                 }
             });
 
@@ -350,7 +362,8 @@ module.exports = {
             render(req, res, {
                 viewName: 'orders/order',
                 options: {
-                    tab: 'stop'
+                    tab: 'stop',
+                    admin: (req.query.admin=='1')
                 }
             });
 
@@ -375,6 +388,177 @@ module.exports = {
             });
 
         } else render(req, res, { view: '404' });
+    },
+
+    adminEdit: async (req, res) => {
+        var data = req.body;
+
+        if(res.locals.__user.department.type != 'admin') {
+            res.status(402).send({errText: 'Эта функция доступна только администратору!'});
+            return;
+        }
+
+        var order = await Order.findOne({id: req.params.id});
+        if(!order) {
+            res.status(402).send({errText: 'Такой заявки не существует!'});
+            return;
+        }
+
+        Object.keys(data).forEach( item => {
+            data[item] = data[item].trim();
+            if(data[item] == '') data[item] = undefined;
+        });
+
+        switch (req.params.tab) {
+            case 'info':
+                var tmp = {};
+
+
+                if(data['date-request']) {
+                    var date = parseDate(data['date-request']);
+
+                    if(!date) {
+                        res.status(400).send({ errText: 'Некорректный формат даты' });
+                        return;
+                    }
+                    data['date-request'] = date;
+                }
+
+                tmp = data;
+
+                if(!data.client) {
+                    res.status(400).send({ errText: 'Клиент - обязательное поле!' });
+                    return;
+                }
+                var clnt = data.client;
+                if(clnt == 'err') {
+                    res.status(400).send({ errText: 'Введите коректное название клиента. Например Apple' });
+                    return;
+                }
+                clnt = await Client.findOne({name: clnt});
+
+                if(!clnt) {
+                    res.status(400).send({ errText: 'Такого клиента не существует.' });
+                    return;
+                }
+
+                tmp.client = clnt;
+
+                var service = await Service.findOne({ _id: data.service });
+                tmp.service = service;
+
+                if(!data.city) {
+                    res.status(400).send({ errText: 'Город указывать обязательно!' });
+                    return;
+                }
+                data.city = parserCity(data.city);
+
+                if(data.city == 'err') {
+                    res.status(400).send({ errText: 'Формат города неверный! Следует писать так - г./c./пос./пгт. Симферополь' });
+                    return;
+                }
+                var tmpCity = await City.find({ type: data.city.type, name: data.city.name });
+
+                if(tmpCity.length == 0) {
+                    var ct = new City({
+                        type: data.city.type,
+                        name: data.city.name,
+                        usage: false
+                    });
+                    let dn = await ct.save();
+                    if (dn) {
+                        tmpCity[0] = dn;
+                    } else {
+                        res.status(400).send({ errText: 'Ошибка создания города! Если вы видете эту ошибку - обратитесь к админисратору' });
+                        return;
+                    }
+                }
+
+                if(tmpCity.length > 1) {
+                    res.status(400).send({ errText: 'Городов с похожим названием найдено несколько. Пожалуйста уточните.' });
+                    return;
+                }
+
+                tmp.city = tmpCity[0];
+
+                if(data['date-sign']) {
+                    var date = parseDate(data['date-sign'])
+                    if(date == 'err') {
+                        res.status(400).send({errText: 'Неверный формат даты'})
+                        return;
+                    }
+                    tmp['date-sign'] = date;
+                }
+
+                if(req.files.order) {
+                    var id = order.id;
+                    var _dir;
+                    for (var i = 0; i < 1000; i++) {
+                        if(id > i*1000) {
+                            _dir = `${(i)*1000}-${(i+1)*1000}`;
+                        }
+                    }
+                    var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
+                    req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function(err) {
+                        if (err) {
+                            logger.error(err);
+                            return res.status(500).send(err);
+                        }
+                    });
+                    order.info.order = `${req.files.order.name}`;
+
+                }
+                order.info = Object.assign(order.info, tmp);
+                break;
+
+            case 'gzp':
+
+                if(isNaN(data.time)) {
+                    res.status(400).send({ errText: 'Срок организации должен быть числом' });
+                    return;
+                }
+
+                order.gzp = Object.assign(order.gzp, data);
+                break;
+
+            case 'stop':
+
+                if(isNaN(data.time)) {
+                    res.status(400).send({errText: 'Срок организации должен быть числом'});
+                    return;
+                }
+
+                if(!data.provider) {
+                    res.status(400).send({errText: 'Провайдер - обязательное поле!'});
+                    return;
+                }
+
+                var prvdr = parseClient(data.provider);
+
+                var provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
+
+                if(!provider) {
+                    res.status(400).send({errText : 'Такого провайдера не существует!'});
+                    return;
+                }
+                data.provider = provider;
+                order.stop = Object.assign(order.stop, data);
+                break;
+        }
+        order.history.push({
+            name: 'Административная правка',
+            date: new Date(),
+            author: await Account.findOne({_id: res.locals.__user._id})
+        });
+
+        var done = await order.save();
+        if(done) {
+            res.status(200).send({created: true});
+            return;
+        } else {
+            res.status(400).send({errText: 'Неизвестная ошибка!'});
+            return;
+        }
     },
 
     endPreGZP: async (req, res) => {

@@ -281,7 +281,10 @@ block('order').elem('body').content()(function () {
                 },
                 {
                     name: 'Услуга',
-                    val: order.info.service.name,
+                    val: (order) => {
+                        if(adminEdit) return order.info.service._id + '';
+                        else return order.info.service.name;
+                    },
                     field: {
                         name: 'service',
                         type: 'select',
@@ -457,7 +460,7 @@ block('order').elem('body').content()(function () {
                         name: 'need'
                     },
                     val: function (order) {
-                        if(order.gzp.complete)
+                        if(order.gzp.capability != undefined)
                             if(order.gzp.need) {
                                 return 'Да';
                             } else return 'Нет';
@@ -473,7 +476,7 @@ block('order').elem('body').content()(function () {
                         name: 'capability'
                     },
                     val: function (order) {
-                        if(order.gzp.complete)
+                        if(order.gzp.capability != undefined)
                             if(order.gzp.capability) {
                                 return 'Да';
                             } else return 'Нет';
@@ -571,7 +574,7 @@ block('order').elem('body').content()(function () {
                 {
                     name: 'Контрольная дата активации сервиса',
                     val: (order) => {
-                        var date = dateToStr(order.date['cs-gzp-organization']);
+                        var date = dateToStr(order.date['cs-stop-organization']);
                         if (date) return date;
                         else return null;
                     }
@@ -586,7 +589,7 @@ block('order').elem('body').content()(function () {
                         name: 'capability'
                     },
                     val: function (order) {
-                        if(order.stop.complete)
+                        if(order.stop.capability != undefined)
                             if(order.stop.capability) {
                                 return 'Да';
                             } else return 'Нет';
@@ -604,9 +607,8 @@ block('order').elem('body').content()(function () {
                         placeholder: '[STOP] Ростелеком'
                     },
                     val: function (order) {
-                        if(order.stop.complete)
+                        if(order.stop.provider)
                             return `[${order.stop.provider.type}] ${order.stop.provider.name}`
-                        else return null;
                     }
                 },
                 {
@@ -719,7 +721,7 @@ block('order').elem('body').content()(function () {
             });
             return;
         }
-            
+
         item.val = (typeof item.val == 'function')?item.val(order):item.val;
 
         if(item.access) {
@@ -731,6 +733,7 @@ block('order').elem('body').content()(function () {
                         block: 'input',
                         name: item.field.name,
                         required: item.field.required,
+                        val: item.val,
                         mods: {
                             width: 'available',
                             theme: 'islands',
@@ -743,6 +746,7 @@ block('order').elem('body').content()(function () {
                     input = {
                         block: 'select',
                         name: item.field.name,
+                        val: item.val,
                         mods: {
                             mode: 'radio',
                             theme: 'islands',
@@ -760,7 +764,7 @@ block('order').elem('body').content()(function () {
                             theme: 'islands',
                             size: 'l'
                         },
-                        val: 1 || item.val,
+                        val: (item.val=='Да')?1:0,
                         options: [
                             {
                                 val: 0,
@@ -777,6 +781,7 @@ block('order').elem('body').content()(function () {
                     input = {
                         block : 'suggest',
                         required: item.field.required,
+                        val: item.val,
                         mods : {
                             theme : 'islands',
                             size : 'l',
@@ -792,6 +797,7 @@ block('order').elem('body').content()(function () {
                 case 'date':
                     input = {
                         block: 'input',
+                        val: item.val,
                         mods: {
                             'has-calendar': true,
                             size: 'm',
@@ -816,7 +822,7 @@ block('order').elem('body').content()(function () {
                             size: 'l'
                         },
                         button: 'Выберите файл',
-                        noFileText: 'Файл не выбран'
+                        noFileText: (item.val)?`Файл загружен - ${item.val}`:'Файл не выбран'
                     };
                     break;
             }
@@ -946,6 +952,7 @@ block('order').elem('body').content()(function () {
         {
             elem: 'actions',
             order: order,
+            admin: adminEdit,
             user: user,
             tab: this.ctx.tab
         }
@@ -963,7 +970,7 @@ function dateToStr (value) {
         if(day < 10) {
             day = '0' + day;
         }
-        return `${day}-${month}-${year}`;
+        return `${day}.${month}.${year}`;
     } else return null;
 }
 
