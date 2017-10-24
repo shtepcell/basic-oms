@@ -74,12 +74,14 @@ module.exports = {
         switch (dep) {
             case 'admin':
                 var ct = await City.find({usage: false});
-                query = {};
-                query['$or'] = ct.map(j => {
-                    return {
-                        'info.city': j._id
-                    }
-                });
+                if(ct.length>0) {
+                    query = {status: {'$ne': 'secret'}};
+                    query['$or'] = ct.map(j => {
+                        return {
+                            'info.city': j._id
+                        }
+                    });
+                }
                 view = 'mains/admin'
                 break;
             case 'b2b':
@@ -148,6 +150,7 @@ module.exports = {
             default:
             break;
         }
+        if(!query) query = {status: 'lolololololoolo'};
 
         var docs = await Order.paginate(query, { page: pageNumber, limit: perPage, populate: [
             {
