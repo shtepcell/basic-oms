@@ -72,6 +72,16 @@ module.exports = {
         });
         var view = 'main';
         switch (dep) {
+            case 'admin':
+                var ct = await City.find({usage: false});
+                query = {};
+                query['$or'] = ct.map(j => {
+                    return {
+                        'info.city': j._id
+                    }
+                });
+                view = 'mains/admin'
+                break;
             case 'b2b':
                 query = {
                     '$and': [
