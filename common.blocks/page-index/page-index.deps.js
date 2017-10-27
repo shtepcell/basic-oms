@@ -1,6 +1,13 @@
 ({
     shouldDeps: [
         {
+            block: 'short-search'
+        },
+        {
+            block: 'short-search',
+            elems: ['form']
+        },
+        {
             block: 'form',
             elem: 'login'
         },

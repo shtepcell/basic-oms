@@ -24,22 +24,13 @@ module.exports = {
 
         var cities = await City.paginate({}, { page: pageNumber, limit: perPage})
 
-        if (!cities.docs.length) {
-            if (pageNumber !== 1) {
-                res.redirect(req.path);
-            } else {
-                render(req, res, {
-                    viewName: 'handbook',
-                    options: {
-                        title: 'Справочник городов',
-                        handbookType: 'cities',
-                        reqUrl: '/admin/cities/add'
-                    }
-                });
-            }
-            return;
+        if(req.query.name) {
+            var rgx =  new RegExp('' + req.query.name + '', 'i');
+            cities = await City.paginate({name: {$regex: rgx}}, { page: pageNumber, limit: perPage});
         }
 
+
+        res.locals.query = req.query;
         res.locals.cities = cities.docs;
         res.locals.pagers = {};
         res.locals.pagers[pagerId] = {

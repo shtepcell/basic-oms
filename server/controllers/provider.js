@@ -22,24 +22,12 @@ module.exports = {
             res.redirect(req.path);
 
         var prvdrs = await Provider.paginate({}, { page: pageNumber, limit: perPage})
-
-        if (!prvdrs.docs.length)
-        {
-            if (pageNumber !== 1) {
-                res.redirect(req.path);
-            } else {
-                render(req, res, {
-                    viewName: 'handbook',
-                    options: {
-                        title: 'Справочник провайдеров',
-                        handbookType: 'providers',
-                        reqUrl: '/admin/providers/add'
-                    }
-                });
-            }
-            return;
+        if(req.query.name) {
+            var rgx =  new RegExp('' + req.query.name + '', 'i');
+            prvdrs = await Provider.paginate({name: {$regex: rgx}}, { page: pageNumber, limit: perPage});
         }
 
+        res.locals.query = req.query;
         res.locals.prvdrs = prvdrs.docs;
         res.locals.pagers = {};
         res.locals.pagers[pagerId] = {

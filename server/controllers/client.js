@@ -19,28 +19,21 @@ module.exports = {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
         }
-        else
+        else {
             res.redirect(req.path);
-
-        res.locals.clientTypeArr = await ClientType.find({}).select({ shortName: 1, _id: 1 })
-        var clients = await Client.paginate({}, { page: pageNumber, limit: perPage, populate: 'type'});
-
-        if (!clients.docs.length)
-        {
-            if (pageNumber !== 1) {
-                res.redirect(req.path);
-            } else {
-                render(req, res, {
-                    viewName: 'handbook',
-                    options: {
-                        title: 'Справочник клиентов',
-                        handbookType: 'clients',
-                        reqUrl: '/admin/clients/add'
-                    }
-                });
-            }
+            return;
         }
 
+        res.locals.clientTypeArr = await ClientType.find({}).select({ shortName: 1, _id: 1 })
+
+        var clients = await Client.paginate({}, { page: pageNumber, limit: perPage, populate: 'type'});
+
+        if(req.query.name) {
+            var rgx =  new RegExp('' + req.query.name + '', 'i');
+            clients = await Client.paginate({name: {$regex: rgx}}, { page: pageNumber, limit: perPage, populate: 'type'});
+        }
+
+        res.locals.query = req.query;
         res.locals.clients = clients.docs;
         res.locals.pagers = {};
         res.locals.pagers[pagerId] = {

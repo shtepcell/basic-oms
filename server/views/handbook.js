@@ -1,6 +1,8 @@
-module.exports = function(opt) {
+module.exports = function(opt, data) {
     var opt = opt || {},
         pagerId;
+
+    var query = data.query || {};
 
     if (opt.pagers && opt.pagers.length)
         pagerId = opt.pagers[0];
@@ -16,6 +18,11 @@ module.exports = function(opt) {
             }
         },
         page: [
+            {
+                block: 'short-search',
+                url: opt.reqUrl+'/search',
+                query: query
+            },
             {
                 block: 'inline-form',
                 attrs: {
