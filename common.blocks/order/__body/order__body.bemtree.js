@@ -62,15 +62,6 @@ block('order').elem('body').content()(function () {
                     val: null,
                     access: true
                 },
-                {
-                    name: 'Требуемая дата организации',
-                    val: null,
-                    access: true,
-                    field: {
-                        name: 'date-request',
-                        type: 'date'
-                    }
-                },
                 'separator',
                 {
                     name: 'Клиент',
@@ -143,7 +134,7 @@ block('order').elem('body').content()(function () {
                     field: {
                         name: 'adds',
                         type: 'text',
-                        placeholder: 'д. Колотушкина, кв.15',
+                        placeholder: 'д.32, кв.15',
                         required: true
                     },
                     val: null,
@@ -165,28 +156,6 @@ block('order').elem('body').content()(function () {
                         name: 'pool',
                         type: 'text',
                         placeholder: '/24'
-                    },
-                    val: null,
-                    access: true
-                },
-                {
-                    name: 'Ожидаемый единовр. доход (руб)',
-                    field: {
-                        name: 'cost-once',
-                        required: true,
-                        type: 'text',
-                        placeholder: '12345'
-                    },
-                    val: null,
-                    access: true
-                },
-                {
-                    name: 'Ожидаемый ежемес. доход (руб)',
-                    field: {
-                        name: 'cost-monthly',
-                        required: true,
-                        type: 'text',
-                        placeholder: '123'
                     },
                     val: null,
                     access: true
@@ -248,15 +217,6 @@ block('order').elem('body').content()(function () {
                     val: order.info.initiator.department.name
                 },
                 'separator',
-                {
-                    name: 'Требуемая дата организации',
-                    val: dateToStr(order.info['date-request']),
-                    field: {
-                        name: 'date-request',
-                        type: 'date'
-                    },
-                    access: (adminEdit)
-                },
                 {
                     name: 'Клиент',
                     val: order.info.client.name,
@@ -366,7 +326,7 @@ block('order').elem('body').content()(function () {
                         type: 'text',
                         placeholder: '12345'
                     },
-                    access: (adminEdit)
+                    access: (adminEdit || ((user.department._id+'' == order.info.initiator.department._id+'') && order.status == 'client-match') )
                 },
                 {
                     name: 'Ожидаемый ежемес. доход (руб)',
@@ -377,7 +337,7 @@ block('order').elem('body').content()(function () {
                         type: 'text',
                         placeholder: '123'
                     },
-                    access: (adminEdit)
+                    access: (adminEdit || ((user.department._id+'' == order.info.initiator.department._id+'') && order.status == 'client-match') )
                 },
                 {
                     name: 'Дополнительная информация',
@@ -457,7 +417,8 @@ block('order').elem('body').content()(function () {
                         user.department.cities.indexOf(order.info.city._id) >= 0)),
                     field: {
                         type: 'boolean',
-                        name: 'need'
+                        name: 'need',
+                        default: 1
                     },
                     val: function (order) {
                         if(order.gzp.capability != undefined)
@@ -473,7 +434,8 @@ block('order').elem('body').content()(function () {
                         user.department.cities.indexOf(order.info.city._id) >= 0)),
                     field: {
                         type: 'boolean',
-                        name: 'capability'
+                        name: 'capability',
+                        default: 1
                     },
                     val: function (order) {
                         if(order.gzp.capability != undefined)
@@ -586,7 +548,8 @@ block('order').elem('body').content()(function () {
                     field: {
                         type: 'boolean',
                         required: true,
-                        name: 'capability'
+                        name: 'capability',
+                        default: 1
                     },
                     val: function (order) {
                         if(order.stop.capability != undefined)
@@ -756,6 +719,11 @@ block('order').elem('body').content()(function () {
                     }
                     break;
                 case 'boolean':
+                    var costil;
+                    if(item.val==undefined) {
+                        costil = item.field.default;
+                    } else costil = (item.val=='Да')?1:0;
+
                     input = {
                         block: 'select',
                         name: item.field.name,
@@ -764,7 +732,7 @@ block('order').elem('body').content()(function () {
                             theme: 'islands',
                             size: 'l'
                         },
-                        val: (item.val=='Да')?1:0,
+                        val: costil,
                         options: [
                             {
                                 val: 0,

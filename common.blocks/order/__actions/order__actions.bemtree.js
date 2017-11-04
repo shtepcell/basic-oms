@@ -28,7 +28,8 @@ block('order').elem('actions').content()(function () {
                     to: 'start-gzp-build',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');
-                        return (order.status == 'client-match' && access && order.gzp.complete && order.gzp.capability)
+                        var income = (order.info['cost-once'] != null && order.info['cost-monthly']);
+                        return (order.status == 'client-match' && access && income && order.gzp.complete && order.gzp.capability)
                     }
                 },
                 {
@@ -36,7 +37,8 @@ block('order').elem('actions').content()(function () {
                     to: 'start-stop-build',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');
-                        return (order.status == 'client-match' && access && order.stop.complete && order.stop.capability);
+                        var income = (order.info['cost-once'] != null && order.info['cost-monthly']);
+                        return (order.status == 'client-match' && access && income && order.stop.complete && order.stop.capability);
                     }
                 },
                 {
@@ -111,6 +113,27 @@ block('order').elem('actions').content()(function () {
 
         var ret = [];
 
+        if(tab == 'info' && order.info.initiator.department._id == user.department._id + ''
+            && order.status == 'client-match') {
+            ret.push({
+                block: 'order',
+                elem: 'action',
+                content: {
+                    block: 'button',
+                    mix: {
+                        block: 'order',
+                        elem: 'action'
+                    },
+                    mods: {
+                        theme: 'islands',
+                        size: 'm',
+                        type: 'submit'
+                    },
+                    text: 'Сохранить информацию о доходах'
+                }
+            })
+        }
+
         actions[tab].forEach( item => {
             if( item.condition(user, order) ) {
                 ret.push({
@@ -181,7 +204,7 @@ block('order').elem('actions').content()(function () {
                         },
                         mods: {
                             theme: 'islands',
-                            size: 'l',
+                            size: 'm',
                             type: 'submit'
                         },
                         text: 'Заказ выполнен'
@@ -201,7 +224,7 @@ block('order').elem('actions').content()(function () {
                         },
                         mods: {
                             theme: 'islands',
-                            size: 'l',
+                            size: 'm',
                             type: 'submit'
                         },
                         text: 'Проработка завершена'
@@ -222,7 +245,7 @@ block('order').elem('actions').content()(function () {
                         },
                         mods: {
                             theme: 'islands',
-                            size: 'l',
+                            size: 'm',
                             type: 'submit'
                         },
                         text: 'Проработка завершена'
@@ -243,7 +266,7 @@ block('order').elem('actions').content()(function () {
                         },
                         mods: {
                             theme: 'islands',
-                            size: 'l',
+                            size: 'm',
                             type: 'submit'
                         },
                         text: 'Сохранить изменения'

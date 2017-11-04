@@ -727,6 +727,31 @@ module.exports = {
                 res.status(200).send({created: true});
             } else res.status(400).send({errText: 'Что-то пошло не так'})
         }
+
+        if(order.status == 'client-match') {
+            if(reqData['cost-once'] == '' || reqData['cost-once'] == null) {
+                res.status(400).send({errText: 'Заполните все доступные поля!'});
+            }
+
+            if(reqData['cost-monthly'] == '' || reqData['cost-once'] == null) {
+                res.status(400).send({errText: 'Заполните все доступные поля!'});
+            }
+
+            order.info['cost-once'] = reqData['cost-once'];
+            order.info['cost-monthly'] = reqData['cost-monthly'];
+
+            order.history.push({
+                name: 'Заполнен ожидаемый доход',
+                date: new Date(),
+                author: await Account.findOne({_id: res.locals.__user._id})
+            });
+
+            var done = await order.save();
+            if(done) {
+                logger.info(`Filling income order #${ done.id }`, res.locals.__user);
+                res.status(200).send({created: true});
+            } else res.status(400).send({errText: 'Что-то пошло не так'})
+        }
     },
 
     getFile: async (req, res) => {
