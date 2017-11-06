@@ -2,6 +2,7 @@ module.exports = function(opt, data) {
     var opt = opt || {},
         pagerId;
 
+    var query = data.query || {};
     var users = data.users;
     if (opt.pagers && opt.pagers.length)
         pagerId = opt.pagers[0];
@@ -23,6 +24,11 @@ module.exports = function(opt, data) {
                     type: 'user'
                 },
                 type: 'list'
+            },
+            {
+                block: 'short-search',
+                url: opt.reqUrl+'/search',
+                query: query
             },
             {
                 block: 'button-panel',

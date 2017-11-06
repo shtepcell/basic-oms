@@ -33,6 +33,7 @@ module.exports = {
             clients = await Client.paginate({name: {$regex: rgx}}, { page: pageNumber, limit: perPage, populate: 'type'});
         }
 
+        if(clients.total == 0) clients.total = 1;
         res.locals.query = req.query;
         res.locals.clients = clients.docs;
         res.locals.pagers = {};

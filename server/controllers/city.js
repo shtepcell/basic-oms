@@ -29,7 +29,7 @@ module.exports = {
             cities = await City.paginate({name: {$regex: rgx}}, { page: pageNumber, limit: perPage});
         }
 
-
+        if(cities.total == 0) cities.total = 1;
         res.locals.query = req.query;
         res.locals.cities = cities.docs;
         res.locals.pagers = {};

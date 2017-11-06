@@ -23,13 +23,15 @@ module.exports = {
         else
             res.redirect(req.path);
 
-        var accs = await Account.paginate({status: true}, { page: pageNumber, limit: perPage, populate: 'department'});
+        var accs = await Account.paginate({status: true}, {page: pageNumber, limit: perPage, populate: 'department'});
 
-        if (!accs.docs.length) {
-            res.redirect(req.path);
-            return;
+        if(req.query.name) {
+            var rgx =  new RegExp('' + req.query.name + '', 'i');
+            accs = await Account.paginate({name: {$regex: rgx}, status: true}, {page: pageNumber, limit: perPage, populate: 'department'});
         }
 
+        if(accs.total == 0) accs.total = 1;
+        res.locals.query = req.query;
         res.locals.users = accs.docs;
         res.locals.pagers = {};
         res.locals.pagers[pagerId] = {
@@ -41,7 +43,8 @@ module.exports = {
         render(req, res, {
             viewName: 'users',
             options: {
-                pagers: pagers
+                pagers: pagers,
+                reqUrl: '/admin/users'
             }
         });
 

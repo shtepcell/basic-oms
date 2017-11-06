@@ -26,7 +26,7 @@ module.exports = {
             var rgx =  new RegExp('' + req.query.name + '', 'i');
             prvdrs = await Provider.paginate({name: {$regex: rgx}}, { page: pageNumber, limit: perPage});
         }
-
+        if(prvdrs.total == 0) prvdrs.total = 1;
         res.locals.query = req.query;
         res.locals.prvdrs = prvdrs.docs;
         res.locals.pagers = {};
