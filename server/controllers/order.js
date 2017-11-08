@@ -330,7 +330,7 @@ module.exports = {
         if(order) {
             order.stage = stages[order.status];
             res.locals.dataset = await getData();
-
+            order.resp = await getRespDep(order);
             res.locals.order = order;
 
             render(req, res, {
@@ -350,7 +350,7 @@ module.exports = {
         if(order) {
             order.stage = stages[order.status];
             res.locals.dataset = await getData();
-
+            order.resp = await getRespDep(order);
             res.locals.order = order;
 
             render(req, res, {
@@ -369,7 +369,7 @@ module.exports = {
         if(order) {
             order.stage = stages[order.status];
             res.locals.dataset = await getData();
-
+            order.resp = await getRespDep(order);
             res.locals.order = order;
 
             render(req, res, {
@@ -389,7 +389,7 @@ module.exports = {
         if(order) {
             order.stage = stages[order.status];
             res.locals.dataset = await getData();
-
+            order.resp = await getRespDep(order);
             res.locals.order = order;
             res.locals.template = await fields.getInfo(order);
 
@@ -1442,4 +1442,32 @@ var calculateDeadline = async (time) => {
         i++;
     }
     return new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, 0, 0, 0, 0);
+}
+
+var getRespDep = async (order) => {
+    switch (order.status) {
+        case 'gzp-pre':
+        case 'gzp-build':
+        case 'install-devices':
+            var dep = await Department.findOne({cities: order.info.city._id});
+            return dep.name;
+            break;
+        case 'stop-pre':
+        case 'stop-build':
+            var dep = await Department.findOne({type: 'b2o'});
+            return dep.name;
+            break;
+        case 'all-pre':
+            var dep1 = await Department.findOne({type: 'b2o'});
+            var dep2 = await Department.findOne({cities: order.info.city._id});
+            return `${dep1.name} и ${dep2.name}`;
+            break;
+        case 'network':
+            var dep = await Department.findOne({type: 'net'});
+            return dep.name;
+            break;
+        default:
+            return order.info.initiator.department.name;
+            break;
+    }
 }

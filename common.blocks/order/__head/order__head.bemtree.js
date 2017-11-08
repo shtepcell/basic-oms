@@ -72,11 +72,11 @@ block('order').elem('head').content()(function () {
                         content: [
                             {
                                 elem: 'cell-name',
-                                content: 'Номер CMS'
+                                content: 'Клиент'
                             },
                             {
                                 elem: 'cell-data',
-                                content: order.info.cms
+                                content: `[${order.info.client.type.shortName}] ${order.info.client.name}`
                             }
                         ]
                     },
@@ -85,14 +85,15 @@ block('order').elem('head').content()(function () {
                         content: [
                             {
                                 elem: 'cell-name',
-                                content: 'Клиент'
+                                content: 'Ответственный за текущий этап отдел'
                             },
                             {
                                 elem: 'cell-data',
-                                content: `[${order.info.client.type.shortName}] ${order.info.client.name}`
+                                content: order.resp
                             }
                         ]
-                    }
+                    },
+
                 ]
             }
         },
