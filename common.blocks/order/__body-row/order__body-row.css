@@ -1,8 +1,8 @@
 .order__body-row {
+    display: table;
     border-radius: 0 0 0.5em 0.5em;
-    line-height: 35px;
-    height: 35px;
-    display: flex;
+    min-height: 35px;
+    width: 95%;
     padding-left: 2em;
     padding-right: 2em;
     border-bottom: 1px solid #cfcfcf;
@@ -10,26 +10,30 @@
 }
 
 .order__body-row-name {
+    display: table-cell;
+    vertical-align: middle;
+    width: 550px;
     font-size: 11pt;
     font-weight:lighter;
     font-style: italic;
-    flex: 30 1 20px;
     text-align: left;
 }
+
 .order__body-date {
+    display: table-cell;
+    text-align: left;
+    width: 20%;
     font-weight:normal;
     font-size: 10pt;
 }
 
 .order__body-row-data {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: table-cell;
+    vertical-align: middle;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 50%;
+    line-height: 18px;
     font-weight: normal;
     font-size: 11pt;
-    flex: 30 1 20px;
-}
-
-.order__body-row-symbol {
-    flex: 1 1 20px;
 }

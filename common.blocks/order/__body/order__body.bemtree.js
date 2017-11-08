@@ -857,7 +857,6 @@ block('order').elem('body').content()(function () {
                                 content: {
                                     html: item.val
                                 }
-
                             },
                             {
                                 elem: 'body-row-symbol'
