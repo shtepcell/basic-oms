@@ -558,17 +558,19 @@ module.exports = {
                 order.stop = Object.assign(order.stop, data);
                 break;
         }
-        order.history.push({
-            name: 'Административная правка',
-            date: new Date(),
-            author: await Account.findOne({_id: res.locals.__user._id})
-        });
 
         var done = await order.save();
         if(done) {
+            order.history.push({
+                name: 'Административная правка',
+                date: new Date(),
+                author: await Account.findOne({_id: res.locals.__user._id})
+            });
+            logger.info(`Admin edit order #${ done.id }`, res.locals.__user);
             res.status(200).send({created: true});
             return;
         } else {
+            logger.error(`Admin edit error order #${ done.id }`, res.locals.__user);
             res.status(400).send({errText: 'Неизвестная ошибка!'});
             return;
         }
