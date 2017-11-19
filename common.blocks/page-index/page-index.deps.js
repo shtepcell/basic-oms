@@ -133,6 +133,9 @@
         {
             block: 'status',
             elems: ['common']
+        },
+        {
+            block: 'user'
         }
     ]
 })

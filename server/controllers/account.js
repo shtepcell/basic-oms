@@ -81,20 +81,13 @@ module.exports = {
     },
 
     getProfile: async (req, res) => {
-        var acc = await Account.findOne({login: res.locals.__user.login, status: true}).populate('department');
+        res.locals.user = await Account.findOne({login: res.locals.__user.login, status: true}).populate('department');
         res.locals.departments = await Department.find();
 
         render(req, res, {
             viewName: 'user',
             options: {
-                type: 'profile',
-                user: {
-                    login: acc.login,
-                    name: acc.name,
-                    email: acc.email,
-                    phone: acc.phone,
-                    department: acc.department.name
-                }
+                page: 'profile'
             }
         });
     },
