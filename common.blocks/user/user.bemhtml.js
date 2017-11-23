@@ -2,7 +2,7 @@ block('user')(
     tag()('form'),
     attrs()(function () {
         return {
-            action: '/profile',
+            action: this.ctx.url,
             method: 'POST'
         }
     })

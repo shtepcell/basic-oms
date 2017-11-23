@@ -4,13 +4,12 @@ block('user').content()(function () {
         page = ctx.page,
         deps = ctx.deps;
 
-    var fields = {
-        info: [
+    var fields = [
             {
                 text: 'Логин',
-                val: user.login,
+                val: (page!='create')?user.login:'',
                 access: page == 'create',
-                show: page == 'profile' || page == 'user',
+                show: true,
                 input: {
                     type: 'text',
                     name: 'login',
@@ -19,7 +18,7 @@ block('user').content()(function () {
             },
             {
                 text: 'Ф.И.О.',
-                val: user.name,
+                val: (page!='create')?user.name:'',
                 access: true,
                 show: true,
                 input: {
@@ -30,7 +29,7 @@ block('user').content()(function () {
             },
             {
                 text: 'E-mail',
-                val: user.email,
+                val: (page!='create')?user.email:'',
                 access: true,
                 show: true,
                 input: {
@@ -41,7 +40,7 @@ block('user').content()(function () {
             },
             {
                 text: 'Телефон',
-                val: user.phone,
+                val: (page!='create')?user.phone:'',
                 access: true,
                 show: true,
                 input: {
@@ -52,7 +51,7 @@ block('user').content()(function () {
             },
             {
                 text: 'Отдел',
-                val: user.department.name,
+                val: (page=='profile')?user.department.name:(page!='create')?`${user.department}`:'',
                 access: page != 'profile',
                 show: true,
                 input: {
@@ -60,9 +59,8 @@ block('user').content()(function () {
                     name: 'department',
                     data: deps
                 }
-            }
-        ],
-        password: [
+            },
+            'space',
             {
                 text: 'Старый пароль',
                 val: '',
@@ -70,7 +68,7 @@ block('user').content()(function () {
                 show: page == 'profile',
                 input: {
                     type: 'password',
-                    name: 'oldpass'
+                    name: 'passwordOld'
                 }
             },
             {
@@ -80,7 +78,7 @@ block('user').content()(function () {
                 show: page != 'create',
                 input: {
                     type: 'password',
-                    name: 'newpass'
+                    name: 'password'
                 }
             },
             {
@@ -90,7 +88,7 @@ block('user').content()(function () {
                 show: page != 'create',
                 input: {
                     type: 'password',
-                    name: 'repeatpass'
+                    name: 'passwordRep'
                 }
             },
             {
@@ -110,18 +108,30 @@ block('user').content()(function () {
                 show: page == 'create',
                 input: {
                     type: 'password',
-                    name: 'repeatpass'
+                    name: 'passwordRep'
                 }
-            }
-        ],
-        other: [
-
-        ]
-    }
+            },
+            'space'
+    ];
 
     var ret = [];
+    deps = deps.map( item => {
+        return {
+            val: ''+item._id,
+            text: item.name
+        }
+    });
 
-    fields.info.forEach( item => {
+    fields.forEach( item => {
+        if(item == 'space')
+            ret.push({
+                elem: 'row',
+                mix: {
+                    block: 'user',
+                    elem: 'row-without-underline'
+                },
+            });
+
         if(item.show) {
             if(item.access) {
                 ret.push({
@@ -138,7 +148,8 @@ block('user').content()(function () {
                                 val: item.val,
                                 placeholder: item.input.placeholder,
                                 type: item.input.type,
-                                name: item.input.name
+                                name: item.input.name,
+                                data: (item.input.type=='select')?deps:[]
                             }
                         }
                     ]
@@ -173,23 +184,6 @@ block('user').content()(function () {
             },
             {
                 elem: 'cell',
-                content: 'Раздел находится в разработке, возможна нестабильная работа. В скором времени будут доступны расширенные настройки...'
-            }
-        ]
-    })
-
-    ret.push({
-        elem: 'row',
-        mix: {
-            block: 'user',
-            elem: 'row-without-underline'
-        },
-        content: [
-            {
-                elem: 'cell'
-            },
-            {
-                elem: 'cell',
                 content: {
                     block: 'button',
                     mods: {
@@ -197,20 +191,32 @@ block('user').content()(function () {
                         size: 'm',
                         type: 'submit'
                     },
-                    text: 'Сохранить изменения'
+                    text: (page=='create')?'Создать':'Сохранить все изменения'
                 }
             }
         ]
     })
 
+    var namePage;
+    switch (page) {
+        case 'create':
+            namePage = 'Создание пользователя';
+            break;
+        case 'profile':
+            namePage = 'Настройки';
+            break;
+        default:
+            namePage = `Редактирование пользователя "${user.login}"`;
+            break;
 
+    }
     return [
         {
             block: 'title',
             mods: {
                 lvl: '3'
             },
-            content: 'Настройки пользователя'
+            content: namePage
         },
         ret
     ];

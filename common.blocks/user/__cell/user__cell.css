@@ -1,12 +1,15 @@
-.user__cell {
+.user__cell
+{
     display: table-cell;
     vertical-align: middle;
 }
-.user__cell {
+.user__cell
+{
     font-size: 10pt;
 }
-.user__cell:first-child {
-    width: 30%;
+.user__cell:first-child
+{
+    width: 200px;
     font-size: 12pt;
     font-style: italic;
     font-weight: lighter;

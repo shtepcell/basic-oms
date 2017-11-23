@@ -2,7 +2,7 @@ block('user').elem('input').content()(function () {
     var ctx = this.ctx,
         val = ctx.val,
         name = ctx.name;
-
+        
     var inputs = {
         'text': {
             block: 'input',
@@ -27,7 +27,15 @@ block('user').elem('input').content()(function () {
             name: name
         },
         'select': {
-
+            block: 'select',
+            mods: {
+                mode: 'radio',
+                theme: 'islands',
+                size: 'm'
+            },
+            val: (ctx.val && ctx.val=='')?ctx.data[0].val:ctx.val,
+            name: 'department',
+            options: ctx.data
         }
     }
 

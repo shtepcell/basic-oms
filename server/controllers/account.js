@@ -56,26 +56,19 @@ module.exports = {
         render(req, res, {
             viewName: 'user',
             options: {
-                type: 'create'
+                page: 'create'
             }
         });
     },
 
     getOne: async (req, res) => {
-        var acc = await Account.findOne({login: req.params.login, status: true});
+        res.locals.user = await Account.findOne({login: req.params.login, status: true});
         res.locals.departments = await Department.find();
 
         render(req, res, {
             viewName: 'user',
             options: {
-                type: 'edit',
-                user: {
-                    login: acc.login,
-                    name: acc.name,
-                    email: acc.email,
-                    phone: acc.phone,
-                    department: acc.department
-                }
+                page: 'edit'
             }
         });
     },
@@ -102,6 +95,7 @@ module.exports = {
         if( !!await Account.findOne({ login: reqData.login }) )
             errors.push({errText: 'Пользователь с таким логином уже существует!'})
 
+        if(!reqData.name) errors.push({errText: 'Ф.И.О. - обязательное поле!'})
         errors = validate(reqData, errors);
 
         if(errors.length === 0) {
@@ -128,12 +122,29 @@ module.exports = {
         var acc = await Account.findOne({ login: req.params.login });
         var reqData = req.body;
 
-        acc.name = reqData.name || acc.name;
-        acc.email = reqData.email || acc.email;
-        acc.role = reqData.role || acc.role;
-        acc.status = reqData.status || acc.status;
-        acc.phone = reqData.phone || acc.phone;
-        acc.department = await Department.findOne({ _id: reqData.department }) || acc.department;
+        acc.name = reqData.name;
+
+        if(reqData.name == '') {
+            res.status(400).send({errText: 'Ф.И.О. - обязательное поле!'});
+            return;
+        }
+
+        acc.email = reqData.email;
+        acc.phone = reqData.phone;
+        acc.department = await Department.findOne({ _id: reqData.department });
+
+        if(reqData.password != '' || reqData.passwordRep != '') {
+            if(reqData.password == '' || reqData.passwordRep  == '') {
+                res.status(400).send({errText: 'Для изменения пароля заполните поля "Пароль" и "Повторите пароль".' +
+                    ' Если вы не собираетесь изменять пароль, то оставьте эти поля пустыми'})
+                return;
+            }
+            if(reqData.password != reqData.passwordRep) {
+                res.status(400).send({errText: 'Пароли не совпадают!'})
+                return;
+            }
+            acc.password = password.createHash(reqData.password)
+        }
 
         var result = await acc.save();
         if(!!result) {
@@ -144,11 +155,34 @@ module.exports = {
 
     selfEdit: async (req, res) => {
         var acc = await Account.findOne({ login: res.locals.__user.login });
-        console.log(req.body);
-        acc.email = req.body.email || acc.email;
-        acc.name = req.body.name || acc.name;
-        acc.phone = req.body.phone || acc.phone;
+        var reqData = req.body;
 
+        acc.email = req.body.email;
+        acc.name = req.body.name;
+        acc.phone = req.body.phone;
+
+        if(reqData.name == '') {
+            res.status(400).send({errText: 'Ф.И.О. - обязательное поле!'});
+            return;
+        }
+
+        if(reqData.password != '' || reqData.passwordRep != '' || reqData.passwordOld != '') {
+            if(reqData.password == '' || reqData.passwordRep  == '' || reqData.passwordOld == '') {
+                res.status(400).send({errText: 'Заполните поля "Текущий пароль", "Пароль" и "Повторите пароль".' +
+                    ' Если вы не собираетесь изменять пароль, то оставьте эти поля пустыми'})
+                return;
+            }
+            if(reqData.password != reqData.passwordRep) {
+                res.status(400).send({errText: 'Пароли не совпадают!'})
+                return;
+            }
+            if(password.createHash(reqData.passwordOld) != acc.password) {
+                res.status(400).send({errText: `Текущий пароль введен не верно!
+                    Если вы забыли текущий пароль - обратитесь к администратору!`});
+                return;
+            }
+            acc.password = password.createHash(reqData.password)
+        }
         var result = await acc.save();
 
         if(!!result) {
