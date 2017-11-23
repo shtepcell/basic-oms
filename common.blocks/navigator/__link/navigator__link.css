@@ -1,0 +1,144 @@
+.navigator__link
+{
+    display: inline-block;
+    padding: 15px 10px 15px 10px;
+}
+
+.navigator__link .icon
+{
+    line-height: 20px;
+    background-size: 100% auto;
+    width: 19px;
+}
+
+.navigator__link .link
+{
+    padding: 15px 0 15px 0;
+    color: #fff;
+}
+
+.navigator__link
+{
+    font-weight: bold;
+    transition: 0.3s all ease-in-out;;
+}
+
+.navigator__link:hover .link
+{
+    color: #fff;
+}
+
+.navigator__link_float_right
+{
+    float: right;
+}
+.navigator__dropdown
+{
+    margin: 0.5em 2em 0.5em 2em;
+    display: block;
+}
+
+.navigator__link:hover
+{
+    height: 18px;
+    background: #0a5a9e;
+    animation: shake 0.7s ease-in both;
+    backface-visibility: hidden;
+}
+
+.navigator__dropdown-link
+{
+    width: 150px;
+    display: block;
+    padding: 5px 5px 5px 5px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.navigator__dropdown-link.link
+{
+    transition: 0s all;
+}
+
+.navigator__dropdown-link:hover.link
+{
+    color: #fff;
+    background-color: #1d7dbf;
+}
+
+.navigator__alarm
+{
+    animation: bell 2s cubic-bezier(.36,.07,.19,.97) infinite;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+}
+
+@keyframes bell {
+    0% {
+        transform: rotateZ(0deg);
+    }
+    5% {
+        transform: rotateZ(15deg);
+    }
+    10% {
+        transform: rotateZ(-15deg);
+
+    }
+    15% {
+        transform: rotateZ(15deg);
+    }
+    20% {
+        transform: rotateZ(-15deg);
+
+    }
+    25% {
+        transform: rotateZ(15deg);
+    }
+    30% {
+        transform: rotateZ(-15deg);
+    }
+    35% {
+        transform: rotateZ(15deg);
+    }
+    40% {
+        transform: rotateZ(-15deg);
+
+    }
+    45% {
+        transform: rotateZ(15deg);
+    }
+    50% {
+        transform: rotateZ(-15deg);
+
+    }
+    55% {
+        transform: rotateZ(15deg);
+    }
+    60% {
+        transform: rotateZ(-15deg);
+    }
+    65% {
+        transform: rotateZ(0deg);
+    }
+    100% {
+        transform: rotateZ(0deg);
+    }
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(0, -1px, 0);
+  }
+
+  20%, 80% {
+    transform: translate3d(0, 1px, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(0, -1px, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(0, 1px, 0);
+  }
+}

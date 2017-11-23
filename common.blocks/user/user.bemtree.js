@@ -35,7 +35,7 @@ block('user').content()(function () {
                 show: true,
                 input: {
                     type: 'text',
-                    name: 'name',
+                    name: 'email',
                     placeholder: 'example@miranda-media.ru'
                 }
             },
@@ -46,7 +46,7 @@ block('user').content()(function () {
                 show: true,
                 input: {
                     type: 'text',
-                    name: 'name',
+                    name: 'phone',
                     placeholder: '+79787654321'
                 }
             },
@@ -138,7 +138,7 @@ block('user').content()(function () {
                                 val: item.val,
                                 placeholder: item.input.placeholder,
                                 type: item.input.type,
-                                name: item.input.type
+                                name: item.input.name
                             }
                         }
                     ]
@@ -161,10 +161,6 @@ block('user').content()(function () {
         }
     })
 
-    //
-    // if(page != 'create') {
-    //
-    // }
     ret.push({
         elem: 'row',
         mix: {
@@ -208,5 +204,14 @@ block('user').content()(function () {
     })
 
 
-    return ret;
+    return [
+        {
+            block: 'title',
+            mods: {
+                lvl: '3'
+            },
+            content: 'Настройки пользователя'
+        },
+        ret
+    ];
 });

@@ -144,7 +144,7 @@ module.exports = {
 
     selfEdit: async (req, res) => {
         var acc = await Account.findOne({ login: res.locals.__user.login });
-
+        console.log(req.body);
         acc.email = req.body.email || acc.email;
         acc.name = req.body.name || acc.name;
         acc.phone = req.body.phone || acc.phone;

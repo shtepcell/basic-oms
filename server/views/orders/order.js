@@ -2,9 +2,9 @@ module.exports = function(opt, data) {
 
     return {
         view: 'page-index',
-        title: 'Заявка',
+        title: `Заявка #${data.order.id}`,
         meta: {
-            description: 'Страница создания отдела',
+            description: `Заявка #${data.order.id}`,
             og: {
                 url: 'https://suz.miranda-media.ru',
                 siteName: 'СУЗ 2.0'

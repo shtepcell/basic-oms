@@ -21,9 +21,9 @@ module.exports = function(opt, data) {
             {
                 block: 'title',
                 mods: {
-                    type: 'user'
+                    lvl: '3'
                 },
-                type: 'list'
+                content: 'Учетные записи СУЗ'
             },
             {
                 block: 'short-search',

@@ -10,7 +10,9 @@ module.exports = function(opt, data) {
     var citiesTable = [
         {
             block: 'title',
-            elem: 'part',
+            mods: {
+                lvl: 4
+            },
             content: 'Привязанные города'
         },
         {
@@ -59,7 +61,10 @@ module.exports = function(opt, data) {
         page: [
             {
                 block: 'title',
-                text: 'Редкатирование отдела'
+                mods: {
+                    lvl: 3
+                },
+                content: 'Редкатирование отдела'
             },
             {
                 block: 'ultra-form',

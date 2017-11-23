@@ -38,7 +38,7 @@ module.exports = {
         render(req, res, {
             viewName: 'handbook',
             options: {
-                title: 'Справочник городов',
+                title: 'Справочник провайдеров',
                 handbookType: 'providers',
                 pagers: pagers,
                 reqUrl: '/admin/providers/add'

@@ -13,7 +13,10 @@ module.exports = function(opt, data) {
         page: [
             {
                 block: 'title',
-                text: 'Создание отдела'
+                mods: {
+                    lvl: '3'
+                },
+                content: 'Создание отдела'
             },
             {
                 block: 'ultra-form',

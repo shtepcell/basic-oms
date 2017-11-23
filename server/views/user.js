@@ -5,7 +5,7 @@ module.exports = function(opt, data) {
 
     return {
         view: 'page-index',
-        title: 'Статистика',
+        title: `Пользователь ${user.login}`,
         meta: {
             description: 'СУЗ 2.0',
             og: {

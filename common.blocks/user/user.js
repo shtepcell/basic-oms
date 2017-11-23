@@ -122,19 +122,14 @@ modules.define('user',
             var form = this.domElem[0];
             var _data = this.domElem.serializeArray();
             var data = {};
+            console.log(_data);
 
-            var file = this.findChildBlock(Attach);
-            if(file) {
-                var s = file.findChildElem('control');
-                data = new FormData(form);
-            } else {
-                _data.forEach( item => {
-                    data[item.name] = item.value;
-                })
-            }
+            _data.forEach( item => {
+                data[item.name] = item.value;
+            })
+            
             return {
-                data: data,
-                file: !!file
+                data: data
             };
         }
     }));

@@ -1,167 +1,149 @@
 block('navigator').content()(function() {
-    var nav = [
+    var user = this.ctx.user;
+    var navLinks = [
         {
-            block: 'link',
-            content: 'Главная',
-            mods: {
-                theme: 'islands'
-            },
-            mix: 'navigator__link',
-            url: '/'
+            type: 'link',
+            text: 'Главная',
+            url: '/',
+            access: user
         },
         {
-            block: 'link',
-            content: 'Поиск заявок',
-            mods: {
-                theme: 'islands'
-            },
-            mix: 'navigator__link',
-            url: '/search'
+            type: 'link',
+            text: 'Поиск заявок',
+            url: '/search',
+            access: user
         },
         {
-            block: 'link',
-            content: 'Статус',
-            mods: {
-                theme: 'islands'
-            },
-            mix: 'navigator__link',
-            url: '/status'
-        }
-    ];
-
-    var end = [
-        {
-            block: 'link',
-            content: 'Выйти',
-            mods: {
-                theme: 'islands'
-            },
-            mix: ['navigator__link', 'navigator__right'],
-            url: '/logout'
+            type: 'link',
+            text: 'Статус',
+            url: '/status',
+            access: user
         },
         {
-            block: 'link',
-            content: '[' + this.data.locals.__user.login + ']',
-            mods: {
-                theme: 'islands'
-            },
-            mix: ['navigator__link', 'navigator__right'],
-            url: '/profile'
-        }
-    ]
-
-    if(this.data.locals.__user.department.type == 'admin') {
-        nav.push({
-            block: 'dropdown',
-            mods: {
-                switcher: 'link',
-                theme: 'islands',
-                size: 'm'
-            },
-            mix: 'navigator__link',
-            switcher: 'Администрирование',
+            type: 'dropdown',
+            text: 'Администрирование',
+            access: user && user.department.type == 'admin',
             popup: [
                 {
-                    block: 'link',
-                    content: 'Учетные записи',
-                    mods: {
-                        theme: 'islands'
-                    },
-                    mix: {
-                        block: 'navigator',
-                        elem: 'dropdown'
-                    },
+                    type: 'link',
+                    text: 'Учетные записи',
                     url: '/admin/users'
                 },
                 {
-                    block: 'link',
-                    content: 'Отделы',
-                    mods: {
-                        theme: 'islands'
-                    },
-                    mix: {
-                        block: 'navigator',
-                        elem: 'dropdown'
-                    },
+                    type: 'link',
+                    text: 'Отделы',
                     url: '/admin/departments'
                 },
                 {
-                    block: 'link',
-                    content: 'Адреса',
-                    mods: {
-                        theme: 'islands'
-                    },
-                    mix: {
-                        block: 'navigator',
-                        elem: 'dropdown'
-                    },
+                    type: 'link',
+                    text: 'Адреса',
                     url: '/admin/cities'
                 },
                 {
-                    block: 'link',
-                    content: 'Клиенты',
-                    mods: {
-                        theme: 'islands'
-                    },
-                    mix: {
-                        block: 'navigator',
-                        elem: 'dropdown'
-                    },
+                    type: 'link',
+                    text: 'Клиенты',
                     url: '/admin/clients'
                 },
                 {
-                    block: 'link',
-                    content: 'Типы клиентов',
-                    mods: {
-                        theme: 'islands'
-                    },
-                    mix: {
-                        block: 'navigator',
-                        elem: 'dropdown'
-                    },
+                    type: 'link',
+                    text: 'Типы клиентов',
                     url: '/admin/client-types'
                 },
                 {
-                    block: 'link',
-                    content: 'Провайдеры',
-                    mods: {
-                        theme: 'islands'
-                    },
-                    mix: {
-                        block: 'navigator',
-                        elem: 'dropdown'
-                    },
+                    type: 'link',
+                    text: 'Провайдеры',
                     url: '/admin/providers'
                 },
                 {
-                    block: 'link',
-                    content: 'Услуги',
-                    mods: {
-                        theme: 'islands'
-                    },
-                    mix: {
-                        block: 'navigator',
-                        elem: 'dropdown'
-                    },
+                    type: 'link',
+                    text: 'Услуги',
                     url: '/admin/services'
                 },
                 {
-                    block: 'link',
-                    content: 'Выходные',
-                    mods: {
-                        theme: 'islands'
-                    },
-                    mix: {
-                        block: 'navigator',
-                        elem: 'dropdown'
-                    },
+                    type: 'link',
+                    text: 'Выходные',
                     url: '/admin/holiday'
                 }
             ]
-        })
-    }
+        },
+        {
+            type: 'link',
+            text: 'Выйти',
+            float: 'right',
+            url: '/logout',
+            access: user
+        },
+        {
+            type: 'link',
+            text: (user)?`${user.login} [${user.department.name}]`:'',
+            float: 'right',
+            url: '/profile',
+            access: user
+        },
+        {
+            type: 'link',
+            float: 'right',
+            text: [
+                {
+                    block: 'icon',
+                    url: (true)?'/alarm.svg':'/alarm-empty.png',
+                    mix: (true)?'navigator__alarm':''
+                }
+            ],
+            access: user
+        },
+        {
+            type: 'title',
+            text: 'Система управления заявками 2.0',
+            access: !user
+        }
+    ];
 
-    nav.push(end);
-    return nav;
+    var ret = [];
+
+    navLinks.forEach( item => {
+        if(item.access) {
+            switch (item.type) {
+                case 'title':
+                    ret.push({
+                        elem: 'title',
+                        content: item.text
+                    });
+                    break;
+                case 'link':
+                    ret.push({
+                        elem: 'link',
+                        float: item.float || 'left',
+                        text: item.text,
+                        url: item.url
+                    })
+                    break;
+                case 'dropdown':
+                    var links = [];
+                    item.popup.forEach( it => {
+                        links.push({
+                            block: 'link',
+                            mods: {
+                                theme: 'islands',
+                                size: 'l'
+                            },
+                            mix: 'navigator__dropdown-link',
+                            url: it.url,
+                            content: it.text
+                        })
+                    });
+                    ret.push({
+                        elem: 'link',
+                        links: links,
+                        float: item.float || 'left',
+                        text: item.text
+                    })
+                    break;
+            }
+
+        }
+    });
+
+    return ret;
 
 })

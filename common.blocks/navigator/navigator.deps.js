@@ -1,6 +1,10 @@
 ({
     shouldDeps: [
         {
+            block: 'navigator',
+            elems: ['link', 'dropdown', 'title']
+        },
+        {
             block: 'link',
             mods: {
                 theme: 'islands',

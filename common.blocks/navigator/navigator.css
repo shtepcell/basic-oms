@@ -1,32 +1,10 @@
-.navigator {
+.navigator
+{
     position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
-    margin-bottom: 1em;
     min-width: 850px;
     background-color: #1a7abe;
     z-index: 999;
-}
-.navigator__link {
-    display: inline-block;
-    padding: 15px 10px 15px 10px;
-
-}
-.navigator__link.link_theme_islands {
-    color: #fff;
-    font-weight: bold;
-    transition: 0.3s all;
-}
-
-.navigator__link.link_theme_islands:hover {
-    color: #fff;
-    transform: translateY(3px);
-}
-
-.navigator__right {
-    float: right;
-}
-.navigator__dropdown {
-    margin: 0.5em 2em 0.5em 2em;
-    display: block;
 }

@@ -1,9 +1,6 @@
 block('header').content()(function() {
-    var ret = [];
-    if(this.data.locals.__user) {
-        ret.push({
-            block: 'navigator',
-        });
+    return {
+        block: 'navigator',
+        user: this.data.locals.__user
     }
-    return ret;
 });

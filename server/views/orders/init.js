@@ -1,7 +1,5 @@
 module.exports = function(opt, data) {
 
-    // console.log(data.template);
-
     return {
         view: 'page-index',
         title: 'Инициация заказа',
@@ -15,7 +13,9 @@ module.exports = function(opt, data) {
         page: [
             {
                 block: 'title',
-                elem: 'main',
+                mods: {
+                    lvl: 3
+                },
                 content: 'Инициация заказа'
             },
             {
@@ -26,16 +26,6 @@ module.exports = function(opt, data) {
                 user: data.__user,
                 dataset: data.dataset
             }
-            // {
-            //     block: 'ultra-form',
-            //     action: '/init',
-            //     method: 'POST',
-            //     text: 'Иницировать заявку',
-            //     mods: {
-            //         theme: 'order'
-            //     },
-            //     fields: data.template
-            // }
         ]
     }
 };

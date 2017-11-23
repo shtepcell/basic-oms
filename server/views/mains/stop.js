@@ -22,7 +22,9 @@ module.exports = function(opt, data){
         page: [
             {
                 block: 'title',
-                elem: 'main-page',
+                mods: {
+                    lvl: 3
+                },
                 content: 'Главная страница'
             },
             {
@@ -36,7 +38,9 @@ module.exports = function(opt, data){
                 content: [
                     {
                         block: 'title',
-                        elem: 'part',
+                        mods: {
+                            lvl: 4
+                        },
                         content: 'Список заявок:'
                     },
                     {

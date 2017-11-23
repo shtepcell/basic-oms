@@ -12,12 +12,6 @@ module.exports = function (opt, data) {
         },
         page: [
             {
-                block: 'title',
-                mods: {
-                    type: 'login'
-                }
-            },
-            {
                 block: 'form',
                 elem: 'login',
                 url: data.trg
