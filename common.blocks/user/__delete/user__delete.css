@@ -1,0 +1,9 @@
+.user__delete.button::before
+{
+    background: #D12;
+}
+
+.user__delete.button
+{
+    color: #fff;
+}

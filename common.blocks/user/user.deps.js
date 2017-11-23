@@ -2,7 +2,7 @@
     shouldDeps: [
         {
             block: 'user',
-            elems: ['row', 'cell', 'input']
+            elems: ['row', 'cell', 'input', 'delete']
         }
     ]
 })

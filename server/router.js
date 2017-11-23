@@ -81,6 +81,7 @@ module.exports = function (app) {
 
     app.get('/admin/users/:login', Account.getOne);
     app.post('/admin/users/:login', Account.edit);
+    app.post('/admin/users/:login/delete', Account.delete);
     app.post('/admin/users/:login/password', Account.passEdit);
 
     app.get('/admin/departments', Department.getAll);

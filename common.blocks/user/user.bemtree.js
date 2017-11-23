@@ -171,7 +171,32 @@ block('user').content()(function () {
             }
         }
     })
+    var dlt = {
+        elem: 'cell',
+        content: {}
+    };
 
+    if(page == 'edit') {
+        dlt = {
+            elem: 'cell',
+            content: {
+                block: 'button',
+                mix: {
+                    block: 'user',
+                    elem: 'delete',
+                    js: {
+                        user: user.login
+                    }
+                },
+                mods: {
+                    theme: 'islands',
+                    size: 'm'
+                },
+                text: 'Удалить'
+            }
+        };
+    };
+    
     ret.push({
         elem: 'row',
         mix: {
@@ -179,9 +204,6 @@ block('user').content()(function () {
             elem: 'row-without-underline'
         },
         content: [
-            {
-                elem: 'cell'
-            },
             {
                 elem: 'cell',
                 content: {
@@ -193,7 +215,8 @@ block('user').content()(function () {
                     },
                     text: (page=='create')?'Создать':'Сохранить все изменения'
                 }
-            }
+            },
+            dlt
         ]
     })
 

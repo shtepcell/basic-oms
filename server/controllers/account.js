@@ -228,6 +228,24 @@ module.exports = {
             res.send({ok: 'ok'});
         }
 
+    },
+
+    delete: async (req, res) => {
+        var acc = await Account.findOne({
+            login: req.params.login
+        });
+
+        acc.login = Date.now()+acc.login;
+        acc.status = false;
+
+        var result = await acc.save();
+        if (result) {
+            res.status(200).send({url: '/admin/users'});
+            return;
+        } else {
+            res.status(400).send('Что-то пошло не так...');
+            return;
+        }
     }
 };
 
