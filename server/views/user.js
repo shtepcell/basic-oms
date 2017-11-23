@@ -15,7 +15,7 @@ module.exports = function(opt, data) {
             title = 'Настройки';
             break;
         case 'edit':
-            url = '/admin/users';
+            url = `/admin/users/${user.login}`;
             title = `Редактирование пользователя ${user.login}`;
             break;
     }
