@@ -18,8 +18,9 @@ modules.define('order__button',
                     dataType: 'json',
                     data: data,
                     timeout: 5000,
-                    success: function () {
-                        window.location.reload();
+                    success: function (res) {
+                        if(res.url) window.location = res.url;
+                        else window.location.reload();
                     }
                 });
             }

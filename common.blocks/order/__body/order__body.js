@@ -74,10 +74,12 @@ modules.define('order__body',
                                     _this._reinitPopupEvents();
                                     _this._events(popup)
                                         .once('close', function() {
-                                            window.location.reload();
+                                            if(res.url) window.location = res.url;
+                                            else window.location.reload();
                                         })
                                         .once('OK', function() {
-                                            window.location.reload();
+                                            if(res.url) window.location = res.url;
+                                            else window.location.reload();
                                         });
                                 },
                                 complete: function() {

@@ -567,7 +567,7 @@ module.exports = {
                 author: await Account.findOne({_id: res.locals.__user._id})
             });
             logger.info(`Admin edit order #${ done.id }`, res.locals.__user);
-            res.status(200).send({created: true});
+            res.status(200).send({url: `/order/${done.id}/${req.params.tab}`});
             return;
         } else {
             logger.error(`Admin edit error order #${ done.id }`, res.locals.__user);
@@ -925,7 +925,8 @@ module.exports = {
         var done = await order.save();
         if(done) {
             logger.info(`${reqData.to} order #${done.id}`, res.locals.__user);
-            res.status(200).send({created: true});
+            if(reqData.to == 'delete') res.status(200).send({url: '/'});
+            else res.status(200).send({created: true});
         } else res.status(400).send({errText: 'Изменение несуществующей заявки!'});
 
     },
