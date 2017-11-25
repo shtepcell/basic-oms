@@ -1,0 +1,17 @@
+.department__cell
+{
+    display: table-cell;
+    vertical-align: middle;
+}
+.department__cell
+{
+    font-size: 10pt;
+}
+.department__cell:first-child
+{
+    width: 200px;
+    font-size: 12pt;
+    font-style: italic;
+    font-weight: lighter;
+    text-align: left;
+}

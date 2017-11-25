@@ -1,0 +1,9 @@
+.department__delete.button::before
+{
+    background: #D12;
+}
+
+.department__delete.button
+{
+    color: #fff;
+}

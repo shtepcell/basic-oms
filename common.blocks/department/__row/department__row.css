@@ -1,0 +1,13 @@
+.department__row
+{
+    display: table;
+    width: 600px;
+    min-height: 35px;
+    padding-left: 2em;
+    padding-right: 2em;
+    border-bottom: 1px solid #cfcfcf;
+}
+.department__row-without-underline
+{
+    border-bottom: none;
+}

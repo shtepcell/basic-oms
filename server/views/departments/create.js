@@ -30,8 +30,7 @@ module.exports = function(opt, data) {
                         mods: {
                             type: 'text',
                             maxLenght: 40
-                        },
-                        required: true
+                        }
                     },
                     {
                         name: 'type',

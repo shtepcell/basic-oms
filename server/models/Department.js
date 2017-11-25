@@ -5,7 +5,12 @@ var mongoose = require('../controllers/connect');
 var schema = mongoose.Schema( {
     name: {
         type: String,
-        required:  true
+        required: true
+    },
+    status: {
+        type: Boolean,
+        required: true,
+        default: true
     },
     type: {
         type: String,

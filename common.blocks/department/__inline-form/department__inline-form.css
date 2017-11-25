@@ -1,0 +1,22 @@
+.department__inline-form .button.button_theme_islands
+{
+    line-height: 29px;
+}
+.department__inline-form .suggest
+{
+    width: 270px;
+}
+
+.department__inline-form-cell
+{
+    display: table-cell;
+}
+
+.department__inline-form-label
+{
+    width: 200px;
+    font-size: 12pt;
+    font-style: italic;
+    font-weight: lighter;
+    text-align: left;
+}

@@ -4,6 +4,9 @@
             block: 'short-search'
         },
         {
+            block: 'department'
+        },
+        {
             block: 'short-search',
             elems: ['form']
         },
