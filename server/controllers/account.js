@@ -51,7 +51,7 @@ module.exports = {
     },
 
     getPageCreate: async (req, res) => {
-        res.locals.departments = await Department.find();
+        res.locals.departments = await Department.find({status: true});
 
         render(req, res, {
             viewName: 'user',
