@@ -83,11 +83,13 @@ block('navigator').content()(function() {
         {
             type: 'link',
             float: 'right',
+            url: '/notifies',
             text: [
+                (user && user.notifies>0)?`(${user.notifies})`:'',
                 {
                     block: 'icon',
-                    url: (true)?'/alarm.svg':'/alarm-empty.png',
-                    mix: (true)?'navigator__alarm':''
+                    url: (user && user.notifies>0)?'/alarm.svg':'/alarm-empty.png',
+                    mix: (user && user.notifies>0)?'navigator__alarm':''
                 }
             ],
             access: user

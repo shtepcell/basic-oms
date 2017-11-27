@@ -10,6 +10,7 @@ const City = require('../models/City');
 const mkdirp = require('mkdirp-promise');
 const fields = require('./fields');
 const Holiday = require('../models/Holiday');
+const Notify = require('../models/Notify');
 
 var stages = {
     'init': 'Инициация заказа',
@@ -203,6 +204,7 @@ module.exports = {
     init: async (req, res) => {
 
         var data = req.body;
+        var smplFlag = false;
 
         Object.keys(data).forEach( item => {
             data[item] = data[item].trim();
@@ -267,6 +269,7 @@ module.exports = {
             });
             let dn = await ct.save();
             if (dn) {
+                smplFlag = true;
                 tmpCity[0] = dn;
             } else {
                 res.status(400).send({ errText: 'Ошибка создания города! Если вы видете эту ошибку - обратитесь к админисратору' });
@@ -315,6 +318,37 @@ module.exports = {
 
         var done = await Order.create(ordr);
         if(done) {
+            if(smplFlag) {
+                let ntf = new Notify({
+                    date: Date.now(),
+                    type: 'init-with-unknown-city',
+                    order: done._id
+                });
+                ntf.save()
+            }
+
+            if(done.status == 'all-pre') {
+                var ntf0 = new Notify({
+                    date: Date.now(),
+                    type: `start-gzp-pre`,
+                    order: done._id
+                });
+                var ntf1 = new Notify({
+                    date: Date.now(),
+                    type: `start-stop-pre`,
+                    order: done._id
+                });
+                ntf0.save();
+                ntf1.save();
+            } else {
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `start-${done.status}`,
+                    order: done._id
+                });
+                ntf.save();
+            }
+
             service.usage = true;
             service.save();
             clnt.usage = true;
@@ -332,7 +366,6 @@ module.exports = {
             res.locals.dataset = await getData();
             order.resp = await getRespDep(order);
             res.locals.order = order;
-
             render(req, res, {
                 viewName: 'orders/order',
                 options: {
@@ -609,6 +642,12 @@ module.exports = {
             });
             var done = await order.save();
             if(done) {
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `end-gzp-pre`,
+                    order: done._id
+                });
+                ntf.save();
                 logger.info(`End pre-gzp order #${ done.id }`, res.locals.__user);
                 res.status(200).send({created: true})
             } else res.status(400).send({errText: 'Что-то пошло не так!'});
@@ -665,6 +704,12 @@ module.exports = {
             });
             var done = await order.save();
             if(done) {
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `end-stop-pre`,
+                    order: done._id
+                });
+                ntf.save();
                 provider.usage = true;
                 provider.save();
                 logger.info(`End pre-stop order #${ done.id }`, res.locals.__user);
@@ -725,6 +770,12 @@ module.exports = {
 
             var done = await order.save();
             if(done) {
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `end-client-notify`,
+                    order: done._id
+                });
+                ntf.save();
                 logger.info(`End client-notify order #${ done.id }`, res.locals.__user);
                 res.status(200).send({created: true});
             } else res.status(400).send({errText: 'Что-то пошло не так'})
@@ -800,6 +851,12 @@ module.exports = {
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `pause`,
+                    order: order._id
+                });
+                ntf.save();
                 break;
             case 'stop-pause':
                 var start = order.pause.date;
@@ -815,6 +872,12 @@ module.exports = {
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `end-pause`,
+                    order: order._id
+                });
+                ntf.save();
                 break;
             case 'delete':
                 order.status = 'secret';
@@ -833,6 +896,12 @@ module.exports = {
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `reject`,
+                    order: order._id
+                });
+                ntf.save();
                 break;
             case 'start-pre-stop':
                 order.status = 'stop-pre';
@@ -844,6 +913,12 @@ module.exports = {
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `start-stop-pre`,
+                    order: order._id
+                });
+                ntf.save();
                 break;
             case 'start-pre-gzp':
                 order.status = 'gzp-pre';
@@ -855,6 +930,12 @@ module.exports = {
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `start-gzp-pre`,
+                    order: order._id
+                });
+                ntf.save();
                 break;
             case 'end-network':
                 order.status = 'client-notify';
@@ -866,6 +947,12 @@ module.exports = {
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `network`,
+                    order: order._id
+                });
+                ntf.save();
                 break;
             case 'end-build':
                 order.status = 'network';
@@ -875,6 +962,12 @@ module.exports = {
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `end-gzp-build`,
+                    order: order._id
+                });
+                ntf.save();
                 break;
             case 'start-gzp-build':
                 if(order.gzp.need) {
@@ -890,6 +983,12 @@ module.exports = {
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `start-gzp-build`,
+                    order: order._id
+                });
+                ntf.save();
                 break;
             case 'end-install-devices':
                 order.status = 'network';
@@ -899,6 +998,12 @@ module.exports = {
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `end-install-devices`,
+                    order: order._id
+                });
+                ntf.save();
                 break;
             case 'start-stop-build':
                 order.status = 'stop-build';
@@ -910,6 +1015,12 @@ module.exports = {
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `start-stop-build`,
+                    order: order._id
+                });
+                ntf.save();
                 break;
             case 'end-build-stop':
                 order.status = 'network';
@@ -919,6 +1030,12 @@ module.exports = {
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `end-stop-build`,
+                    order: order._id
+                });
+                ntf.save();
                 break;
         }
 
@@ -1453,16 +1570,25 @@ var getRespDep = async (order) => {
         case 'gzp-build':
         case 'install-devices':
             var dep = await Department.findOne({cities: order.info.city._id});
+            if(!dep) dep = {
+                name: 'Ответсвенный отдел не определён!'
+            }
             return dep.name;
             break;
         case 'stop-pre':
         case 'stop-build':
             var dep = await Department.findOne({type: 'b2o'});
+            if(!dep) dep = {
+                name: 'Ответсвенный отдел не определён!'
+            }
             return dep.name;
             break;
         case 'all-pre':
             var dep1 = await Department.findOne({type: 'b2o'});
             var dep2 = await Department.findOne({cities: order.info.city._id});
+            if(!dep2 ) dep2 = {
+                name: 'неизвестный отдел'
+            }
             return `${dep1.name} и ${dep2.name}`;
             break;
         case 'network':

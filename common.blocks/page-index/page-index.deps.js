@@ -1,6 +1,9 @@
 ({
     shouldDeps: [
         {
+            block: 'table'
+        },
+        {
             block: 'short-search'
         },
         {

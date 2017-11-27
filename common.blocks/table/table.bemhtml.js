@@ -1,0 +1,3 @@
+block('table')(
+    tag()('table')
+)

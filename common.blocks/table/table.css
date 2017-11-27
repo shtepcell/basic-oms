@@ -1,0 +1,7 @@
+.table
+{
+    display: table;
+    border-collapse: collapse;
+    font-family: sans-serif;
+    font-size: 10pt;
+}

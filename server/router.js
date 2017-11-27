@@ -7,7 +7,8 @@ const Auth = require('./controllers/auth'),
     Client = require('./controllers/client'),
     Department = require('./controllers/departments'),
     Order = require('./controllers/order'),
-    Holiday = require('./controllers/holiday');
+    Holiday = require('./controllers/holiday')
+    Notify = require('./controllers/notify');
 
 const fileUpload = require('express-fileupload');
 const mkdirp = require('mkdirp-promise');
@@ -67,6 +68,9 @@ module.exports = function (app) {
     app.get('/profile', Account.getProfile);
     app.post('/profile', Account.selfEdit);
     app.post('/profile/password', Account.selfPassEdit);
+
+    app.get('/notifies', Notify.get);
+    app.post('/notifies/:id', Notify.read);
 
     app.all('/admin/*', Auth.isAdmin);
 

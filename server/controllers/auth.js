@@ -7,6 +7,7 @@ const logger = require('./logger');
 const Render = require('../render'),
     render = Render.render;
 const View = require('../views');
+const Notify = require('./notify');
 
 module.exports = {
     getLogin: async (req, res) => {
@@ -24,7 +25,8 @@ module.exports = {
                 _id: acc._id,
                 login: acc.login,
                 name: acc.name,
-                department: acc.department
+                department: acc.department,
+                notifies: await Notify.countUnread(acc)
             };
             next();
         } else {
