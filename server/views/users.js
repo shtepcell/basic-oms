@@ -32,7 +32,8 @@ module.exports = function(opt, data) {
             },
             {
                 block: 'button-panel',
-                type: 'users'
+                user: data.__user,
+                type: 'admin'
             },
             {
                 block: 'ultra-table',

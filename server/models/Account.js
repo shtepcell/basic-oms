@@ -30,6 +30,16 @@ var schema = mongoose.Schema( {
 		required : true
 	},
 	settings: {
+		main: {
+			initiators: [
+				{
+					type: mongoose.Schema.Types.ObjectId,
+		        	ref: 'Department'
+				}
+			],
+			zone: [String],
+			stage: [String]
+		},
 		search: {
 			query: String
 		}

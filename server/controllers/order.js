@@ -63,97 +63,146 @@ module.exports = {
             res.redirect(req.path);
 
         var query;
-        var dep = res.locals.__user.department.type;
-        var _dep = res.locals.__user.department._id;
-        var cities = res.locals.__user.department.cities;
-        cities = cities.map( item => {
-            return {
-                'info.city' : item
+
+        var settings = res.locals.__user.settings.main,
+            user = res.locals.__user;
+
+        query = {
+            stage: {},
+            zone: {}
+        };
+
+
+        for (var i = 0; i < settings.zone.length; i++) {
+            var dep = await Department.findOne({_id: settings.zone[i]});
+
+            dep.cities.forEach( item => {
+                if(!query.zone['$or'])
+                    query.zone['$or'] = [];
+                query.zone['$or'].push({
+                    'info.city': item
+                });
+            })
+
+        }
+
+        if(settings.zone.length > 0 && !query.zone['$or'])
+            query.zone['$or'] = [{
+                'some': 'bullshit'
+            }]
+
+        if(settings.stage.length>0)
+            query.stage['$or'] = [];
+
+        settings.stage.forEach( item => {
+            if( (user.department.type  == 'b2b' || user.department.type == 'b2o')
+                    && (item == 'client-notify' || item == 'client-match') ) {
+                query.stage['$or'].push({
+                    '$and': [
+                        {'status': item},
+                        {'info.department': user.department._id}
+                    ]
+                })
+            } else {
+                query.stage['$or'].push({
+                    'status': item
+                })
             }
         });
+
         var view = 'main';
-        switch (dep) {
-            case 'admin':
-                var ct = await City.find({usage: false});
-                if(ct.length>0) {
-                    query = {status: {'$ne': 'secret'}};
-                    query['$or'] = ct.map(j => {
-                        return {
-                            'info.city': j._id
-                        }
-                    });
-                }
-                view = 'mains/admin'
-                break;
-            case 'b2b':
-                query = {
-                    '$and': [
-                        {
-                            '$or': [
-                                {status: 'client-match'},
-                                {status: 'client-notify'}
-                            ]
-                        },
-                        {
-                            'info.department': _dep
-                        }
-                    ]
-                };
 
-                view = 'mains/b2b';
-                break;
-            case 'b2o':
-                query = {
-                    '$or': [
-                        {status: 'stop-build'},
-                        {status: 'stop-pre'},
-                        {status: 'all-pre'},
-                        {
-                            '$and': [
-                                {'info.department': _dep},
-                                {'$or': [
-                                    {status: 'client-match'},
-                                    {status: 'client-notify'}
-                                ]}
-                            ]
-                        }
-                    ]
-                };
-                view = 'mains/stop';
-                break;
-            case 'net':
-                query = {status: 'network'};
-                view = 'mains/net';
-                break;
-            case 'gus':
-                if(cities.length == 0) {
-                    query = { status: 'lololo' };
-                } else {
+        // var dep = res.locals.__user.department.type;
+        // var _dep = res.locals.__user.department._id;
+        // var cities = res.locals.__user.department.cities;
+        // cities = cities.map( item => {
+        //     return {
+        //         'info.city' : item
+        //     }
+        // });
+        // var view = 'main';
+        // switch (dep) {
+        //     case 'admin':
+        //         var ct = await City.find({usage: false});
+        //         if(ct.length>0) {
+        //             query = {status: {'$ne': 'secret'}};
+        //             query['$or'] = ct.map(j => {
+        //                 return {
+        //                     'info.city': j._id
+        //                 }
+        //             });
+        //         }
+        //         view = 'mains/admin'
+        //         break;
+        //     case 'b2b':
+        //         query = {
+        //             '$and': [
+        //                 {
+        //                     '$or': [
+        //                         {status: 'client-match'},
+        //                         {status: 'client-notify'}
+        //                     ]
+        //                 },
+        //                 {
+        //                     'info.department': _dep
+        //                 }
+        //             ]
+        //         };
+        //
+        //         view = 'mains/b2b';
+        //         break;
+        //     case 'b2o':
+        //         query = {
+        //             '$or': [
+        //                 {status: 'stop-build'},
+        //                 {status: 'stop-pre'},
+        //                 {status: 'all-pre'},
+        //                 {
+        //                     '$and': [
+        //                         {'info.department': _dep},
+        //                         {'$or': [
+        //                             {status: 'client-match'},
+        //                             {status: 'client-notify'}
+        //                         ]}
+        //                     ]
+        //                 }
+        //             ]
+        //         };
+        //         view = 'mains/stop';
+        //         break;
+        //     case 'net':
+        //         query = {status: 'network'};
+        //         view = 'mains/net';
+        //         break;
+        //     case 'gus':
+        //         if(cities.length == 0) {
+        //             query = { status: 'lololo' };
+        //         } else {
+        //
+        //             query = {
+        //                 '$and': [
+        //                     {
+        //                         '$or': [
+        //                             {status: 'gzp-pre'},
+        //                             {status: 'all-pre'},
+        //                             {status: 'gzp-build'},
+        //                             {status: 'install-devices'}
+        //                         ]
+        //                     },
+        //                     {
+        //                         '$or': cities
+        //                     }
+        //                 ]
+        //             };
+        //         }
+        //         view = 'mains/gus';
+        //         break;
+        //     default:
+        //     break;
+        // }
+        // if(!query) query = {status: 'lolololololoolo'};
 
-                    query = {
-                        '$and': [
-                            {
-                                '$or': [
-                                    {status: 'gzp-pre'},
-                                    {status: 'all-pre'},
-                                    {status: 'gzp-build'},
-                                    {status: 'install-devices'}
-                                ]
-                            },
-                            {
-                                '$or': cities
-                            }
-                        ]
-                    };
-                }
-                view = 'mains/gus';
-                break;
-            default:
-            break;
-        }
-        if(!query) query = {status: 'lolololololoolo'};
-
-        var docs = await Order.paginate(query, { page: pageNumber, limit: perPage, populate: [
+        var docs = await Order.paginate({$or: [{$and: [query.zone, query.stage]}, {special: user.department._id}]}, { page: pageNumber, limit: perPage, populate: [
             {
                 path: 'info.client',
                 model: 'Client',

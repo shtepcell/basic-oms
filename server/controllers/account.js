@@ -63,7 +63,7 @@ module.exports = {
 
     getOne: async (req, res) => {
         res.locals.user = await Account.findOne({login: req.params.login, status: true});
-        res.locals.departments = await Department.find();
+        res.locals.departments = await Department.find({status: true});
 
         render(req, res, {
             viewName: 'user',
@@ -75,7 +75,7 @@ module.exports = {
 
     getProfile: async (req, res) => {
         res.locals.user = await Account.findOne({login: res.locals.__user.login, status: true}).populate('department');
-        res.locals.departments = await Department.find();
+        res.locals.departments = await Department.find({status: true});
 
         render(req, res, {
             viewName: 'user',
@@ -98,6 +98,48 @@ module.exports = {
         if(!reqData.name) errors.push({errText: 'Ф.И.О. - обязательное поле!'})
         errors = validate(reqData, errors);
 
+        var settings = {}
+
+        var department = await Department.findOne({ _id: reqData.department});
+
+        switch (department.type) {
+            case 'admin':
+                settings.main = {
+                    initiators: [],
+                    zone: ['none'],
+                    stage: []
+                };
+                break;
+            case 'b2b':
+                settings.main = {
+                    initiators: [department._id],
+                    zone: [],
+                    stage: ['client-match', 'client-notify']
+                };
+                break;
+            case 'b2o':
+                settings.main = {
+                    initiators: [department._id],
+                    zone: [],
+                    stage: ['client-match', 'client-notify', 'stop-pre', 'stop-build']
+                };
+                break;
+            case 'network':
+                settings.main = {
+                    initiators: [],
+                    zone: [],
+                    stage: ['network']
+                };
+                break;
+            case 'gus':
+                settings.main = {
+                    initiators: [],
+                    zone: [department._id],
+                    stage: ['gzp-pre', 'gzp-build', 'install-devices']
+                };
+                break;
+        }
+        
         if(errors.length === 0) {
             var acc = new Account({
                 login: reqData.login,
@@ -105,8 +147,9 @@ module.exports = {
                 name: reqData.name,
                 email: reqData.email,
                 phone: reqData.phone,
-                department: await Department.findOne({ _id: reqData.department }),
-                status: true
+                department: reqData.department,
+                status: true,
+                settings: settings
             });
             var result = await acc.save();
         } else res.status(400).send(errors);
@@ -183,6 +226,10 @@ module.exports = {
             }
             acc.password = password.createHash(reqData.password)
         }
+        acc.settings.main.initiators = reqData.initiators || [];
+        acc.settings.main.zone = reqData.zone || [];
+        acc.settings.main.stage = reqData.stage || [];
+
         var result = await acc.save();
 
         if(!!result) {

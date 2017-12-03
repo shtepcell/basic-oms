@@ -121,13 +121,18 @@ modules.define('user',
         _validate: function() {
             var form = this.domElem[0];
             var _data = this.domElem.serializeArray();
-            var data = {};
-            console.log(_data);
+            var data = {
+                initiators: [],
+                zone: [],
+                stage: []
+            };
+
 
             _data.forEach( item => {
-                data[item.name] = item.value;
+                if(data[item.name]) data[item.name].push(item.value);
+                else data[item.name] = item.value;
             })
-            
+
             return {
                 data: data
             };
