@@ -9,6 +9,10 @@ var schema = mongoose.Schema({
         required: true,
         unique: true
     },
+    special: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Department'
+    },
     deadline: {
         type: Date
     },

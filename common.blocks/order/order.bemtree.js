@@ -80,6 +80,7 @@ block('order').content()(function () {
             user: this.ctx.user,
             admin: this.ctx.admin,
             dataset: this.ctx.dataset,
+            department: this.ctx.department,
             js: true
         }
     ]

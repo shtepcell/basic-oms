@@ -918,6 +918,7 @@ block('order').elem('body').content()(function () {
         ret,
         {
             elem: 'actions',
+            department: this.ctx.department,
             order: order,
             admin: adminEdit,
             user: user,

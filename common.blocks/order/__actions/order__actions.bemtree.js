@@ -2,7 +2,8 @@ block('order').elem('actions').content()(function () {
     var order = this.ctx.order,
         user = this.ctx.user,
         adminEdit = this.ctx.admin,
-        tab = this.ctx.tab;
+        tab = this.ctx.tab,
+        department = this.ctx.department;
 
         var actions = {
             init: [],
@@ -253,6 +254,33 @@ block('order').elem('actions').content()(function () {
                 })
             }
 
+        if(tab == 'info' && user.department.type == 'admin') {
+            switch (order.status) {
+                case 'all-pre':
+                case 'gzp-pre':
+                    department.forEach( its => {
+                        if(its.type == 'gus')
+                            ret.push({
+                                block: 'order',
+                                elem: 'action',
+                                content: {
+                                    block: 'order',
+                                    elem: 'button',
+                                    js: {
+                                        data: {
+                                            to: 'set-special',
+                                            dep: its._id,
+                                            text: `Направить заказ в ${its.name}`
+                                        },
+                                        url: `/order/${order.id}/action`
+                                    },
+                                    text: `Направить заказ в ${its.name}`
+                                }
+                            })
+                    })
+                    break;
+            }
+        }
         if(adminEdit) {
             ret = [
                 {

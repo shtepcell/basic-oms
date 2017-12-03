@@ -410,6 +410,8 @@ module.exports = {
     getOrderInfo: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
+        res.locals.department = await Department.find();
+
         if(order) {
             order.stage = stages[order.status];
             res.locals.dataset = await getData();
@@ -428,6 +430,7 @@ module.exports = {
 
     getOrderGZP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+        res.locals.department = await Department.find();
 
         if(order) {
             order.stage = stages[order.status];
@@ -448,6 +451,8 @@ module.exports = {
 
     getOrderSTOP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+        res.locals.department = await Department.find();
+
         if(order) {
             order.stage = stages[order.status];
             res.locals.dataset = await getData();
@@ -927,6 +932,15 @@ module.exports = {
                     order: order._id
                 });
                 ntf.save();
+                break;
+            case 'set-special':
+                order.special = reqData.dep;
+                var dp = await Department.findOne({_id: reqData.dep});
+                order.history.push({
+                    name: `Заказ направлен в ${dp.name}`,
+                    date: new Date(),
+                    author: await Account.findOne({_id: res.locals.__user._id})
+                });
                 break;
             case 'delete':
                 order.status = 'secret';

@@ -18,7 +18,8 @@ module.exports = function(opt, data) {
                 tab: opt.tab,
                 admin: opt.admin,
                 user: data.__user,
-                dataset: data.dataset
+                dataset: data.dataset,
+                department: data.department
             }
         ]
     };
