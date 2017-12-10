@@ -53,7 +53,8 @@ module.exports = {
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
-            perPage = 20; // IDEA брать из настроек пользователя
+            perPage = 10; // IDEA брать из настроек пользователя
+        res.locals.params = req.query;
 
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
@@ -202,25 +203,26 @@ module.exports = {
         // }
         // if(!query) query = {status: 'lolololololoolo'};
 
-        var docs = await Order.paginate({$or: [{$and: [query.zone, query.stage]}, {special: user.department._id}]}, { page: pageNumber, limit: perPage, populate: [
-            {
-                path: 'info.client',
-                model: 'Client',
-                populate: {
-                    path: 'type',
-                    model: 'ClientType'
-                }
-            },
-            {
-                path: 'info.service',
-                model: 'Service'
-            },
-            {
-                path: 'info.city',
-                model: 'City'
-            }
-        ]});
-        if (!docs.docs.length)
+        var orders = await Order.find({
+            $or: [
+                {$and: [query.zone, query.stage]},
+                {special: user.department._id}
+            ],
+            status: {$ne: 'secret'}
+        }).deepPopulate(populateQuery);
+
+        var total = orders.length;
+
+        orders.forEach( item => {
+            item.status = stages[item.status];
+        });
+
+        if(req.query.sort)
+            orders = orderSort(orders, req.query.sort, req.query.value);
+
+        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+
+        if (!orders.length)
         {
             if (pageNumber !== 1) {
                 res.redirect(req.path);
@@ -233,13 +235,11 @@ module.exports = {
             res.locals.pagers = {};
             res.locals.pagers[pagerId] = {
                 pageNumber: +pageNumber,
-                records: docs.total,
-                perPage: docs.limit
+                records: total,
+                perPage: perPage
             };
-            docs.docs.forEach( item => {
-                item.status = stages[item.status];
-            });
-            res.locals.orders = docs.docs;
+
+            res.locals.orders = orders;
             render(req, res, {
                 viewName: view,
                 options: {
@@ -814,7 +814,7 @@ module.exports = {
             order.info.order = `${req.files.order.name}`;
             order.status = 'succes';
             order.date['client-notify'] = new Date();
-            order.deadline = undefined;
+            order.deadline = null;
 
             order.history.push({
                 name: 'Завершено уведомление клиента. Абонент включен.',
@@ -1348,10 +1348,11 @@ module.exports = {
         }
         var query = await makeQuery(req, res);
         query.special = undefined;
+
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
-            perPage = 20; // TODO брать из конфига?
+            perPage = 10; // TODO брать из конфига?
 
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
@@ -1360,37 +1361,27 @@ module.exports = {
         else
             res.redirect(req.path);
 
-        var docs = await Order.paginate(query, { page: pageNumber, limit: perPage, populate: [
-            {
-                path: 'info.client',
-                model: 'Client',
-                populate: {
-                    path: 'type',
-                    model: 'ClientType'
-                }
-            },
-            {
-                path: 'info.service',
-                model: 'Service'
-            },
-            {
-                path: 'info.city',
-                model: 'City'
-            }
-        ]});
+        var orders = await Order.find(query).deepPopulate(populateQuery);
 
-        docs.docs.forEach( item => {
+        var total = orders.length;
+
+        orders.forEach( item => {
             item.status = stages[item.status];
         });
+
+        if(req.query.sort)
+            orders = orderSort(orders, req.query.sort, req.query.value);
+
+        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
         res.locals.pagers = {};
         res.locals.pagers[pagerId] = {
             pageNumber: +pageNumber,
-            records: docs.total,
-            perPage: docs.limit
+            records: total,
+            perPage: perPage
         };
 
-        res.locals.orders = docs.docs;
+        res.locals.orders = orders;
 
         render(req, res, {
             viewName: 'search',
@@ -1662,4 +1653,50 @@ var getRespDep = async (order) => {
             return order.info.initiator.department.name;
             break;
     }
+}
+
+function orderSort(array, path, reverse) {
+    switch (path) {
+        case 'id':
+            path = 'id';
+            break;
+        case 'client':
+            path = 'info.client.name';
+            break;
+        case 'adress':
+            path = 'info.city.name';
+            break;
+        case 'service':
+            path = 'info.service.name';
+            break;
+        case 'deadline':
+            path = 'deadline';
+            break;
+        case 'status':
+            path = 'status';
+            break;
+    }
+
+    var paths = path.split('.');
+
+    array.sort( (a, b) => {
+        for (var i = 0; i<paths.length; i++) {
+            a = a[paths[i]];
+            b = b[paths[i]];
+        }
+        if(path == 'deadline') {
+            if(a === null || a === undefined)
+                a = 9999999999999;
+            if(b === null || b === undefined)
+                b = 9999999999991;
+        }
+
+        if(a < b)
+            return -1*reverse;
+        if(a > b)
+            return 1*reverse;
+        return 0;
+    });
+
+    return array;
 }

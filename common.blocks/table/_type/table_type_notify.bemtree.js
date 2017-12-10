@@ -7,11 +7,17 @@ block('table').mod('type', 'notify').content()(function () {
             elem: 'row',
             mix: [
                 {
+                    block: 'action',
+                    elem: 'read-notify',
+                    js: {
+                        url: `/notifies/${item.id}`
+                    }
+                },
+                {
                     block: 'table',
                     elem: (item.read)?'':'row-unread'
                 }
             ],
-            url: `/notifies/${item.id}`,
             content: [
                 {
                     elem: 'cell',

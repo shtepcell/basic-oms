@@ -1,6 +1,10 @@
 ({
     shouldDeps: [
         {
+            block: 'action',
+            elems: ['read-notify']
+        },
+        {
             block: 'table'
         },
         {

@@ -1,6 +1,6 @@
-modules.define('table__row', ['i-bem-dom', 'jquery'], function(provide, bemDom, $) {
+modules.define('action__read-notify', ['i-bem-dom', 'jquery'], function(provide, bemDom, $) {
 
-provide(bemDom.declElem('table', 'row',
+provide(bemDom.declElem('action', 'read-notify',
     {
         onSetMod: {
             js: {

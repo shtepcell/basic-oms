@@ -42,53 +42,12 @@ module.exports = function(opt, data){
                         content: 'Список заявок:'
                     },
                     {
-                        block: 'ultra-table',
+                        block: 'table',
                         mods: {
-                            'static' : true,
-                            theme: 'order'
+                            type: 'order',
+                            width: 'available'
                         },
-                        fields: [
-                            {
-                                name: 'ID',
-                                getContent: (order) => `${order.id}`
-                            },
-                            {
-                                name: 'Клиент',
-                                getContent: (order) => {
-                                    var name = order.info.client.name;
-                                    if(name.length >= 60) name = name.substring(0, 57) + '...';
-
-                                    return `[${order.info.client.type.shortName}] ${name}`
-                                }
-                            },
-                            {
-                                name: 'Статус',
-                                getContent: (order) => `${order.status}`
-                            },
-                            {
-                                name: 'Услуга',
-                                getContent: (order) => `${order.info.service.name}`
-                            },
-                            {
-                                name: 'КС',
-                                getContent: (order) => {
-                                    if(order.pause.deadline) return order.pause.deadline;
-                                    if(order.deadline != null) {
-                                        var now = new Date();
-                                        now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
-                                        var val = Math.round((order.deadline - now) / 1000 / 60 / 60 / 24);
-                                        return val;
-                                    }
-                                    else return '';
-                                }
-                            },
-                            {
-                                name: 'Адресс',
-                                getContent: (order) => `${order.info.city.type} ${order.info.city.name}, ${order.info.street}, ${order.info.adds}`
-                            }
-                        ],
-                        url: '/order/',
-                        template: 'id',
+                        params: data.params,
                         data: orders
                     },
                     {
