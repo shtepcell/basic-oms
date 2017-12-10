@@ -32,6 +32,27 @@ module.exports = function(opt, data){
                         content: 'Результаты поиска :'
                     },
                     {
+                        block: 'button',
+                        mods: {
+                            theme: 'islands',
+                            size: 'm'
+                        },
+                        mix:[
+                            {
+                                block: 'action',
+                                elem: 'export',
+                                js: {
+                                    query: data.query
+                                }
+                            },
+                            {
+                                block: 'searcher',
+                                elem: 'export'
+                            }
+                        ],
+                        text: 'Экспорт в CSV'
+                    },
+                    {
                         block: 'table',
                         mods: {
                             type: 'order',

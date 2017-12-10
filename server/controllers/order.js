@@ -1311,6 +1311,49 @@ module.exports = {
         });
     },
 
+    getCSV: async (req, res) => {
+
+        if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
+        if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
+        if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
+        if(req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
+
+        var query = await makeQuery(req, res);
+        query.special = undefined;
+
+        var orders = await Order.find(query).deepPopulate(populateQuery);
+        orders.forEach( item => {
+            item.status = stages[item.status];
+        });
+        var allObjects = [];
+
+         allObjects.push(["ID", "Клиент", 'Тип клиента', "Услуга", 'Статус', 'Адрес', '']);
+
+         orders.forEach(function(object){
+             var arr = [];
+             arr.push(object.id);
+             arr.push(object.info.client.name);
+             arr.push(object.info.client.type.name);
+             arr.push(object.info.service.name);
+             arr.push(object.status);
+             arr.push(`${object.info.city.type} ${object.info.city.name} ${object.info.street} ${object.info.adds}`);
+
+             allObjects.push(arr)
+         });
+
+         var csvContent = "";
+
+         allObjects.forEach(function(infoArray, index){
+           var dataString = infoArray.join(",");
+           csvContent += index < allObjects.length ? dataString+ "\n" : dataString;
+         });
+         res.writeHead(200, {
+            'Content-Type': 'text/csv',
+            'Content-Disposition': 'attachment; filename=export.csv'
+        });
+        res.end(csvContent)
+    },
+
     searchReset: async (req, res) => {
         var usr = await Account.findOne({_id: res.locals.__user._id});
         usr.settings.search.query = '/search';
