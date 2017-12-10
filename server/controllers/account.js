@@ -106,7 +106,7 @@ module.exports = {
             case 'admin':
                 settings.main = {
                     initiators: [],
-                    zone: ['none'],
+                    zone: [],
                     stage: []
                 };
                 break;
@@ -139,7 +139,7 @@ module.exports = {
                 };
                 break;
         }
-        
+
         if(errors.length === 0) {
             var acc = new Account({
                 login: reqData.login,

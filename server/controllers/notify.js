@@ -1,6 +1,8 @@
 const common = require('./common');
 const Notify = require('../models/Notify');
 const Account = require('../models/Account');
+const Order = require('../models/Order');
+
 
 const Render = require('../render'),
     render = Render.render;
@@ -31,7 +33,20 @@ module.exports = {
     get: async (req, res) => {
         var acc = await Account.findOne({login: res.locals.__user.login});
         // var settings = acc.settings.notify;
-        var notifies = await Notify.find({}).sort({date: -1}).populate('order').limit(50);
+        var myOrders = await Order.find(
+            {'history.author': acc._id}
+        );
+
+        myOrders = myOrders.map( i => {
+            return {'order': i._id};
+        })
+
+        var notifies = [];
+
+        if(myOrders.length > 0)
+            var notifies = await Notify.find({
+                '$or': myOrders
+            }).sort({date: -1}).populate('order').limit(50);
 
         notifies = notifies.map( item => {
             return {
@@ -61,7 +76,23 @@ module.exports = {
     },
 
     countUnread: async (user) => {
-        var ntfs = await Notify.find({read: {$ne: user._id}}).count();
+        var myOrders = await Order.find(
+            {'history.author': user._id}
+        );
+
+        myOrders = myOrders.map( i => {
+            return {'order': i._id};
+        })
+
+        var ntfs = [];
+
+        if(myOrders.length > 0)
+            ntfs = await Notify.find({
+                '$or': myOrders,
+                read: {$ne: user._id}
+            }).count();
+
+        // var ntfs = await Notify.find({read: {$ne: user._id}}).count();
 
         return ntfs;
     }

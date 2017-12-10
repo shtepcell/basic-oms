@@ -42,6 +42,26 @@ block('user').content()(function () {
             }
         },
         {
+            text: 'Пароль',
+            val: '',
+            access: true,
+            show: page == 'create',
+            input: {
+                type: 'password',
+                name: 'password'
+            }
+        },
+        {
+            text: 'Повторите пароль',
+            val: '',
+            access: true,
+            show: page == 'create',
+            input: {
+                type: 'password',
+                name: 'passwordRep'
+            }
+        },
+        {
             text: 'Ф.И.О.',
             val: (page!='create')?user.name:'',
             access: true,
@@ -91,7 +111,7 @@ block('user').content()(function () {
             mods: {
                 lvl: '4'
             },
-            showT: true,
+            showT: page != 'create',
             content: 'Изменение пароля:'
         },
         {
@@ -119,26 +139,6 @@ block('user').content()(function () {
             val: '',
             access: true,
             show: page != 'create',
-            input: {
-                type: 'password',
-                name: 'passwordRep'
-            }
-        },
-        {
-            text: 'Пароль',
-            val: '',
-            access: true,
-            show: page == 'create',
-            input: {
-                type: 'password',
-                name: 'password'
-            }
-        },
-        {
-            text: 'Повторите пароль',
-            val: '',
-            access: true,
-            show: page == 'create',
             input: {
                 type: 'password',
                 name: 'passwordRep'

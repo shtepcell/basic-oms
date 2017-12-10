@@ -72,6 +72,8 @@ module.exports = {
             stage: {},
             zone: {}
         };
+        settings.zone = settings.zone || [];
+        settings.stage = settings.stage || [];
 
 
         for (var i = 0; i < settings.zone.length; i++) {
