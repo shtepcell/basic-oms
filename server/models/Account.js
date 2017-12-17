@@ -30,6 +30,10 @@ var schema = mongoose.Schema( {
 		required : true
 	},
 	settings: {
+		sendEmail: {
+			type: Boolean,
+			default: false
+		},
 		main: {
 			initiators: [
 				{

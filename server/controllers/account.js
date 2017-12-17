@@ -230,6 +230,12 @@ module.exports = {
         acc.settings.main.zone = reqData.zone || [];
         acc.settings.main.stage = reqData.stage || [];
 
+        if(reqData.sendEmail == '1') {
+            acc.settings.sendEmail = true;
+        } else {
+            acc.settings.sendEmail = false;
+        }
+        
         var result = await acc.save();
 
         if(!!result) {

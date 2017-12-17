@@ -226,6 +226,18 @@ block('user').content()(function () {
                 ]
             }
         },
+        'space',
+        {
+            text: '',
+            val: (page=='profile')?user.settings.sendEmail:'',
+            access: page == 'profile',
+            show: page == 'profile',
+            input: {
+                placeholder: 'Отправлять уведомления на E-mail',
+                type: 'checkbox',
+                name: 'sendEmail'
+            }
+        },
         'space'
     ];
 

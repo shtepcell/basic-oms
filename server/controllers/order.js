@@ -11,6 +11,7 @@ const mkdirp = require('mkdirp-promise');
 const fields = require('./fields');
 const Holiday = require('../models/Holiday');
 const Notify = require('../models/Notify');
+const { sendMail } = require('./mailer');
 
 var stages = {
     'init': 'Инициация заказа',
@@ -389,9 +390,12 @@ module.exports = {
                     type: `start-stop-pre`,
                     order: done._id
                 });
+                sendMail(done, 'new-status');
                 ntf0.save();
                 ntf1.save();
             } else {
+                done.status = stages[done.status];
+                sendMail(done, 'new-status');
                 var ntf = new Notify({
                     date: Date.now(),
                     type: `start-${done.status}`,
@@ -411,7 +415,6 @@ module.exports = {
 
     getOrderInfo: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
-
         res.locals.department = await Department.find();
 
         if(order) {
@@ -703,6 +706,8 @@ module.exports = {
                     type: `end-gzp-pre`,
                     order: done._id
                 });
+                done = await done.deepPopulate(populateQuery);
+                sendMail(done, 'new-status');
                 ntf.save();
                 logger.info(`End pre-gzp order #${ done.id }`, res.locals.__user);
                 res.status(200).send({created: true})
@@ -765,6 +770,8 @@ module.exports = {
                     type: `end-stop-pre`,
                     order: done._id
                 });
+                done = await done.deepPopulate(populateQuery);
+                sendMail(done, 'new-status');
                 ntf.save();
                 provider.usage = true;
                 provider.save();
@@ -831,6 +838,8 @@ module.exports = {
                     type: `end-client-notify`,
                     order: done._id
                 });
+                done = await done.deepPopulate(populateQuery);
+                sendMail(done, 'new-status');
                 ntf.save();
                 logger.info(`End client-notify order #${ done.id }`, res.locals.__user);
                 res.status(200).send({created: true});
@@ -889,7 +898,7 @@ module.exports = {
 
     changeStatus: async (req, res) => {
         var reqData = req.body;
-        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}});
+        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
         if(!order) {
             res.status(400).send({errText: 'Изменение несуществующей заявки!'});
@@ -912,6 +921,7 @@ module.exports = {
                     type: `pause`,
                     order: order._id
                 });
+                sendMail(order, 'pause');
                 ntf.save();
                 break;
             case 'stop-pause':
@@ -933,6 +943,7 @@ module.exports = {
                     type: `end-pause`,
                     order: order._id
                 });
+                sendMail(order, 'end-pause');
                 ntf.save();
                 break;
             case 'set-special':
@@ -966,6 +977,7 @@ module.exports = {
                     type: `reject`,
                     order: order._id
                 });
+                sendMail(order, 'new-status');
                 ntf.save();
                 break;
             case 'start-pre-stop':
@@ -983,6 +995,7 @@ module.exports = {
                     type: `start-stop-pre`,
                     order: order._id
                 });
+                sendMail(order, 'new-status');
                 ntf.save();
                 break;
             case 'start-pre-gzp':
@@ -1000,6 +1013,7 @@ module.exports = {
                     type: `start-gzp-pre`,
                     order: order._id
                 });
+                sendMail(order, 'new-status');
                 ntf.save();
                 break;
             case 'end-network':
@@ -1017,6 +1031,7 @@ module.exports = {
                     type: `network`,
                     order: order._id
                 });
+                sendMail(order, 'new-status');
                 ntf.save();
                 break;
             case 'end-build':
@@ -1032,6 +1047,7 @@ module.exports = {
                     type: `end-gzp-build`,
                     order: order._id
                 });
+                sendMail(order, 'new-status');
                 ntf.save();
                 break;
             case 'start-gzp-build':
@@ -1053,6 +1069,7 @@ module.exports = {
                     type: `start-gzp-build`,
                     order: order._id
                 });
+                sendMail(order, 'new-status');
                 ntf.save();
                 break;
             case 'end-install-devices':
@@ -1068,6 +1085,7 @@ module.exports = {
                     type: `end-install-devices`,
                     order: order._id
                 });
+                sendMail(order, 'new-status');
                 ntf.save();
                 break;
             case 'start-stop-build':
@@ -1085,6 +1103,7 @@ module.exports = {
                     type: `start-stop-build`,
                     order: order._id
                 });
+                sendMail(order, 'new-status');
                 ntf.save();
                 break;
             case 'end-build-stop':
@@ -1100,6 +1119,7 @@ module.exports = {
                     type: `end-stop-build`,
                     order: order._id
                 });
+                sendMail(order, 'new-status');
                 ntf.save();
                 break;
         }

@@ -37,6 +37,17 @@ block('user').elem('input').content()(function () {
             val: (ctx.val && ctx.val=='')?'':ctx.val,
             name: ctx.name,
             options: ctx.data
+        },
+        'checkbox': {
+            block: 'checkbox',
+            mods: {
+                theme: 'islands',
+                size: 'm',
+                checked: ctx.val
+            },
+            name: ctx.name,
+            val: '1',
+            text: ctx.placeholder
         }
     }
 

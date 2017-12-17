@@ -2,7 +2,7 @@ block('table').mod('type', 'order').content()(function () {
     var ctx = this.ctx,
         params = this.ctx.params,
         ret = [];
-
+    if(ctx.data)
     ctx.data.forEach( item => {
         var dl = '';
         if(item.pause.deadline) dl = item.pause.deadline;
@@ -83,7 +83,7 @@ block('table').mod('type', 'order').content()(function () {
     clms.forEach( it => {
         var icon = {};
         var flag = (it.name == params.sort)?params.value:0;
-        
+
         switch (flag) {
             case '1':
                 icon = {
