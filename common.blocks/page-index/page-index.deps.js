@@ -54,6 +54,11 @@
         {
             block: 'handbook-table',
             mod: 'type',
+            val: 'street'
+        },
+        {
+            block: 'handbook-table',
+            mod: 'type',
             val: 'client-types'
         },
         {
@@ -78,6 +83,12 @@
             block: 'inline-form',
             mods: {
                 type:  'cities'
+            }
+        },
+        {
+            block: 'inline-form',
+            mods: {
+                type:  'street'
             }
         },
         {

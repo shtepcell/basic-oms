@@ -8,7 +8,8 @@ const Auth = require('./controllers/auth'),
     Department = require('./controllers/departments'),
     Order = require('./controllers/order'),
     Holiday = require('./controllers/holiday')
-    Notify = require('./controllers/notify');
+    Notify = require('./controllers/notify'),
+    Street = require('./controllers/street');
 
 const fileUpload = require('express-fileupload');
 const mkdirp = require('mkdirp-promise');
@@ -101,8 +102,12 @@ module.exports = function (app) {
     app.post('/admin/departments/:id/delete/:city', Department.deleteCity);
 
 
-    // .get(Department.get)
-    // .delete(Department.delete);
+    app.route('/admin/street')
+        .get(Street.getPage)
+        .delete(Street.delete);
+
+    app.post('/admin/street/change', Street.edit);
+    app.post('/admin/street/add', Street.create);
 
     app.route('/admin/cities')
         .get(City.getPage)

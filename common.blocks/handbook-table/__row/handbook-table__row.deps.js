@@ -46,7 +46,14 @@
                 },
                 tech: 'bemhtml'
             },
-
+            {
+                block: 'handbook-table',
+                elem: 'row',
+                mods: {
+                    type: 'street'
+                },
+                tech: 'bemhtml'
+            },
             {
                 block: 'handbook-table',
                 elem: 'row',
