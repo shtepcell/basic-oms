@@ -36,8 +36,13 @@ block('navigator').content()(function() {
                 },
                 {
                     type: 'link',
-                    text: 'Адреса',
+                    text: 'Города',
                     url: '/admin/cities'
+                },
+                {
+                    type: 'link',
+                    text: 'Улицы',
+                    url: '/admin/street'
                 },
                 {
                     type: 'link',
