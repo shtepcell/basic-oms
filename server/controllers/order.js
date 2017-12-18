@@ -6,7 +6,7 @@ const Client = require('../models/Client');
 const Provider = require('../models/Provider');
 const Service = require('../models/Service');
 const City = require('../models/City');
-// const Street = require('../models/Street');
+const Street = require('../models/Street');
 const mkdirp = require('mkdirp-promise');
 const fields = require('./fields');
 const Holiday = require('../models/Holiday');
@@ -301,11 +301,28 @@ module.exports = {
         var service = await Service.findOne({ _id: order.info.service });
         order.info.service = service;
 
+        if(!order.info.street) {
+            res.status(400).send({ errText: 'Улицу указывать обязательно!' });
+            return;
+        }
+        order.info.street = parserStreet(order.info.street);
+        if(order.info.street == 'err') {
+            res.status(400).send({ errText: 'Формат улицы неверный!' });
+            return;
+        }
+        var strt = await Street.findOne({ type: order.info.street.type, name: order.info.street.name });
+        if(!strt) {
+            res.status(400).send({ errText: 'Такой улицы не существует. Обратитесь к администратору!' });
+            return;
+        }
+        order.info.street = `${strt.type} ${strt.name}`;
+
         if(!order.info.city) {
             res.status(400).send({ errText: 'Город указывать обязательно!' });
             return;
         }
         order.info.city = parserCity(order.info.city);
+
 
         if(order.info.city == 'err') {
             res.status(400).send({ errText: 'Формат города неверный! Следует писать так - г./c./пос./пгт. Симферополь' });
@@ -551,6 +568,22 @@ module.exports = {
 
                 var service = await Service.findOne({ _id: data.service });
                 tmp.service = service;
+
+                if(!tmp.street) {
+                    res.status(400).send({ errText: 'Улицу указывать обязательно!' });
+                    return;
+                }
+                tmp.street = parserStreet(tmp.street);
+                if(tmp.street == 'err') {
+                    res.status(400).send({ errText: 'Формат улицы неверный!' });
+                    return;
+                }
+                var strt = await Street.findOne({ type: tmp.street.type, name: tmp.street.name });
+                if(!strt) {
+                    res.status(400).send({ errText: 'Такой улицы не существует. Обратитесь к администратору!' });
+                    return;
+                }
+                tmp.street = `${strt.type} ${strt.name}`;
 
                 if(!data.city) {
                     res.status(400).send({ errText: 'Город указывать обязательно!' });
@@ -1485,6 +1518,23 @@ function parserCity(str) {
     return 'err';
 }
 
+function parserStreet(str) {
+    var res = { type: '', name: ''};
+    var types = ['ул.', 'пер.', 'кв.', 'пл.', 'пр-т.', 'ш.'];
+
+    for (var i = 0; i < str.length; i++) {
+        if(str[i] === '.') {
+            res.type += '.';
+            res.name = str.slice(i+2, str.length);
+            if (res.name.length <= 0 || types.indexOf(res.type) < 0) {
+                return 'err';
+            }
+            return res;
+        } else res.type += ''+str[i];
+    }
+    return 'err';
+}
+
 var makeQuery = async (req, res) => {
     var qr = {status: {'$ne': 'secret'}};
     var query = req.query;
@@ -1624,6 +1674,7 @@ var getData = async () => {
     var clients = await Client.find().populate('type');
     var providers = await Provider.find();
     var cities = await City.find();
+    var streets = await Street.find();
     var services = await Service.find();
 
 
@@ -1632,6 +1683,8 @@ var getData = async () => {
     providers = providers.map( i => `[${i.type}] ${i.name}`);
 
     cities = cities.map( i => `${i.type} ${i.name}`);
+    streets = streets.map( i => `${i.type} ${i.name}`);
+
 
     services = services.map( i => {
         return {
@@ -1659,6 +1712,7 @@ var getData = async () => {
         clients: clients,
         providers: providers,
         cities: cities,
+        streets: streets,
         services: services,
         pre: pre
     }

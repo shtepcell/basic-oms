@@ -121,10 +121,10 @@ block('order').elem('body').content()(function () {
                     name: 'Улица',
                     field: {
                         name: 'street',
-                        type: 'text',
+                        type: 'suggest',
+                        dataset: 'streets',
                         required: true,
-                        placeholder: 'ул. Пушкина',
-                        required: true
+                        placeholder: 'ул. Пушкина'
                     },
                     val: null,
                     access: true
@@ -279,8 +279,8 @@ block('order').elem('body').content()(function () {
                     val: `${order.info.street}`,
                     field: {
                         name: 'street',
-                        type: 'text',
-                        required: true,
+                        type: 'suggest',
+                        dataset: 'streets',
                         placeholder: 'ул. Пушкина',
                         required: true
                     },
