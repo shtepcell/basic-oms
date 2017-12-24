@@ -36,14 +36,6 @@
     width: 100px;
 }
 
-.footer__company .link {
-    margin-left: 1em;
-    color: #1a7abe;
-    font-size: 14pt;
-    text-decoration: none;
-    vertical-align: -24px;
-}
-
 .footer__copyright {
     color: #1a7abe;
     font-size: 10pt;

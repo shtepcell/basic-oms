@@ -5,13 +5,12 @@ block('footer').content()(function() {
             elem: 'company',
             content: [
                 {
-                    block: 'icon',
-                    url: '/logo.png'
-                },
-                {
                     block: 'link',
                     url: 'http://www.miranda-media.ru/',
-                    content: 'ООО "Миранда-медиа"'
+                    content: {
+                        block: 'icon',
+                        url: '/logo.png'
+                    }
                 }
             ]
         },
