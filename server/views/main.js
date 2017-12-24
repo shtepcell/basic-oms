@@ -39,7 +39,7 @@ module.exports = function(opt, data){
                         mods: {
                             lvl: 4
                         },
-                        content: 'Список заявок:'
+                        content: `Список заказов: `
                     },
                     {
                         block: 'table',

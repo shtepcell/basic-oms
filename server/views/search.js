@@ -5,7 +5,7 @@ module.exports = function(opt, data){
         pagerId;
     if (opt.pagers && opt.pagers.length)
         pagerId = opt.pagers[0];
-
+    
     return {
         view: 'page-index',
         title: 'Поиск заказов',
@@ -29,7 +29,7 @@ module.exports = function(opt, data){
                     {
                         block: 'searcher',
                         elem: 'title',
-                        content: 'Результаты поиска :'
+                        content: `Найдено ${data.pagers.first.records} заказов: `
                     },
                     {
                         block: 'button',
