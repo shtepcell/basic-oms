@@ -10,24 +10,3 @@
     font-family: sans-serif;
     cursor: default;
 }
-
-.navigator__title {
-    animation: shaker 5s cubic-bezier(.36,.07,.19,.97) infinite;
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
-}
-
-@keyframes shaker {
-    0% {
-        transform: rotateZ(0deg);
-    }
-    2%, 7%, 11% {
-        transform: rotateZ(0.5deg);
-    }
-    5%, 9%, 12% {
-        transform: rotateZ(-0.5deg);
-    }
-    15% {
-        transform: rotateZ(0deg);
-    }
-}

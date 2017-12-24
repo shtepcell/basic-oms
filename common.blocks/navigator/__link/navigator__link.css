@@ -42,7 +42,7 @@
 {
     height: 18px;
     background: #0a5a9e;
-    animation: shake 0.7s ease-in both;
+    /*animation: shake 0.7s ease-in both;*/
     backface-visibility: hidden;
 }
 
