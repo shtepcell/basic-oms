@@ -331,19 +331,21 @@ module.exports = {
         var tmpCity = await City.find({ type: order.info.city.type, name: order.info.city.name });
 
         if(tmpCity.length == 0) {
-            var ct = new City({
-                type: order.info.city.type,
-                name: order.info.city.name,
-                usage: false
-            });
-            let dn = await ct.save();
-            if (dn) {
-                smplFlag = true;
-                tmpCity[0] = dn;
-            } else {
-                res.status(400).send({ errText: 'Ошибка создания города! Если вы видете эту ошибку - обратитесь к админисратору' });
-                return;
-            }
+            res.status(400).send({ errText: 'Такого города нет в справочнике! Обратитесь к адиминистратору.' });
+            return;
+            // var ct = new City({
+            //     type: order.info.city.type,
+            //     name: order.info.city.name,
+            //     usage: false
+            // });
+            // let dn = await ct.save();
+            // if (dn) {
+            //     smplFlag = true;
+            //     tmpCity[0] = dn;
+            // } else {
+            //     res.status(400).send({ errText: 'Ошибка создания города! Если вы видете эту ошибку - обратитесь к админисратору' });
+            //     return;
+            // }
         }
 
         if(tmpCity.length > 1) {
@@ -1743,9 +1745,7 @@ var getRespDep = async (order) => {
         case 'gzp-build':
         case 'install-devices':
             var dep = await Department.findOne({cities: order.info.city._id});
-            if(!dep) dep = {
-                name: 'Ответсвенный отдел не определён!'
-            }
+            if(!dep) dep = await Department.findOne({type: 'b2o'});
             return dep.name;
             break;
         case 'stop-pre':
@@ -1759,10 +1759,8 @@ var getRespDep = async (order) => {
         case 'all-pre':
             var dep1 = await Department.findOne({type: 'b2o'});
             var dep2 = await Department.findOne({cities: order.info.city._id});
-            if(!dep2 ) dep2 = {
-                name: 'неизвестный отдел'
-            }
-            return `${dep1.name} и ${dep2.name}`;
+            if(!dep2) return `${dep1.name}`;
+            else return `${dep1.name} и ${dep2.name}`;
             break;
         case 'network':
             var dep = await Department.findOne({type: 'net'});
