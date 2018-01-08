@@ -11,6 +11,10 @@
             }
         },
         {
+            block: 'select',
+            elem: 'service'
+        },
+        {
             block: 'input',
             mods: {
                 'has-calendar': true,

@@ -43,16 +43,6 @@ block('order').elem('body').content()(function () {
         case 'init':
             fields = [
                 {
-                    name: 'Связанные заявки',
-                    field: {
-                        name: 'relation',
-                        type: 'text',
-                        placeholder: '#1234 #4321'
-                    },
-                    val: null,
-                    access: true
-                },
-                {
                     name: 'Номер CMS',
                     field: {
                         name: 'cms',
@@ -85,26 +75,7 @@ block('order').elem('body').content()(function () {
                     val: null,
                     access: true
                 },
-                {
-                    name: 'Услуга',
-                    field: {
-                        name: 'service',
-                        type: 'select',
-                        dataset: 'services',
-                    },
-                    val: null,
-                    access: true
-                },
-                {
-                    name: 'Параметры услуги',
-                    field: {
-                        name: 'options',
-                        type: 'text',
-                        placeholder: '10 мБит/с'
-                    },
-                    val: null,
-                    access: true
-                },
+                'separator',
                 {
                     name: 'Город',
                     field: {
@@ -142,20 +113,11 @@ block('order').elem('body').content()(function () {
                 },
                 'separator',
                 {
-                    name: 'Необходимость выделения IP-адресов',
+                    name: 'Услуга',
                     field: {
-                        name: 'ip',
-                        type: 'boolean'
-                    },
-                    val: null,
-                    access: true
-                },
-                {
-                    name: 'Необходимый пул адресов',
-                    field: {
-                        name: 'pool',
-                        type: 'text',
-                        placeholder: '/24'
+                        name: 'service',
+                        type: 'service',
+                        dataset: 'services',
                     },
                     val: null,
                     access: true
@@ -188,16 +150,7 @@ block('order').elem('body').content()(function () {
                     name: 'Дата инициации заказа',
                     val: dateToStr(order.date.init)
                 },
-                {
-                    name: 'Связанные заявки',
-                    field: {
-                        name: 'relation',
-                        type: 'text',
-                        placeholder: '#1234 #4321'
-                    },
-                    val: order.info.relation,
-                    access: (adminEdit)
-                },
+
                 {
                     name: 'Номер CMS',
                     field: {
@@ -240,29 +193,6 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit)
                 },
                 {
-                    name: 'Услуга',
-                    val: (order) => {
-                        if(adminEdit) return order.info.service._id + '';
-                        else return order.info.service.name;
-                    },
-                    field: {
-                        name: 'service',
-                        type: 'select',
-                        dataset: 'services',
-                    },
-                    access: (adminEdit)
-                },
-                {
-                    name: 'Параметры услуги',
-                    val: order.info.options,
-                    field: {
-                        name: 'options',
-                        type: 'text',
-                        placeholder: '10 мБит/с'
-                    },
-                    access: (adminEdit)
-                },
-                {
                     name: 'Город',
                     val: `${order.info.city.type} ${order.info.city.name}`,
                     field: {
@@ -299,6 +229,39 @@ block('order').elem('body').content()(function () {
                 },
                 'separator',
                 {
+                    name: 'Услуга',
+                    val: (order) => {
+                        if(adminEdit) return order.info.service._id + '';
+                        else return order.info.service.name;
+                    },
+                    field: {
+                        name: 'service',
+                        type: 'select',
+                        dataset: 'services',
+                    },
+                    access: (adminEdit)
+                },
+                {
+                    name: 'Параметры услуги',
+                    val: order.info.options,
+                    field: {
+                        name: 'options',
+                        type: 'text',
+                        placeholder: '10 мБит/с'
+                    },
+                    access: (adminEdit)
+                },
+                {
+                    name: 'Связанные заявки',
+                    field: {
+                        name: 'relation',
+                        type: 'text',
+                        placeholder: '#1234 #4321'
+                    },
+                    val: order.info.relation,
+                    access: (adminEdit)
+                },
+                {
                     name: 'Необходимость выделения IP-адресов',
                     val: (order.info.ip)?'Да':'Нет',
                     field: {
@@ -317,6 +280,7 @@ block('order').elem('body').content()(function () {
                     },
                     access: (adminEdit)
                 },
+                'separator',
                 {
                     name: 'Ожидаемый единовр. доход (руб)',
                     val: order.info['cost-once'],
@@ -703,6 +667,23 @@ block('order').elem('body').content()(function () {
                             size: 'l'
                         },
                         placeholder: item.field.placeholder
+                    }
+                    break;
+                case 'service':
+                    input = {
+                        block: 'select',
+                        name: item.field.name,
+                        val: item.val,
+                        mods: {
+                            mode: 'radio',
+                            theme: 'islands',
+                            size: 'l'
+                        },
+                        mix: {
+                            block: 'select',
+                            elem: 'service'
+                        },
+                        options: dataset[item.field.dataset]
                     }
                     break;
                 case 'select':

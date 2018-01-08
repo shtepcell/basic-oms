@@ -5,6 +5,10 @@
             elems: ['read-notify']
         },
         {
+            block: 'select',
+            elem: 'service'
+        },
+        {
             block: 'table'
         },
         {
