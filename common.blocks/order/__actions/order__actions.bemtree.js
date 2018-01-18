@@ -17,7 +17,7 @@ block('order').elem('actions').content()(function () {
                     }
                 },
                 {
-                    text: 'Отправить на проработку по STOP/VSAT',
+                    text: 'Отправить на проработку по СТОП/VSAT',
                     to: 'start-pre-stop',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');
@@ -34,7 +34,7 @@ block('order').elem('actions').content()(function () {
                     }
                 },
                 {
-                    text: 'Отправить на организацию по STOP/VSAT',
+                    text: 'Отправить на организацию по СТОП/VSAT',
                     to: 'start-stop-build',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');

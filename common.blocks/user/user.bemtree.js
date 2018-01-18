@@ -197,7 +197,7 @@ block('user').content()(function () {
                     },
                     {
                         val: 'all-pre',
-                        text: 'Пр. по ГЗП и STOP/VSAT'
+                        text: 'Пр. по ГЗП и СТОП/VSAT'
                     },
                     {
                         val: 'gzp-pre',
@@ -213,11 +213,11 @@ block('user').content()(function () {
                     },
                     {
                         val: 'stop-pre',
-                        text: 'Пр. по STOP/VSAT'
+                        text: 'Пр. по СТОП/VSAT'
                     },
                     {
                         val: 'stop-build',
-                        text: 'Орг. STOP/VSAT'
+                        text: 'Орг. СТОП/VSAT'
                     },
                     {
                         val: 'network',

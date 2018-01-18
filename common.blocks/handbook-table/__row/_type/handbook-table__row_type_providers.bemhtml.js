@@ -10,7 +10,7 @@ block('handbook-table').elem('row').elemMod('type', 'providers')(
                 block: 'handbook-table',
                 elem: 'cell',
                 content: this.ctx.cellsData.type
-            }, 
+            },
             {
                 block: 'handbook-table',
                 elem: 'cell',
@@ -35,8 +35,8 @@ block('handbook-table').elem('row').elemMod('type', 'providers').elemMod('edited
                     block: 'select',
                     options: [
                         {
-                            val: 'STOP',
-                            text: 'STOP'
+                            val: 'СТОП',
+                            text: 'СТОП'
                         },
                         {
                             val: 'VSAT',

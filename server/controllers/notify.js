@@ -11,13 +11,13 @@ const logger = require('./logger');
 
 var events = {
     'start-gzp-pre': 'Начат этап "Проработка по ГЗП"',
-    'start-stop-pre': 'Начат этап "Проработка по STOP/VSAT"',
+    'start-stop-pre': 'Начат этап "Проработка по СТОП/VSAT"',
     'start-gzp-build': 'Начат этап "Организация ГЗП"',
-    'start-stop-build': 'Начат этап "Организация STOP/VSAT"',
+    'start-stop-build': 'Начат этап "Организация СТОП/VSAT"',
     'init-with-unknown-city': 'Инициирована новая заявка с новым городом',
     'end-gzp-pre': 'Завершен этап "Проработка по ГЗП"',
-    'end-stop-pre': 'Завершен этап "Проработка по STOP/VSAT"',
-    'end-stop-build': 'Завершен этап "Организация STOP/VSAT"',
+    'end-stop-pre': 'Завершен этап "Проработка по СТОП/VSAT"',
+    'end-stop-build': 'Завершен этап "Организация СТОП/VSAT"',
     'end-gzp-build': 'Завершен этап "Организация ГЗП"',
     'end-client-notify': 'Завершен этап "Уведомление клиента"',
     'end-client-match': 'Завершен этап "Согласование с клиентом"',

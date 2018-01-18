@@ -17,12 +17,12 @@ var stages = {
     'init': 'Инициация заказа',
     'client-match': 'Согласование с клиентом',
     'client-notify': 'Уведомление клиента',
-    'all-pre': 'Проработка по ГЗП и STOP/VSAT',
+    'all-pre': 'Проработка по ГЗП и СТОП/VSAT',
     'gzp-pre': 'Проработка по ГЗП',
     'gzp-build': 'Организация ГЗП',
     'install-devices': 'Установка оборудования',
-    'stop-pre': 'Проработка по STOP/VSAT',
-    'stop-build': 'Организация STOP/VSAT',
+    'stop-pre': 'Проработка по СТОП/VSAT',
+    'stop-build': 'Организация СТОП/VSAT',
     'network': 'Настройка сети',
     'succes': 'Включен',
     'reject': 'Заявка отклонена',
@@ -794,7 +794,7 @@ module.exports = {
                 order.stop.complete = true;
             }
             order.history.push({
-                name: 'Завершена проработка STOP/VSAT',
+                name: 'Завершена проработка СТОП/VSAT',
                 date: new Date(),
                 author: await Account.findOne({_id: res.locals.__user._id})
             });
@@ -1021,7 +1021,7 @@ module.exports = {
                 order.date['cs-stop-pre'] = await calculateDeadline(3);
                 order.date['client-match'] = new Date();
                 order.history.push({
-                    name: 'Начало проработки STOP/VSAT',
+                    name: 'Начало проработки СТОП/VSAT',
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
@@ -1129,7 +1129,7 @@ module.exports = {
                 order.date['cs-stop-organization'] = await calculateDeadline(order.stop.time + 2);
                 order.date['client-match'] = new Date();
                 order.history.push({
-                    name: 'Начало организации через STOP/VSAT',
+                    name: 'Начало организации через СТОП/VSAT',
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
@@ -1145,7 +1145,7 @@ module.exports = {
                 order.status = 'network';
                 order.date['stop-build'] = new Date();
                 order.history.push({
-                    name: 'Завершена организация через STOP/VSAT',
+                    name: 'Завершена организация через СТОП/VSAT',
                     date: new Date(),
                     author: await Account.findOne({_id: res.locals.__user._id})
                 });
@@ -1701,11 +1701,11 @@ var getData = async () => {
             val: 'gzp-pre'
         },
         {
-            text: 'только STOP/VSAT',
+            text: 'только СТОП/VSAT',
             val: 'stop-pre'
         },
         {
-            text: 'Одновременно ГЗП и STOP/VSAT',
+            text: 'Одновременно ГЗП и СТОП/VSAT',
             val: 'all-pre'
         }
     ];

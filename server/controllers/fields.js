@@ -8,12 +8,12 @@ var stages = {
     'init': 'Инициация заказа',
     'client-match': 'Согласование с клиентом',
     'client-notify': 'Уведомление клиента',
-    'all-pre': 'Проработка по ГЗП/STOP',
+    'all-pre': 'Проработка по ГЗП/СТОП',
     'gzp-pre': 'Проработка по ГЗП',
     'gzp-build': 'Организация ГЗП',
     'install-devices': 'Установка оборудования',
-    'stop-pre': 'Проработка по STOP/VSAT',
-    'stop-build': 'Организация STOP/VSAT',
+    'stop-pre': 'Проработка по СТОП/VSAT',
+    'stop-build': 'Организация СТОП/VSAT',
     'network': 'Настройка сети',
     'succes': 'Завершение обработки',
     'reject': 'Отклонение'
@@ -196,11 +196,11 @@ var allFields = {
                     val: 'gzp-pre'
                 },
                 {
-                    text: 'только STOP/VSAT',
+                    text: 'только СТОП/VSAT',
                     val: 'stop-pre'
                 },
                 {
-                    text: 'ГЗП и STOP',
+                    text: 'ГЗП и СТОП',
                     val: 'all-pre'
                 }
             ]
@@ -619,7 +619,7 @@ var actions = {
             }
         },
         {
-            text: 'Отправить на проработку по STOP/VSAT',
+            text: 'Отправить на проработку по СТОП/VSAT',
             to: 'start-pre-stop',
             condition: function (user, order) {
                 var access = (order.info.initiator.department._id == user.department._id + '');
@@ -639,7 +639,7 @@ var actions = {
             }
         },
         {
-            text: 'Отправить на организацию по STOP/VSAT',
+            text: 'Отправить на организацию по СТОП/VSAT',
             to: 'start-stop-build',
             condition: function (user, order) {
                 var access = (order.info.initiator.department._id == user.department._id + '');
@@ -793,7 +793,7 @@ module.exports = {
         return ret;
     },
 
-    getSTOP: async (order, access) => {
+    getСТОП: async (order, access) => {
         var stop = allFields.stop;
         var ret = [];
         var prvdrs = await Provider.find();

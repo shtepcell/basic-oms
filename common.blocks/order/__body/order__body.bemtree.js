@@ -531,7 +531,7 @@ block('order').elem('body').content()(function () {
                         dataset: 'providers',
                         name: 'provider',
                         required: true,
-                        placeholder: '[STOP] Ростелеком'
+                        placeholder: '[СТОП] Ростелеком'
                     },
                     val: function (order) {
                         if(order.stop.provider)
@@ -681,7 +681,8 @@ block('order').elem('body').content()(function () {
                         },
                         mix: {
                             block: 'select',
-                            elem: 'service'
+                            elem: 'service',
+                            js: true
                         },
                         options: dataset[item.field.dataset]
                     }

@@ -125,7 +125,7 @@ block('searcher')(
                                                 },
                                                 {
                                                     val: '2',
-                                                    text: 'STOP/VSAT'
+                                                    text: 'СТОП/VSAT'
                                                 },
                                                 {
                                                     val: '3',
@@ -165,7 +165,7 @@ block('searcher')(
                                                 },
                                                 {
                                                     val: '3',
-                                                    text: 'STOP/VSAT'
+                                                    text: 'СТОП/VSAT'
                                                 },
                                                 {
                                                     val: '4',
@@ -205,7 +205,7 @@ block('searcher')(
                                                 },
                                                 {
                                                     val: '2',
-                                                    text: 'Выполненые по STOP/VSAT'
+                                                    text: 'Выполненые по СТОП/VSAT'
                                                 },
                                                 {
                                                     val: '3',

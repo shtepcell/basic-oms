@@ -57,7 +57,7 @@ block('order').content()(function () {
                         view: (tab=='stop')?'action':null
                     },
                     url: `/order/${this.ctx.order.id}/stop`,
-                    text: 'STOP'
+                    text: 'СТОП'
                 },
                 {
                     block: 'button',

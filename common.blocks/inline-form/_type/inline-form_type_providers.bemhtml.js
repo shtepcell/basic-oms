@@ -5,8 +5,8 @@ block('inline-form').mod('type', 'providers').elem('controls').def()(function() 
             block: 'select',
             options: [
                 {
-                    val: 'STOP',
-                    text: 'STOP'
+                    val: 'СТОП',
+                    text: 'СТОП'
                 },
                 {
                     val: 'VSAT',
