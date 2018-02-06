@@ -43,17 +43,6 @@ block('order').elem('body').content()(function () {
         case 'init':
             fields = [
                 {
-                    name: 'Номер CMS',
-                    field: {
-                        name: 'cms',
-                        type: 'text',
-                        placeholder: '12-2222-23'
-                    },
-                    val: null,
-                    access: true
-                },
-                'separator',
-                {
                     name: 'Клиент',
                     field: {
                         name: 'client',
@@ -122,6 +111,7 @@ block('order').elem('body').content()(function () {
                     val: null,
                     access: true
                 },
+                'separator',
                 {
                     name: 'Дополнительная информация',
                     field: {
@@ -132,6 +122,18 @@ block('order').elem('body').content()(function () {
                     val: null,
                     access: true
                 },
+                {
+                    name: 'Номер CMS',
+                    field: {
+                        name: 'cms',
+                        type: 'text',
+                        placeholder: '12-2222-23'
+                    },
+                    val: null,
+                    access: true
+                },
+                'separator',
+
                 {
                     name: 'Отправить на проработку',
                     field: {

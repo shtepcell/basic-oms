@@ -27,8 +27,15 @@ provide(inherit(DataProvider, {
 
     _buildQuery : function(val) {
         if(!val.length) return null;
-        if(!/[^a-zA-ZА-Яа-я0-9\s]/.test(val))
+        val = val.replace(/\[/g, '');
+        val = val.replace(/\]/g, '');
+        val = val.replace(/\\/g, '');
+        val = val.replace(/\(/g, '');
+        val = val.replace(/\)/g, '');
+
+        if(val.length > 0)
             return new RegExp('' + val + '', 'i');
+        else return null;
     }
 }));
 

@@ -5,6 +5,9 @@ block('order').content()(function () {
         return [
             {
                 elem: 'body',
+                elemMods: {
+                    tab: 'init'
+                },
                 action: '/init',
                 tab: 'init',
                 init: true,
@@ -74,6 +77,9 @@ block('order').content()(function () {
         },
         {
             elem: 'body',
+            elemMods: {
+                tab: 'init'
+            },
             action: this.ctx.action,
             order: this.ctx.order,
             tab: this.ctx.tab,

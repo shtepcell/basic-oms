@@ -2,7 +2,19 @@
     shouldDeps: [
         'b-modal-dynamic-popup',
         {
-            elems: ['head', 'body', 'head-cell', 'cell-name', 'cell-data', 'tab', 'body-row', 'body-row-name', 'body-row-data', 'separator', 'actions']
+            elems: ['head', 'head-cell', 'cell-name', 'cell-data', 'tab',
+             'body-row', 'body-row-name', 'body-row-data', 'separator', 'actions']
+        },
+        {
+            block: 'order',
+            elem: 'body',
+            mods: {
+                tab: ['init']
+            }
+        },
+        {
+            block: 'order',
+            elem: 'service-info'
         },
         {
             block: 'attach',
@@ -12,7 +24,7 @@
         },
         {
             block: 'select',
-            elem: 'service'
+            elem: ['service', 'volume', 'ip']
         },
         {
             block: 'input',

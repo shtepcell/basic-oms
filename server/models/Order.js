@@ -51,8 +51,7 @@ var schema = mongoose.Schema({
         },
         contact: String,
         service: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Service',
+            type: String,
             required : true
         },
         options: String,
