@@ -1,6 +1,9 @@
 ({
     shouldDeps: [
         {
+            block: 'field'
+        },
+        {
             block: 'action',
             elems: ['read-notify']
         },
@@ -40,7 +43,7 @@
         {
             block: 'title',
             mods: {
-                type: ['login', 'user']
+                position: ['center']
             }
         },
         {

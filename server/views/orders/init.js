@@ -14,7 +14,8 @@ module.exports = function(opt, data) {
             {
                 block: 'title',
                 mods: {
-                    lvl: 3
+                    lvl: 3,
+                    position: 'center'
                 },
                 content: 'Инициация заказа'
             },

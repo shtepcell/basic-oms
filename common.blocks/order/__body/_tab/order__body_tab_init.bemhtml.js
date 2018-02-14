@@ -300,12 +300,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                         content: [
                             {
                                 block: 'select',
-                                name: 'service',
-                                mix: {
-                                    block: 'action',
-                                    elem: 'change-service',
-                                    js: true
-                                },
+                                name: 'pre',
                                 mods: {
                                     mode: 'radio',
                                     theme: 'islands',
@@ -330,5 +325,20 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                     }
                 ]
             },
+            {
+                block: 'order',
+                elem: 'control',
+                content: [
+                    {
+                        block: 'button',
+                        mods: {
+                            theme: 'islands',
+                            size: 'l',
+                            type: 'submit'
+                        },
+                        text: 'Инициировать заказ'
+                    }
+                ]
+            }
         ];
 })

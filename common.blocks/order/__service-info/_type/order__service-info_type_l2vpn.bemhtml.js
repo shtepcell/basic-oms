@@ -1,4 +1,51 @@
 block('order').elem('service-info').elemMod('type', 'l2vpn').content()(function () {
+    var ctx = this.ctx,
+        order = ctx.order;
+
+    if(!order)
+        order = {
+            info: {}
+        }
+
+    return [
+        {
+            elem: 'body-row',
+            content: [
+                {
+                    elem: 'body-row-name',
+                    content: 'Ёмкость'
+                },
+                {
+                    elem: 'body-row-data',
+                    content: order.info.volume || ''
+                }
+            ]
+        },
+        {
+            elem: 'body-row',
+            content: [
+                {
+                    elem: 'body-row-name',
+                    content: 'Связанная заявка'
+                },
+                {
+                    elem: 'body-row-data',
+                    content: order.info.relation || ''
+                }
+            ]
+        }
+    ]
+})
+
+block('order').elem('service-info').elemMod('type', 'l2vpn').elemMod('access', true).content()(function () {
+    var ctx = this.ctx,
+        order = ctx.order;
+
+    if(!order)
+        order = {
+            info: {}
+        }
+
     return [
         {
             elem: 'body-row',
@@ -12,7 +59,8 @@ block('order').elem('service-info').elemMod('type', 'l2vpn').content()(function 
                     content: [
                         {
                             block: 'select',
-                            elem: 'volume'
+                            elem: 'volume',
+                            val: order.info.volume || ''
                         }
                     ]
                 }
@@ -35,6 +83,7 @@ block('order').elem('service-info').elemMod('type', 'l2vpn').content()(function 
                                 width: 'available',
                                 size: 'l'
                             },
+                            val: order.info.relation || '',
                             name: 'relation',
                             placeholder: 'ID заказа (1234)'
                         }

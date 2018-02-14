@@ -29,7 +29,7 @@ var stages = {
     'secret': 'Заявка удалена'
 };
 
-var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.service info.city stop.provider history.author history.author.department`;
+var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.service info.city info.street stop.provider history.author history.author.department`;
 
 const Render = require('../render'),
     render = Render.render;
@@ -263,15 +263,8 @@ module.exports = {
             if(data[item] == '') data[item] = undefined;
         });
 
-        if(data['date-request']) {
-            var date = parseDate(data['date-request']);
+        console.log(data);
 
-            if(!date) {
-                res.status(400).send({ errText: 'Некорректный формат даты' });
-                return;
-            }
-            data['date-request'] = date;
-        }
         data.initiator = await Account.findOne({login: res.locals.__user.login});
         data.department = await Department.findOne({_id: res.locals.__user.department._id + ''});
 
@@ -290,32 +283,16 @@ module.exports = {
             return;
         }
         clnt = await Client.findOne({name: clnt});
-
         if(!clnt) {
             res.status(400).send({ errText: 'Такого клиента не существует.' });
             return;
         }
-
         order.info.client = clnt;
 
-        var service = await Service.findOne({ _id: order.info.service });
-        order.info.service = service;
-
-        if(!order.info.street) {
-            res.status(400).send({ errText: 'Улицу указывать обязательно!' });
+        if(!order.info.contact) {
+            res.status(400).send({ errText: 'Укажите контактные данные клиента!' });
             return;
         }
-        order.info.street = parserStreet(order.info.street);
-        if(order.info.street == 'err') {
-            res.status(400).send({ errText: 'Формат улицы неверный!' });
-            return;
-        }
-        var strt = await Street.findOne({ type: order.info.street.type, name: order.info.street.name });
-        if(!strt) {
-            res.status(400).send({ errText: 'Такой улицы не существует. Обратитесь к администратору!' });
-            return;
-        }
-        order.info.street = `${strt.type} ${strt.name}`;
 
         if(!order.info.city) {
             res.status(400).send({ errText: 'Город указывать обязательно!' });
@@ -333,19 +310,6 @@ module.exports = {
         if(tmpCity.length == 0) {
             res.status(400).send({ errText: 'Такого города нет в справочнике! Обратитесь к адиминистратору.' });
             return;
-            // var ct = new City({
-            //     type: order.info.city.type,
-            //     name: order.info.city.name,
-            //     usage: false
-            // });
-            // let dn = await ct.save();
-            // if (dn) {
-            //     smplFlag = true;
-            //     tmpCity[0] = dn;
-            // } else {
-            //     res.status(400).send({ errText: 'Ошибка создания города! Если вы видете эту ошибку - обратитесь к админисратору' });
-            //     return;
-            // }
         }
 
         if(tmpCity.length > 1) {
@@ -354,6 +318,35 @@ module.exports = {
         }
 
         order.info.city = tmpCity[0];
+
+        if(!order.info.street) {
+            res.status(400).send({ errText: 'Укажите улицу!' });
+            return;
+        }
+        order.info.street = parserStreet(order.info.street);
+        if(order.info.street == 'err') {
+            res.status(400).send({ errText: 'Формат улицы неверный!' });
+            return;
+        }
+        var strt = await Street.findOne({ type: order.info.street.type, name: order.info.street.name });
+        if(!strt) {
+            res.status(400).send({ errText: 'Такой улицы не существует. Обратитесь к администратору!' });
+            return;
+        }
+        order.info.street = strt;
+
+        if(!order.info.adds) {
+            res.status(400).send({ errText: 'Укажите точный адрес!' });
+            return;
+        }
+
+        if(!order.info.service) {
+            res.status(400).send({ errText: 'Укажите услугу' });
+            return;
+        }
+
+        // TODO: Если услуга требует связанные заказы - проверить наличие
+
         order.info.pre = undefined;
 
         var kk = {
@@ -398,6 +391,26 @@ module.exports = {
                 ntf.save()
             }
 
+            if(req.files['file-init']) {
+                var id = done.id;
+                var _dir;
+                for (var i = 0; i < 1000; i++) {
+                    if(id > i*1000) {
+                        _dir = `${(i)*1000}-${(i+1)*1000}`;
+                    }
+                }
+
+                var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
+                req.files['file-init'].mv(`./static/files/${_dir}/${order.id}/${req.files['file-init'].name}`, function(err) {
+                    if (err) {
+                        logger.error(err);
+                        return res.status(500).send(err);
+                    }
+                });
+                done.info['file-init'] = `${req.files['file-init'].name}`;
+                done.save();
+            }
+
             if(done.status == 'all-pre') {
                 var ntf0 = new Notify({
                     date: Date.now(),
@@ -423,8 +436,6 @@ module.exports = {
                 ntf.save();
             }
 
-            service.usage = true;
-            service.save();
             clnt.usage = true;
             clnt.save();
             logger.info(`Init Order #${ done.id } | ${ done.status } | ${ done.info.client.name } | ${done.info.city.type} ${done.info.city.name}`, res.locals.__user);

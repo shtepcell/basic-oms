@@ -2,19 +2,36 @@
     shouldDeps: [
         'b-modal-dynamic-popup',
         {
-            elems: ['head', 'head-cell', 'cell-name', 'cell-data', 'tab',
+            elems: ['head', 'head-cell', 'cell-name', 'cell-data', 'tab', 'control',
              'body-row', 'body-row-name', 'body-row-data', 'separator', 'actions']
         },
         {
             block: 'order',
             elem: 'body',
             mods: {
-                tab: ['init']
+                tab: ['init', 'info', 'gzp']
             }
         },
         {
             block: 'order',
-            elem: 'service-info'
+            elem: 'service-info',
+            mods: {
+                type: ['internet', 'vpls', 'l3vpn', 'l2vpn', 'iptv']
+            }
+        },
+        {
+            block: 'order',
+            elem: 'gzp-info',
+            mods: {
+                need: ['yes', 'no']
+            }
+        },
+        {
+            block: 'order',
+            elem: 'capability',
+            mods: {
+                type: ['yes', 'no']
+            }
         },
         {
             block: 'attach',

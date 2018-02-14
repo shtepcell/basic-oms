@@ -5,7 +5,6 @@ provide(bemDom.declElem('select', 'service',
         onSetMod: {
             js: {
                 inited: function () {
-                    console.log('YA TUPOY');
                 }
             }
         }

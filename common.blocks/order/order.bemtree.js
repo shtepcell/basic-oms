@@ -78,7 +78,7 @@ block('order').content()(function () {
         {
             elem: 'body',
             elemMods: {
-                tab: 'init'
+                tab: this.ctx.tab
             },
             action: this.ctx.action,
             order: this.ctx.order,

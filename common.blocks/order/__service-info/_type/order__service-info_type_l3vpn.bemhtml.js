@@ -1,4 +1,51 @@
 block('order').elem('service-info').elemMod('type', 'l3vpn').content()(function () {
+    var ctx = this.ctx,
+        order = ctx.order;
+
+    if(!order)
+        order = {
+            info: {}
+        }
+
+    return [
+        {
+            elem: 'body-row',
+            content: [
+                {
+                    elem: 'body-row-name',
+                    content: 'Ёмкость'
+                },
+                {
+                    elem: 'body-row-data',
+                    content: order.info.volume || ''
+                }
+            ]
+        },
+        {
+            elem: 'body-row',
+            content: [
+                {
+                    elem: 'body-row-name',
+                    content: 'Количество IP адресов'
+                },
+                {
+                    elem: 'body-row-data',
+                    content: order.info.ip || ''
+                }
+            ]
+        }
+    ]
+})
+
+block('order').elem('service-info').elemMod('type', 'l3vpn').elemMod('access', true).content()(function () {
+    var ctx = this.ctx,
+        order = ctx.order;
+
+    if(!order)
+        order = {
+            info: {}
+        }
+
     return [
         {
             elem: 'body-row',
@@ -12,7 +59,8 @@ block('order').elem('service-info').elemMod('type', 'l3vpn').content()(function 
                     content: [
                         {
                             block: 'select',
-                            elem: 'volume'
+                            elem: 'volume',
+                            val: order.info.volume
                         }
                     ]
                 }
@@ -30,7 +78,8 @@ block('order').elem('service-info').elemMod('type', 'l3vpn').content()(function 
                     content: [
                         {
                             block: 'select',
-                            elem: 'ip'
+                            elem: 'ip',
+                            val: order.info.ip
                         }
                     ]
                 }

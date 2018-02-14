@@ -40,7 +40,6 @@ var schema = mongoose.Schema({
         },
         relation: String,
         cms: String,
-        'date-request': Date,
         'cost-once': String,
         'cost-monthly': String,
         add_info: String,
@@ -60,12 +59,18 @@ var schema = mongoose.Schema({
             ref: 'City',
             required : true
         },
-        street: String,
+        street: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Street',
+            required : true
+        },
         adds: String,
-        ip: Boolean,
+        ip: String,
+        volume: String,
         pool: String,
         order: String,
-        'date-sign': Date
+        'date-sign': Date,
+        'file-init': String
     },
     gzp: {
         complete: Boolean,
