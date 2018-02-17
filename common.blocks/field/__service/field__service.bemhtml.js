@@ -6,8 +6,8 @@ block('field').elem('service').content()(function () {
     var services = {
         internet: 'Интернет',
          vpls: 'VPLS',
-         l3vpn: 'l3vpn',
-         l2vpn: 'l2vpn',
+         l3vpn: 'L3VPN',
+         l2vpn: 'L2VPN',
          cloud: 'Облачная АТС',
          digital: 'Цифровые каналы',
          sks: 'СКС',
