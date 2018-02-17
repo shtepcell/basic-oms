@@ -28,7 +28,8 @@ block('order').elem('gzp-info').elemMod('need', 'yes').content()(function () {
         {
             block: 'order',
             elem: 'capability',
-            elemMod: {
+            order: order,
+            elemMods: {
                 type: (order.gzp.capability)?'yes':'no'
             }
         }
@@ -47,7 +48,7 @@ block('order').elem('gzp-info').elemMod('need', 'yes').elemMod('access', true).c
             }
         }
     }
-    
+
     return [
         {
             block: 'order',
@@ -61,6 +62,12 @@ block('order').elem('gzp-info').elemMod('need', 'yes').elemMod('access', true).c
                     elem: 'body-row-data',
                     content: {
                         block: 'select',
+                        mix: {
+                            block: 'action',
+                            elem: 'change-tech',
+                            js: true
+                        },
+                        name: 'capability',
                         mods: {
                             theme: 'islands',
                             mode: 'radio',

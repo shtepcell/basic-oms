@@ -29,8 +29,10 @@ block('order').elem('actions').content()(function () {
                     to: 'start-gzp-build',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');
-                        var income = (order.info['cost-once'] != null && order.info['cost-monthly']);
-                        return (order.status == 'client-match' && access && income && order.gzp.complete && order.gzp.capability)
+                        var income = (order.info['income-once'] != null && order.info['income-monthly'] != null);
+
+                        return ( order.status == 'client-match' && access && income && order.gzp.complete
+                            && ( !order.gzp.need || (order.gzp.need && order.gzp.capability) ) )
                     }
                 },
                 {
@@ -38,7 +40,7 @@ block('order').elem('actions').content()(function () {
                     to: 'start-stop-build',
                     condition: function (user, order) {
                         var access = (order.info.initiator.department._id == user.department._id + '');
-                        var income = (order.info['cost-once'] != null && order.info['cost-monthly']);
+                        var income = (order.info['income-once'] != null && order.info['income-monthly']);
                         return (order.status == 'client-match' && access && income && order.stop.complete && order.stop.capability);
                     }
                 },

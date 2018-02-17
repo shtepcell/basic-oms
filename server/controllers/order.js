@@ -256,14 +256,11 @@ module.exports = {
     init: async (req, res) => {
 
         var data = req.body;
-        var smplFlag = false;
 
         Object.keys(data).forEach( item => {
             data[item] = data[item].trim();
             if(data[item] == '') data[item] = undefined;
         });
-
-        console.log(data);
 
         data.initiator = await Account.findOne({login: res.locals.__user.login});
         data.department = await Department.findOne({_id: res.locals.__user.department._id + ''});
@@ -380,17 +377,10 @@ module.exports = {
             ]
          });
 
+        ordr.info['file-init'] = `${req.files['file-init'].name}`;
+
         var done = await Order.create(ordr);
         if(done) {
-            if(smplFlag) {
-                let ntf = new Notify({
-                    date: Date.now(),
-                    type: 'init-with-unknown-city',
-                    order: done._id
-                });
-                ntf.save()
-            }
-
             if(req.files['file-init']) {
                 var id = done.id;
                 var _dir;
@@ -400,15 +390,13 @@ module.exports = {
                     }
                 }
 
-                var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-                req.files['file-init'].mv(`./static/files/${_dir}/${order.id}/${req.files['file-init'].name}`, function(err) {
+                var dir = await mkdirp(`./static/files/${_dir}/${done.id}`);
+                req.files['file-init'].mv(`./static/files/${_dir}/${done.id}/${req.files['file-init'].name}`, function(err) {
                     if (err) {
                         logger.error(err);
                         return res.status(500).send(err);
                     }
                 });
-                done.info['file-init'] = `${req.files['file-init'].name}`;
-                done.save();
             }
 
             if(done.status == 'all-pre') {
@@ -721,10 +709,22 @@ module.exports = {
                 req.body[item] = req.body[item].trim();
                 if(req.body[item] == '') req.body[item] = undefined;
             });
-            if(isNaN(req.body.time)) {
-                res.status(400).send({ errText: 'Срок организации должен быть числом' });
-                return;
+            
+            if( ((req.body.need == '1' && req.body.capability == '1')
+                || (req.body.need == '0')) && isNaN(req.body.time)) {
+                    res.status(400).send({ errText: 'Срок организации должен быть числом' });
+                    return;
             }
+
+            if((req.body.need == '1' && req.body.capability == '1') || (req.body.need == '0')) {
+
+                if(!req.body['cost-once'] || !req.body['cost-monthly']) {
+                    res.status(400).send({ errText: 'Укажите стоимость организации' });
+                    return;
+                }
+
+            }
+
             order.gzp = req.body;
 
             if(order.status == 'gzp-pre') {
@@ -893,16 +893,16 @@ module.exports = {
         }
 
         if(order.status == 'client-match') {
-            if(reqData['cost-once'] == '' || reqData['cost-once'] == null) {
+            if(reqData['income-once'] == '' || reqData['income-once'] == null) {
                 res.status(400).send({errText: 'Заполните все доступные поля!'});
             }
 
-            if(reqData['cost-monthly'] == '' || reqData['cost-once'] == null) {
+            if(reqData['income-monthly'] == '' || reqData['income-once'] == null) {
                 res.status(400).send({errText: 'Заполните все доступные поля!'});
             }
 
-            order.info['cost-once'] = reqData['cost-once'];
-            order.info['cost-monthly'] = reqData['cost-monthly'];
+            order.info['income-once'] = reqData['income-once'];
+            order.info['income-monthly'] = reqData['income-monthly'];
 
             order.history.push({
                 name: 'Заполнен ожидаемый доход',

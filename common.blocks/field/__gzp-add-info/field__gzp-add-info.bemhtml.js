@@ -1,8 +1,6 @@
-block('field').elem('gzp-need').content()(function () {
+block('field').elem('gzp-add-info').content()(function () {
     var ctx = this.ctx,
-        order = ctx.order,
-        dataset = ctx.dataset;
-
+        order = ctx.order;
 
     if(ctx.display) {
         return [
@@ -13,12 +11,12 @@ block('field').elem('gzp-need').content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-name',
-                        content: 'Необходимость ГЗП'
+                        content: 'Дополнительная информация'
                     },
                     {
                         block: 'order',
                         elem: 'body-row-data',
-                        content: (!!order.gzp.need)?'Да':'Нет'
+                        content: order.gzp.add_info
                     }
                 ]
             }
@@ -26,14 +24,14 @@ block('field').elem('gzp-need').content()(function () {
     }
 })
 
-block('field').elem('gzp-need').elemMod('access', true).content()(function () {
+block('field').elem('gzp-add-info').elemMod('access', true).content()(function () {
     var ctx = this.ctx,
         order = ctx.order,
         dataset = ctx.dataset;
 
+
     if(ctx.display) {
         return [
-
             {
                 block: 'order',
                 elem: 'body-row',
@@ -41,36 +39,23 @@ block('field').elem('gzp-need').elemMod('access', true).content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-name',
-                        content: 'Небходимость ГЗП'
+                        content: 'Дополнительная информация'
                     },
                     {
                         block: 'order',
                         elem: 'body-row-data',
                         content: [
                             {
-                                block: 'select',
-                                name: 'need',
-                                mix: {
-                                    block: 'action',
-                                    elem: 'change-gzp-need',
-                                    js: true
-                                },
+                                block: 'input',
+                                name: 'add_info',
                                 mods: {
-                                    mode: 'radio',
+                                    width: 'available',
                                     theme: 'islands',
                                     size: 'l'
                                 },
-                                val: order.gzp.need,
-                                options: [
-                                    {
-                                        text: 'Нет',
-                                        val: 0
-                                    },
-                                    {
-                                        text: 'Да',
-                                        val: 1
-                                    }
-                                ]
+                                val: order.gzp.add_info,
+                                autocomplete: false,
+                                placeholder: 'Доп. информация'
                             }
                         ]
                     }

@@ -1,4 +1,4 @@
-block('field').elem('date-gzp-active').content()(function () {
+block('field').elem('cs-gzp-active').content()(function () {
     var ctx = this.ctx,
         order = ctx.order;
 

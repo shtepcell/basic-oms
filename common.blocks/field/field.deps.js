@@ -17,7 +17,11 @@
                 'cs-gzp-active',
                 'date-gzp-active',
                 'date-gzp-build',
-                'gzp-need'
+                'gzp-need',
+                'gzp-add-info',
+                'init-file',
+                'order',
+                'date-sign'
             ]
         }
     ]

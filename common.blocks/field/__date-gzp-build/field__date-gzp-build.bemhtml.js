@@ -3,7 +3,7 @@ block('field').elem('date-gzp-build').content()(function () {
         order = ctx.order;
 
     if(ctx.display) {
-        var value = order.date['date-build'];
+        var value = order.date['gzp-build'];
         var year = value.getFullYear();
         var month = value.getMonth() + 1;
         if(month < 10) {

@@ -1,4 +1,14 @@
 block('order').elem('capability').elemMod('type', 'no').content()(function () {
+    var ctx = this.ctx,
+        order = ctx.order;
+
+    if(!order) {
+        order = {
+            gzp: {
+                capability: false
+            }
+        }
+    }
     return [
         {
             block: 'order',
@@ -12,7 +22,7 @@ block('order').elem('capability').elemMod('type', 'no').content()(function () {
                 {
                     block: 'order',
                     elem: 'body-row-data',
-                    content: this.ctx.order.gzp.reason
+                    content: order.gzp.reason
                 }
             ]
         }
@@ -20,6 +30,18 @@ block('order').elem('capability').elemMod('type', 'no').content()(function () {
 })
 
 block('order').elem('capability').elemMod('type', 'no').elemMod('access', true).content()(function () {
+
+    var ctx = this.ctx,
+        order = ctx.order;
+
+    if(!order) {
+        order = {
+            gzp: {
+                capability: false
+            }
+        }
+    }
+
     return [
         {
             block: 'order',
@@ -41,7 +63,7 @@ block('order').elem('capability').elemMod('type', 'no').elemMod('access', true).
                             width: 'available'
                         },
                         name: 'reason',
-                        val: this.ctx.order.gzp.reason,
+                        val: order.gzp.reason,
                         placeholder: 'Укажите причину'
                     }
                 }

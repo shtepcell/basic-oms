@@ -40,8 +40,8 @@ var schema = mongoose.Schema({
         },
         relation: String,
         cms: String,
-        'cost-once': String,
-        'cost-monthly': String,
+        'income-once': String,
+        'income-monthly': String,
         add_info: String,
         client: {
             type: mongoose.Schema.Types.ObjectId,
@@ -79,6 +79,7 @@ var schema = mongoose.Schema({
         time: Number,
         'cost-once': String,
         'cost-monthly': String,
+        reason: String,
         add_info: String
     },
     stop: {
