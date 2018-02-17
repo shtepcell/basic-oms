@@ -2,6 +2,23 @@ block('table').mod('type', 'order').content()(function () {
     var ctx = this.ctx,
         params = this.ctx.params,
         ret = [];
+
+    var services = {
+        internet: 'Интернет',
+         vpls: 'VPLS',
+         l3vpn: 'l3vpn',
+         l2vpn: 'l2vpn',
+         cloud: 'Облачная АТС',
+         digital: 'Цифровые каналы',
+         sks: 'СКС',
+         sputnik: 'Спутник',
+         devices: 'Размещение оборудования',
+         phone: 'Телефония (IP-телефония)',
+         analog: 'Аналоговые каналы (ТЧ)',
+         vibe: 'Волокно',
+         wifi: 'Авторизация Wi-Fi',
+         iptv: 'IP TV'
+    };
     if(ctx.data)
     ctx.data.forEach( item => {
         var dl = '';
@@ -37,7 +54,7 @@ block('table').mod('type', 'order').content()(function () {
                 },
                 {
                     elem: 'cell',
-                    content: item.info.service.name
+                    content: services[item.info.service]
                 },
                 {
                     elem: 'cell',
@@ -45,7 +62,7 @@ block('table').mod('type', 'order').content()(function () {
                 },
                 {
                     elem: 'cell',
-                    content: `${item.info.city.type} ${item.info.city.name}, ${item.info.street}, ${item.info.adds}`
+                    content: `${item.info.city.type} ${item.info.city.name}, ${item.info.street.type}${item.info.street.name}, ${item.info.adds}`
                 }
             ]
         })
