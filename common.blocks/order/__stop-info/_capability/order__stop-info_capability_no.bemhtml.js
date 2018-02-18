@@ -12,7 +12,7 @@ block('order').elem('stop-info').elemMod('capability', 'no').content()(function 
             },
             dataset: dataset,
             order: order,
-            display: true
+            display: order.stop.reason
         }
     ]
 })
