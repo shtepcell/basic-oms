@@ -4,6 +4,9 @@
             block: 'field'
         },
         {
+            block: 'chat'
+        },
+        {
             block: 'action',
             elems: ['read-notify']
         },

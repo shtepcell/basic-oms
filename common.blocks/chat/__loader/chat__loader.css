@@ -1,0 +1,10 @@
+.chat__loader
+{
+    width: 215px;
+    margin: 5em auto;
+}
+
+.chat__loader .spin
+{
+    margin-left: 5px;
+}

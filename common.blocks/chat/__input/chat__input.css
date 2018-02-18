@@ -1,0 +1,8 @@
+.chat__input.textarea
+{
+    margin: 5px 1em 5px 1em;
+    height: 75px;
+    width: 770px;
+    resize: vertical;
+    border-radius: 5px;
+}

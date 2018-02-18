@@ -20,6 +20,10 @@ module.exports = function(opt, data) {
                 user: data.__user,
                 dataset: data.dataset,
                 department: data.department
+            },
+            {
+                block: 'chat',
+                order: data.order                
             }
         ]
     };
