@@ -38,7 +38,8 @@
                 'stop-add-info',
                 'stop-org-info',
                 'stop-cost-once',
-                'stop-cost-monthly'
+                'stop-cost-monthly',
+                'idoss'
             ]
         }
     ]

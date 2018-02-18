@@ -917,14 +917,20 @@ module.exports = {
         }
 
         if(order.status == 'client-match') {
+            var mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0);
+
+            if(mustIDOSS && !reqData.idoss) {
+                res.status(400).send({errText: 'Укажите ID OSS'});
+            }
             if(reqData['income-once'] == '' || reqData['income-once'] == null) {
-                res.status(400).send({errText: 'Заполните все доступные поля!'});
+                res.status(400).send({errText: 'Укажите доход!'});
             }
 
             if(reqData['income-monthly'] == '' || reqData['income-once'] == null) {
-                res.status(400).send({errText: 'Заполните все доступные поля!'});
+                res.status(400).send({errText: 'Укажите доход!'});
             }
 
+            order.info['idoss'] = reqData['idoss'];
             order.info['income-once'] = reqData['income-once'];
             order.info['income-monthly'] = reqData['income-monthly'];
 

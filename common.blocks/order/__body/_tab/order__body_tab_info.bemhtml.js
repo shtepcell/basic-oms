@@ -7,8 +7,11 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
         order = ctx.order,
         adminEdit = ctx.adminEdit;
 
-    var isOwner = (user.department._id+'' == order.info.initiator.department._id+'');
-    
+    var isOwner = (user.department._id+'' == order.info.initiator.department._id+''),
+        isMatch = (order.status == 'client-match'),
+        isNotify = (order.status == 'client-notify'),
+        mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0);
+
     return [
         {
             block: 'field',
@@ -102,39 +105,48 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
         { elem: 'separator' },
         {
             block: 'field',
+            elem: 'idoss',
+            order: order,
+            elemMods: {
+                access: (adminEdit || isOwner && isMatch)
+            },
+            display: ( (isMatch && isOwner && mustIDOSS) || !!order.info['idoss'] )
+        },
+        {
+            block: 'field',
             elem: 'income-once',
             order: order,
             elemMods: {
-                access: (adminEdit || (user.department._id+'' == order.info.initiator.department._id+'') && order.status == 'client-match')
+                access: (adminEdit || isOwner && isMatch)
             },
-            display: ( (order.status == 'client-match' && isOwner) || !!order.info['income-monthly'])
+            display: ( (isMatch && isOwner) || !!order.info['income-monthly'])
         },
         {
             block: 'field',
             elem: 'income-monthly',
             order: order,
             elemMods: {
-                access: (adminEdit || (user.department._id+'' == order.info.initiator.department._id+'') && order.status == 'client-match')
+                access: (adminEdit || isOwner && isMatch)
             },
-            display: ( (order.status == 'client-match' && isOwner) || !!order.info['income-monthly'])
+            display: ( (isMatch && isOwner) || !!order.info['income-monthly'])
         },
         {
             block: 'field',
             elem: 'order',
             order: order,
             elemMods: {
-                access: (adminEdit || (user.department._id+'' == order.info.initiator.department._id+'') && order.status == 'client-notify')
+                access: (adminEdit || isOwner && isNotify)
             },
-            display: ( (order.status == 'client-notify' && isOwner) || order.info.order)
+            display: ( (isNotify && isOwner) || order.info.order)
         },
         {
             block: 'field',
             elem: 'date-sign',
             order: order,
             elemMods: {
-                access: (adminEdit || isOwner && order.status == 'client-notify')
+                access: (adminEdit || isOwner && isNotify)
             },
-            display: ( (order.status == 'client-notify' && isOwner) || order.info['date-sign'])
+            display: ( (isNotify && isOwner) || order.info['date-sign'])
         },
         {
             elem: 'actions',

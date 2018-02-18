@@ -40,6 +40,7 @@ var schema = mongoose.Schema({
         },
         relation: String,
         cms: String,
+        idoss: String,
         'income-once': String,
         'income-monthly': String,
         add_info: String,
