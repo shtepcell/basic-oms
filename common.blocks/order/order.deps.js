@@ -9,7 +9,7 @@
             block: 'order',
             elem: 'body',
             mods: {
-                tab: ['init', 'info', 'gzp', 'stop']
+                tab: ['init', 'info', 'gzp', 'stop', 'history']
             }
         },
         {
