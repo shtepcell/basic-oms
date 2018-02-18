@@ -46,7 +46,7 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
             elem: 'date-gzp-active',
             order: order,
             dataset: dataset,
-            display: order.date['network']
+            display: order.date['network'] && order.gzp['gzp-build']
         },
         { elem: 'separator' },
         {

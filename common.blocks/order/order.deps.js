@@ -9,7 +9,7 @@
             block: 'order',
             elem: 'body',
             mods: {
-                tab: ['init', 'info', 'gzp']
+                tab: ['init', 'info', 'gzp', 'stop']
             }
         },
         {
@@ -17,6 +17,13 @@
             elem: 'service-info',
             mods: {
                 type: ['internet', 'vpls', 'l3vpn', 'l2vpn', 'iptv']
+            }
+        },
+        {
+            block: 'order',
+            elem: 'stop-info',
+            mods: {
+                capability: ['yes', 'no']
             }
         },
         {

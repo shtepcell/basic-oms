@@ -21,7 +21,24 @@
                 'gzp-add-info',
                 'init-file',
                 'order',
-                'date-sign'
+                'date-sign',
+                'cs-stop-pre',
+                'date-stop-pre',
+                'cs-stop-organization',
+                'date-stop-organization',
+                'date-stop-build',
+                'tech',
+                'stop-reason',
+                'provider',
+                'provider-contact',
+                'devices',
+                'add-devices',
+                'interfaces',
+                'time',
+                'stop-add-info',
+                'stop-org-info',
+                'stop-cost-once',
+                'stop-cost-monthly'
             ]
         }
     ]

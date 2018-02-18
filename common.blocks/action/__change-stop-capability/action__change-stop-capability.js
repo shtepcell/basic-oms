@@ -1,6 +1,6 @@
-modules.define('action__change-gzp-need', ['i-bem-dom', 'BEMHTML', 'select', 'order__body', 'order__gzp-info'], function(provide, bemDom, BEMHTML, Select, body, order) {
+modules.define('action__change-stop-capability', ['i-bem-dom', 'BEMHTML', 'select', 'order__body', 'order__stop-info'], function(provide, bemDom, BEMHTML, Select, body, order) {
 
-provide(bemDom.declElem('action', 'change-gzp-need',
+provide(bemDom.declElem('action', 'change-stop-capability',
     {
         onSetMod: {
             js: {
@@ -14,9 +14,11 @@ provide(bemDom.declElem('action', 'change-gzp-need',
                             v.domElem,
                             BEMHTML.apply({
                                 block: 'order',
-                                elem: 'gzp-info',
+                                elem: 'stop-info',
+                                order: this.params.order,
+                                dataset:this.params.dataset,
                                 elemMods: {
-                                    need: (!!value)?'yes':'no',
+                                    capability: (!!value)?'yes':'no',
                                     access: true
                                 }
                             })

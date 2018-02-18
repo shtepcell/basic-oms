@@ -377,7 +377,8 @@ module.exports = {
             ]
          });
 
-        ordr.info['file-init'] = `${req.files['file-init'].name}`;
+        if(req.files['file-init'])
+            ordr.info['file-init'] = `${req.files['file-init'].name}`;
 
         var done = await Order.create(ordr);
         if(done) {
@@ -709,7 +710,7 @@ module.exports = {
                 req.body[item] = req.body[item].trim();
                 if(req.body[item] == '') req.body[item] = undefined;
             });
-            
+
             if( ((req.body.need == '1' && req.body.capability == '1')
                 || (req.body.need == '0')) && isNaN(req.body.time)) {
                     res.status(400).send({ errText: 'Срок организации должен быть числом' });
@@ -723,6 +724,13 @@ module.exports = {
                     return;
                 }
 
+            }
+
+            if( req.body.need == '1' && req.body.capability == '0' ) {
+                if(!req.body.reason) {
+                    res.status(400).send({ errText: 'Укажите причину технической не возможности!' });
+                    return;
+                }
             }
 
             order.gzp = req.body;
@@ -769,27 +777,41 @@ module.exports = {
                 if(req.body[item] == '') req.body[item] = undefined;
             });
 
-            if(isNaN(req.body.time)) {
-                res.status(400).send({errText: 'Срок организации должен быть числом'});
-                return;
-            }
-
-            if(!req.body.provider) {
-                res.status(400).send({errText: 'Провайдер - обязательное поле!'});
-                return;
-            }
-
             order.stop = req.body;
-            var prvdr = parseClient(req.body.provider);
+            if(req.body.capability == '1') {
 
-            var provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
+                if(!req.body.provider) {
+                    res.status(400).send({errText: 'Провайдер - обязательное поле!'});
+                    return;
+                }
 
-            if(!provider) {
-                res.status(400).send({errText : 'Такого провайдера не существует!'});
-                return;
+                var prvdr = parseClient(req.body.provider);
+
+                var provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
+
+                if(!provider) {
+                    res.status(400).send({errText : 'Такого провайдера не существует!'});
+                    return;
+                }
+
+                order.stop.provider = provider;
+
+                if(isNaN(req.body.time)) {
+                    res.status(400).send({errText: 'Срок организации должен быть числом'});
+                    return;
+                }
+
+                if(!req.body['cost-once'] || !req.body['cost-monthly']) {
+                    res.status(400).send({errText: 'Укажите стоимость организации'});
+                    return;
+                }
+            } else {
+
+                if(!req.body.reason) {
+                    res.status(400).send({errText: 'Укажите причину'});
+                    return;
+                }
             }
-
-            order.stop.provider = provider;
 
             if(order.status == 'stop-pre') {
                 order.status = 'client-match';
@@ -819,8 +841,10 @@ module.exports = {
                 done = await done.deepPopulate(populateQuery);
                 sendMail(done, 'new-status');
                 ntf.save();
-                provider.usage = true;
-                provider.save();
+                if(req.body.capability == 1) {
+                    provider.usage = true;
+                    provider.save();
+                }
                 logger.info(`End pre-stop order #${ done.id }`, res.locals.__user);
                 res.status(200).send({created: true});
             } else res.status(400).send({errText: 'Что-то пошло не так!'})

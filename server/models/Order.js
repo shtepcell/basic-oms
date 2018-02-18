@@ -89,6 +89,7 @@ var schema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Provider'
         },
+        reason: String,
         contact: String,
         devices: String,
         add_devices: String,
