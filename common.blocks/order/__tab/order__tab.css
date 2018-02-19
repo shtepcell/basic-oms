@@ -1,4 +1,8 @@
-.order__tab {
+.order__tab
+{
     width: 300px;
     margin: 0 auto;
+    margin-bottom: -25px;
+    position: relative;
+    top: -32px;
 }

@@ -17,7 +17,7 @@ block('order').elem('head').content()(function () {
                     elem: 'right'
                 },
                 {
-                    elem: (val >= 0)?'green':'red'
+                    elem: (val >= 0)?(val<3)?'orange':'green':'red'
                 }
             ],
             content: {
@@ -43,7 +43,7 @@ block('order').elem('head').content()(function () {
     var ret = [
         {
             elem: 'head-cell',
-            content: 'Заявка №' + order.id,
+            content: 'Заказ #' + order.id,
             mix: {
                 elem: 'title'
             }
@@ -72,19 +72,6 @@ block('order').elem('head').content()(function () {
                         content: [
                             {
                                 elem: 'cell-name',
-                                content: 'Клиент'
-                            },
-                            {
-                                elem: 'cell-data',
-                                content: `[${order.info.client.type.shortName}] ${order.info.client.name}`
-                            }
-                        ]
-                    },
-                    {
-                        elem: 'head-cell',
-                        content: [
-                            {
-                                elem: 'cell-name',
                                 content: 'Ответственный за текущий этап отдел'
                             },
                             {
@@ -92,8 +79,7 @@ block('order').elem('head').content()(function () {
                                 content: order.resp
                             }
                         ]
-                    },
-
+                    }
                 ]
             }
         },

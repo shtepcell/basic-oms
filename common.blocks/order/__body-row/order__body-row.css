@@ -1,38 +1,39 @@
-.order__body-row {
+.order__body-row
+{
     display: table;
-    border-radius: 0 0 0.5em 0.5em;
     min-height: 35px;
-    width: 95%;
     padding-left: 2em;
     padding-right: 2em;
     border-bottom: 1px solid #cfcfcf;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-.order__body-row-name {
+.order__body-row-name
+{
     display: table-cell;
     vertical-align: middle;
-    width: 550px;
+    width: 370px;
     font-size: 11pt;
-    font-weight:lighter;
+    font-weight: lighter;
     font-style: italic;
     text-align: left;
 }
 
-.order__body-date {
+.order__body-date
+{
     display: table-cell;
     text-align: left;
-    width: 20%;
-    font-weight:normal;
+    width: 200px;
+    font-weight: normal;
     font-size: 10pt;
 }
 
-.order__body-row-data {
+.order__body-row-data
+{
     display: table-cell;
     vertical-align: middle;
     padding-top: 5px;
     padding-bottom: 5px;
-    width: 50%;
+    width: 370px;
     line-height: 18px;
     font-weight: normal;
     font-size: 11pt;

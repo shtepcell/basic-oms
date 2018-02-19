@@ -1,4 +1,5 @@
-.order__cell-name {
+.order__cell-name
+{
     border-bottom: 0.5px solid grey;
     text-align: center;
     font-style: italic;
