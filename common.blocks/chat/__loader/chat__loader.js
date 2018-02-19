@@ -13,6 +13,14 @@ provide(bemDom.declElem('chat', 'loader',
                         context: this,
                         error: function(err) {
                             console.error('Error');
+                            bemDom.replace(
+                                this.domElem,
+                                BEMHTML.apply({
+                                    block: 'chat',
+                                    elem: 'nt',
+                                    content: 'Ошибка загрузки!'
+                                })
+                            )
                         },
                         success: function(res) {
 
