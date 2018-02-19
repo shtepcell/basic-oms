@@ -1,4 +1,12 @@
 .chat__body
 {
     border-bottom: 1px solid #ddd;
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.chat__nt
+{
+    width: 200px;
+    margin: 20px auto;
 }

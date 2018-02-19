@@ -4,23 +4,28 @@ block('chat').elem('editor').content()(function () {
             block: 'textarea',
             mix: {
                 block: 'chat',
-                elem: 'input'
+                elem: 'input',
+                js: true
             },
             mods: {
                 theme: 'islands',
                 size: 'l'
             },
-            placeholder: 'Введите сообщение... Но отправить Вы его не сможете. Чат в разработке :)'
+            placeholder: 'Введите сообщение...'
         },
         {
             block: 'button',
             mix: {
                 block: 'chat',
-                elem: 'send'
+                elem: 'send',
+                js: {
+                    anchor: this.ctx.anchor
+                }
             },
             mods: {
                 theme: 'islands',
-                size: 'l'
+                size: 'l',
+                disabled: true
             },
             text: 'Отправить'
         }

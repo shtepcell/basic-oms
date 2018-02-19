@@ -1,0 +1,40 @@
+.chat__message
+{
+    width: 700px;
+    margin: 25px auto;
+    display: flex;
+    flex-direction: row;
+}
+.chat__mess-container
+{
+    flex: 0 590px;
+    background-color: rgba(26, 120, 190, 0.1);
+    border-radius: 15px;
+}
+
+.chat__time
+{
+    display: inline-block;
+    font-size: 8pt;
+    font-weight: lighter;
+    width: 100px;
+    margin: auto 5px;
+    vertical-align: middle;
+}
+
+.chat__author
+{
+    display: inline-block;
+    font-size: 10pt;
+    font-weight: bold;
+    position: relative;
+    top: -16px;
+    right: -8px;
+}
+
+.chat__text
+{
+    margin: -10px 10px 8px 10px;
+    font-weight: lighter;
+    font-size: 12pt;
+}

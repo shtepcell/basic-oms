@@ -15,11 +15,14 @@ block('chat').content()(function () {
             elem: 'body',
             content: {
                 elem: 'loader',
-                js: true
+                js: {
+                    anchor: ctx.order.id
+                }
             }
         },
         {
-            elem: 'editor'
+            elem: 'editor',
+            anchor: ctx.order.id
         }
     ]
 })

@@ -7,6 +7,10 @@
                 size: 'l',
                 width: 'available'
             }
+        },
+        {
+            block: 'chat',
+            elem: 'input'
         }
     ]
 })

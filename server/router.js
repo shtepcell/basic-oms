@@ -9,7 +9,9 @@ const Auth = require('./controllers/auth'),
     Order = require('./controllers/order'),
     Holiday = require('./controllers/holiday')
     Notify = require('./controllers/notify'),
-    Street = require('./controllers/street');
+    Street = require('./controllers/street'),
+    Chat = require('./controllers/chat');
+
 
 const fileUpload = require('express-fileupload');
 const mkdirp = require('mkdirp-promise');
@@ -67,6 +69,9 @@ module.exports = function (app) {
     app.post('/order/:id/stop', Order.endPreSTOP);
 
     app.post('/order/:id/:tab/admin', Order.adminEdit);
+
+    app.get('/chat/:anchor', Chat.get);
+    app.post('/chat/:anchor', Chat.send);
 
     app.get('/profile', Account.getProfile);
     app.post('/profile', Account.selfEdit);
