@@ -267,7 +267,67 @@ block('searcher')(
                                                 size: 'l',
                                                 width: 'available'
                                             },
-                                            options: [{text: 'Не важно', val: ''}].concat(data.services)
+                                            options: [
+                                                {
+                                                    text: 'Не выбрано'
+                                                },
+                                                {
+                                                    text: 'Интернет',
+                                                    val: 'internet'
+                                                },
+                                                {
+                                                    text: 'L3VPN',
+                                                    val: 'l3vpn'
+                                                },
+                                                {
+                                                    text: 'L2VPN',
+                                                    val: 'l2vpn'
+                                                },
+                                                {
+                                                    text: 'Облачная АТС',
+                                                    val: 'cloud'
+                                                },
+                                                {
+                                                    text: 'Цифровые каналы',
+                                                    val: 'digital'
+                                                },
+                                                {
+                                                    text: 'Спутник',
+                                                    val: 'sputnik'
+                                                },
+                                                {
+                                                    text: 'Размещение оборудования',
+                                                    val: 'devices'
+                                                },
+                                                {
+                                                    text: 'Телефония (IP-телефония)',
+                                                    val: 'phone'
+                                                },
+                                                {
+                                                    text: 'СКС',
+                                                    val: 'sks'
+                                                },
+                                                {
+                                                    text: 'Аналоговые каналы (ТЧ)',
+                                                    val: 'analog'
+                                                },
+                                                {
+                                                    text: 'Волокно',
+                                                    val: 'vibe'
+                                                },
+                                                {
+                                                    text: 'VPLS',
+                                                    val: 'vpls'
+                                                },
+                                                {
+                                                    text: 'Авторизация Wi-Fi',
+                                                    val: 'wifi'
+                                                },
+                                                {
+                                                    text: 'IP TV',
+                                                    val: 'iptv'
+                                                }
+                                            ]
                                         }
                                     }
                                 ]

@@ -101,7 +101,7 @@ block('navigator').content()(function() {
         },
         {
             type: 'title',
-            text: 'Система управления заявками 2.0',
+            text: 'Система управления заказами 2.0',
             access: !user
         }
     ];

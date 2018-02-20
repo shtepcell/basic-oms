@@ -1696,10 +1696,9 @@ var makeQuery = async (req, res) => {
     }
 
     if(query.service) {
-        var service = await Service.findOne({name: query.service});
         if(qr['$and']) {
-            qr['$and'].push({'info.service': service._id})
-        } else qr['$and'] = [{'info.service': service._id}];
+            qr['$and'].push({'info.service': query.service})
+        } else qr['$and'] = [{'info.service': query.service}];
     }
     return qr;
 }
