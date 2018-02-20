@@ -26,7 +26,7 @@ block('order').elem('service-info').elemMod('type', 'vpls').content()(function (
             content: [
                 {
                     elem: 'body-row-name',
-                    content: 'Связанная заявка'
+                    content: 'Связанный заказ'
                 },
                 {
                     elem: 'body-row-data',
@@ -71,7 +71,7 @@ block('order').elem('service-info').elemMod('type', 'vpls').content()(function (
                 content: [
                     {
                         elem: 'body-row-name',
-                        content: 'Связанная заявка'
+                        content: 'Связанный заказ'
                     },
                     {
                         elem: 'body-row-data',

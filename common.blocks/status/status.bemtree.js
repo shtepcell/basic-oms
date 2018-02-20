@@ -10,7 +10,7 @@ block('status').content()(function () {
                     content: [
                         {
                             elem: 'label',
-                            content: 'Всего заявок в системе :'
+                            content: 'Всего заказов в системе :'
                         },
                         {
                             elem: 'data',

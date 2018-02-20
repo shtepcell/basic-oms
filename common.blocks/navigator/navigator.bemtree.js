@@ -9,7 +9,7 @@ block('navigator').content()(function() {
         },
         {
             type: 'link',
-            text: 'Поиск заявок',
+            text: 'Поиск заказов',
             url: '/search',
             access: user
         },

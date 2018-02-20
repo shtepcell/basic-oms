@@ -254,7 +254,7 @@ block('order').elem('body').content()(function () {
                     access: (adminEdit)
                 },
                 {
-                    name: 'Связанные заявки',
+                    name: 'Связанные заказы',
                     field: {
                         name: 'relation',
                         type: 'text',

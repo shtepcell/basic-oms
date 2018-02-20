@@ -52,14 +52,14 @@ block('order').elem('actions').content()(function () {
                     }
                 },
                 {
-                    text: 'Отклонить заявку',
+                    text: 'Отклонить заказ',
                     to: 'reject',
                     condition: function (user, order) {
                         return ((order.info.initiator.department._id == user.department._id + '' || user.department.type == 'admin') && order.status != 'reject')
                     }
                 },
                 {
-                    text: 'Полностью удалить заявку',
+                    text: 'Полностью удалить заказ',
                     to: 'delete',
                     condition: function (user, order) {
                         return (user.department.type == 'admin')

@@ -37,7 +37,7 @@ block('table').mod('type', 'notify').content()(function () {
     return [
         {
             elem: 'head',
-            columns: ['Событие', 'ID заявки', 'Время и дата']
+            columns: ['Событие', 'ID заказа', 'Время и дата']
         },
         {
             elem: 'body',

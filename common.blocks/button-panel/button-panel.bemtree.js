@@ -4,7 +4,7 @@ block('button-panel').content()(function () {
 
 
     var content = [];
-    
+
     switch (user.department.type) {
         case 'b2o':
         case 'b2b':
@@ -21,7 +21,7 @@ block('button-panel').content()(function () {
                         type: 'link'
                     },
                     url: '/init',
-                    text: 'Инициация заявки'
+                    text: 'Инициация заказа'
                 }
             ];
             break;
