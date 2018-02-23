@@ -5,7 +5,6 @@ provide(bemDom.declElem('action', 'change-tech',
         onSetMod: {
             js: {
                 inited: function () {
-                    console.log('HUY');
                     this._events(this.findMixedBlock(Select)).on('change', function(e) {
                         var value = e.bemTarget._menu._val;
                         var b = this.findParentElem(body);

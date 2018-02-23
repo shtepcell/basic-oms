@@ -5,7 +5,7 @@ provide(bemDom.declElem('order', 'stop-info',
         onSetMod: {
             js: {
                 inited: function () {
-                    console.log('Ok');
+                    
                 }
             }
         }

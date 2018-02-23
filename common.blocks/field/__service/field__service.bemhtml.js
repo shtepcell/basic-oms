@@ -69,7 +69,12 @@ block('field').elem('service').elemMod('access', true).content()(function () {
                                 mix: {
                                     block: 'action',
                                     elem: 'change-service',
-                                    js: true
+                                    js: {
+                                        service: order.info.service,
+                                        volume: order.info.volume,
+                                        ip: order.info.ip,
+                                        relation: order.info.relation
+                                    }
                                 },
                                 mods: {
                                     mode: 'radio',

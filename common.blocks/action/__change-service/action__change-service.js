@@ -10,6 +10,18 @@ provide(bemDom.declElem('action', 'change-service',
                         var value = e.bemTarget._menu._val;
                         var b = this.findParentElem(body);
                         var v = b.findChildElem(order);
+                        var ordr,
+                            params = this.params;
+
+                        if (params.service == value) {
+                            ordr = {
+                                info: {
+                                    volume: params.volume,
+                                    ip: params.ip,
+                                    relation: params.relation
+                                }
+                            }
+                        }
 
                         bemDom.replace(
                             v.domElem,
@@ -19,7 +31,8 @@ provide(bemDom.declElem('action', 'change-service',
                                 elemMods: {
                                     type: value,
                                     access: true
-                                }
+                                },
+                                order: ordr
                             })
                         )
 

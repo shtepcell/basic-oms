@@ -10,7 +10,7 @@ modules.define('order__button',
         },
 
         _onClick: function () {
-            var data = this.params.data;
+            var data = this.params;
             if (confirm(`Вы уверены, что хотите ${data.text}?`)) {
                 $.ajax({
                     url: this.params.url,

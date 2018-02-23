@@ -10,6 +10,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
     var isOwner = (user.department._id+'' == order.info.initiator.department._id+''),
         isMatch = (order.status == 'client-match'),
         isNotify = (order.status == 'client-notify'),
+        isPre = (order.status == 'all-pre' || order.status == 'gzp-pre' || order.status == 'stop-pre'),
         mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0);
 
     return [
@@ -69,7 +70,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elem: 'service',
             order: order,
             elemMods: {
-                access: adminEdit
+                access: adminEdit || (isOwner && isPre)
             },
             dataset: dataset,
             display: true
@@ -79,7 +80,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elem: 'service-info',
             elemMods: {
                 type: order.info.service,
-                access: adminEdit
+                access: adminEdit || (isOwner && isPre)
             },
             order: order
         },
@@ -150,11 +151,12 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
         },
         {
             elem: 'actions',
-            department: this.ctx.department,
+            elemMods: {
+                tab: 'info'
+            },
             order: order,
             admin: adminEdit,
-            user: this.ctx.user,
-            tab: this.ctx.tab
+            user: this.ctx.user
         }
     ]
 

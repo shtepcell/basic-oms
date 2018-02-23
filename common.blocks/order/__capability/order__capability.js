@@ -5,7 +5,6 @@ provide(bemDom.declElem('order', 'capability',
         onSetMod: {
             js: {
                 inited: function () {
-                    console.log('Ok');
                 }
             }
         }

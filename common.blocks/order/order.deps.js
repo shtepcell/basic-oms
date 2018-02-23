@@ -7,6 +7,20 @@
         },
         {
             block: 'order',
+            elem: 'action',
+            mods: {
+                type: 'submit'
+            }
+        },
+        {
+            block: 'order',
+            elem: 'actions',
+            mods: {
+                tab: ['info', 'gzp', 'stop']
+            }
+        },
+        {
+            block: 'order',
             elem: 'body',
             mods: {
                 tab: ['init', 'info', 'gzp', 'stop', 'history']

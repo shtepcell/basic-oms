@@ -77,11 +77,12 @@ block('order').elem('body').elemMod('tab', 'stop').content()(function () {
         },
         {
             elem: 'actions',
-            department: this.ctx.department,
+            elemMods: {
+                tab: 'stop'
+            },
             order: order,
             admin: adminEdit,
-            user: this.ctx.user,
-            tab: 'stop'
+            user: this.ctx.user
         }
     ];
 })

@@ -1,9 +1,9 @@
-.order__actions > .order__action {
-    height: 50px;
+.order__actions
+{
     padding-top: 1em;
-    padding-left: 2em;
-    padding-right: 2em;
 }
-.order__action {
-    display: inline-block;
+
+.order__actions > .button
+{
+    margin: 0 0 1em 2em;
 }

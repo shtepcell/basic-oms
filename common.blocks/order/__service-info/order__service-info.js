@@ -5,7 +5,7 @@ provide(bemDom.declElem('order', 'service-info',
         onSetMod: {
             js: {
                 inited: function () {
-                    console.log('Ok');
+                    
                 }
             }
         }

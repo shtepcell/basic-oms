@@ -80,11 +80,12 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
         },
         {
             elem: 'actions',
-            department: this.ctx.department,
+            elemMods: {
+                tab: 'gzp'
+            },
             order: order,
             admin: adminEdit,
-            user: this.ctx.user,
-            tab: 'gzp'
+            user: this.ctx.user
         }
     ];
 })
