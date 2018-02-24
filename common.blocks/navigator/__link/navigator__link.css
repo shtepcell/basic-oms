@@ -6,8 +6,6 @@
 
 .navigator__link .icon
 {
-    line-height: 20px;
-    background-size: 100% auto;
     width: 19px;
 }
 
@@ -42,7 +40,6 @@
 {
     height: 18px;
     background: #0a5a9e;
-    /*animation: shake 0.7s ease-in both;*/
     backface-visibility: hidden;
 }
 
