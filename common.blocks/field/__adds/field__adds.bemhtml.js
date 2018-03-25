@@ -54,7 +54,7 @@ block('field').elem('adds').elemMod('access', true).content()(function () {
                                     theme: 'islands',
                                     size: 'l'
                                 },
-                                val: `${order.info.adds}`,
+                                val: (order)?`${order.info.adds}`:'',
                                 autocomplete: false,
                                 placeholder: 'д.32, кв.15'
                             }

@@ -60,10 +60,10 @@ var schema = mongoose.Schema({
             ref: 'City',
             required : true
         },
+        coordinate: String,
         street: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Street',
-            required : true
+            ref: 'Street'
         },
         adds: String,
         ip: String,

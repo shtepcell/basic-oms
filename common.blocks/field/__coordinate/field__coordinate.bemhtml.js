@@ -1,4 +1,4 @@
-block('field').elem('street').content()(function () {
+block('field').elem('coordinate').content()(function () {
     var ctx = this.ctx,
         order = ctx.order,
         dataset = ctx.dataset;
@@ -12,12 +12,12 @@ block('field').elem('street').content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-name',
-                        content: 'Улица'
+                        content: 'Координаты'
                     },
                     {
                         block: 'order',
                         elem: 'body-row-data',
-                        content: `${order.info.street.type} ${order.info.street.name}`
+                        content: `${order.info.coordinate}`
                     }
                 ]
             }
@@ -25,7 +25,7 @@ block('field').elem('street').content()(function () {
     }
 })
 
-block('field').elem('street').elemMod('access', true).content()(function () {
+block('field').elem('coordinate').elemMod('access', true).content()(function () {
     var ctx = this.ctx,
         order = ctx.order,
         dataset = ctx.dataset;
@@ -40,25 +40,23 @@ block('field').elem('street').elemMod('access', true).content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-name',
-                        content: 'Улица *'
+                        content: 'Координаты *'
                     },
                     {
                         block: 'order',
                         elem: 'body-row-data',
                         content: [
                             {
-                                block : 'suggest',
-                                mods : {
-                                    theme : 'islands',
-                                    size : 'l',
-                                    'has-dataprovider' : 'adress'
+                                block: 'input',
+                                name: 'coordinate',
+                                mods: {
+                                    width: 'available',
+                                    theme: 'islands',
+                                    size: 'l'
                                 },
-                                val: (order)?`${order.info.street.type} ${order.info.street.name}`:'',
-                                placeholder: 'ул. Привокзальная',
-                                name: 'street',
-                                dataprovider: {
-                                    data: dataset['streets']
-                                }
+                                val: (order)?`${order.info.coordinate}`:'',
+                                autocomplete: false,
+                                placeholder: '55,755831°, 37,617673°'
                             }
                         ]
                     }

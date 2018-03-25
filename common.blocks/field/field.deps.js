@@ -39,7 +39,9 @@
                 'stop-org-info',
                 'stop-cost-once',
                 'stop-cost-monthly',
-                'idoss'
+                'idoss',
+                'type-adress',
+                'coordinate'
             ]
         }
     ]

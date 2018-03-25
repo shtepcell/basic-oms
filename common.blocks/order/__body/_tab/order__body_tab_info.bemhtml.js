@@ -45,24 +45,11 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             display: true
         },
         {
-            block: 'field',
-            elem: 'street',
-            order: order,
+            elem: 'adress-info',
             elemMods: {
-                access: adminEdit
+                type: (order.info.coordinate)?'coordination':'location'
             },
-            dataset: dataset,
-            display: true
-        },
-        {
-            block: 'field',
-            elem: 'adds',
-            order: order,
-            elemMods: {
-                access: adminEdit
-            },
-            dataset: dataset,
-            display: true
+            order: order
         },
         { elem: 'separator' },
         {

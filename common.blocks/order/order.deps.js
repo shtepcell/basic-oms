@@ -35,6 +35,13 @@
         },
         {
             block: 'order',
+            elem: 'adress-info',
+            mods: {
+                type: ['location', 'coordination']
+            }
+        },
+        {
+            block: 'order',
             elem: 'stop-info',
             mods: {
                 capability: ['yes', 'no']

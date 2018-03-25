@@ -88,56 +88,22 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                 ]
             },
             {
-                elem: 'body-row',
-                content: [
-                    {
-                        elem: 'body-row-name',
-                        content: 'Улица *'
-                    },
-                    {
-                        elem: 'body-row-data',
-                        content: [
-                            {
-                                block : 'suggest',
-                                mods : {
-                                    theme : 'islands',
-                                    size : 'l',
-                                    'has-dataprovider' : 'adress'
-                                },
-                                placeholder: 'ул. Новый Арбат',
-                                name: 'street',
-                                dataprovider: {
-                                    data: dataset['streets']
-                                }
-                            }
-                        ]
-                    }
-                ]
+                block: 'field',
+                elem: 'type-adress',
+                display: true,
+                dataset: dataset,
+                elemMods: {
+                    access: true
+                }
             },
             {
-                elem: 'body-row',
-                content: [
-                    {
-                        elem: 'body-row-name',
-                        content: 'д./кв. и т.д *'
-                    },
-                    {
-                        elem: 'body-row-data',
-                        content: [
-                            {
-                                block: 'input',
-                                name: 'adds',
-                                mods: {
-                                    width: 'available',
-                                    theme: 'islands',
-                                    size: 'l'
-                                },
-                                autocomplete: false,
-                                placeholder: 'д.32, кв.15'
-                            }
-                        ]
-                    }
-                ]
+                block: 'order',
+                elem: 'adress-info',
+                elemMods: {
+                    type: 'location',
+                    access: true
+                },
+                dataset: dataset
             },
             {
                 elem: 'separator'

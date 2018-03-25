@@ -316,27 +316,36 @@ module.exports = {
 
         order.info.city = tmpCity[0];
 
-        if(!order.info.street) {
-            res.status(400).send({ errText: 'Укажите улицу!' });
-            return;
-        }
-        order.info.street = parserStreet(order.info.street);
-        if(order.info.street == 'err') {
-            res.status(400).send({ errText: 'Формат улицы неверный!' });
-            return;
-        }
-        var strt = await Street.findOne({ type: order.info.street.type, name: order.info.street.name });
-        if(!strt) {
-            res.status(400).send({ errText: 'Такой улицы не существует. Обратитесь к администратору!' });
-            return;
-        }
-        order.info.street = strt;
+        switch (req.body.adressType) {
+            case 'location':
+                if(!order.info.street) {
+                    res.status(400).send({ errText: 'Укажите улицу!' });
+                    return;
+                }
+                order.info.street = parserStreet(order.info.street);
+                if(order.info.street == 'err') {
+                    res.status(400).send({ errText: 'Формат улицы неверный!' });
+                    return;
+                }
+                var strt = await Street.findOne({ type: order.info.street.type, name: order.info.street.name });
+                if(!strt) {
+                    res.status(400).send({ errText: 'Такой улицы не существует. Обратитесь к администратору!' });
+                    return;
+                }
+                order.info.street = strt;
 
-        if(!order.info.adds) {
-            res.status(400).send({ errText: 'Укажите точный адрес!' });
-            return;
+                if(!order.info.adds) {
+                    res.status(400).send({ errText: 'Укажите точный адрес!' });
+                    return;
+                }
+                break;
+            case 'coordination':
+                if(!order.info.coordinate) {
+                    res.status(400).send({ errText: 'Укажите координаты!' });
+                    return;
+                }
+                break;
         }
-
         if(!order.info.service) {
             res.status(400).send({ errText: 'Укажите услугу' });
             return;
@@ -345,6 +354,8 @@ module.exports = {
         // TODO: Если услуга требует связанные заказы - проверить наличие
 
         order.info.pre = undefined;
+        order.info.adressType = undefined;
+
 
         var kk = {
             init: new Date()

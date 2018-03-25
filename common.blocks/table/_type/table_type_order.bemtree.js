@@ -30,6 +30,8 @@ block('table').mod('type', 'order').content()(function () {
             dl = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
         }
 
+        var adress = (item.info.coordinate)?`${item.info.coordinate}`:`${item.info.street.type}${item.info.street.name}, ${item.info.adds}`;
+
         ret.push({
             elem: 'row',
             mix: {
@@ -62,7 +64,7 @@ block('table').mod('type', 'order').content()(function () {
                 },
                 {
                     elem: 'cell',
-                    content: `${item.info.city.type} ${item.info.city.name}, ${item.info.street.type}${item.info.street.name}, ${item.info.adds}`
+                    content: `${item.info.city.type} ${item.info.city.name}, ${adress}`
                 }
             ]
         })
