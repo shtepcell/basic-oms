@@ -8,3 +8,11 @@
     background-color: #1a7abe;
     z-index: 999;
 }
+
+.navigator__right-block
+{
+    display: inline-block;
+    float: right;
+
+    margin-right: 1em;
+}

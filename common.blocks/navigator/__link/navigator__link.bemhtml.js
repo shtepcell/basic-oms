@@ -1,9 +1,13 @@
-block('navigator').elem('link')(
-    mix()(function() {
-        var ctx = this.ctx;
-        
-        if(ctx.float == 'right') {
-            return 'navigator__link_float_right';
-        } else return {};
-    })
-)
+block('navigator').elem('link').content()(function () {
+    var ctx = this.ctx;
+
+    return {
+        block: 'link',
+        mods: {
+            theme: 'islands',
+             size : 'l'
+        },
+        url: ctx.url,
+        content: ctx.text
+    }
+})

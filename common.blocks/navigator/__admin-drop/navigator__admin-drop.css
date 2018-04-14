@@ -1,0 +1,28 @@
+.navigator__admin-link.link
+{
+    display: block;
+    width: 160px;
+
+    padding: 5px 0 5px 0;
+
+    color: #000;
+    font-family: sans-serif;
+    font-weight: lighter;
+    
+    text-align: center;
+
+    border-bottom: 1px #ddd solid;
+
+    transition: all 0s;
+}
+
+.navigator__admin-link.link:last-child
+{
+    border-bottom: none;
+}
+
+.navigator__admin-link.link:hover
+{
+    color: #000;
+    background-color: #e4eaf0;
+}

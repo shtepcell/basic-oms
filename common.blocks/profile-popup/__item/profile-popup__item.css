@@ -1,0 +1,25 @@
+.profile-popup__item.link
+{
+    display: block;
+    padding: 7px 10px 7px 10px;
+
+    color: #000;
+    font-family: sans-serif;
+    font-weight: lighter;
+}
+
+.profile-popup__item.link:hover
+{
+    color: #000;
+    background-color: #e4eaf0;
+}
+
+.profile-popup__item_color_red.link
+{
+    color: #D00;
+}
+
+.profile-popup__item_color_red.link:hover
+{
+    color: #D00;
+}

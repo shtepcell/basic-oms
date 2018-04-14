@@ -4,6 +4,9 @@
             block: 'field'
         },
         {
+            block: 'login-head'
+        },
+        {
             block: 'chat'
         },
         {

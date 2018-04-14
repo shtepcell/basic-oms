@@ -2,14 +2,13 @@
     shouldDeps: [
         {
             block: 'navigator',
-            elems: ['link', 'dropdown', 'title']
+            elems: ['link', 'dropdown', 'title', 'admin-menu', 'admin-drop', 'user']
         },
         {
             block: 'link',
             mods: {
                 theme: 'islands',
-                nav: true,
-                end: true
+                size: 'l'
             }
         },
         {
@@ -17,9 +16,11 @@
             mods: {
                 switcher: 'link',
                 theme: 'islands',
-                nav: true,
-                size: 'm',
+                size: 'l'
             }
+        },
+        {
+            block: 'profile-popup'
         }
     ]
 })

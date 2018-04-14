@@ -1,0 +1,19 @@
+.profile-popup__info
+{
+    padding: 0 10px 0 10px;
+
+    font-family: sans-serif;
+}
+
+.profile-popup__user-name
+{
+    font-weight: 400;
+    font-size: 11pt;
+}
+
+.profile-popup__user-department
+{
+    font-weight: lighter;
+    margin-left: 1em;
+    font-size: 9pt;
+}
