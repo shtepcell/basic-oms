@@ -12,6 +12,10 @@
         {
             block: 'order',
             elem: 'service-info'
+        },
+        {
+            block: 'gavno',
+            elem: 'vkusnoe'
         }
     ]
 })

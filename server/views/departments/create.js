@@ -52,6 +52,10 @@ module.exports = function(opt, data) {
                                 val: 'gus'
                             },
                             {
+                                text: 'Группа РРЛ, СКС, Wi-Fi',
+                                val: 'sks'
+                            },
+                            {
                                 text: 'Технический отдел',
                                 val: 'admin'
                             },

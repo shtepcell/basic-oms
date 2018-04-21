@@ -1,4 +1,4 @@
-modules.define('action__change-service', ['i-bem-dom', 'BEMHTML', 'select', 'order__body', 'order__service-info'], function(provide, bemDom, BEMHTML, Select, body, order) {
+modules.define('action__change-service', ['i-bem-dom', 'BEMHTML', 'select', 'order__body', 'order__service-info', 'gavno__vkusnoe'], function(provide, bemDom, BEMHTML, Select, body, order, Gavno) {
 
 provide(bemDom.declElem('action', 'change-service',
     {
@@ -10,6 +10,7 @@ provide(bemDom.declElem('action', 'change-service',
                         var value = e.bemTarget._menu._val;
                         var b = this.findParentElem(body);
                         var v = b.findChildElem(order);
+                        var g = b.findChildElem(Gavno);
                         var ordr,
                             params = this.params;
 
@@ -22,6 +23,12 @@ provide(bemDom.declElem('action', 'change-service',
                                 }
                             }
                         }
+
+                        console.log(g);
+                        if(value == 'sks')
+                            g.setMod('visible', false)
+                        else
+                            g.setMod('visible')
 
                         bemDom.replace(
                             v.domElem,

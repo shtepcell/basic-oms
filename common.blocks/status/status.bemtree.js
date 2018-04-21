@@ -10,7 +10,14 @@ block('status').content()(function () {
                     content: [
                         {
                             elem: 'label',
-                            content: 'Всего заказов в системе :'
+                            content: {
+                                block: 'link',
+                                mods: {
+                                    theme: 'islands'
+                                },
+                                url: '/search',
+                                content: 'Всего заказов :'
+                            }
                         },
                         {
                             elem: 'data',
@@ -23,7 +30,14 @@ block('status').content()(function () {
                     content: [
                         {
                             elem: 'label',
-                            content: 'Выполненные :'
+                            content: {
+                                block: 'link',
+                                mods: {
+                                    theme: 'islands'
+                                },
+                                url: '/search?final=1&final=2',
+                                content: 'Выполненные :'
+                            }
                         },
                         {
                             elem: 'data',
@@ -36,7 +50,14 @@ block('status').content()(function () {
                     content: [
                         {
                             elem: 'label',
-                            content: 'Отклонённые :'
+                            content:  {
+                                block: 'link',
+                                mods: {
+                                    theme: 'islands'
+                                },
+                                url: '/search?final=3',
+                                content: 'Отклоненные :'
+                            }
                         },
                         {
                             elem: 'data',
@@ -76,7 +97,15 @@ block('status').content()(function () {
                                             content: [
                                                 {
                                                     elem: 'label',
-                                                    content: 'Проработка :'
+                                                    content: {
+                                                        block: 'link',
+                                                        mods: {
+                                                            theme: 'islands',
+                                                            size: 'xl'
+                                                        },
+                                                        url: '/search?pre=1&pre=2&pre=3',
+                                                        content: 'Проработка :'
+                                                    }
                                                 },
                                                 {
                                                     elem: 'data',
@@ -119,7 +148,14 @@ block('status').content()(function () {
                                             content: [
                                                 {
                                                     elem: 'label',
-                                                    content: 'Реализация :'
+                                                    content: {
+                                                        block: 'link',
+                                                        mods: {
+                                                            theme: 'islands'
+                                                        },
+                                                        url: '/search?build=1&build=2&build=3&build=4&build=5',
+                                                        content: 'Реализация :'
+                                                    }
                                                 },
                                                 {
                                                     elem: 'data',
@@ -186,7 +222,18 @@ block('status').content()(function () {
                                             content: [
                                                 {
                                                     elem: 'label',
-                                                    content: 'Проработка :'
+                                                    content: {
+                                                        elem: 'label',
+                                                        content: {
+                                                            block: 'link',
+                                                            mods: {
+                                                                theme: 'islands',
+                                                                size: 'xl'
+                                                            },
+                                                            url: '/search?pre=1&pre=2&pre=3&func=2',
+                                                            content: 'Проработка :'
+                                                        }
+                                                    },
                                                 },
                                                 {
                                                     elem: 'data',
@@ -229,7 +276,14 @@ block('status').content()(function () {
                                             content: [
                                                 {
                                                     elem: 'label',
-                                                    content: 'Реализация :'
+                                                    content: {
+                                                        block: 'link',
+                                                        mods: {
+                                                            theme: 'islands'
+                                                        },
+                                                        url: '/search?build=1&build=2&build=3&build=4&build=5&func=2',
+                                                        content: 'Реализация :'
+                                                    }
                                                 },
                                                 {
                                                     elem: 'data',

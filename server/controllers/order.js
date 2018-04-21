@@ -17,6 +17,8 @@ var stages = {
     'init': 'Инициация заказа',
     'client-match': 'Согласование с клиентом',
     'client-notify': 'Уведомление клиента',
+    'sks-pre': 'Проработка СКС',
+    'sks-build': 'Реализация СКС',
     'all-pre': 'Проработка по ГЗП и СТОП/VSAT',
     'gzp-pre': 'Проработка по ГЗП',
     'gzp-build': 'Организация ГЗП',
@@ -375,7 +377,7 @@ module.exports = {
         }
 
         var ordr = new Order({
-            status: order.status,
+            status: (order.info.service=='sks')?'sks-pre':order.status,
             deadline: await calculateDeadline(3),
             info: order.info,
             date: kk,

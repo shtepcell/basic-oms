@@ -256,6 +256,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
             { elem: 'separator' },
             {
                 elem: 'body-row',
+                mix: { block: 'gavno', elem: 'vkusnoe' },
                 content: [
                     {
                         elem: 'body-row-name',

@@ -1,0 +1,9 @@
+.gavno__vkusnoe.order__body-row
+{
+    display: none;
+}
+
+.gavno__vkusnoe_visible.order__body-row
+{
+    display: table;
+}

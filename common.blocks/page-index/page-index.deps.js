@@ -4,6 +4,10 @@
             block: 'field'
         },
         {
+            block: 'gavno',
+            elem: 'vkusnoe'
+        },
+        {
             block: 'login-head'
         },
         {
