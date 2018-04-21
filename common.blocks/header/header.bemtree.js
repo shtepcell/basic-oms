@@ -1,7 +1,8 @@
 block('header').content()(function() {
     var ret = {
         block: 'navigator',
-        user: this.data.locals.__user
+        user: this.data.locals.__user,
+        deps: this.data.locals.__deps
     };
 
     if(this.data.locals.__user) return ret;

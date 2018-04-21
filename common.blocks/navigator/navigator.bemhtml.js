@@ -1,5 +1,6 @@
 block('navigator').content()(function () {
     var user = this.ctx.user,
+        deps = this.ctx.deps,
         isAdmin = user && (user.department.type == 'admin');
 
     return [
@@ -56,7 +57,8 @@ block('navigator').content()(function () {
                     switcher: `Мой профиль (${user.login})`,
                     popup: {
                         block: 'profile-popup',
-                        user: user
+                        user: user,
+                        deps: deps
                     }
                 }
             ]

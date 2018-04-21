@@ -1,0 +1,4 @@
+({
+    tech: 'js',
+    shouldDeps: []
+})

@@ -235,7 +235,7 @@ module.exports = {
         } else {
             acc.settings.sendEmail = false;
         }
-        
+
         var result = await acc.save();
 
         if(!!result) {
@@ -299,7 +299,32 @@ module.exports = {
             res.status(400).send('Что-то пошло не так...');
             return;
         }
-    }
+    },
+
+    settings: async (req, res) => {
+
+        var acc = await Account.findOne({ login: res.locals.__user.login }),
+            reqData = req.body,
+            tab = req.params.tab;
+
+        console.log(reqData);
+
+        switch (tab) {
+            case 'main-page':
+                acc.settings.main.zone = reqData.zone || [];
+                acc.settings.main.stage = reqData.stage || [];
+                break;
+            case 'table':
+                acc.settings.table.perPage = +reqData.perPage || 50;
+            default:
+
+        }
+
+        acc.save();
+
+        res.status(200).send({});
+
+    },
 };
 
 function validate(user, errs) {

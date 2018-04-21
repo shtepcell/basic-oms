@@ -1,0 +1,65 @@
+.settings
+{
+    min-width: 600px;
+
+    font-family: sans-serif;
+    border-radius: 4px;
+
+}
+
+.modal__content
+{
+    border-radius: 4px;
+}
+
+.settings__head
+{
+    padding: 15px 15px 15px 15px;
+    text-align: center;
+
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+
+    border-bottom: 1px #ddd solid;
+}
+
+.settings__body
+{
+    padding: 15px 15px 15px 15px;
+}
+
+.settings__action
+{
+    border-top: 1px #ddd solid;
+    margin-top: 15px;
+    padding: 14px 0 0 0;
+    text-align: center;
+}
+
+.settings__row
+{
+    display: flex;
+
+    margin-top: 15px;
+
+    font-size: 12pt;
+    font-weight: lighter;
+}
+
+.settings__row:first-child
+{
+    margin-top: 0;
+}
+
+.settings__cell
+{
+    flex: 1 1 100px;
+    line-height: 28px;
+    padding-right: 15px;
+}
+
+.settings__cell .checkbox-group
+{
+    font-weight: normal;
+    font-size: 10pt;
+}

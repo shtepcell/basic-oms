@@ -2,7 +2,7 @@
 {
     display: block;
     padding: 7px 10px 7px 10px;
-
+    outline: none;
     color: #000;
     font-family: sans-serif;
     font-weight: lighter;

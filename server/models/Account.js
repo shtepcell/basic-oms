@@ -30,6 +30,9 @@ var schema = mongoose.Schema( {
 		required : true
 	},
 	settings: {
+		table: {
+			perPage: Number
+		},
 		sendEmail: {
 			type: Boolean,
 			default: false

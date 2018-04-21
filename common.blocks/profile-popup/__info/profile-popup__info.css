@@ -14,6 +14,7 @@
 .profile-popup__user-department
 {
     font-weight: lighter;
+    font-style: italic;
     margin-left: 1em;
     font-size: 9pt;
 }

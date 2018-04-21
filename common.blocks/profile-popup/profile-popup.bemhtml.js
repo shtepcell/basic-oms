@@ -1,5 +1,6 @@
 block('profile-popup').content()(function () {
-    var user = this.ctx.user;
+    var user = this.ctx.user,
+        deps = this.ctx.deps;
 
     return [
         {
@@ -26,23 +27,91 @@ block('profile-popup').content()(function () {
             content: [
                 {
                     block: 'link',
-                    mods: { theme: 'islands', size: 'l', disabled: true},
-                    mix: { block: 'profile-popup', elem: 'item'},
-                    content: 'Настройка таблиц'
-                },
-                {
-                    block: 'link',
-                    mods: { theme: 'islands', size: 'l', disabled: true},
-                    mix: { block: 'profile-popup', elem: 'item'},
-                    content: 'Сброс пароля'
+                    mods: { theme: 'islands', size: 'l'},
+                    mix: { block: 'profile-popup', elem: 'item' },
+                    content: 'Данные пользователя',
+                    url: '/profile'
                 },
                 {
                     block: 'link',
                     mods: { theme: 'islands', size: 'l'},
-                    mix: { block: 'profile-popup', elem: 'item'},
-                    content: 'Изменение информации',
-                    url: '/profile'
-                }
+                    mix: [
+                        { block: 'profile-popup', elem: 'item' },
+                        {
+                            block: 'action',
+                            elem: 'open-modal',
+                            js: true
+                        }
+                    ],
+                    content: [
+                        'Настройка главной страницы',
+                        {
+                            block: 'modal',
+                            mods: { theme: 'islands', autoclosable: true },
+                            content: { block: 'settings', mods: {tab: 'main-page'}, deps: deps, user: user }
+                        }
+                    ]
+                },
+                {
+                    block: 'link',
+                    mods: { theme: 'islands', size: 'l' },
+                    mix: [
+                        { block: 'profile-popup', elem: 'item' },
+                        {
+                            block: 'action',
+                            elem: 'open-modal',
+                            js: true
+                        }
+                    ],
+                    content: [
+                        'Настройка таблиц',
+                        {
+                            block: 'modal',
+                            mods: { theme: 'islands', autoclosable: true  },
+                            content: { block: 'settings', mods: {tab: 'table'}, user: user }
+                        }
+                    ]
+                },
+                {
+                    block: 'link',
+                    mods: { theme: 'islands', size: 'l' },
+                    mix: [
+                        { block: 'profile-popup', elem: 'item' },
+                        {
+                            block: 'action',
+                            elem: 'open-modal',
+                            js: true
+                        }
+                    ],
+                    content: [
+                        'Настройка уведомлений',
+                        {
+                            block: 'modal',
+                            mods: { theme: 'islands', autoclosable: true },
+                            content: { block: 'settings', mods: {tab: 'notify'}, user: user }
+                        }
+                    ]
+                },
+                // {
+                //     block: 'link',
+                //     mods: { theme: 'islands', size: 'l' },
+                //     mix: [
+                //         { block: 'profile-popup', elem: 'item' },
+                //         {
+                //             block: 'action',
+                //             elem: 'open-modal',
+                //             js: true
+                //         }
+                //     ],
+                //     content: [
+                //         'Изменить пароль',
+                //         {
+                //             block: 'modal',
+                //             mods: { theme: 'islands' },
+                //             content: { block: 'settings', mods: {tab: 'password'} }
+                //         }
+                //     ]
+                // }
             ]
         },
         { elem: 'separator'},
@@ -52,7 +121,7 @@ block('profile-popup').content()(function () {
                 {
                     block: 'link',
                     mods: { theme: 'islands', size: 'l'},
-                    mix: { block: 'profile-popup', elem: 'item', elemMods: {color: 'red'}},
+                    mix: { block: 'profile-popup', elem: 'item', elemMods: {color: 'red'} },
                     url: '/logout',
                     content: 'Выйти из системы'
                 }

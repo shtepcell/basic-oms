@@ -54,7 +54,7 @@ module.exports = {
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
-            perPage = 10; // IDEA брать из настроек пользователя
+            perPage = res.locals.__user.settings.table.perPage || 25;
         res.locals.params = req.query;
 
         if (!!(+pageNumber) && (+pageNumber) > 0) {
@@ -1504,7 +1504,7 @@ module.exports = {
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
-            perPage = 10; // TODO брать из конфига?
+            perPage = res.locals.__user.settings.table.perPage || 25;
 
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;

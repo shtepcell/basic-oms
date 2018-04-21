@@ -35,6 +35,8 @@ module.exports = function (app) {
 
     app.get('/', Order.getMainPage);
 
+    app.post('/settings/:tab', Account.settings);
+
     app.get('/status', Order.getStat);
 
     app.get('/search', Order.search);
