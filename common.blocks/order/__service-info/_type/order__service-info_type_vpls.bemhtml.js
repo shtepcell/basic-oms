@@ -30,14 +30,14 @@ block('order').elem('service-info').elemMod('type', 'vpls').content()(function (
                 },
                 {
                     elem: 'body-row-data',
-                    content: order.inf.relation || ''
+                    content: order.info.relation || ''
                 }
             ]
         }
     ]
 })
 
-block('order').elem('service-info').elemMod('type', 'vpls').content()(function () {
+block('order').elem('service-info').elemMod('type', 'vpls').elemMod('access', true).content()(function () {
     var ctx = this.ctx,
         order = ctx.order;
 
