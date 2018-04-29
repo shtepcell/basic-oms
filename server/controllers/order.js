@@ -12,6 +12,7 @@ const fields = require('./fields');
 const Holiday = require('../models/Holiday');
 const Notify = require('../models/Notify');
 const { sendMail } = require('./mailer');
+const { getExcel } = require('./export');
 
 var stages = {
     'init': 'Инициация заказа',
@@ -1422,7 +1423,7 @@ module.exports = {
         });
     },
 
-    getCSV: async (req, res) => {
+    excel: async (req, res) => {
 
         if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
         if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
@@ -1436,33 +1437,9 @@ module.exports = {
         orders.forEach( item => {
             item.status = stages[item.status];
         });
-        var allObjects = [];
 
-         allObjects.push(["ID", "Клиент", 'Тип клиента', "Услуга", 'Статус', 'Адрес', '']);
+        getExcel(orders, res);
 
-         orders.forEach(function(object){
-             var arr = [];
-             arr.push(object.id);
-             arr.push(object.info.client.name);
-             arr.push(object.info.client.type.name);
-             arr.push(object.info.service.name);
-             arr.push(object.status);
-             arr.push(`${object.info.city.type} ${object.info.city.name} ${object.info.street} ${object.info.adds}`);
-
-             allObjects.push(arr)
-         });
-
-         var csvContent = "";
-
-         allObjects.forEach(function(infoArray, index){
-           var dataString = infoArray.join(",");
-           csvContent += index < allObjects.length ? dataString+ "\n" : dataString;
-         });
-         res.writeHead(200, {
-            'Content-Type': 'text/csv',
-            'Content-Disposition': 'attachment; filename=export.csv'
-        });
-        res.end(csvContent)
     },
 
     searchReset: async (req, res) => {
@@ -1591,6 +1568,115 @@ function parserStreet(str) {
     return 'err';
 }
 
+function parseDate (date) {
+    date = date.split('.');
+    if(date.length == 3) {
+        if(date[1] >= 0 && date[1] <= 11 && date[0] > 0 &&  date[0] <= 31)
+            return new Date(date[2], date[1]-1, date[0]);
+        else return false
+    } else return false;
+}
+
+var getData = async () => {
+    var clients = await Client.find().populate('type');
+    var providers = await Provider.find();
+    var cities = await City.find();
+    var streets = await Street.find();
+    var services = await Service.find();
+
+
+    clients = clients.map( i => `${i.name}`);
+
+    providers = providers.map( i => `[${i.type}] ${i.name}`);
+
+    cities = cities.map( i => `${i.type} ${i.name}`);
+    streets = streets.map( i => `${i.type} ${i.name}`);
+
+
+    services = services.map( i => {
+        return {
+            val: `${i._id}`,
+            text: `${i.name}`
+        }
+    });
+
+    var pre = [
+        {
+            text: 'только ГЗП',
+            val: 'gzp-pre'
+        },
+        {
+            text: 'только СТОП/VSAT',
+            val: 'stop-pre'
+        },
+        {
+            text: 'Одновременно ГЗП и СТОП/VSAT',
+            val: 'all-pre'
+        }
+    ];
+
+    return {
+        clients: clients,
+        providers: providers,
+        cities: cities,
+        streets: streets,
+        services: services,
+        pre: pre
+    }
+
+}
+
+var calculateDeadline = async (time) => {
+    var holidays = await Holiday.find();
+    var now = new Date();
+
+    var i = 0;
+
+    while (time > 0) {
+        var day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+        var holi = await Holiday.findOne({date: day});
+
+        if(day.getDay() != 6 && day.getDay() != 0 && holi == null) {
+            time--;
+        }
+        i++;
+    }
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, 0, 0, 0, 0);
+}
+
+var getRespDep = async (order) => {
+    switch (order.status) {
+        case 'gzp-pre':
+        case 'gzp-build':
+        case 'install-devices':
+            var dep = await Department.findOne({cities: order.info.city._id});
+            if(!dep) dep = await Department.findOne({type: 'b2o'});
+            return dep.name;
+            break;
+        case 'stop-pre':
+        case 'stop-build':
+            var dep = await Department.findOne({type: 'b2o'});
+            if(!dep) dep = {
+                name: 'Ответсвенный отдел не определён!'
+            }
+            return dep.name;
+            break;
+        case 'all-pre':
+            var dep1 = await Department.findOne({type: 'b2o'});
+            var dep2 = await Department.findOne({cities: order.info.city._id});
+            if(!dep2) return `${dep1.name}`;
+            else return `${dep1.name} и ${dep2.name}`;
+            break;
+        case 'network':
+            var dep = await Department.findOne({type: 'net'});
+            return dep.name;
+            break;
+        default:
+            return order.info.initiator.department.name;
+            break;
+    }
+}
+
 var makeQuery = async (req, res) => {
     var qr = {status: {'$ne': 'secret'}};
     var query = req.query;
@@ -1714,115 +1800,6 @@ var makeQuery = async (req, res) => {
         } else qr['$and'] = [{'info.service': query.service}];
     }
     return qr;
-}
-
-function parseDate (date) {
-    date = date.split('.');
-    if(date.length == 3) {
-        if(date[1] >= 0 && date[1] <= 11 && date[0] > 0 &&  date[0] <= 31)
-            return new Date(date[2], date[1]-1, date[0]);
-        else return false
-    } else return false;
-}
-
-var getData = async () => {
-    var clients = await Client.find().populate('type');
-    var providers = await Provider.find();
-    var cities = await City.find();
-    var streets = await Street.find();
-    var services = await Service.find();
-
-
-    clients = clients.map( i => `${i.name}`);
-
-    providers = providers.map( i => `[${i.type}] ${i.name}`);
-
-    cities = cities.map( i => `${i.type} ${i.name}`);
-    streets = streets.map( i => `${i.type} ${i.name}`);
-
-
-    services = services.map( i => {
-        return {
-            val: `${i._id}`,
-            text: `${i.name}`
-        }
-    });
-
-    var pre = [
-        {
-            text: 'только ГЗП',
-            val: 'gzp-pre'
-        },
-        {
-            text: 'только СТОП/VSAT',
-            val: 'stop-pre'
-        },
-        {
-            text: 'Одновременно ГЗП и СТОП/VSAT',
-            val: 'all-pre'
-        }
-    ];
-
-    return {
-        clients: clients,
-        providers: providers,
-        cities: cities,
-        streets: streets,
-        services: services,
-        pre: pre
-    }
-
-}
-
-var calculateDeadline = async (time) => {
-    var holidays = await Holiday.find();
-    var now = new Date();
-
-    var i = 0;
-
-    while (time > 0) {
-        var day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
-        var holi = await Holiday.findOne({date: day});
-
-        if(day.getDay() != 6 && day.getDay() != 0 && holi == null) {
-            time--;
-        }
-        i++;
-    }
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, 0, 0, 0, 0);
-}
-
-var getRespDep = async (order) => {
-    switch (order.status) {
-        case 'gzp-pre':
-        case 'gzp-build':
-        case 'install-devices':
-            var dep = await Department.findOne({cities: order.info.city._id});
-            if(!dep) dep = await Department.findOne({type: 'b2o'});
-            return dep.name;
-            break;
-        case 'stop-pre':
-        case 'stop-build':
-            var dep = await Department.findOne({type: 'b2o'});
-            if(!dep) dep = {
-                name: 'Ответсвенный отдел не определён!'
-            }
-            return dep.name;
-            break;
-        case 'all-pre':
-            var dep1 = await Department.findOne({type: 'b2o'});
-            var dep2 = await Department.findOne({cities: order.info.city._id});
-            if(!dep2) return `${dep1.name}`;
-            else return `${dep1.name} и ${dep2.name}`;
-            break;
-        case 'network':
-            var dep = await Department.findOne({type: 'net'});
-            return dep.name;
-            break;
-        default:
-            return order.info.initiator.department.name;
-            break;
-    }
 }
 
 function orderSort(array, path, reverse) {

@@ -6,8 +6,14 @@ provide(bemDom.declElem('action', 'export',
             js: {
                 inited: function () {
                     this._domEvents().on('click', function() {
-                        location.change({url: '/export'});
-                        location.change({params: this.params.query});
+                        var str = "";
+                        for (var key in this.params.query) {
+                            if (str != "") {
+                                str += "&";
+                            }
+                            str += key + "=" + encodeURIComponent(this.params.query[key]);
+                        }
+                        window.open('/export?'+str);
                     })
                 }
             }

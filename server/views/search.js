@@ -5,7 +5,7 @@ module.exports = function(opt, data){
         pagerId;
     if (opt.pagers && opt.pagers.length)
         pagerId = opt.pagers[0];
-    
+
     return {
         view: 'page-index',
         title: 'Поиск заказов',
@@ -50,7 +50,7 @@ module.exports = function(opt, data){
                                 elem: 'export'
                             }
                         ],
-                        text: 'Экспорт в CSV'
+                        text: 'Экспорт в Excel'
                     },
                     {
                         block: 'table',

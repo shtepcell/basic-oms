@@ -10,7 +10,8 @@ const Auth = require('./controllers/auth'),
     Holiday = require('./controllers/holiday')
     Notify = require('./controllers/notify'),
     Street = require('./controllers/street'),
-    Chat = require('./controllers/chat');
+    Chat = require('./controllers/chat'),
+    Export = require('./controllers/export');
 
 
 const fileUpload = require('express-fileupload');
@@ -42,7 +43,7 @@ module.exports = function (app) {
     app.get('/search', Order.search);
     app.get('/search/reset', Order.searchReset);
 
-    app.get('/export', Order.getCSV);
+    app.get('/export', Order.excel);
 
     app.get('/dev', function (req, res) {
         render(req, res, {
