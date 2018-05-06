@@ -6,23 +6,59 @@ list.departments = [
         type: 'admin'
     },
     {
-        name: 'B2B',
-        type: 'b2b'
+        name: 'Руководство',
+        type: 'man'
     },
     {
-        name: 'B2O',
-        type: 'b2o'
-    },
-    {
-        name: 'B2C',
-        type: 'b2c'
-    },
-    {
-        name: 'ГУС',
+        name: 'Технический отдел',
         type: 'gus'
     },
     {
-        name: 'Сетевой',
+        name: 'Отдел продаж В2В',
+        type: 'b2b'
+    },
+    {
+        name: 'Отдел продаж В2О',
+        type: 'b2o'
+    },
+    {
+        name: 'ГУС Симферополь',
+        type: 'gus'
+    },
+    {
+        name: 'ГУС Севастополь',
+        type: 'gus'
+    },
+    {
+        name: 'ГУС Феодосия',
+        type: 'gus'
+    },
+    {
+        name: 'ГУС Евпатория',
+        type: 'gus'
+    },
+    {
+        name: 'ТЦТЭТ Симферополь',
+        type: 'gus'
+    },
+    {
+        name: 'ТЦТЭТ Севастополь',
+        type: 'gus'
+    },
+    {
+        name: 'ТЦТЭТ Феодосия',
+        type: 'gus'
+    },
+    {
+        name: 'ТЦТЭТ Красноперекопск',
+        type: 'gus'
+    },
+    {
+        name: 'Группа РРЛ, СКС, WiFi',
+        type: 'sks'
+    },
+    {
+        name: 'Сетевой отдел',
         type: 'net'
     }
 ]

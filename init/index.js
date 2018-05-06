@@ -21,8 +21,8 @@ var init = async () => {
 
     if(accs.length === 0) {
         var admin = new Account({
-                login : 'admin',
-                password : password.createHash('admin'),
+                login : 'admen',
+                password : password.createHash('admen'),
                 department: await Department.findOne({ type: 'admin' }),
                 name : 'Admin',
                 role: 0,

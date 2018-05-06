@@ -4,6 +4,10 @@ block('field').elem('city').content()(function () {
         dataset = ctx.dataset;
 
     if(ctx.display) {
+        var value = '';
+        if(order.info.city)
+            value = `${order.info.city.type} ${order.info.city.name}`
+
         return [
             {
                 block: 'order',
@@ -17,7 +21,7 @@ block('field').elem('city').content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-data',
-                        content: `${order.info.city.type} ${order.info.city.name}`
+                        content: value
                     }
                 ]
             }
@@ -32,6 +36,8 @@ block('field').elem('city').elemMod('access', true).content()(function () {
 
 
     if(ctx.display) {
+        var value = `${order.info.city.type} ${order.info.city.name}`;
+
         return [
             {
                 block: 'order',
@@ -50,10 +56,10 @@ block('field').elem('city').elemMod('access', true).content()(function () {
                                 block : 'suggest',
                                 mods : {
                                     theme : 'islands',
-                                    size : 'l',
+                                    size : 'm',
                                     'has-dataprovider' : 'adress'
                                 },
-                                val: `${order.info.city.type} ${order.info.city.name}`,
+                                val: value,
                                 placeholder: 'г. Москва',
                                 name: 'city',
                                 dataprovider: {

@@ -57,7 +57,7 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
                 access: (adminEdit || mustFill),
             },
             dataset: dataset,
-            display: (mustFill || order.gzp.complete)
+            display: (mustFill || order.gzp.need != undefined)
         },
         {
             elem: 'gzp-info',
@@ -66,7 +66,7 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
                 access: (adminEdit || mustFill),
             },
             order: order,
-            display: (mustFill || order.gzp.complete)
+            display: (mustFill || order.gzp.need != undefined)
         },
         {
             block: 'field',

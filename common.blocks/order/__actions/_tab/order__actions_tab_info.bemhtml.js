@@ -53,7 +53,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-pre-gzp',
                 id: order.id
             },
-            display: (isOwner && isMatch && !order.gzp.complete && !isSKS) && !isPause
+            display: (isOwner && isMatch && order.gzp.need == undefined && !isSKS) && !isPause
         },
         {
             block: 'order',
@@ -83,7 +83,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-pre-stop',
                 id: order.id
             },
-            display: (isOwner && isMatch && !order.stop.complete && !isSKS) && !isPause
+            display: (isOwner && isMatch &&  order.stop.capability == undefined && !isSKS) && !isPause
         },
         {
             block: 'order',
@@ -93,7 +93,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-gzp-build',
                 id: order.id
             },
-            display: (isOwner && isMatch && order.gzp.complete && !isSKS) && !isPause && incomeIsFill
+            display: (isOwner && isMatch &&  order.gzp.need != undefined && !isSKS) && !isPause && incomeIsFill
         },
         {
             block: 'order',
@@ -103,7 +103,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-stop-build',
                 id: order.id
             },
-            display: (isOwner && isMatch && order.stop.complete  && !isSKS) && !isPause && incomeIsFill
+            display: (isOwner && isMatch && order.stop.capability != undefined && !isSKS) && !isPause && incomeIsFill
         },
         {
             block: 'order',

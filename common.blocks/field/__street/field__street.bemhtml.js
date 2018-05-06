@@ -3,7 +3,13 @@ block('field').elem('street').content()(function () {
         order = ctx.order,
         dataset = ctx.dataset;
 
+
     if(ctx.display) {
+        var value = '';
+
+        if(order.info.street)
+            value = `${order.info.street.type} ${order.info.street.name}`;
+
         return [
             {
                 block: 'order',
@@ -17,7 +23,7 @@ block('field').elem('street').content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-data',
-                        content: `${order.info.street.type} ${order.info.street.name}`
+                        content: value
                     }
                 ]
             }
@@ -32,6 +38,11 @@ block('field').elem('street').elemMod('access', true).content()(function () {
 
 
     if(ctx.display) {
+        var value = '';
+
+        if(order && order.info.street)
+            value = `${order.info.street.type} ${order.info.street.name}`;
+
         return [
             {
                 block: 'order',
@@ -53,7 +64,7 @@ block('field').elem('street').elemMod('access', true).content()(function () {
                                     size : 'l',
                                     'has-dataprovider' : 'adress'
                                 },
-                                val: (order)?`${order.info.street.type} ${order.info.street.name}`:'',
+                                val: value,
                                 placeholder: 'ул. Привокзальная',
                                 name: 'street',
                                 dataprovider: {

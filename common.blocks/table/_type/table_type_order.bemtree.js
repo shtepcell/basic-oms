@@ -22,7 +22,9 @@ block('table').mod('type', 'order').content()(function () {
     if(ctx.data)
     ctx.data.forEach( item => {
         var dl = '';
-        if(item.pause.deadline) dl = item.pause.deadline;
+
+        if(item.pause)
+            if(item.pause.deadline) dl = item.pause.deadline;
 
         if(item.deadline != null) {
             var now = new Date();
@@ -30,7 +32,15 @@ block('table').mod('type', 'order').content()(function () {
             dl = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
         }
 
-        var adress = (item.info.coordinate)?`${item.info.coordinate}`:`${item.info.street.type}${item.info.street.name}, ${item.info.adds}`;
+        var adress;
+
+        if(item.isOld)
+            adress = `${item.info.adds}`;
+        else {
+            adress = `${item.info.city.type} ${item.info.city.name}, `;
+            adress += (item.info.coordinate)?`${item.info.coordinate}`:`${item.info.street.type}${item.info.street.name}, ${item.info.adds}`;
+        }
+
 
         ret.push({
             elem: 'row',
@@ -64,7 +74,7 @@ block('table').mod('type', 'order').content()(function () {
                 },
                 {
                     elem: 'cell',
-                    content: `${item.info.city.type} ${item.info.city.name}, ${adress}`
+                    content: `${adress}`
                 }
             ]
         })
