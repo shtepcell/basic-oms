@@ -393,7 +393,7 @@ block('searcher')(
                                     theme: 'islands',
                                     size: 'm'
                                 },
-                                url: '/search/reset',
+                                url: '/search?clear',
                                 content: 'Сбросить фильтры'
                             },
                             {
