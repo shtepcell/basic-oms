@@ -1474,7 +1474,7 @@ module.exports = {
         usr.settings.search.query = '/search';
         var done = await usr.save();
         if(done) {
-            res.redirect('/search');
+            res.redirect('/search?');
             return;
         } else return;
     },
