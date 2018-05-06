@@ -9,6 +9,7 @@ var schema = mongoose.Schema({
         required: true,
         unique: true
     },
+    isOld: Boolean,
     special: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Department'

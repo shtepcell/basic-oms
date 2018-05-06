@@ -32,8 +32,36 @@ var stages = {
     'secret': 'Заявка удалена'
 };
 
-var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.service info.city info.street stop.provider history.author history.author.department`;
+var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.city info.street stop.provider history.author history.author.department`;
+var shortPop = 'info.client.type info.city info.street';
 
+var populateClient = {
+    path: 'info.client',
+    select: 'name type',
+    populate: {
+        path: 'type',
+        select: 'shortName'
+    },
+    options: {
+        lean: true
+    }
+}
+
+var populateCity = {
+    path: 'info.city',
+    select: 'name type',
+    options: {
+        lean: true
+    }
+}
+
+var populateStreet = {
+    path: 'info.street',
+    select: 'name type',
+    options: {
+        lean: true
+    }
+}
 const Render = require('../render'),
     render = Render.render;
 
@@ -43,7 +71,6 @@ module.exports = {
 
     getPageInit: async (req, res) => {
         if(res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o') {
-            res.locals.template = await fields.getInitField();
             res.locals.dataset = await getData();
             render(req, res, {
                 viewName: 'orders/init'
@@ -215,18 +242,18 @@ module.exports = {
                 {special: user.department._id}
             ],
             status: {$ne: 'secret'}
-        }).deepPopulate(populateQuery);
+        }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length;
-
-        orders.forEach( item => {
-            item.status = stages[item.status];
-        });
 
         if(req.query.sort)
             orders = orderSort(orders, req.query.sort, req.query.value);
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+
+        orders.forEach( item => {
+            item.status = stages[item.status];
+        });
 
         if (!orders.length)
         {
@@ -1478,7 +1505,6 @@ module.exports = {
             res.locals.err.id = 'ID должен быть числом';
         }
         var query = await makeQuery(req, res);
-        query.special = undefined;
 
         var pagerId = 'first',
             pagers = [],
@@ -1492,18 +1518,18 @@ module.exports = {
         else
             res.redirect(req.path);
 
-        var orders = await Order.find(query).deepPopulate(populateQuery);
+        var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length;
-
-        orders.forEach( item => {
-            item.status = stages[item.status];
-        });
 
         if(req.query.sort)
             orders = orderSort(orders, req.query.sort, req.query.value);
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+
+        orders.forEach( item => {
+            item.status = stages[item.status];
+        });
 
         res.locals.pagers = {};
         res.locals.pagers[pagerId] = {
@@ -1650,7 +1676,8 @@ var getRespDep = async (order) => {
         case 'gzp-build':
         case 'install-devices':
             var dep = await Department.findOne({cities: order.info.city._id});
-            if(!dep) dep = await Department.findOne({type: 'b2o'});
+            // if(!dep) dep = await Department.findOne({type: 'b2o'});
+            if(!dep) return 'Ответственный отдел не определён!'
             return dep.name;
             break;
         case 'stop-pre':
@@ -1678,7 +1705,7 @@ var getRespDep = async (order) => {
 }
 
 var makeQuery = async (req, res) => {
-    var qr = {status: {'$ne': 'secret'}};
+    var qr = {};
     var query = req.query;
     var status = [];
     if(query.id) {

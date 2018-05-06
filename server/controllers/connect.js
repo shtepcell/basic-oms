@@ -17,7 +17,7 @@ var uri = 'mongodb://' + url + '/' + name;
 mongoose.connect(uri, options);
 
 mongoose.connection.on('connected', function() {
-    logger.info(`Connected to DB.`);
+    // logger.info(`Connected to DB.`);
 });
 
 module.exports = mongoose;

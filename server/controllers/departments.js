@@ -19,7 +19,7 @@ module.exports = {
 
     getOne: async (req, res) => {
         res.locals.department = await Department.findOne({status: true, _id: req.params.id}).populate('cities');
-        res.locals.cities = await City.find({usage: false});
+        res.locals.cities = await City.find({usage: {$ne: true}});
         if(res.locals.department) {
             render(req, res, {
                 viewName: 'departments/item'
@@ -41,7 +41,7 @@ module.exports = {
             res.status(400).send({errText: 'Название отдела - обязательно!'})
             return;
         }
-        
+
         var dep = await Department.findOne({name: reqData.name});
 
         if(dep != null) {

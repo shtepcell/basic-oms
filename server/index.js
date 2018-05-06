@@ -28,6 +28,8 @@ var fs = require('fs'),
     isDev = process.env.NODE_ENV === 'development',
 
     MongoStore = require('connect-mongo')(expressSession),
+    mongoose = require('./controllers/connect'),
+
     common = require('./controllers/common'),
     router = require('./router'),
 
@@ -61,6 +63,7 @@ app
     .use(cookieParser())
     .use(bodyParser.urlencoded({ extended: true }))
     .use(expressSession({
+        name: 'basic-oms',
         resave: false,
         saveUninitialized: false,
         cookie: {
@@ -70,7 +73,7 @@ app
         secret: 's562hdnYsd52nSBN',
         // secret: secretConf.secret,
         store: new MongoStore({
-            mongooseConnection: db,
+            mongooseConnection: mongoose.connection,
             autoRemove: 'native',
             ttl: 14 * 24 * 60 * 60,
             touchAfter: 10 * 60,
@@ -80,6 +83,7 @@ app
     .use(passport.initialize())
     .use(passport.session())
     // .use(csrf());
+
 
 // NOTE: conflicts with livereload
 isDev || app.use(slashes());
