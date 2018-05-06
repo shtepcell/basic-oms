@@ -5,7 +5,7 @@ var users = require('./users'),
 
 (async () => {
 
-    for (var i = 1; i < users.length; i++) {
+    for (var i = 0; i < users.length; i++) {
         if(users[i].department == 'Без отдела') users[i].department = 'Администрация';
         if(users[i].department == '') users[i].department = 'Администрация';
 
