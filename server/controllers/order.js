@@ -47,6 +47,14 @@ var populateClient = {
     }
 }
 
+var populateInitiator = {
+    path: 'info.initiator',
+    select: 'name department',
+    options: {
+        lean: true
+    }
+};
+
 var populateCity = {
     path: 'info.city',
     select: 'name type',
@@ -1252,7 +1260,7 @@ module.exports = {
 
     getStat: async (req, res) => {
         var deps = await Department.find();
-        var orders = await Order.find({status: {'$ne': 'secret'}}).populate('info.initiator');
+        var orders = await Order.find({status: {'$ne': 'secret'}}).populate(populateInitiator).lean();
 
         orders = orders.map( item => {
             var wrkr;
