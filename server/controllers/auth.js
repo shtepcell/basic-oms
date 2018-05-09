@@ -22,7 +22,7 @@ module.exports = {
     isLoggedIn: async (req, res, next) => {
         if (req.session.__user) {
             var acc = await Account.findOne({login: req.session.__user}).populate('department');
-            var deps = await Department.find({status: true});
+            var deps = await Department.find({status: true, type: 'gus'}).lean();
 
             res.locals.__deps = deps;
             res.locals.__user = {
