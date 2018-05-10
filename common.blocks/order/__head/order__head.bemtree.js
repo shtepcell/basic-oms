@@ -2,6 +2,7 @@ block('order').elem('head').content()(function () {
     var order = this.ctx.order;
     var pause = null;
     var cs = null;
+    var link = null;
 
     if(order.deadline != null) {
         var now = new Date();
@@ -27,6 +28,31 @@ block('order').elem('head').content()(function () {
         }
     }
 
+    if(order.isOld)
+        link = {
+            elem: 'head-cell',
+            content: [
+                {
+                    elem: 'cell-name',
+                    content: 'Заявка в основном СУЗ-е'
+                },
+                {
+                    elem: 'cell-data',
+                    content: {
+                        block: 'link',
+                        mods: {
+                            theme: 'islands'
+                        },
+                        attrs: {
+                            target: '_blank'
+                        },
+                        url: `http://ops.miranda-media.ru/orders/${order.id}`,
+                        content: 'Ссылка'
+                    }
+                }
+            ]
+        }
+    
     if(order.pause.status) pause = {
         elem: 'head-cell',
         mix: {
@@ -54,6 +80,7 @@ block('order').elem('head').content()(function () {
             content: {
                 elem: 'head-container',
                 content: [
+                    link,
                     {
                         elem: 'head-cell',
                         content: [
