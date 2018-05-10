@@ -39,13 +39,29 @@ var stages = {
 var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.city info.street stop.provider history.author history.author.department`;
 var shortPop = 'info.client.type info.city info.street';
 
+var populateAll = [
+    populateClient,
+    populateInitiator,
+    populateCity,
+    populateStreet,
+    populateProvider
+];
+
 var populateClient = {
     path: 'info.client',
     select: 'name type',
     populate: {
         path: 'type',
-        select: 'shortName'
+        select: 'shortName name'
     },
+    options: {
+        lean: true
+    }
+}
+
+var populateProvider = {
+    path: 'stop.provider',
+    select: 'name type',
     options: {
         lean: true
     }
@@ -1299,7 +1315,8 @@ module.exports = {
         var query = await helper.makeQuery(req, res);
         query.special = undefined;
 
-        var orders = await Order.find(query).deepPopulate(populateQuery);
+        var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        // deepPopulate(populateQuery);
         orders.forEach( item => {
             item.status = stages[item.status];
         });

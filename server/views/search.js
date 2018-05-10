@@ -35,7 +35,7 @@ module.exports = function(opt, data){
                         block: 'button',
                         mods: {
                             theme: 'islands',
-                            disabled: true,
+                            disabled: false,
                             size: 'm'
                         },
                         mix:[
