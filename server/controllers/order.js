@@ -14,6 +14,10 @@ const Notify = require('../models/Notify');
 const { sendMail } = require('./mailer');
 const { getExcel } = require('./export');
 
+const common = require('./common');
+const helper = require('./helper');
+const validator = require('./validator');
+
 var stages = {
     'init': 'Инициация заказа',
     'client-match': 'Согласование с клиентом',
@@ -79,7 +83,7 @@ module.exports = {
 
     getPageInit: async (req, res) => {
         if(res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o') {
-            res.locals.dataset = await getData();
+            res.locals.dataset = await helper.getData();
             render(req, res, {
                 viewName: 'orders/init'
             });
@@ -87,6 +91,7 @@ module.exports = {
             render(req, res, { view: '404' });
         }
     },
+
     getMainPage: async (req, res) => {
 
         var pagerId = 'first',
@@ -154,96 +159,6 @@ module.exports = {
 
         var view = 'main';
 
-        // var dep = res.locals.__user.department.type;
-        // var _dep = res.locals.__user.department._id;
-        // var cities = res.locals.__user.department.cities;
-        // cities = cities.map( item => {
-        //     return {
-        //         'info.city' : item
-        //     }
-        // });
-        // var view = 'main';
-        // switch (dep) {
-        //     case 'admin':
-        //         var ct = await City.find({usage: false});
-        //         if(ct.length>0) {
-        //             query = {status: {'$ne': 'secret'}};
-        //             query['$or'] = ct.map(j => {
-        //                 return {
-        //                     'info.city': j._id
-        //                 }
-        //             });
-        //         }
-        //         view = 'mains/admin'
-        //         break;
-        //     case 'b2b':
-        //         query = {
-        //             '$and': [
-        //                 {
-        //                     '$or': [
-        //                         {status: 'client-match'},
-        //                         {status: 'client-notify'}
-        //                     ]
-        //                 },
-        //                 {
-        //                     'info.department': _dep
-        //                 }
-        //             ]
-        //         };
-        //
-        //         view = 'mains/b2b';
-        //         break;
-        //     case 'b2o':
-        //         query = {
-        //             '$or': [
-        //                 {status: 'stop-build'},
-        //                 {status: 'stop-pre'},
-        //                 {status: 'all-pre'},
-        //                 {
-        //                     '$and': [
-        //                         {'info.department': _dep},
-        //                         {'$or': [
-        //                             {status: 'client-match'},
-        //                             {status: 'client-notify'}
-        //                         ]}
-        //                     ]
-        //                 }
-        //             ]
-        //         };
-        //         view = 'mains/stop';
-        //         break;
-        //     case 'net':
-        //         query = {status: 'network'};
-        //         view = 'mains/net';
-        //         break;
-        //     case 'gus':
-        //         if(cities.length == 0) {
-        //             query = { status: 'lololo' };
-        //         } else {
-        //
-        //             query = {
-        //                 '$and': [
-        //                     {
-        //                         '$or': [
-        //                             {status: 'gzp-pre'},
-        //                             {status: 'all-pre'},
-        //                             {status: 'gzp-build'},
-        //                             {status: 'install-devices'}
-        //                         ]
-        //                     },
-        //                     {
-        //                         '$or': cities
-        //                     }
-        //                 ]
-        //             };
-        //         }
-        //         view = 'mains/gus';
-        //         break;
-        //     default:
-        //     break;
-        // }
-        // if(!query) query = {status: 'lolololololoolo'};
-
         var orders = await Order.find({
             $or: [
                 {$and: [query.zone, query.stage]},
@@ -255,7 +170,7 @@ module.exports = {
         var total = orders.length;
 
         if(req.query.sort)
-            orders = orderSort(orders, req.query.sort, req.query.value);
+            orders = helper.orderSort(orders, req.query.sort, req.query.value);
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
@@ -292,7 +207,6 @@ module.exports = {
     },
 
     init: async (req, res) => {
-
         var data = req.body;
 
         Object.keys(data).forEach( item => {
@@ -308,18 +222,9 @@ module.exports = {
             info: data
         };
 
-        if(!order.info.client) {
-            res.status(400).send({ errText: 'Клиент - обязательное поле!' });
-            return;
-        }
-        var clnt = order.info.client;
-        if(clnt == 'err') {
-            res.status(400).send({ errText: 'Введите коректное название клиента. Например Apple' });
-            return;
-        }
-        clnt = await Client.findOne({name: clnt});
-        if(!clnt) {
-            res.status(400).send({ errText: 'Такого клиента не существует.' });
+        var clnt = await validator.client(order.info.client);
+        if(!clnt._id) {
+            res.status(400).send({ errText: clnt });
             return;
         }
         order.info.client = clnt;
@@ -329,51 +234,24 @@ module.exports = {
             return;
         }
 
-        if(!order.info.city) {
-            res.status(400).send({ errText: 'Город указывать обязательно!' });
+        var city = await validator.city(order.info.city);
+        if(!city._id) {
+            res.status(400).send({ errText: city });
             return;
         }
-        order.info.city = parserCity(order.info.city);
-
-
-        if(order.info.city == 'err') {
-            res.status(400).send({ errText: 'Формат города неверный! Следует писать так - г./c./пос./пгт. Симферополь' });
-            return;
-        }
-        var tmpCity = await City.find({ type: order.info.city.type, name: order.info.city.name });
-
-        if(tmpCity.length == 0) {
-            res.status(400).send({ errText: 'Такого города нет в справочнике! Обратитесь к адиминистратору.' });
-            return;
-        }
-
-        if(tmpCity.length > 1) {
-            res.status(400).send({ errText: 'Городов с похожим названием найдено несколько. Пожалуйста уточните.' });
-            return;
-        }
-
-        order.info.city = tmpCity[0];
+        order.info.city = city;
 
         switch (req.body.adressType) {
             case 'location':
-                if(!order.info.street) {
-                    res.status(400).send({ errText: 'Укажите улицу!' });
-                    return;
-                }
-                order.info.street = parserStreet(order.info.street);
-                if(order.info.street == 'err') {
-                    res.status(400).send({ errText: 'Формат улицы неверный!' });
-                    return;
-                }
-                var strt = await Street.findOne({ type: order.info.street.type, name: order.info.street.name });
-                if(!strt) {
-                    res.status(400).send({ errText: 'Такой улицы не существует. Обратитесь к администратору!' });
+                var strt = await validator.street(order.info.street);
+                if(!strt._id) {
+                    res.status(400).send({ errText: strt });
                     return;
                 }
                 order.info.street = strt;
 
                 if(!order.info.adds) {
-                    res.status(400).send({ errText: 'Укажите точный адрес!' });
+                    res.status(400).send({ errText: 'Уточните адрес!' });
                     return;
                 }
                 break;
@@ -384,8 +262,9 @@ module.exports = {
                 }
                 break;
         }
+
         if(!order.info.service) {
-            res.status(400).send({ errText: 'Укажите услугу' });
+            res.status(400).send({ errText: 'Выберите услугу' });
             return;
         }
 
@@ -394,27 +273,32 @@ module.exports = {
         order.info.pre = undefined;
         order.info.adressType = undefined;
 
-
         var kk = {
             init: new Date()
         };
 
+        if(order.info.service == 'sks') order.status = 'sks-pre';
+
+        var deadline = await helper.calculateDeadline(3);
         switch (order.status) {
             case 'all-pre':
-                kk['cs-gzp-pre'] = await calculateDeadline(3);
-                kk['cs-stop-pre'] = await calculateDeadline(3);
+                kk['cs-gzp-pre'] = deadline;
+                kk['cs-stop-pre'] = deadline;
                 break;
             case 'gzp-pre':
-                kk['cs-gzp-pre'] = await calculateDeadline(3);
+                kk['cs-gzp-pre'] = deadline;
                 break;
             case 'stop-pre':
-                kk['cs-stop-pre'] = await calculateDeadline(3);
+                kk['cs-stop-pre'] = deadline;
+                break;
+            case 'sks-pre':
+                kk['cs-sks-pre'] = deadline;
                 break;
         }
 
         var ordr = new Order({
-            status: (order.info.service=='sks')?'sks-pre':order.status,
-            deadline: await calculateDeadline(3),
+            status: order.status,
+            deadline: deadline,
             info: order.info,
             date: kk,
             history: [
@@ -487,14 +371,14 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            res.locals.dataset = await getData();
-            order.resp = await getRespDep(order);
+            res.locals.dataset = await helper.getData();
+            order.resp = await helper.getRespDep(order);
             res.locals.order = order;
             render(req, res, {
                 viewName: 'orders/order',
                 options: {
                     tab: 'info',
-                    admin: (req.query.admin=='1')
+                    admin: req.query.admin
                 }
             });
 
@@ -507,15 +391,15 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            res.locals.dataset = await getData();
-            order.resp = await getRespDep(order);
+            res.locals.dataset = await helper.getData();
+            order.resp = await helper.getRespDep(order);
             res.locals.order = order;
 
             render(req, res, {
                 viewName: 'orders/order',
                 options: {
                     tab: 'gzp',
-                    admin: (req.query.admin=='1')
+                    admin: req.query.admin
                 }
             });
 
@@ -528,15 +412,15 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            res.locals.dataset = await getData();
-            order.resp = await getRespDep(order);
+            res.locals.dataset = await helper.getData();
+            order.resp = await helper.getRespDep(order);
             res.locals.order = order;
 
             render(req, res, {
                 viewName: 'orders/order',
                 options: {
                     tab: 'stop',
-                    admin: (req.query.admin=='1')
+                    admin: req.query.admin
                 }
             });
 
@@ -548,8 +432,8 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            res.locals.dataset = await getData();
-            order.resp = await getRespDep(order);
+            res.locals.dataset = await helper.getData();
+            order.resp = await helper.getRespDep(order);
             res.locals.order = order;
             res.locals.template = await fields.getInfo(order);
 
@@ -566,16 +450,7 @@ module.exports = {
     adminEdit: async (req, res) => {
         var data = req.body;
 
-        if(res.locals.__user.department.type != 'admin') {
-            res.status(402).send({errText: 'Эта функция доступна только администратору!'});
-            return;
-        }
-
         var order = await Order.findOne({id: req.params.id});
-        if(!order) {
-            res.status(402).send({errText: 'Такой заявки не существует!'});
-            return;
-        }
 
         Object.keys(data).forEach( item => {
             data[item] = data[item].trim();
@@ -586,92 +461,41 @@ module.exports = {
             case 'info':
                 var tmp = {};
 
-
-                if(data['date-request']) {
-                    var date = parseDate(data['date-request']);
-
-                    if(!date) {
-                        res.status(400).send({ errText: 'Некорректный формат даты' });
-                        return;
-                    }
-                    data['date-request'] = date;
-                }
-
                 tmp = data;
 
-                if(!data.client) {
-                    res.status(400).send({ errText: 'Клиент - обязательное поле!' });
-                    return;
-                }
-                var clnt = data.client;
-                if(clnt == 'err') {
-                    res.status(400).send({ errText: 'Введите коректное название клиента. Например Apple' });
-                    return;
-                }
-                clnt = await Client.findOne({name: clnt});
+                //Клиент
+                var clnt = await validator.client(data.client);
 
-                if(!clnt) {
-                    res.status(400).send({ errText: 'Такого клиента не существует.' });
+                if(!clnt._id) {
+                    res.status(400).send({ errText: clnt });
                     return;
                 }
-
                 tmp.client = clnt;
 
-                var service = await Service.findOne({ _id: data.service });
+                // Услуга
+                var service = data.service;
                 tmp.service = service;
 
-                if(!tmp.street) {
-                    res.status(400).send({ errText: 'Улицу указывать обязательно!' });
-                    return;
-                }
-                tmp.street = parserStreet(tmp.street);
-                if(tmp.street == 'err') {
-                    res.status(400).send({ errText: 'Формат улицы неверный!' });
-                    return;
-                }
-                var strt = await Street.findOne({ type: tmp.street.type, name: tmp.street.name });
-                if(!strt) {
-                    res.status(400).send({ errText: 'Такой улицы не существует. Обратитесь к администратору!' });
-                    return;
-                }
-                tmp.street = `${strt.type} ${strt.name}`;
+                // Улица
+                var strt = await validator.street(data.street);
 
-                if(!data.city) {
-                    res.status(400).send({ errText: 'Город указывать обязательно!' });
+                if(!strt._id) {
+                    res.status(400).send({ errText: strt });
                     return;
                 }
-                data.city = parserCity(data.city);
+                tmp.street = strt;
 
-                if(data.city == 'err') {
-                    res.status(400).send({ errText: 'Формат города неверный! Следует писать так - г./c./пос./пгт. Симферополь' });
+                // Город
+                var city = await validator.city(data.city);
+
+                if(!city._id) {
+                    res.status(400).send({ errText: city });
                     return;
                 }
-                var tmpCity = await City.find({ type: data.city.type, name: data.city.name });
-
-                if(tmpCity.length == 0) {
-                    var ct = new City({
-                        type: data.city.type,
-                        name: data.city.name,
-                        usage: false
-                    });
-                    let dn = await ct.save();
-                    if (dn) {
-                        tmpCity[0] = dn;
-                    } else {
-                        res.status(400).send({ errText: 'Ошибка создания города! Если вы видете эту ошибку - обратитесь к админисратору' });
-                        return;
-                    }
-                }
-
-                if(tmpCity.length > 1) {
-                    res.status(400).send({ errText: 'Городов с похожим названием найдено несколько. Пожалуйста уточните.' });
-                    return;
-                }
-
-                tmp.city = tmpCity[0];
+                tmp.city = city;
 
                 if(data['date-sign']) {
-                    var date = parseDate(data['date-sign'])
+                    var date = common.parseDate(data['date-sign'])
                     if(date == 'err') {
                         res.status(400).send({errText: 'Неверный формат даты'})
                         return;
@@ -679,7 +503,7 @@ module.exports = {
                     tmp['date-sign'] = date;
                 }
 
-                if(req.files.order) {
+                if(req.files && req.files.order) {
                     var id = order.id;
                     var _dir;
                     for (var i = 0; i < 1000; i++) {
@@ -695,8 +519,8 @@ module.exports = {
                         }
                     });
                     order.info.order = `${req.files.order.name}`;
-
                 }
+
                 order.info = Object.assign(order.info, tmp);
                 break;
 
@@ -722,7 +546,7 @@ module.exports = {
                     return;
                 }
 
-                var prvdr = parseClient(data.provider);
+                var prvdr = helper.parseClient(data.provider);
 
                 var provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
 
@@ -786,9 +610,9 @@ module.exports = {
 
             if(order.status == 'gzp-pre') {
                 order.status = 'client-match';
-                order.deadline = await calculateDeadline(10);
+                order.deadline = await helper.calculateDeadline(10);
                 order.date['gzp-pre'] = new Date();
-                order.date['cs-client-match'] = await calculateDeadline(10);
+                order.date['cs-client-match'] = await helper.calculateDeadline(10);
                 order.gzp.complete = true;
             }
 
@@ -834,7 +658,7 @@ module.exports = {
                     return;
                 }
 
-                var prvdr = parseClient(req.body.provider);
+                var prvdr = helper.parseClient(req.body.provider);
 
                 var provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
 
@@ -864,8 +688,8 @@ module.exports = {
 
             if(order.status == 'stop-pre') {
                 order.status = 'client-match';
-                order.deadline = await calculateDeadline(10);
-                order.date['cs-client-match'] = await calculateDeadline(10);
+                order.deadline = await helper.calculateDeadline(10);
+                order.date['cs-client-match'] = await helper.calculateDeadline(10);
                 order.date['stop-pre'] = new Date();
                 order.stop.complete = true;
             }
@@ -900,102 +724,7 @@ module.exports = {
         } else res.status(404);
     },
 
-    endClientNotify: async (req, res) => {
-        var reqData = req.body;
-        var order = await Order.findOne({id: req.params.id});
 
-        if(!order) {
-            res.status(400).send({errText: 'Ошибка при сохранении!'});
-            return;
-        }
-
-        if(order.status == 'client-notify') {
-            var id = order.id;
-            var _dir;
-            for (var i = 0; i < 1000; i++) {
-                if(id > i*1000) {
-                    _dir = `${(i)*1000}-${(i+1)*1000}`;
-                }
-            }
-            if(!req.files.order) {
-                res.status(400).send({errText: 'Договор - обязателен!'})
-                return;
-            }
-            if(!reqData['date-sign']) {
-                res.status(400).send({errText: 'Дата подписания - обязательна!'})
-                return;
-            }
-            var date = parseDate(reqData['date-sign'])
-            if(!date) {
-                res.status(400).send({errText: 'Неверный формат даты'})
-                return;
-            }
-            var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-            req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function(err) {
-                if (err) {
-                    logger.error(err);
-                    return res.status(500).send(err);
-                }
-            });
-
-            order.info['date-sign'] = date;
-            order.info.order = `${req.files.order.name}`;
-            order.status = 'succes';
-            order.date['client-notify'] = new Date();
-            order.deadline = null;
-
-            order.history.push({
-                name: 'Завершено уведомление клиента. Абонент включен.',
-                date: new Date(),
-                author: await Account.findOne({_id: res.locals.__user._id})
-            });
-
-            var done = await order.save();
-            if(done) {
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `end-client-notify`,
-                    order: done._id
-                });
-                done = await done.deepPopulate(populateQuery);
-                sendMail(done, 'new-status');
-                ntf.save();
-                logger.info(`End client-notify order #${ done.id }`, res.locals.__user);
-                res.status(200).send({created: true});
-            } else res.status(400).send({errText: 'Что-то пошло не так'})
-        }
-
-        if(order.status == 'client-match') {
-            var mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0);
-
-            if(mustIDOSS && !reqData.idoss) {
-                res.status(400).send({errText: 'Укажите ID OSS'});
-            }
-            if(reqData['income-once'] == '' || reqData['income-once'] == null) {
-                res.status(400).send({errText: 'Укажите доход!'});
-            }
-
-            if(reqData['income-monthly'] == '' || reqData['income-once'] == null) {
-                res.status(400).send({errText: 'Укажите доход!'});
-            }
-
-            order.info['idoss'] = reqData['idoss'];
-            order.info['income-once'] = reqData['income-once'];
-            order.info['income-monthly'] = reqData['income-monthly'];
-
-            order.history.push({
-                name: 'Заполнен ожидаемый доход',
-                date: new Date(),
-                author: await Account.findOne({_id: res.locals.__user._id})
-            });
-
-            var done = await order.save();
-            if(done) {
-                logger.info(`Filling income order #${ done.id }`, res.locals.__user);
-                res.status(200).send({created: true});
-            } else res.status(400).send({errText: 'Что-то пошло не так'})
-        }
-    },
 
     getFile: async (req, res) => {
         var order = await Order.findOne({id: req.params.id});
@@ -1030,6 +759,9 @@ module.exports = {
             return;
         }
         switch (reqData.to) {
+            case 'adminEdit':
+
+                break;
             case 'pause':
                 order.pause = {
                     status: true,
@@ -1107,8 +839,8 @@ module.exports = {
                 break;
             case 'start-pre-stop':
                 order.status = 'stop-pre';
-                order.deadline = await calculateDeadline(3);
-                order.date['cs-stop-pre'] = await calculateDeadline(3);
+                order.deadline = await helper.calculateDeadline(3);
+                order.date['cs-stop-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
                 order.history.push({
                     name: 'Начало проработки СТОП/VSAT',
@@ -1125,8 +857,8 @@ module.exports = {
                 break;
             case 'start-pre-gzp':
                 order.status = 'gzp-pre';
-                order.deadline = await calculateDeadline(3);
-                order.date['cs-gzp-pre'] = await calculateDeadline(3);
+                order.deadline = await helper.calculateDeadline(3);
+                order.date['cs-gzp-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
                 order.history.push({
                     name: 'Начало проработки ГЗП',
@@ -1143,8 +875,8 @@ module.exports = {
                 break;
             case 'end-network':
                 order.status = 'client-notify';
-                order.deadline = await calculateDeadline(2);
-                order.date['cs-client-notify'] = await calculateDeadline(2);
+                order.deadline = await helper.calculateDeadline(2);
+                order.date['cs-client-notify'] = await helper.calculateDeadline(2);
                 order.date['network'] = new Date();
                 order.history.push({
                     name: 'Выполнена настройка сети',
@@ -1181,8 +913,8 @@ module.exports = {
                 } else {
                     order.status = 'install-devices';
                 }
-                order.deadline = await calculateDeadline(order.gzp.time);
-                order.date['cs-gzp-organization'] = await calculateDeadline(order.gzp.time + 2);
+                order.deadline = await helper.calculateDeadline(order.gzp.time);
+                order.date['cs-gzp-organization'] = await helper.calculateDeadline(order.gzp.time + 2);
                 order.date['client-match'] = new Date();
                 order.history.push({
                     name: 'Начало строительства ГЗП',
@@ -1215,8 +947,8 @@ module.exports = {
                 break;
             case 'start-stop-build':
                 order.status = 'stop-build';
-                order.deadline = await calculateDeadline(order.stop.time);
-                order.date['cs-stop-organization'] = await calculateDeadline(order.stop.time + 2);
+                order.deadline = await helper.calculateDeadline(order.stop.time);
+                order.date['cs-stop-organization'] = await helper.calculateDeadline(order.stop.time + 2);
                 order.date['client-match'] = new Date();
                 order.history.push({
                     name: 'Начало организации через СТОП/VSAT',
@@ -1253,9 +985,108 @@ module.exports = {
         if(done) {
             logger.info(`${reqData.to} order #${done.id}`, res.locals.__user);
             if(reqData.to == 'delete') res.status(200).send({url: '/'});
+            if(reqData.to == 'adminEdit') res.status(200).send({url: `/order/${done.id}/info/admin`});
+
             else res.status(200).send({created: true});
         } else res.status(400).send({errText: 'Изменение несуществующей заявки!'});
 
+    },
+
+    endClientNotify: async (req, res) => {
+        var reqData = req.body;
+        var order = await Order.findOne({id: req.params.id});
+
+        if(!order) {
+            res.status(400).send({errText: 'Ошибка при сохранении!'});
+            return;
+        }
+
+        if(order.status == 'client-notify') {
+            var id = order.id;
+            var _dir;
+            for (var i = 0; i < 1000; i++) {
+                if(id > i*1000) {
+                    _dir = `${(i)*1000}-${(i+1)*1000}`;
+                }
+            }
+            if(!req.files.order) {
+                res.status(400).send({errText: 'Договор - обязателен!'})
+                return;
+            }
+            if(!reqData['date-sign']) {
+                res.status(400).send({errText: 'Дата подписания - обязательна!'})
+                return;
+            }
+            var date = common.parseDate(reqData['date-sign'])
+            if(!date) {
+                res.status(400).send({errText: 'Неверный формат даты'})
+                return;
+            }
+            var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
+            req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function(err) {
+                if (err) {
+                    logger.error(err);
+                    return res.status(500).send(err);
+                }
+            });
+
+            order.info['date-sign'] = date;
+            order.info.order = `${req.files.order.name}`;
+            order.status = 'succes';
+            order.date['client-notify'] = new Date();
+            order.deadline = null;
+
+            order.history.push({
+                name: 'Завершено уведомление клиента. Абонент включен.',
+                date: new Date(),
+                author: await Account.findOne({_id: res.locals.__user._id})
+            });
+
+            var done = await order.save();
+            if(done) {
+                var ntf = new Notify({
+                    date: Date.now(),
+                    type: `end-client-notify`,
+                    order: done._id
+                });
+                done = await done.deepPopulate(populateQuery);
+                sendMail(done, 'new-status');
+                ntf.save();
+                logger.info(`End client-notify order #${ done.id }`, res.locals.__user);
+                res.status(200).send({created: true});
+            } else res.status(400).send({errText: 'Что-то пошло не так'})
+        }
+
+        if(order.status == 'client-match') {
+            var mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0);
+
+            if(mustIDOSS && !reqData.idoss) {
+                res.status(400).send({errText: 'Укажите ID OSS'});
+            }
+            if(reqData['income-once'] == '' || reqData['income-once'] == null) {
+                res.status(400).send({errText: 'Укажите доход!'});
+            }
+
+            if(reqData['income-monthly'] == '' || reqData['income-once'] == null) {
+                res.status(400).send({errText: 'Укажите доход!'});
+            }
+
+            order.info['idoss'] = reqData['idoss'];
+            order.info['income-once'] = reqData['income-once'];
+            order.info['income-monthly'] = reqData['income-monthly'];
+
+            order.history.push({
+                name: 'Заполнен ожидаемый доход',
+                date: new Date(),
+                author: await Account.findOne({_id: res.locals.__user._id})
+            });
+
+            var done = await order.save();
+            if(done) {
+                logger.info(`Filling income order #${ done.id }`, res.locals.__user);
+                res.status(200).send({created: true});
+            } else res.status(400).send({errText: 'Что-то пошло не так'})
+        }
     },
 
     getStat: async (req, res) => {
@@ -1465,7 +1296,7 @@ module.exports = {
         if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
         if(req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
 
-        var query = await makeQuery(req, res);
+        var query = await helper.makeQuery(req, res);
         query.special = undefined;
 
         var orders = await Order.find(query).deepPopulate(populateQuery);
@@ -1488,7 +1319,7 @@ module.exports = {
     },
 
     search: async (req, res) => {
-        res.locals.data = await getData();
+        res.locals.data = await helper.getData();
         res.locals.err = {};
 
         if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
@@ -1512,7 +1343,7 @@ module.exports = {
         if(req.query.id && isNaN(req.query.id)) {
             res.locals.err.id = 'ID должен быть числом';
         }
-        var query = await makeQuery(req, res);
+        var query = await helper.makeQuery(req, res);
 
         var pagerId = 'first',
             pagers = [],
@@ -1531,7 +1362,7 @@ module.exports = {
         var total = orders.length;
 
         if(req.query.sort)
-            orders = orderSort(orders, req.query.sort, req.query.value);
+            orders = helper.orderSort(orders, req.query.sort, req.query.value);
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
@@ -1555,330 +1386,4 @@ module.exports = {
             }
         });
     }
-}
-
-function parseClient(str) {
-    var res = { type: '', name: ''};
-    for (var i = 1; i < str.length; i++) {
-        if(str[i] === ']') {
-            res.name = str.slice(i+2, str.length);
-            return res;
-        } else res.type += ''+str[i];
-    }
-    return 'err';
-}
-
-function parserCity(str) {
-    var res = { type: '', name: ''};
-    var types = ['г.', 'с.', 'пгт.', 'пос.'];
-
-    for (var i = 0; i < str.length; i++) {
-        if(str[i] === '.') {
-            res.type += '.';
-            res.name = str.slice(i+2, str.length);
-            if (res.name.length <= 0 || types.indexOf(res.type) < 0) {
-                return 'err';
-            }
-            return res;
-        } else res.type += ''+str[i];
-    }
-    return 'err';
-}
-
-function parserStreet(str) {
-    var res = { type: '', name: ''};
-    var types = ['ул.', 'пер.', 'кв.', 'пл.', 'пр-т.', 'ш.'];
-
-    for (var i = 0; i < str.length; i++) {
-        if(str[i] === '.') {
-            res.type += '.';
-            res.name = str.slice(i+2, str.length);
-            if (res.name.length <= 0 || types.indexOf(res.type) < 0) {
-                return 'err';
-            }
-            return res;
-        } else res.type += ''+str[i];
-    }
-    return 'err';
-}
-
-function parseDate (date) {
-    date = date.split('.');
-    if(date.length == 3) {
-        if(date[1] >= 0 && date[1] <= 11 && date[0] > 0 &&  date[0] <= 31)
-            return new Date(date[2], date[1]-1, date[0]);
-        else return false
-    } else return false;
-}
-
-var getData = async () => {
-    var clients = await Client.find().populate('type');
-    var providers = await Provider.find();
-    var cities = await City.find();
-    var streets = await Street.find();
-    var services = await Service.find();
-
-
-    clients = clients.map( i => `${i.name}`);
-
-    providers = providers.map( i => `[${i.type}] ${i.name}`);
-
-    cities = cities.map( i => `${i.type} ${i.name}`);
-    streets = streets.map( i => `${i.type} ${i.name}`);
-
-
-    services = services.map( i => {
-        return {
-            val: `${i._id}`,
-            text: `${i.name}`
-        }
-    });
-
-    var pre = [
-        {
-            text: 'только ГЗП',
-            val: 'gzp-pre'
-        },
-        {
-            text: 'только СТОП/VSAT',
-            val: 'stop-pre'
-        },
-        {
-            text: 'Одновременно ГЗП и СТОП/VSAT',
-            val: 'all-pre'
-        }
-    ];
-
-    return {
-        clients: clients,
-        providers: providers,
-        cities: cities,
-        streets: streets,
-        services: services,
-        pre: pre
-    }
-
-}
-
-var calculateDeadline = async (time) => {
-    var holidays = await Holiday.find();
-    var now = new Date();
-
-    var i = 0;
-
-    while (time > 0) {
-        var day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
-        var holi = await Holiday.findOne({date: day});
-
-        if(day.getDay() != 6 && day.getDay() != 0 && holi == null) {
-            time--;
-        }
-        i++;
-    }
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, 0, 0, 0, 0);
-}
-
-var getRespDep = async (order) => {
-    switch (order.status) {
-        case 'gzp-pre':
-        case 'gzp-build':
-        case 'install-devices':
-            var dep = await Department.findOne({cities: order.info.city._id});
-            // if(!dep) dep = await Department.findOne({type: 'b2o'});
-            if(!dep) return 'Ответственный отдел не определён!'
-            return dep.name;
-            break;
-        case 'stop-pre':
-        case 'stop-build':
-            var dep = await Department.findOne({type: 'b2o'});
-            if(!dep) dep = {
-                name: 'Ответсвенный отдел не определён!'
-            }
-            return dep.name;
-            break;
-        case 'all-pre':
-            var dep1 = await Department.findOne({type: 'b2o'});
-            var dep2 = await Department.findOne({cities: order.info.city._id});
-            if(!dep2) return `${dep1.name}`;
-            else return `${dep1.name} и ${dep2.name}`;
-            break;
-        case 'network':
-            var dep = await Department.findOne({type: 'net'});
-            return dep.name;
-            break;
-        default:
-            return order.info.initiator.department.name;
-            break;
-    }
-}
-
-var makeQuery = async (req, res) => {
-    var qr = {};
-    var query = req.query;
-    var status = [];
-    if(query.id) {
-        return {id: query.id};
-    }
-    if(query.cms) {
-        return {cms: query.cms};
-    }
-    if(query.func) {
-        if(query.func.indexOf('1') >= 0) {
-            qr['$or'] = [
-                {'info.initiator': res.locals.__user._id},
-                {'history.author': res.locals.__user._id}
-            ]
-        }
-        if(query.func.indexOf('2') >= 0) {
-            qr['deadline'] = {'$lte': new Date()};
-        }
-        if(query.func.indexOf('3') >= 0) {
-            qr['pause.status'] = true;
-        }
-    }
-    if(query.pre) {
-        if(query.pre.indexOf('1') >= 0) {
-            status.push({status: 'gzp-pre'});
-            status.push({status: 'all-pre'});
-        }
-        if(query.pre.indexOf('2') >= 0) {
-            status.push({status: 'stop-pre'});
-            if(status.indexOf({status: 'all-pre'}) < 0) {
-                status.push({status: 'all-pre'});
-            }
-        }
-        if(query.pre.indexOf('3') >= 0) {
-            status.push({status: 'client-match'});
-        }
-    }
-    if(query.build) {
-        if(query.build.indexOf('1') >= 0) {
-            status.push({status: 'gzp-build'});
-        }
-        if(query.build.indexOf('2') >= 0) {
-            status.push({status: 'install-devices'});
-        }
-        if(query.build.indexOf('3') >= 0) {
-            status.push({status: 'stop-build'});
-        }
-        if(query.build.indexOf('4') >= 0) {
-            status.push({status: 'network'});
-        }
-        if(query.build.indexOf('5') >= 0) {
-            status.push({status: 'client-notify'});
-        }
-    }
-
-    if(query.final) {
-        if(query.final.indexOf('1') >= 0) {
-            status.push({ '$and' : [
-                {status: 'succes'},
-                {'date.gzp-build': {$ne:null}}
-            ]});
-        }
-        if(query.final.indexOf('2') >= 0) {
-            status.push({ '$and' : [
-                {status: 'succes'},
-                {'date.stop-build': {$ne:null} }
-            ]});
-        }
-        if(query.final.indexOf('3') >= 0) {
-            status.push({status: 'reject'});
-        }
-    }
-
-    if(status.length > 0) {
-        if(qr['$or']) {
-            qr['$or'] = qr['$or'].concat(status);
-        } else
-            qr['$or'] = status;
-    }
-
-    if(query.client) {
-        var clnt = query.client;
-        clnt = clnt.trim();
-        var rgx =  new RegExp('' + clnt + '', 'i');
-        clnt = await Client.find({name: {$regex: rgx}});
-        if(clnt.length > 0) {
-            var _q = [];
-            clnt.forEach( itm => {
-                _q.push({'info.client': itm._id});
-            })
-            qr['$and'] = [{'$or': _q}];
-        } else {
-            qr['$and'] = [{'asdasd': 'asdasdasd'}]
-        }
-    }
-
-    if(query.city) {
-        // var city = parserCity(query.city);
-        var city = query.city;
-        city = city.trim();
-        var rgx =  new RegExp('' + city + '', 'i');
-        city = await City.find({name: {$regex: rgx}});
-        if(city.length > 0) {
-            var _q = [];
-            city.forEach( itm => {
-                _q.push({'info.city': itm._id});
-            })
-            if(qr['$and']) {
-                qr['$and'].push({'$or': _q})
-            } else qr['$and'] = [{'$or': _q}];
-        } else {
-            qr['$and'] = [{'asdasd': 'asdasdasd'}]
-        }
-    }
-
-    if(query.service) {
-        if(qr['$and']) {
-            qr['$and'].push({'info.service': query.service})
-        } else qr['$and'] = [{'info.service': query.service}];
-    }
-    return qr;
-}
-
-function orderSort(array, path, reverse) {
-    switch (path) {
-        case 'id':
-            path = 'id';
-            break;
-        case 'client':
-            path = 'info.client.name';
-            break;
-        case 'adress':
-            path = 'info.city.name';
-            break;
-        case 'service':
-            path = 'info.service.name';
-            break;
-        case 'deadline':
-            path = 'deadline';
-            break;
-        case 'status':
-            path = 'status';
-            break;
-    }
-
-    var paths = path.split('.');
-
-    array.sort( (a, b) => {
-        for (var i = 0; i<paths.length; i++) {
-            a = a[paths[i]];
-            b = b[paths[i]];
-        }
-        if(path == 'deadline') {
-            if(a === null || a === undefined)
-                a = 9999999999999;
-            if(b === null || b === undefined)
-                b = 9999999999991;
-        }
-
-        if(a < b)
-            return -1*reverse;
-        if(a > b)
-            return 1*reverse;
-        return 0;
-    });
-
-    return array;
 }

@@ -47,8 +47,10 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
         {
             elem: 'adress-info',
             elemMods: {
-                type: (order.info.coordinate)?'coordination':'location'
+                type: (order.info.coordinate)?'coordination':'location',
+                access: adminEdit
             },
+            dataset: dataset,
             order: order
         },
         { elem: 'separator' },
@@ -142,7 +144,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
                 tab: 'info'
             },
             order: order,
-            admin: adminEdit,
+            adminEdit: adminEdit,
             user: this.ctx.user
         }
     ]

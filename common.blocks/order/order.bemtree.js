@@ -84,7 +84,7 @@ block('order').content()(function () {
             order: this.ctx.order,
             tab: this.ctx.tab,
             user: this.ctx.user,
-            admin: this.ctx.admin,
+            adminEdit: this.ctx.adminEdit,
             dataset: this.ctx.dataset,
             department: this.ctx.department,
             js: true

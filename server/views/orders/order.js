@@ -16,14 +16,14 @@ module.exports = function(opt, data) {
                 action: `/order/${data.order.id}/${opt.tab}`,
                 order: data.order,
                 tab: opt.tab,
-                admin: opt.admin,
+                adminEdit: opt.admin,
                 user: data.__user,
                 dataset: data.dataset,
                 department: data.department
             },
             {
                 block: 'chat',
-                order: data.order                
+                order: data.order
             }
         ]
     };

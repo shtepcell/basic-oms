@@ -4,6 +4,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
         user = ctx.user,
         adminEdit = ctx.adminEdit;
 
+        console.log(adminEdit);
     var isOwner = (order.info.initiator.department._id == user.department._id + ''),
         isPre = (order.status == 'all-pre' || order.status == 'gzp-pre' || order.status == 'stop-pre'),
         isMatch = (order.status == 'client-match'),
@@ -32,7 +33,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             data: {
                 text: 'Сохранить изменения'
             },
-            display: (adminEdit || isOwner && (isPre || isMatch))  && !isPause
+            display: ((isOwner && (isPre || isMatch)) && !isPause) || adminEdit
         },
         {
             block: 'order',
@@ -132,6 +133,18 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 text: 'Полностью удалить заказ',
                 to: 'delete',
                 id: order.id
+            },
+            display: isAdmin
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            elemMods: {
+                type: 'add-param'
+            },
+            data: {
+                text: 'Административная правка'
+                // TODO: Нужно сделать добавление пармаетра
             },
             display: isAdmin
         },

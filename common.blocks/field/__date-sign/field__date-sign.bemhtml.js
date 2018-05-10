@@ -41,6 +41,16 @@ block('field').elem('date-sign').elemMod('access', true).content()(function () {
         dataset = ctx.dataset;
 
     if(ctx.display) {
+        var value = order.info['date-sign'];
+        var year = value.getFullYear();
+        var month = value.getMonth() + 1;
+        if(month < 10) {
+            month = '0' + month;
+        }
+        var day = value.getDate();
+        if(day < 10) {
+            day = '0' + day;
+        }
 
         return [
             {
@@ -63,6 +73,7 @@ block('field').elem('date-sign').elemMod('access', true).content()(function () {
                                     size: 'm',
                                     theme: 'islands'
                                 },
+                                val: `${day}.${month}.${year}`,
                                 name: 'date-sign',
                                 weekdays: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
                                 months: ['Январь', 'Февраль', 'Март',

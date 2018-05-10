@@ -7,6 +7,7 @@ provide(bemDom.declElem('action', 'add-params',
                 inited: function () {
                     this._domEvents().on('click', function() {
                         location.change({ params: this.params.params });
+                        window.location = window.location;
                     })
                 }
             }

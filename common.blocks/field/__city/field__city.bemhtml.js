@@ -56,7 +56,7 @@ block('field').elem('city').elemMod('access', true).content()(function () {
                                 block : 'suggest',
                                 mods : {
                                     theme : 'islands',
-                                    size : 'm',
+                                    size : 'l',
                                     'has-dataprovider' : 'adress'
                                 },
                                 val: value,

@@ -138,14 +138,13 @@ schema.plugin(deepPopulate);
 
 var order;
 
-schema.statics.getNextId = async () => {
-    var ret = await order.find().sort('id');
+schema.statics.getNextId = async () => { //TODO: Сделать counter
+    var ret = await order.find().sort('id').lean();
 
-    if(ret.length == 0) {
+    if(ret.length == 0)
         return 1;
-    }
-    return ret[ret.length - 1].id + 1;
 
+    return ret[ret.length - 1].id + 1;
 };
 
 schema.statics.create = async(ordr) => {

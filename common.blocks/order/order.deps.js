@@ -10,7 +10,7 @@
             block: 'order',
             elem: 'action',
             mods: {
-                type: 'submit'
+                type: ['add-param', 'submit']
             }
         },
         {
