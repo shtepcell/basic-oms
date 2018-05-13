@@ -252,27 +252,27 @@ module.exports = {
            case 'gzp-pre':
            case 'gzp-build':
            case 'install-devices':
-               var dep = await Department.findOne({cities: order.info.city});
+               var dep = await Department.findOne({cities: order.info.city}).lean();
                return dep;
                break;
            case 'stop-pre':
            case 'stop-build':
-               var dep = await Department.findOne({type: 'b2o'});
+               var dep = await Department.findOne({type: 'b2o'}).lean();
                return dep;
                break;
            case 'all-pre':
                var deps = [
-                   await Department.findOne({type: 'b2o'}),
-                   await Department.findOne({cities: order.info.city})
+                   await Department.findOne({type: 'b2o'}).lean(),
+                   await Department.findOne({cities: order.info.city}).lean()
                ];
               return deps;
               break;
            case 'network':
-               var dep = await Department.findOne({type: 'net'});
+               var dep = await Department.findOne({type: 'net'}).lean();
                return dep;
                break;
            default:
-               return order.info.initiator.department;
+               return await Department.findOne({_id: order.info.initiator.department}).lean();
                break;
        }
    },

@@ -1085,208 +1085,202 @@ module.exports = {
     },
 
     getStat: async (req, res) => {
-        var deps = await Department.find();
-        var ordrs = await Order.find({status: {'$ne': 'secret'}}).populate(populateInitiator).lean();
-        var orders = [];
+        var preQuery =[
+            {status: 'gzp-pre'},
+            {status: 'stop-pre'},
+            {status: 'all-pre'},
+            {status: 'sks-pre'},
+            {status: 'client-match'}
+        ]
 
-        for (var i = 0; i < ordrs.length; i++) {
-            orders.push({
-                status: ordrs[i].status,
-                pause: ordrs[i].pause,
-                worker: await helper.getRespDep(ordrs[i]),
-                deadline: ordrs[i].deadline
+        var buildQuery = [
+            {status: 'gzp-build'},
+            {status: 'stop-build'},
+            {status: 'sks-build'},
+            {status: 'install-devices'},
+            {status: 'client-notify'},
+            {status: 'network'}
+        ];
+
+        var counter = {
+            all: await Order.count({status: {$ne: 'secret'}}),
+            succes: await Order.count({status: 'succes'}),
+            reject: await Order.count({status: 'reject'}),
+            pre: await Order.count({
+                $or: preQuery
+            }),
+            build: await Order.count({
+                $or: buildQuery
+            }),
+            'pre-deadline': await Order.count({
+                deadline: {'$lte': new Date()},
+                $or: preQuery
+            }),
+            'build-deadline': await Order.count({
+                deadline: {'$lte': new Date()},
+                $or: buildQuery
             })
-        }
-        // orders = orders.map( async (item) => {
-        //     var wrkr =
-            // switch (item.status) {
-            //     case 'gzp-pre':
-            //         deps.forEach( i => {
-            //             if(i.type == 'gus') {
-            //                 if(i.cities.indexOf(item.info.city) >= 0) {
-            //                     item.worker = i;
-            //                     return;
-            //                 }
-            //             }
-            //         })
-            //         break;
-            //     case 'stop-pre':
-            //         deps.forEach( i => {
-            //             if(i.type == 'b2o') {
-            //                 item.worker = i;
-            //             }
-            //         })
-            //         break;
-            //     case 'all-pre':
-            //         item.worker = [];
-            //         deps.forEach( i => {
-            //             if(i.type == 'gus') {
-            //                 if(i.cities.indexOf(item.info.city) >= 0) {
-            //                     item.worker.push(i);
-            //                     return;
-            //                 }
-            //             }
-            //             if(i.type == 'b2o') {
-            //                 item.worker.push(i);
-            //             }
-            //         })
-            //         break;
-            //     case 'client-notify':
-            //         deps.forEach( i => {
-            //             if(item.info.initiator.department == ''+i._id) {
-            //                 item.worker = i;
-            //                 return;
-            //             }
-            //         })
-            //         break;
-            //
-            //     case 'client-match':
-            //         deps.forEach( i => {
-            //             if(item.info.initiator.department ==''+i._id) {
-            //                 item.worker = i;
-            //                 return;
-            //             }
-            //         })
-            //         break;
-            //
-            //     case 'network':
-            //         deps.forEach( i => {
-            //             if(i.type == 'net') {
-            //                 item.worker = i;
-            //                 return;
-            //             }
-            //         })
-            //         break;
-            //
-            //     case 'gzp-build':
-            //         deps.forEach( i => {
-            //             if(i.type == 'gus') {
-            //                 if(i.cities.indexOf(item.info.city) >= 0) {
-            //                     item.worker = i;
-            //                     return;
-            //                 }
-            //             }
-            //         })
-            //         break;
-            //
-            //     case 'install-devices':
-            //         deps.forEach( i => {
-            //             if(i.type == 'gus') {
-            //                 if(i.cities.indexOf(item.info.city) >= 0) {
-            //                     item.worker = i;
-            //                     return;
-            //                 }
-            //             }
-            //         })
-            //         break;
-            //
-            //     case 'stop-build':
-            //         deps.forEach( i => {
-            //             if(i.type == 'b2o') {
-            //                 item.worker = i;
-            //                 return;
-            //             }
-            //         });
-            //         break;
-            //
-            // }
-        //     return {
-        //         status: item.status,
-        //         pause: item.pause,
-        //         worker: wrkr,
-        //         deadline: item.deadline
-        //     }
-        // });
-
-        var stages = {
-            pre: {
-                all: 0,
-                bad: 0
-            },
-            build: {
-                all: 0,
-                bad: 0
-            },
-            succes: {
-                all: 0
-            },
-            reject: {
-                all: 0
-            }
         };
 
-        var dprtmts = {};
-        // console.log(orders);
-        orders.forEach( item => {
-            var pre = ['gzp-pre', 'stop-pre', 'all-pre', 'client-match'];
-            var build = ['gzp-build', 'stop-build', 'install-devices', 'client-notify', 'network'];
+        var deps = await Department.find({
+            $and: [
+                {type: {$ne: 'admin'}},
+                {type: {$ne: 'man'}}
+            ]
+        }).lean();
 
-            if(pre.indexOf(item.status) >= 0) {
-                stages.pre.all++;
-                if(item.deadline < new Date()) stages.pre.bad++;
-            }
-
-            if(build.indexOf(item.status) >= 0) {
-                stages.build.all++;
-                if(item.deadline < new Date()) stages.build.bad++;
-            }
-            if(item.worker) {
-                if(item.worker.length) {
-                    item.worker.forEach( i => {
-                        if(!dprtmts[i._id]) {
-                            dprtmts[i._id] = {
-                                pre: {
-                                    all: 0,
-                                    bad: 0
+        for (var i = 0; i < deps.length; i++) {
+            switch (deps[i].type) {
+                case 'gus':
+                    counter[deps[i]._id] = {
+                        pre: await Order.count({
+                            $or: [
+                                {status: 'gzp-pre'},
+                                {status: 'all-pre'}
+                            ],
+                            'info.city': deps[i].cities
+                        }),
+                        build: await Order.count({
+                            $or: [
+                                {status: 'gzp-build'},
+                                {status: 'install-devices'}
+                            ],
+                            'info.city': deps[i].cities
+                        }),
+                        'pre-deadline': await Order.count({
+                            deadline: {'$lte': new Date()},
+                            $or: [
+                                {status: 'gzp-pre'},
+                                {status: 'all-pre'}
+                            ],
+                            'info.city': deps[i].cities
+                        }),
+                        'build-deadline': await Order.count({
+                            deadline: {'$lte': new Date()},
+                            $or: [
+                                {status: 'gzp-build'},
+                                {status: 'install-devices'}
+                            ],
+                            'info.city': deps[i].cities
+                        }),
+                    }
+                    break;
+                case 'b2b':
+                    counter[deps[i]._id] = {
+                        pre: await Order.count({
+                            $or: [
+                                {status: 'client-match'}
+                            ],
+                            'info.department': deps[i]._id
+                        }),
+                        build: await Order.count({
+                            $or: [
+                                {status: 'client-notify'}
+                            ],
+                            'info.department': deps[i]._id
+                        }),
+                        'pre-deadline': await Order.count({
+                            deadline: {'$lte': new Date()},
+                            $or: [
+                                {status: 'client-match'}
+                            ],
+                            'info.department': deps[i]._id
+                        }),
+                        'build-deadline': await Order.count({
+                            deadline: {'$lte': new Date()},
+                            $or: [
+                                {status: 'client-notify'}
+                            ],
+                            'info.department': deps[i]._id
+                        })
+                    }
+                    break;
+                case 'b2o':
+                    counter[deps[i]._id] = {
+                        pre: await Order.count({
+                            $or: [
+                                {
+                                    $or: [
+                                        {status: 'client-match'}
+                                    ],
+                                    'info.department': deps[i]._id
                                 },
-                                build: {
-                                    all: 0,
-                                    bad: 0
-                                }
-                            }
-                        }
-                        if(pre.indexOf(item.status) >= 0) {
-                            dprtmts[i._id].pre.all++;
-                            if(item.deadline < new Date()) dprtmts[i._id].pre.bad++;
-                        }
-
-                    })
-
-                } else {
-                    if(!dprtmts[item.worker._id])
-                        dprtmts[item.worker._id] = {
-                            pre: {
-                                all: 0,
-                                bad: 0
-                            },
-                            build: {
-                                all: 0,
-                                bad: 0
-                            }
-                        }
-                    if(pre.indexOf(item.status) >= 0) {
-                        dprtmts[item.worker._id].pre.all++;
-                        if(item.deadline < new Date()) dprtmts[item.worker._id].pre.bad++;
+                                {status: 'all-pre'},
+                                {status: 'stop-pre'}
+                            ]
+                        }),
+                        build: await Order.count({
+                            $or: [
+                                {
+                                    $or: [
+                                        {status: 'client-notify'}
+                                    ],
+                                    'info.department': deps[i]._id
+                                },
+                                {status: 'stop-build'}
+                            ]
+                        }),
+                        'pre-deadline': await Order.count({
+                            deadline: {'$lte': new Date()},
+                            $or: [
+                                {
+                                    $or: [
+                                        {status: 'client-match'}
+                                    ],
+                                    'info.department': deps[i]._id
+                                },
+                                {status: 'all-pre'},
+                                {status: 'stop-pre'}
+                            ]
+                        }),
+                        'build-deadline': await Order.count({
+                            deadline: {'$lte': new Date()},
+                            $or: [
+                                {
+                                    $or: [
+                                        {status: 'client-notify'}
+                                    ],
+                                    'info.department': deps[i]._id
+                                },
+                                {status: 'stop-build'}
+                            ]
+                        }),
                     }
-
-                    if(build.indexOf(item.status) >= 0) {
-                        dprtmts[item.worker._id].build.all++;
-                        if(item.deadline < new Date()) dprtmts[item.worker._id].build.bad++;
+                    break;
+                case 'sks':
+                    counter[deps[i]._id] = {
+                        pre: await Order.count({
+                            status: 'sks-pre'
+                        }),
+                        build: await Order.count({
+                            status: 'sks-build'
+                        }),
+                        'pre-deadline': await Order.count({
+                            deadline: {'$lte': new Date()},
+                            status: 'sks-pre'
+                        }),
+                        'build-deadline': await Order.count({
+                            deadline: {'$lte': new Date()},
+                            status: 'sks-build'
+                        })
                     }
-                }
-
+                    break;
+                case 'network':
+                    counter[deps[i]._id] = {
+                        build: await Order.count({
+                            status: 'network'
+                        }),
+                        'build-dedline': await Order.count({
+                            deadline: {'$lte': new Date()},
+                            status: 'network'
+                        }),
+                    }
+                    break;
             }
-
-            if(item.status == 'succes') stages.succes.all++;
-            if(item.status == 'reject') stages.reject.all++;
-
-        })
+        }
+        
         res.locals.deps = deps;
-        res.locals.statistics = {
-            all: orders.length,
-            stages: stages,
-            deps : dprtmts
-        };
+        res.locals.statistics = counter;
         render(req, res, {
             viewName: 'status'
         });

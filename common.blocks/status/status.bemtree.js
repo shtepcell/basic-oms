@@ -41,7 +41,7 @@ block('status').content()(function () {
                         },
                         {
                             elem: 'data',
-                            content: stat.stages.succes.all
+                            content: stat.succes
                         }
                     ]
                 },
@@ -61,7 +61,7 @@ block('status').content()(function () {
                         },
                         {
                             elem: 'data',
-                            content: stat.stages.reject.all
+                            content: stat.reject
                         }
                     ]
                 }
@@ -82,7 +82,7 @@ block('status').content()(function () {
                                 },
                                 {
                                     elem: 'data',
-                                    content: stat.stages.pre.all+stat.stages.build.all
+                                    content: stat.pre + stat.build
                                 }
                             ]
                         },
@@ -109,7 +109,7 @@ block('status').content()(function () {
                                                 },
                                                 {
                                                     elem: 'data',
-                                                    content: stat.stages.pre.all
+                                                    content: stat.pre
                                                 }
                                             ]
                                         },
@@ -118,8 +118,8 @@ block('status').content()(function () {
                                             content: function () {
                                                 var ret = [];
                                                 deps.forEach( item => {
-                                                    if(stat.deps[item._id]) {
-                                                        if(stat.deps[item._id].pre.all > 0)
+                                                    if(stat[item._id]) {
+                                                        if(stat[item._id].pre > 0)
                                                             ret.push({
                                                                 elem: 'row',
                                                                 content: [
@@ -129,7 +129,7 @@ block('status').content()(function () {
                                                                     },
                                                                     {
                                                                         elem: 'data',
-                                                                        content: stat.deps[item._id].pre.all
+                                                                        content: stat[item._id].pre
                                                                     }
                                                                 ]
                                                             })
@@ -159,7 +159,7 @@ block('status').content()(function () {
                                                 },
                                                 {
                                                     elem: 'data',
-                                                    content: stat.stages.build.all
+                                                    content: stat.build
                                                 }
                                             ]
                                         },
@@ -168,8 +168,8 @@ block('status').content()(function () {
                                             content: function () {
                                                 var ret = [];
                                                 deps.forEach( item => {
-                                                    if(stat.deps[item._id]) {
-                                                        if(stat.deps[item._id].build.all > 0)
+                                                    if(stat[item._id]) {
+                                                        if(stat[item._id].build > 0)
                                                             ret.push({
                                                                 elem: 'row',
                                                                 content: [
@@ -179,7 +179,7 @@ block('status').content()(function () {
                                                                     },
                                                                     {
                                                                         elem: 'data',
-                                                                        content: stat.deps[item._id].build.all
+                                                                        content: stat[item._id].build
                                                                     }
                                                                 ]
                                                             })
@@ -207,7 +207,7 @@ block('status').content()(function () {
                                 },
                                 {
                                     elem: 'data',
-                                    content: stat.stages.pre.bad+stat.stages.build.bad
+                                    content: stat['pre-deadline']+stat['build-deadline']
                                 }
                             ]
                         },
@@ -237,7 +237,7 @@ block('status').content()(function () {
                                                 },
                                                 {
                                                     elem: 'data',
-                                                    content: stat.stages.pre.bad
+                                                    content: stat['pre-deadline']
                                                 }
                                             ]
                                         },
@@ -246,8 +246,8 @@ block('status').content()(function () {
                                             content: function () {
                                                 var ret = [];
                                                 deps.forEach( item => {
-                                                    if(stat.deps[item._id]) {
-                                                        if(stat.deps[item._id].pre.bad > 0)
+                                                    if(stat[item._id]) {
+                                                        if(stat[item._id]['pre-deadline'] > 0)
                                                             ret.push({
                                                                 elem: 'row',
                                                                 content: [
@@ -257,7 +257,7 @@ block('status').content()(function () {
                                                                     },
                                                                     {
                                                                         elem: 'data',
-                                                                        content: stat.deps[item._id].pre.bad
+                                                                        content: stat[item._id]['pre-deadline']
                                                                     }
                                                                 ]
                                                             })
@@ -287,7 +287,7 @@ block('status').content()(function () {
                                                 },
                                                 {
                                                     elem: 'data',
-                                                    content: stat.stages.build.bad
+                                                    content: stat['build-deadline']
                                                 }
                                             ]
                                         },
@@ -296,8 +296,8 @@ block('status').content()(function () {
                                             content: function () {
                                                 var ret = [];
                                                 deps.forEach( item => {
-                                                    if(stat.deps[item._id]) {
-                                                        if(stat.deps[item._id].build.bad > 0)
+                                                    if(stat[item._id]) {
+                                                        if(stat[item._id]['build-deadline'] > 0)
                                                             ret.push({
                                                                 elem: 'row',
                                                                 content: [
@@ -307,7 +307,7 @@ block('status').content()(function () {
                                                                     },
                                                                     {
                                                                         elem: 'data',
-                                                                        content: stat.deps[item._id].build.bad
+                                                                        content: stat[item._id]['build-deadline']
                                                                     }
                                                                 ]
                                                             })
