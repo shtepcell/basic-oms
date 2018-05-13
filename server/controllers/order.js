@@ -1265,7 +1265,7 @@ module.exports = {
                         })
                     }
                     break;
-                case 'network':
+                case 'net':
                     counter[deps[i]._id] = {
                         build: await Order.count({
                             status: 'network'
@@ -1278,7 +1278,7 @@ module.exports = {
                     break;
             }
         }
-        
+
         res.locals.deps = deps;
         res.locals.statistics = counter;
         render(req, res, {
