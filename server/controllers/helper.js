@@ -157,11 +157,8 @@ module.exports = {
        }
 
        if(query.city) {
-           // var city = parserCity(query.city);
-           var city = query.city;
-           city = city.trim();
-           var rgx =  new RegExp('' + city + '', 'i');
-           city = await City.find({name: {$regex: rgx}});
+           var city = module.exports.parserCity(query.city);
+           city = await City.find({name: city.name, type: city.type});
            if(city.length > 0) {
                var _q = [];
                city.forEach( itm => {
