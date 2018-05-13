@@ -1,5 +1,5 @@
 var Holiday = require('../models/Holiday');
-var common = require('./common');
+var helper = require('./helper');
 
 var Render = require('../render'),
     render = Render.render;
@@ -15,7 +15,7 @@ module.exports = {
     },
 
     add: async (req, res) => {
-        var date = common.strToDate(req.body.date);
+        var date = helper.strToDate(req.body.date);
         if(!date) {
             res.status(400).send({errText: 'Выберите дату'});
             return;

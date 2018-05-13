@@ -30,7 +30,7 @@ var fs = require('fs'),
     MongoStore = require('connect-mongo')(expressSession),
     mongoose = require('./controllers/connect'),
 
-    common = require('./controllers/common'),
+    helper = require('./controllers/helper'),
     router = require('./router'),
 
     db = require('./controllers/connect').connections[0];
@@ -38,7 +38,7 @@ var fs = require('fs'),
 require('debug-http')();
 
 morgan.token('date', function() {
-    var p = common.dateToExtStr(new Date());
+    var p = helper.dateToExtStr(new Date());
     return p;
 });
 
@@ -117,6 +117,6 @@ isSocket && fs.existsSync(port) && fs.unlinkSync(port);
 
 app.listen(port, function() {
     isSocket && fs.chmod(port, '0777');
-    console.log(`\n  ################## RELOAD SERVER - ${common.dateToExtStr()} ################### \n`);
+    console.log(`\n  ################## RELOAD SERVER - ${helper.dateToExtStr()} ################### \n`);
     logger.info(`Server is listening on ${this.address().port}`);
 });

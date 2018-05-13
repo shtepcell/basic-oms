@@ -4,37 +4,18 @@ const Department = require('../models/Department');
 const Account = require('../models/Account');
 const Client = require('../models/Client');
 const Provider = require('../models/Provider');
-const Service = require('../models/Service');
 const City = require('../models/City');
 const Street = require('../models/Street');
 const mkdirp = require('mkdirp-promise');
-const fields = require('./fields');
 const Holiday = require('../models/Holiday');
 const Notify = require('../models/Notify');
 const { sendMail } = require('./mailer');
 const { getExcel } = require('./export');
 
-const common = require('./common');
 const helper = require('./helper');
 const validator = require('./validator');
 
-var stages = {
-    'init': 'Инициация заказа',
-    'client-match': 'Согласование с клиентом',
-    'client-notify': 'Уведомление клиента',
-    'sks-pre': 'Проработка СКС',
-    'sks-build': 'Реализация СКС',
-    'all-pre': 'Проработка по ГЗП и СТОП/VSAT',
-    'gzp-pre': 'Проработка по ГЗП',
-    'gzp-build': 'Организация ГЗП',
-    'install-devices': 'Установка оборудования',
-    'stop-pre': 'Проработка по СТОП/VSAT',
-    'stop-build': 'Организация СТОП/VSAT',
-    'network': 'Настройка сети',
-    'succes': 'Включен',
-    'reject': 'Заявка отклонена',
-    'secret': 'Заявка удалена'
-};
+var stages = require('../common-data').stages;
 
 var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.city info.street stop.provider history.author history.author.department`;
 var shortPop = 'info.client.type info.city info.street';
@@ -99,7 +80,6 @@ module.exports = {
 
     getPageInit: async (req, res) => {
         if(res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o') {
-            res.locals.dataset = await helper.getData();
             render(req, res, {
                 viewName: 'orders/init'
             });
@@ -114,7 +94,11 @@ module.exports = {
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
             perPage = res.locals.__user.settings.table.perPage || 25;
-        res.locals.params = req.query;
+        res.locals.params = helper.trimObject(req.query);
+        
+        if(res.locals.params.id && isNaN(res.locals.params.id)) {
+            res.locals.params.id_error = true;
+        }
 
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
@@ -124,6 +108,7 @@ module.exports = {
             res.redirect(req.path);
 
         var query;
+        var subQ = await helper.makeQuery(req, res);
 
         var settings = res.locals.__user.settings.main,
             user = res.locals.__user;
@@ -177,8 +162,7 @@ module.exports = {
 
         var orders = await Order.find({
             $or: [
-                {$and: [query.zone, query.stage]},
-                {special: user.department._id}
+                { $and: [query.zone, query.stage, subQ] }
             ],
             status: {$ne: 'secret'}
         }).populate([populateClient, populateCity, populateStreet]).lean();
@@ -387,7 +371,6 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            res.locals.dataset = await helper.getData();
             order.resp = await helper.getRespDep(order);
             res.locals.order = order;
             render(req, res, {
@@ -407,7 +390,6 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            res.locals.dataset = await helper.getData();
             order.resp = await helper.getRespDep(order);
             res.locals.order = order;
 
@@ -428,7 +410,6 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            res.locals.dataset = await helper.getData();
             order.resp = await helper.getRespDep(order);
             res.locals.order = order;
 
@@ -448,10 +429,8 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            res.locals.dataset = await helper.getData();
             order.resp = await helper.getRespDep(order);
             res.locals.order = order;
-            res.locals.template = await fields.getInfo(order);
 
             render(req, res, {
                 viewName: 'orders/order',
@@ -511,7 +490,7 @@ module.exports = {
                 tmp.city = city;
 
                 if(data['date-sign']) {
-                    var date = common.parseDate(data['date-sign'])
+                    var date = helper.parseDate(data['date-sign'])
                     if(date == 'err') {
                         res.status(400).send({errText: 'Неверный формат даты'})
                         return;
@@ -1033,7 +1012,7 @@ module.exports = {
                 res.status(400).send({errText: 'Дата подписания - обязательна!'})
                 return;
             }
-            var date = common.parseDate(reqData['date-sign'])
+            var date = helper.parseDate(reqData['date-sign'])
             if(!date) {
                 res.status(400).send({errText: 'Неверный формат даты'})
                 return;

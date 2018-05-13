@@ -4,6 +4,9 @@
             block: 'field'
         },
         {
+            block: 'short-filter'
+        },
+        {
             block: 'gavno',
             elem: 'vkusnoe'
         },

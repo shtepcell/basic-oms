@@ -3,7 +3,6 @@ const Department = require('../models/Department');
 const Account = require('../models/Account');
 const Client = require('../models/Client');
 const Provider = require('../models/Provider');
-const Service = require('../models/Service');
 const City = require('../models/City');
 const Street = require('../models/Street');
 const Holiday = require('../models/Holiday');
@@ -53,7 +52,7 @@ module.exports = {
 
         if(city == 'err')
             return 'Формат города неверный! Следует писать так - г./c./пос./пгт. Симферополь';
-        
+
         city = await City.findOne({ type: city.type, name: city.name });
 
         if(!city)

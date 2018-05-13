@@ -3,7 +3,6 @@ const Auth = require('./controllers/auth'),
     City = require('./controllers/city'),
     ClientType = require('./controllers/clientType'),
     Provider = require('./controllers/provider'),
-    Service = require('./controllers/service'),
     Client = require('./controllers/client'),
     Department = require('./controllers/departments'),
     Order = require('./controllers/order'),
@@ -11,8 +10,8 @@ const Auth = require('./controllers/auth'),
     Notify = require('./controllers/notify'),
     Street = require('./controllers/street'),
     Chat = require('./controllers/chat'),
-    Export = require('./controllers/export');
-
+    Export = require('./controllers/export'),
+    helper = require('./controllers/helper');
 
 const fileUpload = require('express-fileupload');
 const mkdirp = require('mkdirp-promise');
@@ -31,6 +30,11 @@ module.exports = function (app) {
     app.post('/login', Auth.checkAuthorisation);
 
     app.all('*', Auth.isLoggedIn);
+
+    app.get('*', async (req, res, next) => {
+        res.locals.dataset = await helper.getData();
+        next();
+    });
 
     app.get('/logout', Auth.logout);
 
@@ -137,13 +141,6 @@ module.exports = function (app) {
 
     app.post('/admin/providers/change', Provider.edit);
     app.post('/admin/providers/add', Provider.create);
-
-    app.route('/admin/services')
-        .get(Service.getPage)
-        .delete(Service.delete);
-
-    app.post('/admin/services/change', Service.edit);
-    app.post('/admin/services/add', Service.create);
 
     app.route('/admin/clients')
         .get(Client.getPage)

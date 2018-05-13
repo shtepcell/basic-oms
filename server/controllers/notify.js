@@ -1,4 +1,4 @@
-const common = require('./common');
+const helper = require('./helper');
 const Notify = require('../models/Notify');
 const Account = require('../models/Account');
 const Order = require('../models/Order');
@@ -51,7 +51,7 @@ module.exports = {
         notifies = notifies.map( item => {
             return {
                 id: item._id,
-                date: common.dateToExtStr(item.date),
+                date: helper.dateToExtStr(item.date),
                 text: events[item.type],
                 order: item.order.id,
                 read: (item.read.indexOf(res.locals.__user._id+'') >= 0)

@@ -1,8 +1,7 @@
-'use strict'
+'use strict';
 
-const models = require('../models');
-const Account = models.Account;
-const Department = models.Department;
+const Account = require('../models/Account');
+const Department = require('../models/Department');
 const password = require('./password');
 const logger = require('./logger');
 const Render = require('../render'),

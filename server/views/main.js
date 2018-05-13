@@ -35,6 +35,11 @@ module.exports = function(opt, data){
                 elem: 'main',
                 content: [
                     {
+                        block: 'short-filter',
+                        dataset: data.dataset,
+                        query: data.params
+                    },
+                    {
                         block: 'title',
                         mods: {
                             lvl: 4

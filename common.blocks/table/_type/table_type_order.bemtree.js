@@ -3,22 +3,8 @@ block('table').mod('type', 'order').content()(function () {
         params = this.ctx.params,
         ret = [];
 
-    var services = {
-        internet: 'Интернет',
-         vpls: 'VPLS',
-         l3vpn: 'L3VPN',
-         l2vpn: 'l2VPN',
-         cloud: 'Облачная АТС',
-         digital: 'Цифровые каналы',
-         sks: 'СКС',
-         sputnik: 'Спутник',
-         devices: 'Размещение оборудования',
-         phone: 'Телефония (IP-телефония)',
-         analog: 'Аналоговые каналы (ТЧ)',
-         vibe: 'Волокно',
-         wifi: 'Авторизация Wi-Fi',
-         iptv: 'IP TV'
-    };
+    var services = this.data.locals.dataset.services;
+
     if(ctx.data)
     ctx.data.forEach( item => {
         var dl = '';

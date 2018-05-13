@@ -3,14 +3,72 @@ const Department = require('../models/Department');
 const Account = require('../models/Account');
 const Client = require('../models/Client');
 const Provider = require('../models/Provider');
-const Service = require('../models/Service');
 const City = require('../models/City');
 const Street = require('../models/Street');
 const Holiday = require('../models/Holiday');
 const Notify = require('../models/Notify');
 
+const common = require('../common-data');
+
 module.exports = {
 
+    trimObject: function (obj) {
+        Object.keys(obj).forEach( i => {
+            try {
+                obj[i] = obj[i].trim();
+            } catch(err) { console.log('Cannot trim field') }
+        })
+        return obj;
+    },
+
+    dateToStr: function (value) {
+        var year = value.getFullYear();
+        var month = value.getMonth() + 1;
+        if(month < 10) {
+            month = '0' + month;
+        }
+        var day = value.getDate();
+        if(day < 10) {
+            day = '0' + day;
+        }
+        return `${day}-${month}-${year}`;
+    },
+
+    dateToExtStr: function (value = new Date()) {
+        var hour = value.getHours();
+        if(hour < 10) {
+            hour = '0' + hour;
+        }
+        var min = value.getMinutes();
+        if(min < 10) {
+            min = '0' + min;
+        }
+        var sec = value.getSeconds();
+        if(sec < 10) {
+            sec = '0' + sec;
+        }
+        return `${this.dateToStr(value)} ${hour}:${min}:${sec}`;
+    },
+
+    strToDate: function (date) {
+        if(date) {
+            date = date.split('.');
+            if(date.length == 3) {
+                if(date[1] >= 0 && date[1] <= 11 && date[0] > 0 &&  date[0] <= 31)
+                    return new Date(date[2], date[1]-1, date[0]);
+                else return false
+            } else return false;
+        } else return null;
+    },
+
+    parseDate: (date) => {
+        date = date.split('.');
+        if(date.length == 3) {
+            if(date[1] >= 0 && date[1] <= 11 && date[0] > 0 &&  date[0] <= 31)
+                return new Date(date[2], date[1]-1, date[0]);
+            else return false
+        } else return false;
+    },
 
     orderSort: (array, path, reverse) => {
        switch (path) {
@@ -63,7 +121,8 @@ module.exports = {
        var query = req.query;
        var status = [];
        if(query.id) {
-           return {id: query.id};
+           if(!isNaN(query.id))
+            return {id: query.id};
        }
        if(query.cms) {
            return {cms: query.cms};
@@ -170,6 +229,14 @@ module.exports = {
            } else {
                qr['$and'] = [{'asdasd': 'asdasdasd'}]
            }
+       }
+
+       if(query.adress) {
+           var rgx =  new RegExp('' + query.adress + '', 'i');
+
+           if(qr['$and']) {
+               qr['$and'].push({'info.adds': {$regex: rgx}})
+           } else qr['$and'] = [{'info.adds': {$regex: rgx}}];
        }
 
        if(query.service) {
@@ -291,7 +358,8 @@ module.exports = {
        var providers = await Provider.find();
        var cities = await City.find();
        var streets = await Street.find();
-       var services = await Service.find();
+       var services = common.services;
+       var stages = common.stages;
 
 
        clients = clients.map( i => `${i.name}`);
@@ -300,14 +368,6 @@ module.exports = {
 
        cities = cities.map( i => `${i.type} ${i.name}`);
        streets = streets.map( i => `${i.type} ${i.name}`);
-
-
-       services = services.map( i => {
-           return {
-               val: `${i._id}`,
-               text: `${i.name}`
-           }
-       });
 
        var pre = [
            {
@@ -330,6 +390,7 @@ module.exports = {
            cities: cities,
            streets: streets,
            services: services,
+           stages: stages,
            pre: pre
        }
    }

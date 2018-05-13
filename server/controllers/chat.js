@@ -3,7 +3,7 @@
 const Chat = require('../models/Chat'),
     Render = require('../render'),
     render = Render.render,
-    common = require('./common');
+    helper = require('./helper');
 
 module.exports = {
 
@@ -14,7 +14,7 @@ module.exports = {
             return {
                 author: item.author.name,
                 text: item.text,
-                time: common.dateToExtStr(item.time)
+                time: helper.dateToExtStr(item.time)
             }
         });
 
@@ -38,7 +38,7 @@ module.exports = {
         var _msg = {
             author:  res.locals.__user.name,
             text: done.text,
-            time: common.dateToExtStr(done.time),
+            time: helper.dateToExtStr(done.time),
             isFirst: isFirst
         }
 

@@ -1,0 +1,36 @@
+.short-filter
+{
+    width: 100%;
+    text-align: center;
+}
+
+.short-filter .input.input_theme_islands
+{
+    line-height: 28px;
+}
+
+.short-filter__client
+{
+    display: inline-block;
+    width: calc(100% - 200px - 250px - 60px - 200px);
+}
+
+.short-filter__service
+{
+    width: 200px;
+}
+
+.short-filter__adress
+{
+    width: 250px;
+}
+
+.short-filter__id
+{
+    width: 60px;
+}
+
+.short-filter__id_error.input_theme_islands
+{
+    box-shadow: 0 0 0 1px rgb(255, 0, 0);
+}
