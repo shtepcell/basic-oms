@@ -252,34 +252,64 @@ module.exports = {
            case 'gzp-pre':
            case 'gzp-build':
            case 'install-devices':
-               var dep = await Department.findOne({cities: order.info.city._id});
-               // if(!dep) dep = await Department.findOne({type: 'b2o'});
-               if(!dep) return 'Ответственный отдел не определён!'
-               return dep.name;
+               var dep = await Department.findOne({cities: order.info.city});
+               return dep;
                break;
            case 'stop-pre':
            case 'stop-build':
                var dep = await Department.findOne({type: 'b2o'});
-               if(!dep) dep = {
-                   name: 'Ответсвенный отдел не определён!'
-               }
-               return dep.name;
+               return dep;
                break;
            case 'all-pre':
-               var dep1 = await Department.findOne({type: 'b2o'});
-               var dep2 = await Department.findOne({cities: order.info.city._id});
-               if(!dep2) return `${dep1.name}`;
-               else return `${dep1.name} и ${dep2.name}`;
-               break;
+               var deps = [
+                   await Department.findOne({type: 'b2o'}),
+                   await Department.findOne({cities: order.info.city})
+               ];
+              return deps;
+              break;
            case 'network':
                var dep = await Department.findOne({type: 'net'});
-               return dep.name;
+               return dep;
                break;
            default:
-               return order.info.initiator.department.name;
+               return order.info.initiator.department;
                break;
        }
    },
+
+   getRespDepName : async (order) => {
+      switch (order.status) {
+          case 'gzp-pre':
+          case 'gzp-build':
+          case 'install-devices':
+              var dep = await Department.findOne({cities: order.info.city._id});
+              // if(!dep) dep = await Department.findOne({type: 'b2o'});
+              if(!dep) return 'Ответственный отдел не определён!'
+              return dep.name;
+              break;
+          case 'stop-pre':
+          case 'stop-build':
+              var dep = await Department.findOne({type: 'b2o'});
+              if(!dep) dep = {
+                  name: 'Ответсвенный отдел не определён!'
+              }
+              return dep.name;
+              break;
+          case 'all-pre':
+              var dep1 = await Department.findOne({type: 'b2o'});
+              var dep2 = await Department.findOne({cities: order.info.city._id});
+              if(!dep2) return `${dep1.name}`;
+              else return `${dep1.name} и ${dep2.name}`;
+              break;
+          case 'network':
+              var dep = await Department.findOne({type: 'net'});
+              return dep.name;
+              break;
+          default:
+              return order.info.initiator.department.name;
+              break;
+      }
+  },
 
    calculateDeadline: async (time) => {
        var holidays = await Holiday.find();

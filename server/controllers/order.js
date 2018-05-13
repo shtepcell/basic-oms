@@ -95,7 +95,7 @@ module.exports = {
             pageNumber = req.query['pager' + pagerId] || 1,
             perPage = res.locals.__user.settings.table.perPage || 25;
         res.locals.params = helper.trimObject(req.query);
-        
+
         if(res.locals.params.id && isNaN(res.locals.params.id)) {
             res.locals.params.id_error = true;
         }
@@ -371,7 +371,7 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            order.resp = await helper.getRespDep(order);
+            order.resp = await helper.getRespDepName(order);
             res.locals.order = order;
             render(req, res, {
                 viewName: 'orders/order',
@@ -390,7 +390,7 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            order.resp = await helper.getRespDep(order);
+            order.resp = await helper.getRespDepName(order);
             res.locals.order = order;
 
             render(req, res, {
@@ -410,7 +410,7 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            order.resp = await helper.getRespDep(order);
+            order.resp = await helper.getRespDepName(order);
             res.locals.order = order;
 
             render(req, res, {
@@ -429,7 +429,7 @@ module.exports = {
 
         if(order) {
             order.stage = stages[order.status];
-            order.resp = await helper.getRespDep(order);
+            order.resp = await helper.getRespDepName(order);
             res.locals.order = order;
 
             render(req, res, {
@@ -1086,109 +1086,117 @@ module.exports = {
 
     getStat: async (req, res) => {
         var deps = await Department.find();
-        var orders = await Order.find({status: {'$ne': 'secret'}}).populate(populateInitiator).lean();
+        var ordrs = await Order.find({status: {'$ne': 'secret'}}).populate(populateInitiator).lean();
+        var orders = [];
 
-        orders = orders.map( item => {
-            var wrkr;
-
-            switch (item.status) {
-                case 'gzp-pre':
-                    deps.forEach( i => {
-                        if(i.type == 'gus') {
-                            if(i.cities.indexOf(item.info.city) >= 0) {
-                                item.worker = i;
-                                return;
-                            }
-                        }
-                    })
-                    break;
-                case 'stop-pre':
-                    deps.forEach( i => {
-                        if(i.type == 'b2o') {
-                            item.worker = i;
-                        }
-                    })
-                    break;
-                case 'all-pre':
-                    item.worker = [];
-                    deps.forEach( i => {
-                        if(i.type == 'gus') {
-                            if(i.cities.indexOf(item.info.city) >= 0) {
-                                item.worker.push(i);
-                                return;
-                            }
-                        }
-                        if(i.type == 'b2o') {
-                            item.worker.push(i);
-                        }
-                    })
-                    break;
-                case 'client-notify':
-                    deps.forEach( i => {
-                        if(item.info.initiator.department == ''+i._id) {
-                            item.worker = i;
-                            return;
-                        }
-                    })
-                    break;
-
-                case 'client-match':
-                    deps.forEach( i => {
-                        if(item.info.initiator.department ==''+i._id) {
-                            item.worker = i;
-                            return;
-                        }
-                    })
-                    break;
-
-                case 'network':
-                    deps.forEach( i => {
-                        if(i.type == 'net') {
-                            item.worker = i;
-                            return;
-                        }
-                    })
-                    break;
-
-                case 'gzp-build':
-                    deps.forEach( i => {
-                        if(i.type == 'gus') {
-                            if(i.cities.indexOf(item.info.city) >= 0) {
-                                item.worker = i;
-                                return;
-                            }
-                        }
-                    })
-                    break;
-
-                case 'install-devices':
-                    deps.forEach( i => {
-                        if(i.type == 'gus') {
-                            if(i.cities.indexOf(item.info.city) >= 0) {
-                                item.worker = i;
-                                return;
-                            }
-                        }
-                    })
-                    break;
-
-                case 'stop-build':
-                    deps.forEach( i => {
-                        if(i.type == 'b2o') {
-                            item.worker = i;
-                            return;
-                        }
-                    });
-                    break;
-
-            }
-            return {
-                status: item.status,
-                pause: item.pause,
-                worker: item.worker,
-                deadline: item.deadline
-            }
-        });
+        for (var i = 0; i < ordrs.length; i++) {
+            orders.push({
+                status: ordrs[i].status,
+                pause: ordrs[i].pause,
+                worker: await helper.getRespDep(ordrs[i]),
+                deadline: ordrs[i].deadline
+            })
+        }
+        // orders = orders.map( async (item) => {
+        //     var wrkr =
+            // switch (item.status) {
+            //     case 'gzp-pre':
+            //         deps.forEach( i => {
+            //             if(i.type == 'gus') {
+            //                 if(i.cities.indexOf(item.info.city) >= 0) {
+            //                     item.worker = i;
+            //                     return;
+            //                 }
+            //             }
+            //         })
+            //         break;
+            //     case 'stop-pre':
+            //         deps.forEach( i => {
+            //             if(i.type == 'b2o') {
+            //                 item.worker = i;
+            //             }
+            //         })
+            //         break;
+            //     case 'all-pre':
+            //         item.worker = [];
+            //         deps.forEach( i => {
+            //             if(i.type == 'gus') {
+            //                 if(i.cities.indexOf(item.info.city) >= 0) {
+            //                     item.worker.push(i);
+            //                     return;
+            //                 }
+            //             }
+            //             if(i.type == 'b2o') {
+            //                 item.worker.push(i);
+            //             }
+            //         })
+            //         break;
+            //     case 'client-notify':
+            //         deps.forEach( i => {
+            //             if(item.info.initiator.department == ''+i._id) {
+            //                 item.worker = i;
+            //                 return;
+            //             }
+            //         })
+            //         break;
+            //
+            //     case 'client-match':
+            //         deps.forEach( i => {
+            //             if(item.info.initiator.department ==''+i._id) {
+            //                 item.worker = i;
+            //                 return;
+            //             }
+            //         })
+            //         break;
+            //
+            //     case 'network':
+            //         deps.forEach( i => {
+            //             if(i.type == 'net') {
+            //                 item.worker = i;
+            //                 return;
+            //             }
+            //         })
+            //         break;
+            //
+            //     case 'gzp-build':
+            //         deps.forEach( i => {
+            //             if(i.type == 'gus') {
+            //                 if(i.cities.indexOf(item.info.city) >= 0) {
+            //                     item.worker = i;
+            //                     return;
+            //                 }
+            //             }
+            //         })
+            //         break;
+            //
+            //     case 'install-devices':
+            //         deps.forEach( i => {
+            //             if(i.type == 'gus') {
+            //                 if(i.cities.indexOf(item.info.city) >= 0) {
+            //                     item.worker = i;
+            //                     return;
+            //                 }
+            //             }
+            //         })
+            //         break;
+            //
+            //     case 'stop-build':
+            //         deps.forEach( i => {
+            //             if(i.type == 'b2o') {
+            //                 item.worker = i;
+            //                 return;
+            //             }
+            //         });
+            //         break;
+            //
+            // }
+        //     return {
+        //         status: item.status,
+        //         pause: item.pause,
+        //         worker: wrkr,
+        //         deadline: item.deadline
+        //     }
+        // });
 
         var stages = {
             pre: {
@@ -1208,7 +1216,7 @@ module.exports = {
         };
 
         var dprtmts = {};
-
+        // console.log(orders);
         orders.forEach( item => {
             var pre = ['gzp-pre', 'stop-pre', 'all-pre', 'client-match'];
             var build = ['gzp-build', 'stop-build', 'install-devices', 'client-notify', 'network'];
