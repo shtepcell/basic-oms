@@ -24,7 +24,7 @@ block('short-search').content()(function () {
                     mods: {
                         theme: 'islands',
                         size: 'm',
-                        type: 'subnit'
+                        type: 'submit'
                     },
                     text: 'Поиск'
                 }

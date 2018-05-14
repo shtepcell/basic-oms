@@ -1270,7 +1270,7 @@ module.exports = {
                         build: await Order.count({
                             status: 'network'
                         }),
-                        'build-dedline': await Order.count({
+                        'build-deadline': await Order.count({
                             deadline: {'$lte': new Date()},
                             status: 'network'
                         }),

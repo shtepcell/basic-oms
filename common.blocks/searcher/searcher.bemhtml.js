@@ -3,6 +3,13 @@ block('searcher')(
         var data = this.ctx.data,
             query = this.ctx.query;
 
+        data.deps = data.deps.map( item => {
+            return {
+                text: item.name,
+                val: item._id + ''
+            }
+        });
+
         return [
             {
                 elem: 'form',
@@ -128,6 +135,10 @@ block('searcher')(
                                                     text: 'СТОП/VSAT'
                                                 },
                                                 {
+                                                    val: '4',
+                                                    text: 'СКС'
+                                                },
+                                                {
                                                     val: '3',
                                                     text: 'Согласование с клиентом'
                                                 }
@@ -166,6 +177,10 @@ block('searcher')(
                                                 {
                                                     val: '3',
                                                     text: 'СТОП/VSAT'
+                                                },
+                                                {
+                                                    val: '6',
+                                                    text: 'СКС'
                                                 },
                                                 {
                                                     val: '4',
@@ -222,6 +237,32 @@ block('searcher')(
                         elem: 'group',
                         title: 'Фильтр по основным полям',
                         content: [
+                            {
+                                elem: 'row',
+                                content: [
+                                    {
+                                        elem: 'label',
+                                        content: 'Ответственный отдел'
+                                    },
+                                    {
+                                        elem: 'cell',
+                                        content: {
+                                            block: 'select',
+                                            name: 'resp',
+                                            val: query.resp + '',
+                                            text: 'Не выбран',
+                                            mods: {
+                                                disabled: true,
+                                                mode: 'radio-check',
+                                                theme: 'islands',
+                                                size: 'l',
+                                                width: 'available'
+                                            },
+                                            options: data.deps
+                                        }
+                                    }
+                                ]
+                            },
                             {
                                 elem: 'row',
                                 content: [

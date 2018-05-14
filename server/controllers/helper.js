@@ -117,17 +117,17 @@ module.exports = {
    },
 
     makeQuery: async  (req, res) => {
-       var qr = {};
-       var query = req.query;
-       var status = [];
-       if(query.id) {
+        var qr = {};
+        var query = req.query;
+        var status = [];
+        if(query.id) {
            if(!isNaN(query.id))
             return {id: query.id};
-       }
-       if(query.cms) {
+        }
+        if(query.cms) {
            return {cms: query.cms};
-       }
-       if(query.func) {
+        }
+        if(query.func) {
            if(query.func.indexOf('1') >= 0) {
                qr['$or'] = [
                    {'info.initiator': res.locals.__user._id},
@@ -140,8 +140,59 @@ module.exports = {
            if(query.func.indexOf('3') >= 0) {
                qr['pause.status'] = true;
            }
-       }
-       if(query.pre) {
+        }
+
+        if(query.resp) {
+           var resp;
+           try {
+               resp = await Department.findOne({_id: query.resp+''});
+           } catch(err) { console.log('Cannot find department');}
+           var respQ = {};
+           if(resp != null)
+           switch (resp.type) {
+               case 'b2b':
+                    respQ = {'info.department': resp._id};
+                    break;
+               case 'b2o':
+                    respQ = { '$or': [
+                        {
+                            '$or': [
+                                {status: 'client-match'},
+                                {status: 'client-notify'}
+
+                            ],
+                            'info.department': resp._id
+                        },
+                        {status: 'stop-build'},
+                        {status: 'all-pre'},
+                        {status: 'stop-pre'}
+                    ]}
+                    break;
+               case 'gus':
+                    var cts = resp.cities.map( j => {
+                        return {
+                            'info.city': j
+                        }
+                    });
+                    respQ = { '$or': cts };
+                    break;
+                case 'net':
+                    respQ = { status: 'network' };
+                    break;
+                case 'sks':
+                    respQ = { '$or':[
+                        { status: 'sks-pre' },
+                        { status: 'sks-build' }
+                    ]};
+                    break;
+           }
+
+           if(qr['$and']) {
+               qr['$and'].push(respQ);
+           } else qr['$and'] = [respQ];
+        }
+
+        if(query.pre) {
            if(query.pre.indexOf('1') >= 0) {
                status.push({status: 'gzp-pre'});
                status.push({status: 'all-pre'});
@@ -155,8 +206,12 @@ module.exports = {
            if(query.pre.indexOf('3') >= 0) {
                status.push({status: 'client-match'});
            }
-       }
-       if(query.build) {
+           if(query.pre.indexOf('4') >= 0) {
+               status.push({status: 'sks-pre'});
+           }
+        }
+
+        if(query.build) {
            if(query.build.indexOf('1') >= 0) {
                status.push({status: 'gzp-build'});
            }
@@ -172,9 +227,12 @@ module.exports = {
            if(query.build.indexOf('5') >= 0) {
                status.push({status: 'client-notify'});
            }
-       }
+           if(query.build.indexOf('6') >= 0) {
+               status.push({status: 'sks-build'});
+           }
+        }
 
-       if(query.final) {
+        if(query.final) {
            if(query.final.indexOf('1') >= 0) {
                status.push({ '$and' : [
                    {status: 'succes'},
@@ -190,16 +248,16 @@ module.exports = {
            if(query.final.indexOf('3') >= 0) {
                status.push({status: 'reject'});
            }
-       }
+        }
 
-       if(status.length > 0) {
+        if(status.length > 0) {
            if(qr['$or']) {
                qr['$or'] = qr['$or'].concat(status);
            } else
                qr['$or'] = status;
-       }
+        }
 
-       if(query.client) {
+        if(query.client) {
            var clnt = query.client;
            clnt = clnt.trim();
            var rgx =  new RegExp('' + clnt + '', 'i');
@@ -213,9 +271,9 @@ module.exports = {
            } else {
                qr['$and'] = [{'asdasd': 'asdasdasd'}]
            }
-       }
+        }
 
-       if(query.city) {
+        if(query.city) {
            var city = module.exports.parserCity(query.city);
            city = await City.find({name: city.name, type: city.type});
            if(city.length > 0) {
@@ -229,22 +287,23 @@ module.exports = {
            } else {
                qr['$and'] = [{'asdasd': 'asdasdasd'}]
            }
-       }
+        }
 
-       if(query.adress) {
+
+        if(query.adress) {
            var rgx =  new RegExp('' + query.adress + '', 'i');
 
            if(qr['$and']) {
                qr['$and'].push({'info.adds': {$regex: rgx}})
            } else qr['$and'] = [{'info.adds': {$regex: rgx}}];
-       }
+        }
 
-       if(query.service) {
+        if(query.service) {
            if(qr['$and']) {
                qr['$and'].push({'info.service': query.service})
            } else qr['$and'] = [{'info.service': query.service}];
-       }
-       return qr;
+        }
+        return qr;
    },
 
     getRespDep : async (order) => {
@@ -388,6 +447,13 @@ module.exports = {
        var providers = await Provider.find();
        var cities = await City.find();
        var streets = await Street.find();
+       var deps = await Department.find({
+           $and: [
+               {type: {$ne: 'admin'}},
+               {type: {$ne: 'man'}}
+           ]
+       }).lean();
+
        var services = common.services;
        var stages = common.stages;
 
@@ -421,6 +487,7 @@ module.exports = {
            streets: streets,
            services: services,
            stages: stages,
+           deps: deps,
            pre: pre
        }
    }
