@@ -16,6 +16,16 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
     return [
         {
             block: 'field',
+            elem: 'date-init',
+            order: order,
+            elemMods: {
+                access: false
+            },
+            dataset: dataset,
+            display: true
+        },
+        {
+            block: 'field',
             elem: 'client',
             order: order,
             elemMods: {

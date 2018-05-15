@@ -15,6 +15,7 @@
                 'cs-gzp-pre',
                 'date-gzp-pre',
                 'cs-gzp-active',
+                'date-init',
                 'date-gzp-active',
                 'date-gzp-build',
                 'gzp-need',

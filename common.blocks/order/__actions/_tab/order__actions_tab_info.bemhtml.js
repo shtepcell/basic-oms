@@ -4,7 +4,6 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
         user = ctx.user,
         adminEdit = ctx.adminEdit;
 
-        console.log(adminEdit);
     var isOwner = (order.info.initiator.department._id == user.department._id + ''),
         isPre = (order.status == 'all-pre' || order.status == 'gzp-pre' || order.status == 'stop-pre'),
         isMatch = (order.status == 'client-match'),
