@@ -107,63 +107,68 @@ module.exports = {
         else
             res.redirect(req.path);
 
-        var query;
+        var query = {};
         var subQ = await helper.makeQuery(req, res);
 
-        var settings = res.locals.__user.settings.main,
-            user = res.locals.__user;
+        var user = res.locals.__user;
 
-        query = {
-            stage: {},
-            zone: {}
-        };
-        settings.zone = settings.zone || [];
-        settings.stage = settings.stage || [];
-
-
-        for (var i = 0; i < settings.zone.length; i++) {
-            var dep = await Department.findOne({_id: settings.zone[i]});
-
-            dep.cities.forEach( item => {
-                if(!query.zone['$or'])
-                    query.zone['$or'] = [];
-                query.zone['$or'].push({
-                    'info.city': item
-                });
-            })
-
+        switch (user.department.type) {
+            case 'b2b':
+                query = {
+                    '$or': [
+                        {'$and': [
+                            {'info.initiator': user._id},
+                            {status: 'client-match'}
+                        ]},
+                        {'$and': [
+                            {'info.initiator': user._id},
+                            {status: 'client-notify'}
+                        ]}
+                    ]
+                };
+                break;
+            case 'b2o':
+                query = {
+                    '$or': [
+                        {'$and': [
+                            {'info.initiator': user._id},
+                            {status: 'client-match'}
+                        ]},
+                        {'$and': [
+                            {'info.initiator': user._id},
+                            {status: 'client-notify'}
+                        ]},
+                        {status: 'stop-pre'},
+                        {status: 'stop-build'}
+                    ]
+                };
+                break;
+            case 'gus':
+                query = {
+                    '$or': [
+                        {status: 'gzp-pre'},
+                        {status: 'gzp-build'},
+                        {status: 'install-devices'},
+                        {status: 'all-pre'}
+                    ],
+                    'info.city': user.department.cities
+                }
+                break;
+            case 'net':
+                query = {status: 'network'};
+                break;
+            case 'sks':
+                query = {
+                    '$or': [
+                        {status: 'sks-pre'},
+                        {status: 'sks-build'}
+                    ]
+                }
+                break;
         }
 
-        if(settings.zone.length > 0 && !query.zone['$or'])
-            query.zone['$or'] = [{
-                'some': 'bullshit'
-            }]
-
-        if(settings.stage.length>0)
-            query.stage['$or'] = [];
-
-        settings.stage.forEach( item => {
-            if( (user.department.type  == 'b2b' || user.department.type == 'b2o')
-                    && (item == 'client-notify' || item == 'client-match') ) {
-                query.stage['$or'].push({
-                    '$and': [
-                        {'status': item},
-                        {'info.department': user.department._id}
-                    ]
-                })
-            } else {
-                query.stage['$or'].push({
-                    'status': item
-                })
-            }
-        });
-
-        var view = 'main';
-
         var orders = await Order.find({
-            $or: [
-                { $and: [query.zone, query.stage, subQ] }
-            ],
+            $and: [query, subQ],
             status: {$ne: 'secret'}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
@@ -184,7 +189,7 @@ module.exports = {
                 res.redirect(req.path);
             } else {
                 render(req, res, {
-                    viewName: view
+                    viewName: 'main'
                 });
             }
         } else {
@@ -197,7 +202,7 @@ module.exports = {
 
             res.locals.orders = orders;
             render(req, res, {
-                viewName: view,
+                viewName: 'main',
                 options: {
                     pagers: pagers
                 }

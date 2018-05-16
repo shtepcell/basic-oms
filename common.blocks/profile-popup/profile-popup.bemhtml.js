@@ -32,26 +32,26 @@ block('profile-popup').content()(function () {
                     content: 'Данные пользователя',
                     url: '/profile'
                 },
-                {
-                    block: 'link',
-                    mods: { theme: 'islands', size: 'l'},
-                    mix: [
-                        { block: 'profile-popup', elem: 'item' },
-                        {
-                            block: 'action',
-                            elem: 'open-modal',
-                            js: true
-                        }
-                    ],
-                    content: [
-                        'Настройка главной страницы',
-                        {
-                            block: 'modal',
-                            mods: { theme: 'islands', autoclosable: true },
-                            content: { block: 'settings', mods: {tab: 'main-page'}, deps: deps, user: user }
-                        }
-                    ]
-                },
+                // {
+                //     block: 'link',
+                //     mods: { theme: 'islands', size: 'l'},
+                //     mix: [
+                //         { block: 'profile-popup', elem: 'item' },
+                //         {
+                //             block: 'action',
+                //             elem: 'open-modal',
+                //             js: true
+                //         }
+                //     ],
+                //     content: [
+                //         'Настройка главной страницы',
+                //         {
+                //             block: 'modal',
+                //             mods: { theme: 'islands', autoclosable: true },
+                //             content: { block: 'settings', mods: {tab: 'main-page'}, deps: deps, user: user }
+                //         }
+                //     ]
+                // },
                 {
                     block: 'link',
                     mods: { theme: 'islands', size: 'l' },
