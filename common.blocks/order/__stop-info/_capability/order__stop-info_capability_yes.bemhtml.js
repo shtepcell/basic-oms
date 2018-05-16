@@ -24,36 +24,36 @@ block('order').elem('stop-info').elemMod('capability', 'yes').content()(function
             order: order,
             display: order.stop.contact
         },
-        {
-            block: 'field',
-            elem: 'devices',
-            elemMods: {
-                access: false
-            },
-            dataset: dataset,
-            order: order,
-            display: order.stop.devices
-        },
-        {
-            block: 'field',
-            elem: 'add-devices',
-            elemMods: {
-                access: false
-            },
-            dataset: dataset,
-            order: order,
-            display: order.stop.add_devices
-        },
-        {
-            block: 'field',
-            elem: 'interfaces',
-            elemMods: {
-                access: false
-            },
-            dataset: dataset,
-            order: order,
-            display: order.stop.interfaces
-        },
+        // {
+        //     block: 'field',
+        //     elem: 'devices',
+        //     elemMods: {
+        //         access: false
+        //     },
+        //     dataset: dataset,
+        //     order: order,
+        //     display: order.stop.devices
+        // },
+        // {
+        //     block: 'field',
+        //     elem: 'add-devices',
+        //     elemMods: {
+        //         access: false
+        //     },
+        //     dataset: dataset,
+        //     order: order,
+        //     display: order.stop.add_devices
+        // },
+        // {
+        //     block: 'field',
+        //     elem: 'interfaces',
+        //     elemMods: {
+        //         access: false
+        //     },
+        //     dataset: dataset,
+        //     order: order,
+        //     display: order.stop.interfaces
+        // },
         {
             block: 'field',
             elem: 'time',
@@ -65,16 +65,16 @@ block('order').elem('stop-info').elemMod('capability', 'yes').content()(function
             display: true
         },
         { block: 'order', elem: 'separator' },
-        {
-            block: 'field',
-            elem: 'stop-add-info',
-            elemMods: {
-                access: false
-            },
-            dataset: dataset,
-            order: order,
-            display: order.stop.add_info
-        },
+        // {
+        //     block: 'field',
+        //     elem: 'stop-add-info',
+        //     elemMods: {
+        //         access: false
+        //     },
+        //     dataset: dataset,
+        //     order: order,
+        //     display: order.stop.add_info
+        // },
         {
             block: 'field',
             elem: 'stop-org-info',
@@ -134,36 +134,36 @@ block('order').elem('stop-info').elemMod('capability', 'yes').elemMod('access', 
                 order: order,
                 display: true
             },
-            {
-                block: 'field',
-                elem: 'devices',
-                elemMods: {
-                    access: true
-                },
-                dataset: dataset,
-                order: order,
-                display: true
-            },
-            {
-                block: 'field',
-                elem: 'add-devices',
-                elemMods: {
-                    access: true
-                },
-                dataset: dataset,
-                order: order,
-                display: true
-            },
-            {
-                block: 'field',
-                elem: 'interfaces',
-                elemMods: {
-                    access: true
-                },
-                dataset: dataset,
-                order: order,
-                display: true
-            },
+            // {
+            //     block: 'field',
+            //     elem: 'devices',
+            //     elemMods: {
+            //         access: true
+            //     },
+            //     dataset: dataset,
+            //     order: order,
+            //     display: true
+            // },
+            // {
+            //     block: 'field',
+            //     elem: 'add-devices',
+            //     elemMods: {
+            //         access: true
+            //     },
+            //     dataset: dataset,
+            //     order: order,
+            //     display: true
+            // },
+            // {
+            //     block: 'field',
+            //     elem: 'interfaces',
+            //     elemMods: {
+            //         access: true
+            //     },
+            //     dataset: dataset,
+            //     order: order,
+            //     display: true
+            // },
             {
                 block: 'field',
                 elem: 'time',
@@ -175,16 +175,16 @@ block('order').elem('stop-info').elemMod('capability', 'yes').elemMod('access', 
                 display: true
             },
             { block: 'order', elem: 'separator' },
-            {
-                block: 'field',
-                elem: 'stop-add-info',
-                elemMods: {
-                    access: true
-                },
-                dataset: dataset,
-                order: order,
-                display: true
-            },
+            // {
+            //     block: 'field',
+            //     elem: 'stop-add-info',
+            //     elemMods: {
+            //         access: true
+            //     },
+            //     dataset: dataset,
+            //     order: order,
+            //     display: true
+            // },
             {
                 block: 'field',
                 elem: 'stop-org-info',
