@@ -26,7 +26,13 @@ module.exports = {
         var accs = await Account.paginate({status: true}, {page: pageNumber, limit: perPage, populate: 'department'});
 
         if(req.query.name) {
-            var rgx =  new RegExp('' + req.query.name + '', 'i');
+            var val = req.query.name;
+            val = val.replace(/\[/g, '');
+            val = val.replace(/\]/g, '');
+            val = val.replace(/\\/g, '');
+            val = val.replace(/\(/g, '');
+            val = val.replace(/\)/g, '');
+            var rgx =  new RegExp('' + val + '', 'i');
             accs = await Account.paginate({name: {$regex: rgx}, status: true}, {page: pageNumber, limit: perPage, populate: 'department'});
         }
 

@@ -23,7 +23,13 @@ module.exports = {
 
         var prvdrs = await Provider.paginate({}, { page: pageNumber, limit: perPage})
         if(req.query.name) {
-            var rgx =  new RegExp('' + req.query.name + '', 'i');
+            var val = req.query.name;
+            val = val.replace(/\[/g, '');
+            val = val.replace(/\]/g, '');
+            val = val.replace(/\\/g, '');
+            val = val.replace(/\(/g, '');
+            val = val.replace(/\)/g, '');
+            var rgx =  new RegExp('' + val + '', 'i');
             prvdrs = await Provider.paginate({name: {$regex: rgx}}, { page: pageNumber, limit: perPage});
         }
         if(prvdrs.total == 0) prvdrs.total = 1;

@@ -29,7 +29,13 @@ module.exports = {
         var clients = await Client.paginate({}, { page: pageNumber, limit: perPage, populate: 'type'});
 
         if(req.query.name) {
-            var rgx =  new RegExp('' + req.query.name + '', 'i');
+            var val = req.query.name;
+            val = val.replace(/\[/g, '');
+            val = val.replace(/\]/g, '');
+            val = val.replace(/\\/g, '');
+            val = val.replace(/\(/g, '');
+            val = val.replace(/\)/g, '');
+            var rgx =  new RegExp('' + val + '', 'i');
             clients = await Client.paginate({name: {$regex: rgx}}, { page: pageNumber, limit: perPage, populate: 'type'});
         }
 

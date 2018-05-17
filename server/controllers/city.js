@@ -25,7 +25,13 @@ module.exports = {
         var cities = await City.paginate({}, { page: pageNumber, limit: perPage})
 
         if(req.query.name) {
-            var rgx =  new RegExp('' + req.query.name + '', 'i');
+            var val = req.query.name;
+            val = val.replace(/\[/g, '');
+            val = val.replace(/\]/g, '');
+            val = val.replace(/\\/g, '');
+            val = val.replace(/\(/g, '');
+            val = val.replace(/\)/g, '');
+            var rgx =  new RegExp('' + val + '', 'i');
             cities = await City.paginate({name: {$regex: rgx}}, { page: pageNumber, limit: perPage});
         }
 

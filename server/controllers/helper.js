@@ -291,8 +291,14 @@ module.exports = {
 
 
         if(query.adress) {
-           var rgx =  new RegExp('' + query.adress + '', 'i');
-
+            var val = query.adress;
+            val = val.replace(/\[/g, '');
+            val = val.replace(/\]/g, '');
+            val = val.replace(/\\/g, '');
+            val = val.replace(/\(/g, '');
+            val = val.replace(/\)/g, '');
+            var rgx =  new RegExp('' + val + '', 'i');
+            console.log(rgx);
            if(qr['$and']) {
                qr['$and'].push({'info.adds': {$regex: rgx}})
            } else qr['$and'] = [{'info.adds': {$regex: rgx}}];
