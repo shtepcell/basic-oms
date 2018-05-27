@@ -11,7 +11,8 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
         user.department.cities.indexOf(order.info.city._id) >= 0);
 
     var mustFill = ( (order.status == 'gzp-pre' || order.status == 'all-pre') && isOwner);
-
+    if(!order.date['cs-gzp-pre'])
+        return 'Информации по ГЗП нет!'
     return [
         {
             block: 'field',
@@ -84,7 +85,7 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
                 tab: 'gzp'
             },
             order: order,
-            admin: adminEdit,
+            adminEdit: adminEdit,
             user: this.ctx.user
         }
     ];

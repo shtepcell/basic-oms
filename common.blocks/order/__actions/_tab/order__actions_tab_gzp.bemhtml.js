@@ -8,7 +8,8 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
         isPre = (order.status == 'gzp-pre' || order.status == 'all-pre'),
         isBuild = (order.status == 'gzp-build'),
         isInstall = (order.status == 'install-devices'),
-        isPause = (order.pause.status);
+        isPause = (order.pause.status),
+        isAdmin = (user.department.type == 'admin');
 
     return [
         {
@@ -41,6 +42,28 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
                 id: order.id
             },
             display: (isOwner && isInstall) && !isPause
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            elemMods: {
+                type: 'add-param'
+            },
+            data: {
+                text: 'Административная правка'
+            },
+            display: !adminEdit && isAdmin
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            elemMods: {
+                type: 'submit'
+            },
+            data: {
+                text: 'Сохранить изменения'
+            },
+            display: adminEdit && isAdmin
         }
     ];
 })

@@ -41,7 +41,9 @@ block('field').elem('date-sign').elemMod('access', true).content()(function () {
         dataset = ctx.dataset;
 
     if(ctx.display) {
-        var value = order.info['date-sign'];
+        var value;
+
+        var value = order.info['date-sign'] || new Date();
         var year = value.getFullYear();
         var month = value.getMonth() + 1;
         if(month < 10) {

@@ -143,9 +143,8 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             },
             data: {
                 text: 'Административная правка'
-                // TODO: Нужно сделать добавление пармаетра
             },
-            display: isAdmin
+            display: !adminEdit && isAdmin
         },
         {
             block: 'order',

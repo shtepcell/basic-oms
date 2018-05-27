@@ -1,0 +1,24 @@
+.order__cs-title
+{
+    font-size: 8pt;
+}
+
+.order__cs-number
+{
+    font-style: italic;
+}
+
+.order__cs-number_status_ok
+{
+    color: black;
+}
+
+.order__cs-number_status_warning
+{
+    color: orange;
+}
+
+.order__cs-number_status_red
+{
+    color: red;
+}

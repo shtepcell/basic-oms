@@ -11,6 +11,8 @@ block('order').elem('body').elemMod('tab', 'stop').content()(function () {
     var isOwner = (user.department.type == 'b2o'),
         isPre = (order.status == 'all-pre' || order.status == 'stop-pre');
 
+    if(!order.date['cs-stop-pre'])
+        return 'Информации по ГЗП нет!'
     return [
         {
             block: 'field',
@@ -81,7 +83,7 @@ block('order').elem('body').elemMod('tab', 'stop').content()(function () {
                 tab: 'stop'
             },
             order: order,
-            admin: adminEdit,
+            adminEdit: adminEdit,
             user: this.ctx.user
         }
     ];

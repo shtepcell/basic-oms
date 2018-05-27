@@ -1,8 +1,53 @@
 .order__tab
 {
-    width: 300px;
-    margin: 0 auto;
-    margin-bottom: -25px;
     position: relative;
-    top: -32px;
+    display: inline-block;
+    vertical-align: bottom;
+
+    width: 100px;
+    height: 32px;
+
+    margin-left: -5px;
+    margin-right: -5px;
+
+    box-shadow: 1px 1px 0 #ccc inset, -1px 0 0 #ccc inset;
+
+    background: white;
+
+    line-height: 37px;
+
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+
+    text-decoration: none;
+    color: black;
+}
+
+.order__tab:nth-child(1)
+{
+    z-index: 10
+}
+.order__tab:nth-child(2)
+{
+    z-index: 9
+}
+.order__tab:nth-child(3)
+{
+    z-index: 8
+}
+.order__tab:nth-child(4)
+{
+    z-index: 7
+}
+.order__tab:nth-child(5)
+{
+    z-index: 6
+}
+
+.order__tab_active
+{
+    height: 35px;
+
+    z-index: 90 !important;
+    background: #ffdb4d;
 }

@@ -3,8 +3,16 @@
         'b-modal-dynamic-popup',
         'gavno__vkusnoe',
         {
-            elems: ['head', 'head-cell', 'cell-name', 'cell-data', 'tab', 'control',
-             'body-row', 'body-row-name', 'body-row-data', 'separator', 'actions']
+            elems: ['head', 'cell-name', 'cell-data', 'tab', 'control',
+             'body-row', 'body-row-name', 'body-row-data', 'separator', 'actions',
+            'switcher', 'id', 'cs']
+        },
+        {
+            block: 'order',
+            elem: 'head-cell',
+            mods: {
+                type: ['left', 'right', 'top', 'bottom', 'center']
+            }
         },
         {
             block: 'order',

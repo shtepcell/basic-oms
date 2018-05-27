@@ -21,6 +21,17 @@ module.exports = {
         return obj;
     },
 
+    calculateCS: (order) => {
+        if (!order.deadline) return null;
+        var now = new Date();
+        now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+        var cs = Math.round((order.deadline - now) / 1000 / 60 / 60 / 24);
+
+        // TODO: Добавлять паузу
+
+        return cs;
+    },
+
     dateToStr: function (value) {
         var year = value.getFullYear();
         var month = value.getMonth() + 1;
@@ -114,7 +125,7 @@ module.exports = {
        });
 
        return array;
-   },
+    },
 
     makeQuery: async  (req, res) => {
         var qr = {};
@@ -143,17 +154,17 @@ module.exports = {
         }
 
         if(query.resp) {
-           var resp;
-           try {
-               resp = await Department.findOne({_id: query.resp+''});
-           } catch(err) { console.log('Cannot find department');}
-           var respQ = {};
-           if(resp != null)
-           switch (resp.type) {
-               case 'b2b':
+            var resp;
+            try {
+                resp = await Department.findOne({_id: query.resp+''});
+            } catch(err) { console.log('Cannot find department');}
+            var respQ = {};
+            if(resp != null)
+            switch (resp.type) {
+                case 'b2b':
                     respQ = {'info.department': resp._id};
                     break;
-               case 'b2o':
+                case 'b2o':
                     respQ = { '$or': [
                         {
                             '$or': [
@@ -168,7 +179,7 @@ module.exports = {
                         {status: 'stop-pre'}
                     ]}
                     break;
-               case 'gus':
+                case 'gus':
                     var cts = resp.cities.map( j => {
                         return {
                             'info.city': j
@@ -185,11 +196,11 @@ module.exports = {
                         { status: 'sks-build' }
                     ]};
                     break;
-           }
+            }
 
-           if(qr['$and']) {
-               qr['$and'].push(respQ);
-           } else qr['$and'] = [respQ];
+            if(qr['$and']) {
+                qr['$and'].push(respQ);
+            } else qr['$and'] = [respQ];
         }
 
         if(query.pre) {
@@ -251,32 +262,32 @@ module.exports = {
         }
 
         if(status.length > 0) {
-           if(qr['$or']) {
-               qr['$or'] = qr['$or'].concat(status);
-           } else
-               qr['$or'] = status;
+            if(qr['$or']) {
+                qr['$or'] = qr['$or'].concat(status);
+            } else
+                qr['$or'] = status;
         }
 
         if(query.client) {
-           var clnt = query.client;
-           clnt = clnt.trim();
-           var rgx =  new RegExp('' + clnt + '', 'i');
-           clnt = await Client.find({name: {$regex: rgx}});
-           if(clnt.length > 0) {
+            var clnt = query.client;
+            clnt = clnt.trim();
+            var rgx =  new RegExp('' + clnt + '', 'i');
+            clnt = await Client.find({name: {$regex: rgx}});
+            if(clnt.length > 0) {
                var _q = [];
                clnt.forEach( itm => {
                    _q.push({'info.client': itm._id});
                })
                qr['$and'] = [{'$or': _q}];
-           } else {
+            } else {
                qr['$and'] = [{'asdasd': 'asdasdasd'}]
-           }
+            }
         }
 
         if(query.city) {
-           var city = module.exports.parserCity(query.city);
-           city = await City.find({name: city.name, type: city.type});
-           if(city.length > 0) {
+            var city = module.exports.parserCity(query.city);
+            city = await City.find({name: city.name, type: city.type});
+            if(city.length > 0) {
                var _q = [];
                city.forEach( itm => {
                    _q.push({'info.city': itm._id});
@@ -284,9 +295,9 @@ module.exports = {
                if(qr['$and']) {
                    qr['$and'].push({'$or': _q})
                } else qr['$and'] = [{'$or': _q}];
-           } else {
+            } else {
                qr['$and'] = [{'asdasd': 'asdasdasd'}]
-           }
+            }
         }
 
 
@@ -310,7 +321,7 @@ module.exports = {
            } else qr['$and'] = [{'info.service': query.service}];
         }
         return qr;
-   },
+    },
 
     getRespDep : async (order) => {
        switch (order.status) {
@@ -336,8 +347,12 @@ module.exports = {
                var dep = await Department.findOne({type: 'net'}).lean();
                return dep;
                break;
-           default:
+           case 'client-match':
+           case 'client-notify':
                return await Department.findOne({_id: order.info.initiator.department}).lean();
+               break;
+           default:
+               return null;
                break;
        }
    },
@@ -370,8 +385,12 @@ module.exports = {
               var dep = await Department.findOne({type: 'net'});
               return dep.name;
               break;
-          default:
+          case 'client-match':
+          case 'client-notify':
               return order.info.initiator.department.name;
+              break;
+          default:
+              return null;
               break;
       }
   },

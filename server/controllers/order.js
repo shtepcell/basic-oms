@@ -373,6 +373,7 @@ module.exports = {
     getOrderInfo: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
         res.locals.department = await Department.find();
+        order.cs = helper.calculateCS(order);
 
         if(order) {
             order.stage = stages[order.status];
@@ -392,6 +393,7 @@ module.exports = {
     getOrderGZP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
         res.locals.department = await Department.find();
+        order.cs = helper.calculateCS(order);
 
         if(order) {
             order.stage = stages[order.status];
@@ -412,6 +414,7 @@ module.exports = {
     getOrderSTOP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
         res.locals.department = await Department.find();
+        order.cs = helper.calculateCS(order);
 
         if(order) {
             order.stage = stages[order.status];
@@ -431,6 +434,8 @@ module.exports = {
 
     getOrderHistory: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+        res.locals.department = await Department.find();
+        order.cs = helper.calculateCS(order);
 
         if(order) {
             order.stage = stages[order.status];

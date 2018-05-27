@@ -22,7 +22,6 @@ module.exports = function(opt, data) {
             {
                 block: 'order',
                 action: `/init`,
-                order: data.order,
                 tab: 'init',
                 user: data.__user,
                 dataset: data.dataset

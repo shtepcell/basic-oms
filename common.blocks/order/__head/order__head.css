@@ -1,12 +1,14 @@
 .order__head
 {
+    display: flex;
     height: 100px;
     box-shadow: 0 4px 1px rgba(0,0,0,0.1);
 }
 
-.order__head-wrapper
+.order__head-item
 {
-    position: relative;
-    top: -2.5em;
-    text-align: center;
+    display: inline-block;
+    padding-top: 10px;
+    line-height: 15px;
+    margin-right: 1em;
 }
