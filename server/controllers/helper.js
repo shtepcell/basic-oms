@@ -26,10 +26,12 @@ module.exports = {
         var now = new Date();
         now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
         var cs = Math.round((order.deadline - now) / 1000 / 60 / 60 / 24);
-
-        // TODO: Добавлять паузу
-
-        return cs;
+        var pause = 0;
+        if(order.pause && order.pause.status) {
+            pause = order.pause.date;
+            pause = Math.round((now - pause) / 1000 / 60 / 60 / 24) + 1;
+        }
+        return cs+pause;
     },
 
     dateToStr: function (value) {

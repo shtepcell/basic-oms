@@ -787,10 +787,10 @@ module.exports = {
                 ntf.save();
                 break;
             case 'stop-pause':
-                var start = order.pause.date;
                 var now = new Date();
-                var delta = Math.round((now - start) / 1000 / 60 / 60 / 24);
-                order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + delta);
+                var pause = order.pause.date;
+                pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
+                order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
                 order.pause = {
                     status: false,
                     date: undefined
