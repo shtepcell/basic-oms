@@ -1,9 +1,8 @@
-'use strict';
+var mongoose = require('../controllers/connect'),
+	Schema = mongoose.Schema,
+	mongoosePaginate = require('mongoose-paginate');
 
-var mongoose = require('../controllers/connect');
-var mongoosePaginate = require('mongoose-paginate');
-
-var schema = mongoose.Schema({
+var schema = new Schema({
     id: {
         type: Number,
         required: true,
@@ -11,7 +10,7 @@ var schema = mongoose.Schema({
     },
     isOld: Boolean,
     special: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Department'
     },
     deadline: {
@@ -30,12 +29,12 @@ var schema = mongoose.Schema({
     },
     info: {
         initiator: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Account',
             required : true
         },
         department: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Department',
             required : true
         },
@@ -46,7 +45,7 @@ var schema = mongoose.Schema({
         'income-monthly': String,
         add_info: String,
         client: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Client',
             required : true
         },
@@ -57,13 +56,13 @@ var schema = mongoose.Schema({
         },
         options: String,
         city: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'City',
             required : true
         },
         coordinate: String,
         street: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Street'
         },
         adds: String,
@@ -88,7 +87,7 @@ var schema = mongoose.Schema({
         complete: Boolean,
         capability: Boolean,
         provider: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Provider'
         },
         reason: String,
@@ -125,11 +124,7 @@ var schema = mongoose.Schema({
     history: [{
         name: String,
         date: Date,
-        author: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Account',
-            required : true
-        }
+        author: String
     }]
 });
 

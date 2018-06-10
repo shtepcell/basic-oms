@@ -1,9 +1,8 @@
-'use strict';
+var mongoose = require('../controllers/connect'),
+	Schema = mongoose.Schema,
+	mongoosePaginate = require('mongoose-paginate');
 
-var mongoose = require('../controllers/connect');
-var mongoosePaginate = require('mongoose-paginate');
-
-var schema = mongoose.Schema( {
+var schema = new Schema( {
 	login : {
 		type : String,
 		required : true,
@@ -21,7 +20,7 @@ var schema = mongoose.Schema( {
 	email : String,
 	phone : String,
 	department : {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Department',
 		required : true
 	},
@@ -40,7 +39,7 @@ var schema = mongoose.Schema( {
 		main: {
 			initiators: [
 				{
-					type: mongoose.Schema.Types.ObjectId,
+					type: Schema.Types.ObjectId,
 		        	ref: 'Department'
 				}
 			],

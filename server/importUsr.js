@@ -8,11 +8,7 @@ var users = require('./users'),
     for (var i = 0; i < users.length; i++) {
         if(users[i].department == 'Без отдела') users[i].department = 'Администрация';
         if(users[i].department == '') users[i].department = 'Администрация';
-
         var dep = await Department.findOne({name: users[i].department});
-        if (!dep) {
-            console.log(users[i].department );
-        }
         var usr = new Account({
             login: users[i].login,
             password: password.createHash(users[i].login),

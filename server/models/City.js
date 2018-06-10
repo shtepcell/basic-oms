@@ -1,9 +1,8 @@
-'use strict';
+var mongoose = require('../controllers/connect'),
+	Schema = mongoose.Schema,
+	mongoosePaginate = require('mongoose-paginate');
 
-var mongoose = require('../controllers/connect');
-var mongoosePaginate = require('mongoose-paginate');
-
-var schema = mongoose.Schema( {
+var schema = new Schema( {
 	name : {
 		type : String,
 		required : true

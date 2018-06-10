@@ -3,7 +3,7 @@ block('order').elem('switcher').content()(function () {
         tab = this.ctx.tab;
 
     var gzpMustShow = (order.status == 'gzp-pre' || order.status == 'all-pre' || order.gzp.need !== undefined),
-        stopMustShow = (order.status == 'stop-pre' || order.status == 'all-pre' || order.stop.need !== undefined);
+        stopMustShow = (order.status == 'stop-pre' || order.status == 'all-pre' || order.stop.capability !== undefined);
 
     return [
         {

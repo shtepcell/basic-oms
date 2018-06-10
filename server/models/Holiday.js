@@ -1,8 +1,7 @@
-'use strict';
+var mongoose = require('../controllers/connect'),
+	Schema = mongoose.Schema;
 
-var mongoose = require('../controllers/connect');
-
-var schema = mongoose.Schema( {
+var schema = new Schema( {
     date: {
         type: Date,
         required: true,

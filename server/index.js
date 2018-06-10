@@ -21,19 +21,16 @@ var fs = require('fs'),
 
     Render = require('./render'),
     render = Render.render,
-    dropCache = Render.dropCache, // eslint-disable-line no-unused-vars
 
     port = process.env.PORT || config.defaultPort,
     isSocket = isNaN(port),
     isDev = process.env.NODE_ENV === 'development',
 
-    MongoStore = require('connect-mongo')(expressSession),
     mongoose = require('./controllers/connect'),
+    MongoStore = require('connect-mongo')(expressSession),
 
     helper = require('./controllers/helper'),
-    router = require('./router'),
-
-    db = require('./controllers/connect').connections[0];
+    router = require('./router');
 
 require('debug-http')();
 

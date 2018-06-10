@@ -1,10 +1,9 @@
-'use strict';
+var mongoose = require('../controllers/connect'),
+	Schema = mongoose.Schema;
 
-var mongoose = require('../controllers/connect');
-
-var schema = mongoose.Schema({
+var schema = new mongoose.Schema({
     order: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Order'
     },
     type: {
@@ -20,7 +19,7 @@ var schema = mongoose.Schema({
     },
     read: [
         {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Account'
         }
     ]

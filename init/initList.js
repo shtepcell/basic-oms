@@ -26,6 +26,10 @@ list.departments = [
         type: 'gus'
     },
     {
+        name: 'ГУС Ялта',
+        type: 'gus'
+    },
+    {
         name: 'ГУС Севастополь',
         type: 'gus'
     },

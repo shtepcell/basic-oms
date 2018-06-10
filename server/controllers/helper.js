@@ -21,6 +21,15 @@ module.exports = {
         return obj;
     },
 
+    historyGenerator: function (type, user) {
+        var usr = `[${user.department.name}] ${user.name}`,
+            now = new Date();
+        switch (type) {
+            case 'init':
+                return [{author: usr, date: now, name: 'Инициация заказа'}];
+        }
+    },
+
     calculateCS: (order) => {
         if (!order.deadline) return null;
         var now = new Date();

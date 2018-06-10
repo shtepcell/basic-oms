@@ -1,3 +1,5 @@
+var db = require('./controllers/connect');
+
 var orders = require('./export'),
     Order = require('./models/Order'),
     Client = require('./models/Client'),
@@ -8,6 +10,20 @@ var orders = require('./export'),
 
 var readline = require('readline');
 
+var his = {
+    orderCanceled: 'Заказ отклонен',
+    orderFinished: 'Заказ выполнен',
+    clientNotify: 'Уведомление клиента',
+    netConfig: 'Настройка сети',
+    clientEquip: 'Установка оборудования у клиента',
+    buildSTOP: 'Реализация через СТОП/VSAT',
+    buildGZP: 'Построение ГЗП',
+    buildGZPPre: 'Построение ГЗП: запрос разрешений/ТУ',
+    clientAgreement: 'Согласование с клиентом',
+    stopAnalyze: 'Проработка по СТОП/VSAT',
+    gzpAnalyze: 'Проработка по ГЗП',
+    init: 'Инициация'
+};
 
 function clearLine(n = 1) {
     for (var i = 0; i < n; i++) {
@@ -23,10 +39,24 @@ var count = {
     provider: 0
 };
 
-async function find_or_create_client (name) {
+async function find_or_create_TypeClient (name) {
+    var type = await ClientType.findOne({name: name});
+
+    if(!type) {
+        type = new ClientType({
+            name: name,
+            shortName: name
+        })
+        type = await type.save();
+    }
+
+    return type
+}
+
+async function find_or_create_client (name, type) {
     name = name.trim();
     var client = await Client.findOne({name: name});
-    var type = await ClientType.findOne();
+    var type = await find_or_create_TypeClient(type);
 
     if(!client) {
         client = new Client({
@@ -92,6 +122,19 @@ async function find_user (name) {
     } else return undefined;
 }
 
+function parseOldHistory(hist) {
+    var ret = [];
+
+    for (var i = 0; i < hist.length; i++) {
+        ret.push({
+            date: hist[i].date,
+            name: his[hist[i].stage],
+            author: hist[i].user
+        })
+    }
+
+    return ret;
+}
 
 (async () => {
     process.stdout.write(`Импорт... 0%\t`);
@@ -102,12 +145,12 @@ async function find_user (name) {
 
 
     for (var i = 0; i < orders.length; i++) {
-        var client = await find_or_create_client(orders[i].client);
+        var client = await find_or_create_client(orders[i].client, orders[i].clientType);
         var city = await find_or_create_city(orders[i].city);
         var provider = await find_or_create_provider(orders[i].stop.provider);
         var initiator = await find_user(orders[i].initiator);
-        // if(!orders[i].service)
-        //     console.log(orders[i]);
+        var history = parseOldHistory(orders[i].history);
+
         var order = new Order({
             id: orders[i].id,
             isOld: true,
@@ -147,7 +190,8 @@ async function find_user (name) {
                 reason: orders[i].stop.reason,
                 add_info: orders[i].add_info
             },
-            date: orders[i].date
+            date: orders[i].date,
+            history: history
         })
         order.save();
         count.order++;

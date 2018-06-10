@@ -1,10 +1,8 @@
-'use strict';
-
 var mongoose = require('../controllers/connect'),
     Schema = mongoose.Schema,
     mongoosePaginate = require('mongoose-paginate');
 
-var schema = Schema( {
+var schema = new Schema( {
     author: {
         type: Schema.Types.ObjectId,
         ref: 'Account',

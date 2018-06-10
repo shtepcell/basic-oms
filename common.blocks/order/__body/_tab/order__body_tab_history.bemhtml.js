@@ -58,7 +58,7 @@ block('order').elem('body').elemMod('tab', 'history').content()(function () {
                 },
                 {
                     elem: 'body-row-name',
-                    content: `[${item.author.department.name}] ${item.author.name} `
+                    content: `${item.author}`
                 }
             ]
         }
