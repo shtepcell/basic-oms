@@ -4,6 +4,7 @@ block('order').elem('switcher').content()(function () {
 
     var gzpMustShow = (order.status == 'gzp-pre' || order.status == 'all-pre' || order.gzp.need !== undefined),
         stopMustShow = (order.status == 'stop-pre' || order.status == 'all-pre' || order.stop.capability !== undefined);
+        sksMustShow = (order.status == 'sks-pre' || order.sks !== undefined);
 
     return [
         {
@@ -27,7 +28,7 @@ block('order').elem('switcher').content()(function () {
         {
             elem: 'tab',
             elemMods: {
-                display: false,
+                display: sksMustShow,
                 active: (tab=='sks')
             },
             content: 'СКС',

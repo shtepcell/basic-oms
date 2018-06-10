@@ -67,12 +67,14 @@ module.exports = function (app) {
 
     app.get('/order/:id/info', Order.getOrderInfo);
     app.get('/order/:id/gzp', Order.getOrderGZP);
+    app.get('/order/:id/sks', Order.getOrderSKS);
     app.get('/order/:id/stop', Order.getOrderSTOP);
     app.get('/order/:id/history', Order.getOrderHistory);
     app.get('/order/:id/file/:file', Order.getFile);
 
     app.post('/order/:id/info', Order.endClientNotify);
     app.post('/order/:id/gzp', Order.endPreGZP);
+    // app.post('/order/:id/sks', Order.endPreSKS);
     app.post('/order/:id/stop', Order.endPreSTOP);
 
     app.post('/order/:id/:tab/admin', Order.adminEdit);

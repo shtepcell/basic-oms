@@ -385,6 +385,27 @@ module.exports = {
         } else render(req, res, { view: '404' });
     },
 
+    getOrderSKS: async (req, res) => {
+        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+        res.locals.department = await Department.find();
+        order.cs = helper.calculateCS(order);
+
+        if(order) {
+            order.stage = stages[order.status];
+            order.resp = await helper.getRespDepName(order);
+            res.locals.order = order;
+
+            render(req, res, {
+                viewName: 'orders/order',
+                options: {
+                    tab: 'sks',
+                    admin: req.query.admin
+                }
+            });
+
+        } else render(req, res, { view: '404' });
+    },
+
     getOrderGZP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
         res.locals.department = await Department.find();

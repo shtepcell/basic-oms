@@ -32,7 +32,7 @@
             block: 'order',
             elem: 'body',
             mods: {
-                tab: ['init', 'info', 'gzp', 'stop', 'history']
+                tab: ['init', 'info', 'gzp', 'stop', 'sks', 'history']
             }
         },
         {
