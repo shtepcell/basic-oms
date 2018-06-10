@@ -1,4 +1,4 @@
-block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
+block('order').elem('body').elemMod('tab', 'sks').content()(function () {
 
     var ctx = this.ctx,
         tab = ctx.tab,

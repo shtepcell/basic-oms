@@ -12,6 +12,14 @@
             block: 'chat',
             elem: 'message',
             tech: 'bemhtml'
+        },
+        {
+            block: 'chat',
+            elem: 'message',
+            mods: {
+                mine: true
+            },
+            tech: 'bemhtml'
         }
     ]
 })

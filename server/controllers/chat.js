@@ -13,8 +13,9 @@ module.exports = {
         chat = chat.map( item => {
             return {
                 author: item.author.name,
+                mine: (item.author._id+'' == res.locals.__user._id),
                 text: item.text,
-                time: helper.dateToExtStr(item.time)
+                time: helper.dateToChatStr(item.time)
             }
         });
 
@@ -38,7 +39,7 @@ module.exports = {
         var _msg = {
             author:  res.locals.__user.name,
             text: done.text,
-            time: helper.dateToExtStr(done.time),
+            time: helper.dateToChatStr(done.time),
             isFirst: isFirst
         }
 

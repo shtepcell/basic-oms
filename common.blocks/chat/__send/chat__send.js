@@ -39,22 +39,28 @@ provide(bemDom.declElem('chat', 'send',
                                         BEMHTML.apply({
                                             block: 'chat',
                                             elem: 'message',
+                                            elemMods: {
+                                                mine: true
+                                            },
                                             author: res.author,
                                             text: res.text,
                                             time: res.time
                                         })
                                     )
                                 } else
-                                bemDom.append(
-                                    body.domElem,
-                                    BEMHTML.apply({
-                                        block: 'chat',
-                                        elem: 'message',
-                                        author: res.author,
-                                        text: res.text,
-                                        time: res.time
-                                    })
-                                )
+                                    bemDom.append(
+                                        body.domElem,
+                                        BEMHTML.apply({
+                                            block: 'chat',
+                                            elem: 'message',
+                                            elemMods: {
+                                                mine: true
+                                            },
+                                            author: res.author,
+                                            text: res.text,
+                                            time: res.time
+                                        })
+                                    )
                                 body.domElem[0].scrollTop = 99999;
                             }
                         })

@@ -1,8 +1,10 @@
 .chat__body
 {
     border-bottom: 1px solid #ddd;
-    max-height: 400px;
+    min-height: 200px;
+    max-height: 600px;
     overflow-y: scroll;
+    background-image: url("chat-background.jpg");
 }
 
 .chat__nt

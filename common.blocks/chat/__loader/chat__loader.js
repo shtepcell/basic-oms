@@ -32,6 +32,9 @@ provide(bemDom.declElem('chat', 'loader',
                                     ret.push({
                                         block: 'chat',
                                         elem: 'message',
+                                        elemMods:{
+                                            mine: item.mine
+                                        },
                                         author: item.author,
                                         text: item.text,
                                         time: item.time

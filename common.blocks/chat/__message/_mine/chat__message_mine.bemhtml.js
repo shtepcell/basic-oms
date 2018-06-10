@@ -1,4 +1,4 @@
-block('chat').elem('message').content()(function () {
+block('chat').elem('message').elemMod('mine', true).content()(function () {
     var ctx = this.ctx;
 
     return [
@@ -6,11 +6,6 @@ block('chat').elem('message').content()(function () {
             block: 'chat',
             elem: 'mess-container',
             content: [
-                {
-                    block: 'chat',
-                    elem: 'author',
-                    content: ctx.author
-                },
                 {
                     block: 'chat',
                     elem: 'text',

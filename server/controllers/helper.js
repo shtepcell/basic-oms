@@ -53,7 +53,7 @@ module.exports = {
         if(day < 10) {
             day = '0' + day;
         }
-        return `${day}-${month}-${year}`;
+        return `${day}.${month}.${year}`;
     },
 
     dateToExtStr: function (value = new Date()) {
@@ -70,6 +70,24 @@ module.exports = {
             sec = '0' + sec;
         }
         return `${this.dateToStr(value)} ${hour}:${min}:${sec}`;
+    },
+
+    dateToChatStr: function (value = new Date()) {
+        var now = new Date().getDate();
+
+        if(now == value.getDate()) {
+            var hour = value.getHours();
+            if(hour < 10) {
+                hour = '0' + hour;
+            }
+            var min = value.getMinutes();
+            if(min < 10) {
+                min = '0' + min;
+            }
+            return `${hour}:${min}`;
+        } else {
+            return this.dateToStr(value);
+        }
     },
 
     strToDate: function (date) {

@@ -1,5 +1,4 @@
 module.exports = function(opt, data) {
-
     return {
         view: 'page-index',
         title: `Заказ #${data.order.id}`,
