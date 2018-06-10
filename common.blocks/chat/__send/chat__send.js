@@ -32,6 +32,7 @@ provide(bemDom.declElem('chat', 'send',
                             },
                             success: function(res) {
                                 input.setVal('');
+                                select.setVal([]);
                                 if(res.isFirst) {
                                     bemDom.update(
                                         body.domElem,
