@@ -1,0 +1,9 @@
+.chat__recipient
+{
+    margin: 0 0 10px 1em;
+}
+
+.chat__recipient.select
+{
+    max-width: 650px;
+}

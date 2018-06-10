@@ -23,6 +23,7 @@ module.exports = function(opt, data) {
             },
             {
                 block: 'chat',
+                users: data.users,
                 order: data.order
             }
         ]

@@ -22,6 +22,7 @@ block('chat').content()(function () {
         },
         {
             elem: 'editor',
+            users: ctx.users,
             anchor: ctx.order.id
         }
     ]

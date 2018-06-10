@@ -1,6 +1,6 @@
 modules.define('chat__send', ['i-bem-dom', 'jquery', 'button', 'textarea',
-    'chat__editor', 'chat', 'chat__body'],
-    function(provide, bemDom, $, Button, Input, Tree, Chat, Body) {
+    'chat__editor', 'chat', 'chat__body', 'select'],
+    function(provide, bemDom, $, Button, Input, Tree, Chat, Body, Select) {
 
 provide(bemDom.declElem('chat', 'send',
     {
@@ -10,6 +10,7 @@ provide(bemDom.declElem('chat', 'send',
                     var button = this.findMixedBlock(Button),
                         tree = this.findParentElem(Tree),
                         input = tree.findChildBlock(Input),
+                        select = tree.findChildBlock(Select),
                         chat = tree.findParentBlock(Chat),
                         body = chat.findChildBlock(Body);
 
@@ -23,7 +24,8 @@ provide(bemDom.declElem('chat', 'send',
                             timeout: 5000,
                             context: this,
                             data: {
-                                text: input.getVal()
+                                text: input.getVal(),
+                                recipients: select.getVal()
                             },
                             error: function(err) {
                                 console.error('Error');
