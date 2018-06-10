@@ -23,6 +23,7 @@ block('chat').content()(function () {
         {
             elem: 'editor',
             users: ctx.users,
+            me: ctx.me,
             anchor: ctx.order.id
         }
     ]

@@ -5,7 +5,7 @@ block('root').replace()(function() {
         og = meta.og || {};
 
     if (ctx.context) return ctx.context;
-    
+
     return {
         block: 'page',
         title: data.title,
@@ -17,6 +17,10 @@ block('root').replace()(function() {
             }
         ],
         scripts: [
+            {
+                elem: 'js',
+                url: '/socket.io.js'
+            },
             {
                 elem: 'js',
                 url: '/index.min.js'

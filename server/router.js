@@ -19,7 +19,7 @@ const mkdirp = require('mkdirp-promise');
 var Render = require('./render'),
     render = Render.render;
 
-module.exports = function (app) {
+module.exports = function (app, io) {
 
     app.use(fileUpload());
     app.get('/ping/', function(req, res) {
@@ -80,7 +80,9 @@ module.exports = function (app) {
     app.post('/order/:id/:tab/admin', Order.adminEdit);
 
     app.get('/chat/:anchor', Chat.get);
-    app.post('/chat/:anchor', Chat.send);
+    app.post('/chat/:anchor',(req, res) => {
+        return Chat.send(req, res, io);
+    });
 
     app.get('/profile', Account.getProfile);
     app.post('/profile', Account.selfEdit);

@@ -38,7 +38,8 @@ block('chat').elem('editor').content()(function () {
                 block: 'chat',
                 elem: 'send',
                 js: {
-                    anchor: this.ctx.anchor
+                    anchor: this.ctx.anchor,
+                    me: this.ctx.me
                 }
             },
             mods: {

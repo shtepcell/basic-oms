@@ -93,7 +93,11 @@ passport.deserializeUser(function(user, done) {
     done(null, JSON.parse(user));
 });
 
-router(app);
+var server = require('http').createServer(app);
+
+var io = require('socket.io')(server);
+
+router(app, io);
 
 isDev && require('./rebuild')(app);
 
@@ -112,7 +116,7 @@ if (isDev) {
 
 isSocket && fs.existsSync(port) && fs.unlinkSync(port);
 
-app.listen(port, function() {
+server.listen(port, function() {
     isSocket && fs.chmod(port, '0777');
     console.log(`\n  ################## RELOAD SERVER - ${helper.dateToExtStr()} ################### \n`);
     logger.info(`Server is listening on ${this.address().port}`);

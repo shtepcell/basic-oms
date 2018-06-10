@@ -44,7 +44,8 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "serve-favicon": "^2.3.0",
-    "serve-static": "^1.10.2"
+    "serve-static": "^1.10.2",
+    "socket.io": "^2.1.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.6.1",

@@ -22,7 +22,7 @@ module.exports = {
         res.send(chat);
     },
 
-    send: async (req, res) => {
+    send: async (req, res, io) => {
         var data = req.body;
 
         var isFirst = await Chat.find({anchor: req.params.anchor});
@@ -38,11 +38,12 @@ module.exports = {
         var done = await msg.save();
         var _msg = {
             author:  res.locals.__user.name,
+            anchor: req.params.anchor,
             text: done.text,
             time: helper.dateToChatStr(done.time),
             isFirst: isFirst
         }
-
+        io.emit('new message', _msg);
         res.status(200).send(_msg);
     }
 }
