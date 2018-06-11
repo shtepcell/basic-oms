@@ -9,6 +9,7 @@ const Street = require('../models/Street');
 const mkdirp = require('mkdirp-promise');
 const Holiday = require('../models/Holiday');
 const Notify = require('../models/Notify');
+const notify = require('./notify');
 const { sendMail } = require('./mailer');
 const { getExcel } = require('./export');
 
@@ -211,7 +212,7 @@ module.exports = {
 
     },
 
-    init: async (req, res) => {
+    init: async (req, res, io) => {
         var data = req.body;
 
         Object.keys(data).forEach( item => {
@@ -333,32 +334,16 @@ module.exports = {
             }
 
             if(done.status == 'all-pre') {
-                var ntf0 = new Notify({
-                    date: Date.now(),
-                    type: `start-gzp-pre`,
-                    order: done._id
-                });
-                var ntf1 = new Notify({
-                    date: Date.now(),
-                    type: `start-stop-pre`,
-                    order: done._id
-                });
-                sendMail(done, 'new-status');
-                ntf0.save();
-                ntf1.save();
+                notify.create(io, res.locals.__user, done.id, 'start-gzp-pre');
+                notify.create(io, res.locals.__user, done.id, 'start-stop-pre');
+                // sendMail(done, 'new-status');
+
             } else {
+                notify.create(io, res.locals.__user, done.id, `start-${done.status}`);
                 done.status = stages[done.status];
-                sendMail(done, 'new-status');
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `start-${done.status}`,
-                    order: done._id
-                });
-                ntf.save();
+                // sendMail(done, 'new-status');
             }
 
-            clnt.usage = true;
-            clnt.save();
             logger.info(`Init Order #${ done.id } | ${ done.status } | ${ done.info.client.name } | ${done.info.city.type} ${done.info.city.name}`, res.locals.__user);
             res.send({created: true})
         } else res.send({errText: 'Что-то пошло не так'});
@@ -375,6 +360,7 @@ module.exports = {
                         lean: true
                     }
                 })
+                .sort('name')
                 .lean();
         res.locals.department = await Department.find();
         order.cs = helper.calculateCS(order);
@@ -405,6 +391,7 @@ module.exports = {
                         lean: true
                     }
                 })
+                .sort('name')
                 .lean();
         res.locals.department = await Department.find();
         order.cs = helper.calculateCS(order);
@@ -436,6 +423,7 @@ module.exports = {
                         lean: true
                     }
                 })
+                .sort('name')
                 .lean();
         res.locals.department = await Department.find();
         order.cs = helper.calculateCS(order);
@@ -467,6 +455,7 @@ module.exports = {
                         lean: true
                     }
                 })
+                .sort('name')
                 .lean();
         res.locals.department = await Department.find();
         order.cs = helper.calculateCS(order);
@@ -498,6 +487,7 @@ module.exports = {
                         lean: true
                     }
                 })
+                .sort('name')
                 .lean();
         res.locals.department = await Department.find();
         order.cs = helper.calculateCS(order);
@@ -517,7 +507,7 @@ module.exports = {
         } else render(req, res, { view: '404' });
     },
 
-    adminEdit: async (req, res) => {
+    adminEdit: async (req, res, io) => {
         var data = req.body;
 
         var order = await Order.findOne({id: req.params.id});
@@ -630,6 +620,7 @@ module.exports = {
         }
 
         order.history.push(helper.historyGenerator('admin', res.locals.__user));
+        notify.create(io, res.locals.__user, order.id, 'admin');
         var done = await order.save();
         if(done) {
             logger.info(`Admin edit order #${ done.id }`, res.locals.__user);
@@ -642,7 +633,7 @@ module.exports = {
         }
     },
 
-    endPreGZP: async (req, res) => {
+    endPreGZP: async (req, res, io) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
         if(order) {
             Object.keys(req.body).forEach( item => {
@@ -691,21 +682,16 @@ module.exports = {
             order.history.push(helper.historyGenerator('gzp-pre', res.locals.__user));
             var done = await order.save();
             if(done) {
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `end-gzp-pre`,
-                    order: done._id
-                });
-                done = await done.deepPopulate(populateQuery);
-                sendMail(done, 'new-status');
-                ntf.save();
+                notify.create(io, res.locals.__user, done.id, 'end-gzp-pre');
+                // done = await done.deepPopulate(populateQuery);
+                // sendMail(done, 'new-status');
                 logger.info(`End pre-gzp order #${ done.id }`, res.locals.__user);
                 res.status(200).send({created: true})
             } else res.status(400).send({errText: 'Что-то пошло не так!'});
         } else res.status(404);
     },
 
-    endPreSTOP: async (req, res) => {
+    endPreSTOP: async (req, res, io) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
         if(order) {
             Object.keys(req.body).forEach( item => {
@@ -766,25 +752,14 @@ module.exports = {
             order.history.push(helper.historyGenerator('stop-pre', res.locals.__user));
             var done = await order.save();
             if(done) {
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `end-stop-pre`,
-                    order: done._id
-                });
-                done = await done.deepPopulate(populateQuery);
-                sendMail(done, 'new-status');
-                ntf.save();
-                if(req.body.capability == 1) {
-                    provider.usage = true;
-                    provider.save();
-                }
+                notify.create(io, res.locals.__user, done.id, 'end-stop-pre');
+                // done = await done.deepPopulate(populateQuery);
+                // sendMail(done, 'new-status');
                 logger.info(`End pre-stop order #${ done.id }`, res.locals.__user);
                 res.status(200).send({created: true});
             } else res.status(400).send({errText: 'Что-то пошло не так!'})
         } else res.status(404);
     },
-
-
 
     getFile: async (req, res) => {
         var order = await Order.findOne({id: req.params.id});
@@ -810,7 +785,7 @@ module.exports = {
         }
     },
 
-    changeStatus: async (req, res) => {
+    changeStatus: async (req, res, io) => {
         var reqData = req.body;
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
@@ -829,13 +804,8 @@ module.exports = {
                     deadline: Math.round((order.deadline - new Date()) / 1000 / 60 / 60 / 24)
                 };
                 order.history.push(helper.historyGenerator('pause-start', res.locals.__user));
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `pause`,
-                    order: order._id
-                });
-                sendMail(order, 'pause');
-                ntf.save();
+                notify.create(io, res.locals.__user, order.id, 'pause-start');
+                // sendMail(order, 'pause');
                 break;
             case 'stop-pause':
                 var now = new Date();
@@ -847,13 +817,8 @@ module.exports = {
                     date: undefined
                 };
                 order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `end-pause`,
-                    order: order._id
-                });
-                sendMail(order, 'end-pause');
-                ntf.save();
+                notify.create(io, res.locals.__user, order.id, 'pause-stop');
+                // sendMail(order, 'end-pause');
                 break;
             // case 'set-special':
             //     order.special = reqData.dep;
@@ -869,39 +834,22 @@ module.exports = {
                 order.status = 'reject';
                 order.deadline = null;
                 order.history.push(helper.historyGenerator('reject', res.locals.__user));
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `reject`,
-                    order: order._id
-                });
-                sendMail(order, 'new-status');
-                ntf.save();
                 break;
             case 'start-pre-stop':
                 order.status = 'stop-pre';
                 order.deadline = await helper.calculateDeadline(3);
                 order.date['cs-stop-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `start-stop-pre`,
-                    order: order._id
-                });
-                sendMail(order, 'new-status');
-                ntf.save();
+                notify.create(io, res.locals.__user, order.id, 'start-stop-pre');
+                // sendMail(order, 'new-status');
                 break;
             case 'start-pre-gzp':
                 order.status = 'gzp-pre';
                 order.deadline = await helper.calculateDeadline(3);
                 order.date['cs-gzp-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `start-gzp-pre`,
-                    order: order._id
-                });
-                sendMail(order, 'new-status');
-                ntf.save();
+                notify.create(io, res.locals.__user, done.id, 'start-gzp-pre');
+                // sendMail(order, 'new-status');
                 break;
             case 'end-network':
                 order.status = 'client-notify';
@@ -909,25 +857,15 @@ module.exports = {
                 order.date['cs-client-notify'] = await helper.calculateDeadline(2);
                 order.date['network'] = new Date();
                 order.history.push(helper.historyGenerator('network', res.locals.__user));
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `network`,
-                    order: order._id
-                });
-                sendMail(order, 'new-status');
-                ntf.save();
+                notify.create(io, res.locals.__user, order.id, 'network');
+                // sendMail(order, 'new-status');
                 break;
             case 'end-build':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
                 order.history.push(helper.historyGenerator('gzp-build', res.locals.__user));
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `end-gzp-build`,
-                    order: order._id
-                });
-                sendMail(order, 'new-status');
-                ntf.save();
+                notify.create(io, res.locals.__user, order.id, 'end-gzp-build');
+                // sendMail(order, 'new-status');
                 break;
             case 'start-gzp-build':
                 if(order.gzp.need) {
@@ -941,25 +879,15 @@ module.exports = {
 
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
 
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `start-gzp-build`,
-                    order: order._id
-                });
-                sendMail(order, 'new-status');
-                ntf.save();
+                notify.create(io, res.locals.__user, order.id, `start-${order.status}`);
+                // sendMail(order, 'new-status');
                 break;
             case 'end-install-devices':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
                 order.history.push(helper.historyGenerator('install-devices', res.locals.__user));
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `end-install-devices`,
-                    order: order._id
-                });
-                sendMail(order, 'new-status');
-                ntf.save();
+                notify.create(io, res.locals.__user, order.id, `end-install-devices`);
+                // sendMail(order, 'new-status');
                 break;
             case 'start-stop-build':
                 order.status = 'stop-build';
@@ -967,25 +895,15 @@ module.exports = {
                 order.date['cs-stop-organization'] = await helper.calculateDeadline(order.stop.time + 2);
                 order.date['client-match'] = new Date();
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `start-stop-build`,
-                    order: order._id
-                });
-                sendMail(order, 'new-status');
-                ntf.save();
+                notify.create(io, res.locals.__user, order.id, `start-stop-build`);
+                // sendMail(order, 'new-status');
                 break;
             case 'end-build-stop':
                 order.status = 'network';
                 order.date['stop-build'] = new Date();
                 order.history.push(helper.historyGenerator('stop-build', res.locals.__user));
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `end-stop-build`,
-                    order: order._id
-                });
-                sendMail(order, 'new-status');
-                ntf.save();
+                notify.create(io, res.locals.__user, order.id, `end-stop-build`);
+                // sendMail(order, 'new-status');
                 break;
         }
 
@@ -1000,7 +918,7 @@ module.exports = {
 
     },
 
-    endClientNotify: async (req, res) => {
+    endClientNotify: async (req, res, io) => {
         var reqData = req.body;
         var order = await Order.findOne({id: req.params.id});
 
@@ -1048,14 +966,9 @@ module.exports = {
 
             var done = await order.save();
             if(done) {
-                var ntf = new Notify({
-                    date: Date.now(),
-                    type: `end-client-notify`,
-                    order: done._id
-                });
-                done = await done.deepPopulate(populateQuery);
-                sendMail(done, 'new-status');
-                ntf.save();
+                // notify.create(ord res.locals.__user,er.id, `end-client-notify`);
+                // done = await done.deepPopulate(populateQuery);
+                // sendMail(done, 'new-status');
                 logger.info(`End client-notify order #${ done.id }`, res.locals.__user);
                 res.status(200).send({created: true});
             } else res.status(400).send({errText: 'Что-то пошло не так'})

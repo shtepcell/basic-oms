@@ -33,18 +33,24 @@ block('navigator').content()(function () {
             elem: 'right-block',
             content: [
                 {
-                    block: 'link',
-                    mods: { theme: 'islands', size: 'l' },
-                    mix: { block: 'navigator', elem: 'link' },
-                    url: '/notifies',
-                    content: [
-                        (user && user.notifies>0)?`(${user.notifies})`:'',
-                        {
-                            block: 'icon',
-                            url: (user && user.notifies>0)?'/alarm.svg':'/alarm-empty.png',
-                            mix: (user && user.notifies>0)?'navigator__alarm':''
-                        }
-                    ]
+                    block: 'bell',
+                    js: {
+                        user: user.login,
+                    },
+                    content: {
+                        block: 'link',
+                        mods: { theme: 'islands', size: 'l' },
+                        mix: { block: 'navigator', elem: 'link' },
+                        url: '/notifies',
+                        content: [
+                            '',
+                            {
+                                block: 'icon',
+                                url: '/alarm-empty.png',
+                                mix: 'navigator__alarm'
+                            }
+                        ]
+                    }
                 },
                 {
                     block: 'dropdown',

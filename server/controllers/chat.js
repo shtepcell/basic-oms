@@ -3,6 +3,7 @@
 const Chat = require('../models/Chat'),
     Render = require('../render'),
     render = Render.render,
+    notify = require('./notify'),
     helper = require('./helper');
 
 module.exports = {
@@ -43,6 +44,7 @@ module.exports = {
             time: helper.dateToChatStr(done.time),
             isFirst: isFirst
         }
+        notify.create(io, res.locals.__user, req.params.anchor, 'chat', data.recipients);
         io.emit('new message', _msg);
         res.status(200).send(_msg);
     }

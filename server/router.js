@@ -56,14 +56,18 @@ module.exports = function (app, io) {
     })
     // *************************************************************
     app.get('/init', Order.getPageInit);
-    app.post('/init', Order.init);
+    app.post('/init', (req, res) => {
+        return Order.init(req, res, io);
+    });
 
     app.get('/order/:id', function (req, res) {
         res.redirect(`/order/${req.params.id}/info`)
     });
 
     // app.post('/order/:id', Order.submit);
-    app.post('/order/:id/action', Order.changeStatus)
+    app.post('/order/:id/action', (req, res) => {
+        return Order.changeStatus(req, res, io);
+    });
 
     app.get('/order/:id/info', Order.getOrderInfo);
     app.get('/order/:id/gzp', Order.getOrderGZP);
@@ -72,12 +76,23 @@ module.exports = function (app, io) {
     app.get('/order/:id/history', Order.getOrderHistory);
     app.get('/order/:id/file/:file', Order.getFile);
 
-    app.post('/order/:id/info', Order.endClientNotify);
-    app.post('/order/:id/gzp', Order.endPreGZP);
-    // app.post('/order/:id/sks', Order.endPreSKS);
-    app.post('/order/:id/stop', Order.endPreSTOP);
 
-    app.post('/order/:id/:tab/admin', Order.adminEdit);
+    app.post('/order/:id/info', (req, res) => {
+        return Order.endClientNotify(req, res, io);
+    });
+
+    app.post('/order/:id/gzp', (req, res) => {
+        return Order.endPreGZP(req, res, io);
+    });
+
+    // app.post('/order/:id/sks', Order.endPreSKS);
+    app.post('/order/:id/stop', (req, res) => {
+        return Order.endPreSTOP(req, res, io);
+    });
+
+    app.post('/order/:id/:tab/admin', (req, res) => {
+        return Order.adminEdit(req, res, io);
+    });
 
     app.get('/chat/:anchor', Chat.get);
     app.post('/chat/:anchor',(req, res) => {
@@ -89,6 +104,7 @@ module.exports = function (app, io) {
     app.post('/profile/password', Account.selfPassEdit);
 
     app.get('/notifies', Notify.get);
+    app.post('/getNotifyCount', Notify.countUnread);
     app.post('/notifies/:id', Notify.read);
 
     app.all('/admin/*', Auth.isAdmin);

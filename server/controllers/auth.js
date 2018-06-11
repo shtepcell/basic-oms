@@ -29,7 +29,6 @@ module.exports = {
                 login: acc.login,
                 name: acc.name,
                 department: acc.department,
-                notifies: await Notify.countUnread(acc),
                 settings: acc.settings
             };
             next();

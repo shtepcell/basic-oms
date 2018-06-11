@@ -1,11 +1,9 @@
 var mongoose = require('../controllers/connect'),
 	Schema = mongoose.Schema;
 
-var schema = new mongoose.Schema({
-    order: {
-        type: Schema.Types.ObjectId,
-        ref: 'Order'
-    },
+var schema = new Schema({
+    order: Number,
+	recipients: [String],
     type: {
         type: String,
         required: true
@@ -17,6 +15,7 @@ var schema = new mongoose.Schema({
         type: Date,
         required: true
     },
+	initiator: String,
     read: [
         {
             type: Schema.Types.ObjectId,

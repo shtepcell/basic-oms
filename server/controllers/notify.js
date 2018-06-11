@@ -9,33 +9,20 @@ const Render = require('../render'),
 
 const logger = require('./logger');
 
-var events = {
-    'start-gzp-pre': 'Начат этап "Проработка по ГЗП"',
-    'start-stop-pre': 'Начат этап "Проработка по СТОП/VSAT"',
-    'start-gzp-build': 'Начат этап "Организация ГЗП"',
-    'start-stop-build': 'Начат этап "Организация СТОП/VSAT"',
-    'init-with-unknown-city': 'Инициирована новая заявка с новым городом',
-    'end-gzp-pre': 'Завершен этап "Проработка по ГЗП"',
-    'end-stop-pre': 'Завершен этап "Проработка по СТОП/VSAT"',
-    'end-stop-build': 'Завершен этап "Организация СТОП/VSAT"',
-    'end-gzp-build': 'Завершен этап "Организация ГЗП"',
-    'end-client-notify': 'Завершен этап "Уведомление клиента"',
-    'end-client-match': 'Завершен этап "Согласование с клиентом"',
-    'end-install-devices': 'Завершен этап "Установка оборудования"',
-    'network': 'Завершен этап "Настройка сети"',
-    'reject': 'Заявка отклонена',
-    'secret': 'Заявка удалена',
-    'pause': 'Заявка поставлена на паузу',
-    'end-pause': 'Заявка снята с паузы'
-};
+const events = require('../common-data').notifies;
+
+// Есть три типа уведомлений:
+// 1) Изменение состояния заказов - 'status'
+// 2) Упоминания в чате = 'chat'
+// 3) Broadcast-уведомления (обновление системы и др.) - 'Broadcast'
 
 module.exports = {
     get: async (req, res) => {
         var acc = await Account.findOne({login: res.locals.__user.login});
         // var settings = acc.settings.notify;
-        var myOrders = await Order.find(
-            {'history.author': acc._id}
-        );
+        var myOrders = await Order.find({
+            'history.author': acc._id
+        });
 
         myOrders = myOrders.map( i => {
             return {'order': i._id};
@@ -65,35 +52,121 @@ module.exports = {
         });
     },
 
-    read: async (req, res) => {
-        var ntf = await Notify.findOne({_id: req.params.id}).populate('order read');
+    create: async (io, user, id, text, recipients) => {
+        var ntf;
+        if(text == 'chat') {
+            ntf = new Notify({
+                order: id,
+                type: 'chat',
+                initiator: user.login,
+                text: 'new-message',
+                recipients: recipients,
+                date: new Date()
+            })
+        } else {
+            ntf = new Notify({
+                order: id,
+                initiator: user.login,
+                type: 'status',
+                text: text,
+                date: new Date()
+            })
+        }
+        var done = await ntf.save();
 
-        ntf.read.push(res.locals.__user);
+        io.emit('new notify', done);
 
-        ntf.save();
-
-        res.status(200).send({url: `/order/${ntf.order.id}`});
     },
 
-    countUnread: async (user) => {
-        var myOrders = await Order.find(
-            {'history.author': user._id}
-        );
+    read: async (req, res) => {
+        // var ntf = await Notify.findOne({_id: req.params.id}).populate('order read');
+        //
+        // ntf.read.push(res.locals.__user);
+        //
+        // ntf.save();
+        //
+        // res.status(200).send({url: `/order/${ntf.order.id}`});
+    },
 
-        myOrders = myOrders.map( i => {
-            return {'order': i._id};
+    countUnread: async (req, res) => {
+        var user = res.locals.__user;
+
+        var orders = [],
+            stages = [],
+            status = 0,
+            query = null;
+
+        switch (user.department.type) {
+            case 'b2b':
+                query = {'info.initiator': user._id};
+                break;
+            case 'b2o':
+                query = {'info.initiator': user._id};
+                stages = [
+                    "start-stop-pre",
+                    "start-stop-build"
+                ];
+                break;
+            case 'net':
+                stages = [
+                    "end-stop-build",
+                    'end-gzp-build',
+                    'end-install-devices'
+                ];
+                break;
+            case 'sks':
+                stages = [
+                    "start-sks-pre",
+                    "start-sks-build"
+                ];
+                break;
+            case 'gus':
+                query = {'info.city': user.department.cities};
+                stages = [
+                    "start-gzp-pre",
+                    "start-gzp-build"
+                ];
+                break;
+        }
+
+        if(query != null) {
+            orders = await Order.find(query).lean();
+        }
+
+        orders = orders.map( item => {
+            return {'order': item.id};
         })
 
-        var ntfs = [];
+        var forIO = orders.map( item => {
+            return item.order;
+        })
 
-        if(myOrders.length > 0)
-            ntfs = await Notify.find({
-                '$or': myOrders,
+        if(stages.length > 0) {
+            stages.forEach( it => {
+                orders.push({ 'text': it })
+            })
+        }
+
+        if(orders.length > 0) {
+            status = await Notify.find({
+                $or: orders,
+                type: 'status',
+                initiator: {$ne: user.login},
                 read: {$ne: user._id}
-            }).count();
+            }).count()
+        }
 
-        // var ntfs = await Notify.find({read: {$ne: user._id}}).count();
+        var chat = await Notify.find({
+            recipients: user.login,
+            type: 'chat',
+            read: {$ne: user._id}
+        }).count();
 
-        return ntfs;
+        var broadcast = await Notify.find({
+            type: 'broadcast',
+            read: {$ne: user._id}
+        }).count();
+
+        res.send({count: status + chat + broadcast});
     }
 }
