@@ -23,11 +23,54 @@ module.exports = {
 
     historyGenerator: function (type, user) {
         var usr = `[${user.department.name}] ${user.name}`,
-            now = new Date();
+            now = new Date(),
+            ret = { author: usr, date: now };
+
         switch (type) {
             case 'init':
-                return [{author: usr, date: now, name: 'Инициация заказа'}];
+                ret.name = 'Инициация заказа';
+                break;
+            case 'admin':
+                ret.name = 'Административная правка';
+                break;
+            case 'gzp-pre':
+                ret.name = 'Проработка ГЗП';
+                break;
+            case 'stop-pre':
+                ret.name = 'Проработка СТОП/VSAT';
+                break;
+            case 'pause-start':
+                ret.name = 'Пауза';
+                break;
+            case 'pause-start':
+                ret.name = 'Снятие с паузы';
+                break;
+            case 'delete':
+                ret.name = 'Заказ удалён';
+                break;
+            case 'reject':
+                ret.name = 'Заказ отклонён';
+                break;
+            case 'network':
+                ret.name = 'Настройка сети';
+                break;
+            case 'gzp-build':
+                ret.name = 'Организация ГЗП';
+                break;
+            case 'install-devices':
+                ret.name = 'Установка оборудования';
+                break;
+            case 'stop-build':
+                ret.name = 'Организация СТОП/VSAT';
+                break;
+            case 'client-notify':
+                ret.name = 'Уведомление клиента (заказ включен)';
+                break;
+            case 'client-match':
+                ret.name = 'Согласование с клиентом';
+                break;
         }
+        return ret;
     },
 
     calculateCS: (order) => {
