@@ -93,7 +93,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-gzp-build',
                 id: order.id
             },
-            display: (isOwner && isMatch &&  order.gzp.need != undefined && !isSKS) && !isPause && incomeIsFill
+            display: (isOwner && isMatch &&  order.gzp.need != undefined && order.gzp.capability && !isSKS) && !isPause && incomeIsFill
         },
         {
             block: 'order',
@@ -103,7 +103,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-stop-build',
                 id: order.id
             },
-            display: (isOwner && isMatch && order.stop.capability != undefined && !isSKS) && !isPause && incomeIsFill
+            display: (isOwner && isMatch && order.stop.capability && !isSKS) && !isPause && incomeIsFill
         },
         {
             block: 'order',

@@ -34,23 +34,7 @@ block('navigator').content()(function () {
             content: [
                 {
                     block: 'bell',
-                    js: {
-                        user: user.login,
-                    },
-                    content: {
-                        block: 'link',
-                        mods: { theme: 'islands', size: 'l' },
-                        mix: { block: 'navigator', elem: 'link' },
-                        url: '/notifies',
-                        content: [
-                            '',
-                            {
-                                block: 'icon',
-                                url: '/alarm-empty.png',
-                                mix: 'navigator__alarm'
-                            }
-                        ]
-                    }
+                    user: user
                 },
                 {
                     block: 'dropdown',

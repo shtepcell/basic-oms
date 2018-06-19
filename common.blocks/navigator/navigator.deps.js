@@ -20,7 +20,8 @@
             }
         },
         {
-            block: 'bell'
+            block: 'bell',
+            elems: ['count']
         },
         {
             block: 'profile-popup'

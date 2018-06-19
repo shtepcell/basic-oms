@@ -104,7 +104,15 @@ module.exports = function (app, io) {
     app.post('/profile/password', Account.selfPassEdit);
 
     app.get('/notifies', Notify.get);
-    app.post('/getNotifyCount', Notify.countUnread);
+    app.get('/readNotify/:id', Notify.read);
+
+    app.post('/getNotifyCount', async (req, res) => {
+        var user = res.locals.__user;
+
+        var count = await Notify.countUnread(user);
+
+        res.send({count: count});
+    });
     app.post('/notifies/:id', Notify.read);
 
     app.all('/admin/*', Auth.isAdmin);

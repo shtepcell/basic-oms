@@ -18,38 +18,147 @@ const events = require('../common-data').notifies;
 
 module.exports = {
     get: async (req, res) => {
-        var acc = await Account.findOne({login: res.locals.__user.login});
-        // var settings = acc.settings.notify;
-        var myOrders = await Order.find({
-            'history.author': acc._id
-        });
 
-        myOrders = myOrders.map( i => {
-            return {'order': i._id};
+        var orders = [],
+            stages = [],
+            status = 0,
+            user = res.locals.__user,
+            query = null;
+
+        res.locals.notifies = [];
+
+        switch (user.department.type) {
+            case 'b2b':
+                query = {'info.initiator': user._id};
+                break;
+            case 'b2o':
+                query = {'info.initiator': user._id};
+                stages = [
+                    "start-stop-pre",
+                    "start-stop-build"
+                ];
+                break;
+            case 'net':
+                stages = [
+                    "end-stop-build",
+                    'end-gzp-build',
+                    'end-install-devices'
+                ];
+                break;
+            case 'sks':
+                stages = [
+                    "start-sks-pre",
+                    "start-sks-build"
+                ];
+                break;
+            case 'gus':
+                query = {'info.city': user.department.cities};
+                stages = [
+                    "start-gzp-pre",
+                    "start-gzp-build"
+                ];
+                break;
+        }
+
+        if(query != null) {
+            orders = await Order.find(query).lean();
+            console.log(query);
+        }
+
+        orders = orders.map( item => {
+            return {'order': item.id};
         })
 
-        var notifies = [];
+        var forIO = orders.map( item => {
+            return item.order;
+        })
 
-        if(myOrders.length > 0)
-            var notifies = await Notify.find({
-                '$or': myOrders
-            }).sort({date: -1}).populate('order').limit(50);
+        if(stages.length > 0 && user.department.type != 'gus') {
+            stages.forEach( it => {
+                orders.push({ 'text': it })
+            })
+        }
 
-        notifies = notifies.map( item => {
-            return {
-                id: item._id,
-                date: helper.dateToExtStr(item.date),
-                text: events[item.type],
-                order: item.order.id,
-                read: (item.read.indexOf(res.locals.__user._id+'') >= 0)
+        if(orders.length > 0) {
+            if(user.department.type != 'gus')
+                notifies = await Notify.find({
+                    $or: [
+                        {
+                            $or: orders,
+                            type: 'status',
+                            initiator: {$ne: user.login}
+                        },
+                        {
+                            recipients: user.login,
+                            type: 'chat'
+                        },
+                        {
+                            type: 'broadcast'
+                        }
+                    ]
+                }).sort({'date': -1});
+            else
+                notifies = await Notify.find({
+                    $or: [
+                        {
+                            $or: orders,
+                            $or: [
+                                {'text': 'start-gzp-pre'},
+                                {'text': 'start-gzp-build'}
+                            ],
+                            type: 'status',
+                            initiator: {$ne: user.login}
+                        },
+                        {
+                            recipients: user.login,
+                            type: 'chat'
+                        },
+                        {
+                            type: 'broadcast'
+                        }
+                    ]
+                }).sort({'date': -1});
+        }
+
+        else
+            notifies = await Notify.find({
+                $or: [
+                    {
+                        recipients: user.login,
+                        type: 'chat'
+                    },
+                    {
+                        type: 'broadcast'
+                    }
+                ]
+            }).sort({'date': -1});
+
+
+        if(notifies.length > 0) {
+            res.locals.notifies = notifies.map( i => {
+                i.text = events[i.text];
+
+                if(i.read.indexOf(user._id) < 0) {
+                    i.isNew = true;
+                }
+
+                return i;
+            })
+        }
+
+        for (var i = 0; i < notifies.length; i++) {
+            if (notifies[i].read.indexOf(user._id) < 0) {
+                let ntf = await Notify.findOne({_id: notifies[i]._id});
+
+                ntf.read.push(user._id);
+                ntf.save();
             }
-        });
-
-        res.locals.notifies = notifies;
+        }
 
         render(req, res, {
             viewName: 'notifies'
         });
+
     },
 
     create: async (io, user, id, text, recipients) => {
@@ -78,18 +187,15 @@ module.exports = {
 
     },
 
-    read: async (req, res) => {
-        // var ntf = await Notify.findOne({_id: req.params.id}).populate('order read');
-        //
-        // ntf.read.push(res.locals.__user);
-        //
-        // ntf.save();
-        //
-        // res.status(200).send({url: `/order/${ntf.order.id}`});
+    read: async (id) => {
+        var ntf = await Notify.findOne({_id: req.params.id});
+
+        ntf.read.push(res.locals.__user);
+
+        ntf.save();
     },
 
-    countUnread: async (req, res) => {
-        var user = res.locals.__user;
+    countUnread: async (user) => {
 
         var orders = [],
             stages = [],
@@ -148,25 +254,68 @@ module.exports = {
         }
 
         if(orders.length > 0) {
-            status = await Notify.find({
-                $or: orders,
-                type: 'status',
-                initiator: {$ne: user.login},
-                read: {$ne: user._id}
-            }).count()
+            if(user.department.type != 'gus')
+                status = await Notify.find({
+                    $or: [
+                        {
+                            $or: orders,
+                            type: 'status',
+                            initiator: {$ne: user.login},
+                            read: {$ne: user._id}
+                        },
+                        {
+                            recipients: user.login,
+                            type: 'chat',
+                            read: {$ne: user._id}
+                        },
+                        {
+                            type: 'broadcast',
+                            read: {$ne: user._id}
+                        }
+                    ]
+                }).count();
+            else
+                status = await Notify.find({
+                    $or: [
+                        {
+                            $or: orders,
+                            $or: [
+                                {'text': 'start-gzp-pre'},
+                                {'text': 'start-gzp-build'}
+                            ],
+                            type: 'status',
+                            initiator: {$ne: user.login},
+                            read: {$ne: user._id}
+                        },
+                        {
+                            recipients: user.login,
+                            type: 'chat',
+                            read: {$ne: user._id}
+                        },
+                        {
+                            type: 'broadcast',
+                            read: {$ne: user._id}
+                        }
+                    ]
+                }).count();
         }
 
-        var chat = await Notify.find({
-            recipients: user.login,
-            type: 'chat',
-            read: {$ne: user._id}
-        }).count();
+        else
+            status = await Notify.find({
+                $or: [
+                    {
+                        recipients: user.login,
+                        type: 'chat',
+                        read: {$ne: user._id}
+                    },
+                    {
+                        type: 'broadcast',
+                        read: {$ne: user._id}
+                    }
+                ]
+            }).count();
 
-        var broadcast = await Notify.find({
-            type: 'broadcast',
-            read: {$ne: user._id}
-        }).count();
-
-        res.send({count: status + chat + broadcast});
+        return status;
     }
+
 }

@@ -1,0 +1,5 @@
+.notifies__text
+{
+    display: inline-block;
+    width: calc(100% - 150px);
+}

@@ -1,11 +1,13 @@
 .navigator__link.link
 {
     display: inline-block;
-    padding: 15px 10px 15px 10px;
+    padding: 0 10px 0 10px;
     outline: none;
     color: #fff;
     font-family: sans-serif;
     font-weight: lighter;
+    line-height: 50px;
+
 
     transition: 0.2s all ease-in-out;
 }
@@ -15,15 +17,23 @@
     margin-left: 1em;
 }
 
+.bell > .navigator__link.link
+{
+    padding: 0 15px 0 15px;
+}
+
+
 .navigator__link.link:hover
 {
     color: #fff;
     background: #0a5a9e;
 }
 
+
 .navigator__link .icon
 {
-    width: 20px;
+    width: 22px;
+    line-height: 50px;
 }
 
 .navigator__alarm

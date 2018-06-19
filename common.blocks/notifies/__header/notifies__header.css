@@ -1,0 +1,15 @@
+.notifies__header
+{
+    padding: 10px 0 10px 0;
+    text-align: center;
+}
+
+.notifies__header .checkbox
+{
+    margin-left: 100px;
+}
+
+.notifies__header .checkbox:nth-child(1)
+{
+    margin-left: 0;
+}

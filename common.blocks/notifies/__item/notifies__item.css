@@ -1,0 +1,31 @@
+.notifies__item
+{
+    display: block;
+
+    width: calc(100%-2px);
+    height: 50px;
+
+    font-size: 10pt;
+
+    background: #fff;
+    text-decoration: none;
+    color: #000;
+    border: 1px solid #bbd0d9;
+    border-top: none;
+}
+
+.notifies__item_unread
+{
+    background: #e4eaf0;
+}
+
+
+.notifies__item:first-child
+{
+    border-top: 1px solid #bbd0d9;
+}
+
+.notifies__item:hover
+{
+    background: #e6eff9;
+}

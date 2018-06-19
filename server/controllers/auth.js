@@ -23,12 +23,15 @@ module.exports = {
             var acc = await Account.findOne({login: req.session.__user}).populate('department');
             var deps = await Department.find({status: true, type: 'gus'}).lean();
 
+            var ntfs = await Notify.countUnread(acc);
+            
             res.locals.__deps = deps;
             res.locals.__user = {
                 _id: acc._id,
                 login: acc.login,
                 name: acc.name,
                 department: acc.department,
+                notifies: ntfs,
                 settings: acc.settings
             };
             next();

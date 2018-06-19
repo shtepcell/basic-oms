@@ -4,6 +4,12 @@
             block: 'field'
         },
         {
+            block: 'wrapper'
+        },
+        {
+            block: 'notifies'
+        },
+        {
             block: 'short-filter'
         },
         {

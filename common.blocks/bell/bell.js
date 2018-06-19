@@ -7,42 +7,7 @@ provide(bemDom.declBlock('bell',
             js: {
                 inited: function () {
                     var socket = io();
-                    var count;
-                    $.ajax({
-                        type: 'POST',
-                        dataType: 'json',
-                        url: `/getNotifyCount`,
-                        timeout: 5000,
-                        context: this,
-                        data: {},
-                        error: function(err) {
-                            console.error('Error');
-                        },
-                        success: function(res) {
-                            if(res.count != count && res.count > 0) {
-                                count = res.count;
-                                bemDom.update(
-                                    bell,
-                                    BEMHTML.apply({
-                                        block: 'link',
-                                        mods: { theme: 'islands', size: 'l' },
-                                        tag: 'a',
-                                        attrs: {href: '/notifies'},
-                                        mix: { block: 'navigator', elem: 'link' },
-                                        url: '/notifies',
-                                        content: [
-                                            `(${count})`,
-                                            {
-                                                block: 'icon',
-                                                url: '/alarm.svg',
-                                                mix: 'navigator__alarm'
-                                            }
-                                        ]
-                                    })
-                                )
-                            }
-                        }
-                    })
+                    var count = this.params.count;
 
                     var me = this.params.user;
 
@@ -62,24 +27,32 @@ provide(bemDom.declBlock('bell',
                             success: function(res) {
                                 if(res.count != count && res.count > 0) {
                                     count = res.count;
+                                    console.log(count);
                                     bemDom.update(
                                         bell,
-                                        BEMHTML.apply({
-                                            block: 'link',
-                                            mods: { theme: 'islands', size: 'l' },
-                                            tag: 'a',
-                                            attrs: {href: '/notifies'},
-                                            mix: { block: 'navigator', elem: 'link' },
-                                            url: '/notifies',
-                                            content: [
-                                                `(${count})`,
-                                                {
-                                                    block: 'icon',
-                                                    url: '/alarm.svg',
-                                                    mix: 'navigator__alarm'
-                                                }
-                                            ]
-                                        })
+                                        BEMHTML.apply(
+                                            {
+                                               block: 'link',
+                                               mods: { theme: 'islands', size: 'l' },
+                                               mix: { block: 'navigator', elem: 'link' },
+                                               url: '/notifies',
+                                               content: [
+                                                   {
+                                                       block: 'bell',
+                                                       elem: 'count',
+                                                       elemMods: {
+                                                           visible: true
+                                                       },
+                                                       content: count
+                                                   },
+                                                   {
+                                                       block: 'icon',
+                                                       url: '/alarm.svg',
+                                                       mix: 'navigator__alarm'
+                                                   }
+                                               ]
+                                           }
+                                       )
                                     )
                                 }
                             }

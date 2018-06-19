@@ -1,0 +1,25 @@
+.bell__count
+{
+    display: none;
+
+    height: 20px;
+    width:auto;
+
+    padding: 0 7px 0 7px;
+    margin-right: 5px;
+
+    line-height: 20px;
+    font-size: 10pt;
+    text-align: center;
+    z-index: 99;
+    background-color: red;
+    border-radius: 30px;
+    text-shadow: 1px 1px 0px black;
+    font-weight: bold;
+}
+
+
+.bell__count_visible
+{
+    display: inline-block;
+}

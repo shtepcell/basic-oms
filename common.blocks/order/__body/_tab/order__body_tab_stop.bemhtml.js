@@ -65,7 +65,7 @@ block('order').elem('body').elemMod('tab', 'stop').content()(function () {
             },
             order: order,
             dataset: dataset,
-            display: (order.stop.complete || (isOwner && isPre))
+            display: (order.stop.capability != undefined || (isOwner && isPre))
         },
         {
             elem: 'stop-info',
@@ -75,7 +75,7 @@ block('order').elem('body').elemMod('tab', 'stop').content()(function () {
             },
             order: order,
             dataset: dataset,
-            display: (order.stop.complete || (isOwner && isPre))
+            display: (order.stop.capability != undefined || (isOwner && isPre))
         },
         {
             elem: 'actions',

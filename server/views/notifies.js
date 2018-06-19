@@ -12,20 +12,25 @@ module.exports = function(opt, data){
         },
         page: [
             {
-                block: 'title',
+                block: 'wrapper',
                 mods: {
-                    lvl: 3
+                    size: 'm'
                 },
-                content: 'Последние события'
-            },
-            {
-                block: 'table',
-                mods: {
-                    type: 'notify',
-                    width: 'available'
-                },
-                data: data.notifies
+                content: [
+                    {
+                        block: 'title',
+                        mods: {
+                            lvl: 3
+                        },
+                        content: 'Уведомления'
+                    },
+                    {
+                        block: 'notifies',
+                        notifies: data.notifies
+                    }
+                ]
             }
+
         ]
     };
 };
