@@ -70,7 +70,8 @@ block('handbook-table').elem('row').elemMod('type', 'cities').elemMod('edited', 
                     block: 'input',
                     mods: {
                         theme: 'islands',
-                        size: 's'
+                        size: 's',
+                        width: 'available'
                     },
                     mix: {
                         block: 'handbook-table',

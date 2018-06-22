@@ -1,6 +1,7 @@
 'use strict';
 
 const Provider = require('../models/Provider'),
+    Order = require('../models/Order'),
     Render = require('../render'),
     render = Render.render;
 
@@ -121,7 +122,10 @@ module.exports = {
             return;
         }
 
-        if (prvdr.isUsed()) {
+        var orders = await Order.find({ 'stop.provider': prvdr }).lean(),
+            used = (orders.length > 0)
+
+        if (used) {
             res.status(400).send({ errText: 'Невозможно удалить провайдера, использующегося в системе.' });
             return;
         }

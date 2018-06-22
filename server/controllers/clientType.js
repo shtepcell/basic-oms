@@ -1,8 +1,7 @@
 'use strict';
 
-// TODO: TRIM NAME
-
 const ClientType = require('../models/ClientType'),
+    Client = require('../models/Client'),
     Render = require('../render'),
     render = Render.render;
 
@@ -14,7 +13,7 @@ module.exports = {
         var pagerId = 'client-types',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
-            perPage = 30; // TODO брать из конфига?
+            perPage = 30;
 
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
@@ -127,9 +126,11 @@ module.exports = {
     },
 
     delete: async (req, res) => {
-        var clientType = await ClientType.findById(req.body.obj._id);
+        var clientType = await ClientType.findById(req.body.obj._id),
+            clients = await Client.find({ type: clientType}),
+            used = (clients.length > 0);
 
-        if (clientType.isUsed()) {
+        if (used) {
             res.status(400).send({ errText: 'Невозможно удалить тип клиента, использующийся в системе.' });
             return;
         } else {

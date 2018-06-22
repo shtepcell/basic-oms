@@ -10,7 +10,7 @@ block('handbook-table').elem('row').elemMod('type', 'client-types')(
                 block: 'handbook-table',
                 elem: 'cell',
                 content: this.ctx.cellsData.shortName
-            }, 
+            },
             {
                 block: 'handbook-table',
                 elem: 'cell',
@@ -71,7 +71,8 @@ block('handbook-table').elem('row').elemMod('type', 'client-types').elemMod('edi
                     mix: [{ block: 'handbook-table', elem: 'save-chng' }],
                     mods: {
                         theme: 'islands',
-                        size: 's'
+                        size: 's',
+                        width: 'available'
                     }
                 }
             },

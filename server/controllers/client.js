@@ -2,6 +2,7 @@
 
 const Client = require('../models/Client'),
     ClientType = require('../models/ClientType'),
+    Order = require('../models/Order'),
     Render = require('../render'),
     render = Render.render;
 
@@ -160,9 +161,12 @@ module.exports = {
             return;
         }
 
+        var orders = await Order.find({'info.client': client}).lean(),
+            used = (orders.length > 0);
+
         var clientType = client.type;
 
-        if (client.isUsed()) {
+        if (used) {
             res.status(400).send({ errText: 'Невозможно удалить клиента, использующегося в системе.' });
             return;
         }

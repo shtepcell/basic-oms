@@ -1,6 +1,7 @@
 'use strict';
 
 const Street = require('../models/Street'),
+    Order = require('../models/Order'),
     Render = require('../render'),
     render = Render.render;
 
@@ -122,8 +123,10 @@ module.exports = {
             res.status(400).send({ errText: 'Невозможно удалить несуществующую улицу.' });
             return;
         }
+        var orders = await Order.find({ 'info.street': street}).lean(),
+            used = (orders.length > 0);
 
-        if (street.isUsed()) {
+        if (used) {
             res.status(400).send({ errText: 'Невозможно удалить улицу, которая используется в системе.' });
             return;
         }

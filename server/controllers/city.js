@@ -1,6 +1,8 @@
 'use strict';
 
 const City = require('../models/City'),
+    Order = require('../models/Order'),
+    Department = require('../models/Department'),
     Render = require('../render'),
     render = Render.render;
 
@@ -117,13 +119,16 @@ module.exports = {
     delete: async (req, res) => {
 
         var city = await City.findById(req.body.obj._id);
+        var orders = await Order.find({'info.city': city}).lean();
+        var deps = await Department.find({'cities': city}).lean();
+        var used = (orders.length > 0 || deps.length > 0);
 
         if (city == null) {
             res.status(400).send({ errText: 'Невозможно удалить несуществующий город.' });
             return;
         }
 
-        if (city.isUsed()) {
+        if (used) {
             res.status(400).send({ errText: 'Невозможно удалить город, использующийся в системе.' });
             return;
         }
