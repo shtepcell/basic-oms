@@ -2,10 +2,12 @@ block('field').elem('order').content()(function () {
     var order = this.ctx.order,
         fileName = order.info.order;
 
-    if(fileName[0] == '/')
-        fileName = fileName.replace('/', '');
 
-    if(this.ctx.display)
+    if(this.ctx.display) {
+
+        if(fileName[0] == '/')
+            fileName = fileName.replace('/', '');
+
         return [
             {
                 block: 'order',
@@ -34,6 +36,7 @@ block('field').elem('order').content()(function () {
                 ]
             }
         ]
+    }
 })
 
 
