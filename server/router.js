@@ -75,7 +75,7 @@ module.exports = function (app, io) {
     app.get('/order/:id/stop', Order.getOrderSTOP);
     app.get('/order/:id/history', Order.getOrderHistory);
     app.get('/order/:id/file/:file', Order.getFile);
-
+    app.get('/order/:id/file/docs/:dir/:number/:name', Order.getFileOld);
 
     app.post('/order/:id/info', (req, res) => {
         return Order.endClientNotify(req, res, io);

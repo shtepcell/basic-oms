@@ -785,6 +785,23 @@ module.exports = {
         }
     },
 
+    getFileOld: async (req, res) => {
+        var order = await Order.findOne({id: req.params.id});
+        var params = req.params;
+        if(order) {
+            var filePath = `./static/files/docs/${params.dir}/${params.number}/${params.name}`;
+            var options = {
+                root: './',
+                dotfiles: 'deny',
+                headers: {
+                   'x-timestamp': Date.now(),
+                   'x-sent': true
+               }
+            }
+            res.sendFile(filePath, options);
+        }
+    },
+
     changeStatus: async (req, res, io) => {
         var reqData = req.body;
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
