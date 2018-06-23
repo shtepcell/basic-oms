@@ -4,10 +4,6 @@ var mongoose = require('../controllers/connect'),
 var schema = new Schema({
     order: Number,
 	recipients: [String],
-    type: {
-        type: String,
-        required: true
-    },
     text: {
         type: String
     },

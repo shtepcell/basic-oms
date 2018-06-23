@@ -334,12 +334,12 @@ module.exports = {
             }
 
             if(done.status == 'all-pre') {
-                notify.create(io, res.locals.__user, done.id, 'start-gzp-pre');
-                notify.create(io, res.locals.__user, done.id, 'start-stop-pre');
+                notify.create(res.locals.__user, done, 'start-gzp-pre');
+                notify.create(res.locals.__user, done, 'start-stop-pre');
                 // sendMail(done, 'new-status');
 
             } else {
-                notify.create(io, res.locals.__user, done.id, `start-${done.status}`);
+                notify.create(res.locals.__user, done, `start-${done.status}`);
                 done.status = stages[done.status];
                 // sendMail(done, 'new-status');
             }
@@ -620,7 +620,7 @@ module.exports = {
         }
 
         order.history.push(helper.historyGenerator('admin', res.locals.__user));
-        notify.create(io, res.locals.__user, order.id, 'admin');
+        notify.create(res.locals.__user, order, 'admin');
         var done = await order.save();
         if(done) {
             logger.info(`Admin edit order #${ done.id }`, res.locals.__user);
@@ -682,7 +682,7 @@ module.exports = {
             order.history.push(helper.historyGenerator('gzp-pre', res.locals.__user));
             var done = await order.save();
             if(done) {
-                notify.create(io, res.locals.__user, done.id, 'end-gzp-pre');
+                notify.create(res.locals.__user, done, 'end-gzp-pre');
                 // done = await done.deepPopulate(populateQuery);
                 // sendMail(done, 'new-status');
                 logger.info(`End pre-gzp order #${ done.id }`, res.locals.__user);
@@ -752,7 +752,7 @@ module.exports = {
             order.history.push(helper.historyGenerator('stop-pre', res.locals.__user));
             var done = await order.save();
             if(done) {
-                notify.create(io, res.locals.__user, done.id, 'end-stop-pre');
+                notify.create(res.locals.__user, done, 'end-stop-pre');
                 // done = await done.deepPopulate(populateQuery);
                 // sendMail(done, 'new-status');
                 logger.info(`End pre-stop order #${ done.id }`, res.locals.__user);
@@ -804,7 +804,7 @@ module.exports = {
                     deadline: Math.round((order.deadline - new Date()) / 1000 / 60 / 60 / 24)
                 };
                 order.history.push(helper.historyGenerator('pause-start', res.locals.__user));
-                notify.create(io, res.locals.__user, order.id, 'pause-start');
+                notify.create(res.locals.__user, order, 'pause-start');
                 // sendMail(order, 'pause');
                 break;
             case 'stop-pause':
@@ -817,7 +817,7 @@ module.exports = {
                     date: undefined
                 };
                 order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
-                notify.create(io, res.locals.__user, order.id, 'pause-stop');
+                notify.create(res.locals.__user, order, 'pause-stop');
                 // sendMail(order, 'end-pause');
                 break;
             // case 'set-special':
@@ -840,7 +840,7 @@ module.exports = {
                 order.deadline = await helper.calculateDeadline(3);
                 order.date['cs-stop-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
-                notify.create(io, res.locals.__user, order.id, 'start-stop-pre');
+                notify.create(res.locals.__user, order, 'start-stop-pre');
                 // sendMail(order, 'new-status');
                 break;
             case 'start-pre-gzp':
@@ -848,7 +848,7 @@ module.exports = {
                 order.deadline = await helper.calculateDeadline(3);
                 order.date['cs-gzp-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
-                notify.create(io, res.locals.__user, done.id, 'start-gzp-pre');
+                notify.create(res.locals.__user, done, 'start-gzp-pre');
                 // sendMail(order, 'new-status');
                 break;
             case 'end-network':
@@ -857,14 +857,14 @@ module.exports = {
                 order.date['cs-client-notify'] = await helper.calculateDeadline(2);
                 order.date['network'] = new Date();
                 order.history.push(helper.historyGenerator('network', res.locals.__user));
-                notify.create(io, res.locals.__user, order.id, 'network');
+                notify.create(res.locals.__user, order, 'network');
                 // sendMail(order, 'new-status');
                 break;
             case 'end-build':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
                 order.history.push(helper.historyGenerator('gzp-build', res.locals.__user));
-                notify.create(io, res.locals.__user, order.id, 'end-gzp-build');
+                notify.create(res.locals.__user, order, 'end-gzp-build');
                 // sendMail(order, 'new-status');
                 break;
             case 'start-gzp-build':
@@ -879,14 +879,14 @@ module.exports = {
 
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
 
-                notify.create(io, res.locals.__user, order.id, `start-${order.status}`);
+                notify.create(res.locals.__user, order, `start-${order.status}`);
                 // sendMail(order, 'new-status');
                 break;
             case 'end-install-devices':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
                 order.history.push(helper.historyGenerator('install-devices', res.locals.__user));
-                notify.create(io, res.locals.__user, order.id, `end-install-devices`);
+                notify.create(res.locals.__user, order, `end-install-devices`);
                 // sendMail(order, 'new-status');
                 break;
             case 'start-stop-build':
@@ -895,14 +895,14 @@ module.exports = {
                 order.date['cs-stop-organization'] = await helper.calculateDeadline(order.stop.time + 2);
                 order.date['client-match'] = new Date();
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
-                notify.create(io, res.locals.__user, order.id, `start-stop-build`);
+                notify.create(res.locals.__user, order, `start-stop-build`);
                 // sendMail(order, 'new-status');
                 break;
             case 'end-build-stop':
                 order.status = 'network';
                 order.date['stop-build'] = new Date();
                 order.history.push(helper.historyGenerator('stop-build', res.locals.__user));
-                notify.create(io, res.locals.__user, order.id, `end-stop-build`);
+                notify.create(res.locals.__user, order, `end-stop-build`);
                 // sendMail(order, 'new-status');
                 break;
         }
@@ -966,7 +966,7 @@ module.exports = {
 
             var done = await order.save();
             if(done) {
-                // notify.create(ord res.locals.__user,er.id, `end-client-notify`);
+                // notify.create(res.locals.__user,er.id, `end-client-notify`);
                 // done = await done.deepPopulate(populateQuery);
                 // sendMail(done, 'new-status');
                 logger.info(`End client-notify order #${ done.id }`, res.locals.__user);

@@ -149,6 +149,7 @@ function parseOldHistory(hist) {
         var city = await find_or_create_city(orders[i].city);
         var provider = await find_or_create_provider(orders[i].stop.provider);
         var initiator = await find_user(orders[i].initiator);
+        if(!initiator) console.log(orders[i]);
         var history = parseOldHistory(orders[i].history);
 
         var order = new Order({
@@ -206,6 +207,8 @@ function parseOldHistory(hist) {
 
     }
 
-    process.exit(0);
+    setTimeout(function () {
+        process.exit(0);
+    }, 2000);
 
 })();

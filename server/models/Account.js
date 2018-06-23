@@ -28,6 +28,10 @@ var schema = new Schema( {
 		type : Boolean,
 		required : true
 	},
+	notifies: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Notify'
+	}],
 	settings: {
 		table: {
 			perPage: Number

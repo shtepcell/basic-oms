@@ -20,18 +20,21 @@ module.exports = {
 
     isLoggedIn: async (req, res, next) => {
         if (req.session.__user) {
-            var acc = await Account.findOne({login: req.session.__user}).populate('department');
+            var acc = await Account.findOne({login: req.session.__user}).populate('department notifies');
             var deps = await Department.find({status: true, type: 'gus'}).lean();
+            var count = 0;
 
-            var ntfs = await Notify.countUnread(acc);
-            
+            for (var i = 0; i < acc.notifies.length; i++) {
+                if(acc.notifies[i].read.indexOf(acc._id) < 0) count++;
+            }
+
             res.locals.__deps = deps;
             res.locals.__user = {
                 _id: acc._id,
                 login: acc.login,
                 name: acc.name,
                 department: acc.department,
-                notifies: ntfs,
+                notifies: count,
                 settings: acc.settings
             };
             next();

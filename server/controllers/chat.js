@@ -44,7 +44,7 @@ module.exports = {
             time: helper.dateToChatStr(done.time),
             isFirst: isFirst
         }
-        notify.create(io, res.locals.__user, req.params.anchor, 'chat', data.recipients);
+        notify.create(res.locals.__user, {id: req.params.anchor}, 'new-message', data.recipients);
         io.emit('new message', _msg);
         res.status(200).send(_msg);
     }

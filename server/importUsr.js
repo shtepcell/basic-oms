@@ -21,7 +21,10 @@ var users = require('./users'),
 
         usr.save();
     }
+    
+    setTimeout(function () {
+        process.exit(0);
+    }, 1000);
 
-    process.exit(0);
 
 })();

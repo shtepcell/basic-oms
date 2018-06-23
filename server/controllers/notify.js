@@ -1,321 +1,105 @@
-const helper = require('./helper');
-const Notify = require('../models/Notify');
-const Account = require('../models/Account');
-const Order = require('../models/Order');
+const helper = require('./helper'),
+    Notify = require('../models/Notify'),
+    Account = require('../models/Account'),
+    Department = require('../models/Department'),
+    Order = require('../models/Order'),
 
+    Render = require('../render'),
+    render = Render.render,
 
-const Render = require('../render'),
-    render = Render.render;
-
-const logger = require('./logger');
-
-const events = require('../common-data').notifies;
-
-// Есть три типа уведомлений:
-// 1) Изменение состояния заказов - 'status'
-// 2) Упоминания в чате = 'chat'
-// 3) Broadcast-уведомления (обновление системы и др.) - 'Broadcast'
+    common = require('./helper'),
+    events = require('../common-data').notifies;
 
 module.exports = {
     get: async (req, res) => {
+        var user = await Account.findOne({_id: res.locals.__user._id})
+                                .populate('notifies');
 
-        var orders = [],
-            stages = [],
-            status = 0,
-            user = res.locals.__user,
-            query = null;
+        res.locals.notifies = user.notifies.map( i => {
+            i.text = events[i.text];
 
-        res.locals.notifies = [];
-
-        switch (user.department.type) {
-            case 'b2b':
-                query = {'info.initiator': user._id};
-                break;
-            case 'b2o':
-                query = {'info.initiator': user._id};
-                stages = [
-                    "start-stop-pre",
-                    "start-stop-build"
-                ];
-                break;
-            case 'net':
-                stages = [
-                    "end-stop-build",
-                    'end-gzp-build',
-                    'end-install-devices'
-                ];
-                break;
-            case 'sks':
-                stages = [
-                    "start-sks-pre",
-                    "start-sks-build"
-                ];
-                break;
-            case 'gus':
-                query = {'info.city': user.department.cities};
-                stages = [
-                    "start-gzp-pre",
-                    "start-gzp-build"
-                ];
-                break;
-        }
-
-        if(query != null) {
-            orders = await Order.find(query).lean();
-            console.log(query);
-        }
-
-        orders = orders.map( item => {
-            return {'order': item.id};
-        })
-
-        var forIO = orders.map( item => {
-            return item.order;
-        })
-
-        if(stages.length > 0 && user.department.type != 'gus') {
-            stages.forEach( it => {
-                orders.push({ 'text': it })
-            })
-        }
-
-        if(orders.length > 0) {
-            if(user.department.type != 'gus')
-                notifies = await Notify.find({
-                    $or: [
-                        {
-                            $or: orders,
-                            type: 'status',
-                            initiator: {$ne: user.login}
-                        },
-                        {
-                            recipients: user.login,
-                            type: 'chat'
-                        },
-                        {
-                            type: 'broadcast'
-                        }
-                    ]
-                }).sort({'date': -1});
-            else
-                notifies = await Notify.find({
-                    $or: [
-                        {
-                            $or: orders,
-                            $or: [
-                                {'text': 'start-gzp-pre'},
-                                {'text': 'start-gzp-build'}
-                            ],
-                            type: 'status',
-                            initiator: {$ne: user.login}
-                        },
-                        {
-                            recipients: user.login,
-                            type: 'chat'
-                        },
-                        {
-                            type: 'broadcast'
-                        }
-                    ]
-                }).sort({'date': -1});
-        }
-
-        else
-            notifies = await Notify.find({
-                $or: [
-                    {
-                        recipients: user.login,
-                        type: 'chat'
-                    },
-                    {
-                        type: 'broadcast'
-                    }
-                ]
-            }).sort({'date': -1});
-
-
-        if(notifies.length > 0) {
-            res.locals.notifies = notifies.map( i => {
-                i.text = events[i.text];
-
-                if(i.read.indexOf(user._id) < 0) {
-                    i.isNew = true;
-                }
-
-                return i;
-            })
-        }
-
-        for (var i = 0; i < notifies.length; i++) {
-            if (notifies[i].read.indexOf(user._id) < 0) {
-                let ntf = await Notify.findOne({_id: notifies[i]._id});
-
-                ntf.read.push(user._id);
-                ntf.save();
+            if(i.read.indexOf(user._id) < 0) {
+                i.isNew = true;
             }
-        }
+
+            i.strDate = helper.dateToChatStr(i.date);
+
+            return i;
+        });
 
         render(req, res, {
             viewName: 'notifies'
         });
 
+        for (var i = 0; i < user.notifies.length; i++) {
+            var ntf = await Notify.findOne({_id: user.notifies[i]._id});
+            if(ntf.read.indexOf(user._id) < 0) {
+                ntf.read.push(user._id);
+                ntf.save();
+            }
+        }
     },
 
-    create: async (io, user, id, text, recipients) => {
-        var ntf;
-        if(text == 'chat') {
-            ntf = new Notify({
-                order: id,
-                type: 'chat',
-                initiator: user.login,
-                text: 'new-message',
-                recipients: recipients,
-                date: new Date()
-            })
-        } else {
-            ntf = new Notify({
-                order: id,
-                initiator: user.login,
-                type: 'status',
-                text: text,
-                date: new Date()
-            })
-        }
-        var done = await ntf.save();
+    create: async (user, order, type, recipients) => {
 
-        io.emit('new notify', done);
+        var ntf = new Notify({
+            order: order.id,
+            initiator: user.login,
+            text: type,
+            date: new Date()
+        });
+
+        ntf = await ntf.save();
+
+        var b2o = await Department.findOne({ type: 'b2o' }),
+            sks = await Department.findOne({ type: 'sks' }),
+            net = await Department.findOne({ type: 'net' });
+
+        var worker = [];
+
+        switch (type) {
+
+            case "start-gzp-pre":
+            case "start-gzp-build":
+            case "start-install-devices":
+                var gus = await Department.findOne({ cities: order.info.city });
+
+                worker = await Account.find({ department: gus });
+                break;
+
+            case "start-stop-pre":
+            case "start-stop-build":
+                worker = await Account.find({ department: b2o });
+                break;
+
+            case "end-stop-build":
+            case "end-gzp-build":
+            case "end-install-devices":
+                worker = await Account.find({department: net});
+                break;
+
+            case "network":
+                worker = await Account.find({ _id: order.info.initiator });
+                break;
+
+            case "new-message":
+                recipients = recipients.map( item => {
+                    return { login: item };
+                });
+                worker = await Account.find({ $or: recipients });
+                break;
+        }
+
+        for (var i = 0; i < worker.length; i++) {
+            worker[i].notifies.unshift(ntf);
+            worker[i].save();
+        }
+
+        return;
 
     },
 
-    read: async (id) => {
-        var ntf = await Notify.findOne({_id: req.params.id});
+    read: async (req, res) => {
 
-        ntf.read.push(res.locals.__user);
-
-        ntf.save();
-    },
-
-    countUnread: async (user) => {
-
-        var orders = [],
-            stages = [],
-            status = 0,
-            query = null;
-
-        switch (user.department.type) {
-            case 'b2b':
-                query = {'info.initiator': user._id};
-                break;
-            case 'b2o':
-                query = {'info.initiator': user._id};
-                stages = [
-                    "start-stop-pre",
-                    "start-stop-build"
-                ];
-                break;
-            case 'net':
-                stages = [
-                    "end-stop-build",
-                    'end-gzp-build',
-                    'end-install-devices'
-                ];
-                break;
-            case 'sks':
-                stages = [
-                    "start-sks-pre",
-                    "start-sks-build"
-                ];
-                break;
-            case 'gus':
-                query = {'info.city': user.department.cities};
-                stages = [
-                    "start-gzp-pre",
-                    "start-gzp-build"
-                ];
-                break;
-        }
-
-        if(query != null) {
-            orders = await Order.find(query).lean();
-        }
-
-        orders = orders.map( item => {
-            return {'order': item.id};
-        })
-
-        var forIO = orders.map( item => {
-            return item.order;
-        })
-
-        if(stages.length > 0) {
-            stages.forEach( it => {
-                orders.push({ 'text': it })
-            })
-        }
-
-        if(orders.length > 0) {
-            if(user.department.type != 'gus')
-                status = await Notify.find({
-                    $or: [
-                        {
-                            $or: orders,
-                            type: 'status',
-                            initiator: {$ne: user.login},
-                            read: {$ne: user._id}
-                        },
-                        {
-                            recipients: user.login,
-                            type: 'chat',
-                            read: {$ne: user._id}
-                        },
-                        {
-                            type: 'broadcast',
-                            read: {$ne: user._id}
-                        }
-                    ]
-                }).count();
-            else
-                status = await Notify.find({
-                    $or: [
-                        {
-                            $or: orders,
-                            $or: [
-                                {'text': 'start-gzp-pre'},
-                                {'text': 'start-gzp-build'}
-                            ],
-                            type: 'status',
-                            initiator: {$ne: user.login},
-                            read: {$ne: user._id}
-                        },
-                        {
-                            recipients: user.login,
-                            type: 'chat',
-                            read: {$ne: user._id}
-                        },
-                        {
-                            type: 'broadcast',
-                            read: {$ne: user._id}
-                        }
-                    ]
-                }).count();
-        }
-
-        else
-            status = await Notify.find({
-                $or: [
-                    {
-                        recipients: user.login,
-                        type: 'chat',
-                        read: {$ne: user._id}
-                    },
-                    {
-                        type: 'broadcast',
-                        read: {$ne: user._id}
-                    }
-                ]
-            }).count();
-
-        return status;
     }
-
 }

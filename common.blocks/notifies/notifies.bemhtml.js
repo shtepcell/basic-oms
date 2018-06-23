@@ -9,13 +9,11 @@ block('notifies').content()(function () {
                 elemMods: {
                     unread: item.isNew
                 },
-                js: {
-                    id: item._id
-                },
+                order: item.order,
                 content: [
                     {
                         elem: 'icon',
-                        content: '™'
+                        content: '-'
                     },
                     {
                         elem: 'text',
@@ -23,7 +21,7 @@ block('notifies').content()(function () {
                     },
                     {
                         elem: 'time',
-                        content: '21:34'
+                        content: item.strDate
                     }
                 ]
             })

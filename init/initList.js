@@ -64,6 +64,10 @@ list.departments = [
     {
         name: 'Сетевой отдел',
         type: 'net'
+    },
+    {
+        name: 'Контакт-центр',
+        type: 'gus'
     }
 ]
 

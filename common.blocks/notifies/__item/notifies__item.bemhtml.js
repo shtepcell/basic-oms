@@ -1,6 +1,8 @@
 block('notifies').elem('item')(
     tag()('a'),
-    attrs()({
-        href: '/'
+    attrs()(function () {
+        return {
+            href: `/order/${this.ctx.order}`
+        }
     })
 )
