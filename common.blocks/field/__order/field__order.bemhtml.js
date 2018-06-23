@@ -1,5 +1,9 @@
 block('field').elem('order').content()(function () {
-    var order = this.ctx.order;
+    var order = this.ctx.order,
+        fileName = order.info.order;
+
+    if(fileName[0] == '/')
+        fileName = fileName.replace('/', '');
 
     if(this.ctx.display)
         return [
@@ -22,7 +26,7 @@ block('field').elem('order').content()(function () {
                                     theme: 'islands',
                                     size: 'l'
                                 },
-                                url: `/order/${order.id}/file/${order.info.order}`,
+                                url: `/order/${order.id}/file/${fileName}`,
                                 content: order.info.order
                             }
                         ]
