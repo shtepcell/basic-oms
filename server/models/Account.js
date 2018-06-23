@@ -38,7 +38,7 @@ var schema = new Schema( {
 		},
 		sendEmail: {
 			type: Boolean,
-			default: false
+			default: true
 		},
 		main: {
 			initiators: [

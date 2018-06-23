@@ -1,6 +1,8 @@
 'use strict';
-const nodemailer = require('nodemailer');
-const logger = require('./logger');
+const nodemailer = require('nodemailer'),
+    logger = require('./logger'),
+    { notifies } = require('../common-data');
+
 
 var transporter = nodemailer.createTransport({
     host: 'relay1.miranda-media.ru',
@@ -8,70 +10,50 @@ var transporter = nodemailer.createTransport({
     secure: false
 });
 
-var header = '<h2>Сообщение Системы управления заявками</h2>'
+var header = '<h2>СУЗ | Новое уведомление</h2>';
 var footer = '<br><br><span style="color:#000;font-size:80%">'+
     '<p>Это письмо сформировано автоматически службой уведомлений '+
     'Системы управления заказами. Отвечать на него не нужно.</p>'+
     '<p>Если вы получаете эти письма по ошибке, обратитесь к администратору системы</p>'+
     '</span>';
 
-var stages = {
-    'init': 'Инициация заказа',
-    'client-match': 'Согласование с клиентом',
-    'client-notify': 'Уведомление клиента',
-    'all-pre': 'Проработка по ГЗП и СТОП/VSAT',
-    'gzp-pre': 'Проработка по ГЗП',
-    'gzp-build': 'Организация ГЗП',
-    'install-devices': 'Установка оборудования',
-    'stop-pre': 'Проработка по СТОП/VSAT',
-    'stop-build': 'Организация СТОП/VSAT',
-    'network': 'Настройка сети',
-    'succes': 'Включен',
-    'reject': 'Заявка отклонена',
-    'secret': 'Заявка удалена'
-};
-module.exports.sendMail = (order, type) => {
+
+module.exports.sendMail = (order, recipients, type) => {
     var mailOptions = {
         from: 'ops@miranda-media.ru'
     }
 
-    var boxes = [];
-    order.history.forEach( item => {
-        if(boxes.indexOf(item.author.email) < 0) {
-            if(item.author.settings && item.author.settings.sendEmail)
-                boxes.push(item.author.email);
+    var to = [];
+
+    for (var i = 0; i < recipients.length; i++) {
+        if(recipients[i].settings.sendEmail && recipients[i].email) {
+            to.push(recipients[i].email);
         }
-    })
-
-    var to = '';
-    for (var i = 0; i < boxes.length; i++) {
-        if(i == boxes.length - 1)
-            to +=boxes[i];
-        else
-            to +=boxes[i]+', ';
     }
 
-    mailOptions.to = to;
+    var rps = '';
 
-    switch (type) {
-        case 'new-status':
-            mailOptions.subject = `СУЗ 2.0: Статус заказа ${order.id}`
-            mailOptions.html = header + `<p><a href="ops-test.miranda-media.ru/order/${order.id}">` +
-    			`Заявка ${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> (ops-test.miranda-media.ru/orders/${order.id}) переведена в состояние "${stages[order.status]}"</p>` +
-    			footer
-            break;
-        case 'pause':
-            mailOptions.subject = `СУЗ 2.0: Статус заказа ${order.id}`
-            mailOptions.html = header + `<p><a href="ops-test.miranda-media.ru/order/${order.id}">` +
-    			`Заявка ${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> (ops-test.miranda-media.ru/orders/${order.id}) поставлена на паузу"</p>` +
-    			footer
-            break;
+    for (var i = 0; i < to.length; i++) {
+        var last = (i+1 == to.length);
+
+        rps += to[i];
+
+        if(!last) rps += ',';
     }
+
+    mailOptions.to = rps;
+
+    mailOptions.subject = `СУЗ | Статус заказа ${order.id}`
+
+    mailOptions.html = header + `<p><a href="ops-test.miranda-media.ru/order/${order.id}">` +
+		`Заказ ${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
+		footer
+
     if (process.env.NODE_ENV != 'development')
         transporter.sendMail(mailOptions, (error, info) => {
             if(error) {
                 console.log(error);
             }
         })
-    console.log('Send mail to', to);
+    console.log('Send mail to', rps);
 }

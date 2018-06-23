@@ -7,6 +7,8 @@ const helper = require('./helper'),
     Render = require('../render'),
     render = Render.render,
 
+    { sendMail } = require('./mailer'),
+
     common = require('./helper'),
     events = require('../common-data').notifies;
 
@@ -94,6 +96,8 @@ module.exports = {
             worker[i].notifies.unshift(ntf);
             worker[i].save();
         }
+
+        sendMail(order, worker, type);
 
         return;
 

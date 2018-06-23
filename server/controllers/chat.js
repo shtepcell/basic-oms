@@ -2,9 +2,23 @@
 
 const Chat = require('../models/Chat'),
     Render = require('../render'),
+    Order = require('../models/Order'),
+
     render = Render.render,
     notify = require('./notify'),
     helper = require('./helper');
+
+var populateClient = {
+        path: 'info.client',
+        select: 'name type',
+        populate: {
+            path: 'type',
+            select: 'shortName name'
+        },
+        options: {
+            lean: true
+        }
+    }
 
 module.exports = {
 
@@ -29,6 +43,10 @@ module.exports = {
         var isFirst = await Chat.find({anchor: req.params.anchor});
         isFirst = (isFirst.length == 0);
 
+        var order = await Order.findOne({id: req.params.anchor})
+                                .populate(populateClient)
+                                .lean();
+
         var msg = new Chat({
             author: res.locals.__user,
             text: data.text,
@@ -44,7 +62,7 @@ module.exports = {
             time: helper.dateToChatStr(done.time),
             isFirst: isFirst
         }
-        notify.create(res.locals.__user, {id: req.params.anchor}, 'new-message', data.recipients);
+        notify.create(res.locals.__user, order, 'new-message', data.recipients);
         io.emit('new message', _msg);
         res.status(200).send(_msg);
     }
