@@ -10,8 +10,8 @@ var transporter = nodemailer.createTransport({
     secure: false
 });
 
-var subject = '<h2>СУЗ | Новое уведомление</h2>';
-var footer = '<br><br><span style="color:#000;font-size:12pt">'+
+var subject = 'СУЗ | Новое уведомление';
+var footer = '<br><br><span style="color:#000;font-size:10pt">'+
     '<p>Это письмо сформировано автоматически службой уведомлений '+
     'Системы управления заказами. Отвечать на него не нужно.</p>'+
     '<p>Если вы получаете эти письма по ошибке, обратитесь к администратору системы</p>'+
@@ -43,17 +43,16 @@ module.exports.sendMail = (order, recipients, type) => {
 
     mailOptions.to = rps;
 
-    var header = `СУЗ | Новое уведомление`;
+    var header = `<h2>СУЗ | Новое уведомление</h2>`;
     if(type == 'new-message')
-        header = `СУЗ | Вас упомянули в чате заказа ${order.id}`;
+        header = `<h2>СУЗ | Вас упомянули в чате заказа ${order.id}</h2>`;
     else
-        header = `СУЗ | Статус заказа ${order.id}`;
+        header = `<h2>СУЗ | Статус заказа #${order.id}</h2>`;
 
     mailOptions.subject = subject;
 
-
-    mailOptions.html = header + `<p style="font-size: 14pt;"><a href="http://ops-test.miranda-media.ru/order/${order.id}">` +
-		`Заказ ${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
+    mailOptions.html = header + `<p style="font-size: 12pt;"><a href="http://ops-test.miranda-media.ru/order/${order.id}">` +
+		`Заказ #${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
 		footer
 
     if (process.env.NODE_ENV != 'development')
