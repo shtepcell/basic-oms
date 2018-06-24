@@ -57,6 +57,12 @@ module.exports = {
             case 'gzp-build':
                 ret.name = 'Организация ГЗП';
                 break;
+            case 'sks-pre':
+                ret.name = 'Проработка СКС';
+                break;
+            case 'sks-build':
+                ret.name = 'Реализация СКС';
+                break;
             case 'install-devices':
                 ret.name = 'Установка оборудования';
                 break;

@@ -16,7 +16,7 @@ block('field').elem('sks-add-info').content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-data',
-                        content: order.info.add_info
+                        content: order.sks.add_info
                     }
                 ]
             }

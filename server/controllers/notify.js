@@ -69,18 +69,27 @@ module.exports = {
                 worker = await Account.find({ department: gus });
                 break;
 
+
             case "start-stop-pre":
             case "start-stop-build":
                 worker = await Account.find({ department: b2o });
                 break;
 
+            case "start-sks-pre":
+                worker = await Account.find({ department: sks });
+                break;
+
             case "end-stop-build":
             case "end-gzp-build":
+            case "end-sks-build":
             case "end-install-devices":
                 worker = await Account.find({department: net});
                 break;
 
             case "network":
+            case "end-stop-pre":
+            case "end-gzp-pre":
+            case "end-sks-pre":
                 worker = await Account.find({ _id: order.info.initiator });
                 break;
 

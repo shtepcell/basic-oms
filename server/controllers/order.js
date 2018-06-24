@@ -899,14 +899,14 @@ module.exports = {
                 order.deadline = await helper.calculateDeadline(3);
                 order.date['cs-gzp-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
-                notify.create(res.locals.__user, done, 'start-gzp-pre');
+                notify.create(res.locals.__user, order, 'start-gzp-pre');
                 break;
-            case 'start-sks-gzp':
-                order.status = 'gzp-pre';
+            case 'start-sks-pre':
+                order.status = 'sks-pre';
                 order.deadline = await helper.calculateDeadline(3);
                 order.date['cs-sks-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
-                notify.create(res.locals.__user, done, 'start-sks-pre');
+                notify.create(res.locals.__user, order, 'start-sks-pre');
                 break;
             case 'end-network':
                 order.status = 'client-notify';

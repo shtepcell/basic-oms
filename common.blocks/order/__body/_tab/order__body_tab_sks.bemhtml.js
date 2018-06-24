@@ -7,8 +7,8 @@ block('order').elem('body').elemMod('tab', 'sks').content()(function () {
         adminEdit = ctx.adminEdit,
         dataset = ctx.dataset;
 
-    var mustFill = (order.status == 'sks-pre');
-    
+    var mustFill = (order.status == 'sks-pre' && user.department.type == 'sks');
+
     return [
         {
             block: 'field',
