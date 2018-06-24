@@ -319,7 +319,10 @@ module.exports = {
            if(query.final.indexOf('1') >= 0) {
                status.push({ '$and' : [
                    {status: 'succes'},
-                   {'date.gzp-build': {$ne:null}}
+                   { '$or': [
+                       {'date.gzp-build': {$ne: null}},
+                       {'date.install-devices': {$ne: null}}
+                   ]}
                ]});
            }
            if(query.final.indexOf('2') >= 0) {

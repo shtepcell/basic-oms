@@ -10,6 +10,10 @@ block('select').elem('ip').replace()(function () {
         name: 'ip',
         options: [
             {
+                text: 'Нет необходимости',
+                val: 'Нет необходимости'
+            },
+            {
                 text: '4 (факт. 1) = /30',
                 val: '4 (факт. 1) = /30'
             },

@@ -49,13 +49,6 @@ block('order').elem('body').elemMod('tab', 'stop').content()(function () {
             dataset: dataset,
             display: order.date['network'] && order.date['stop-build']
         },
-        {
-            block: 'field',
-            elem: 'date-stop-build',
-            order: order,
-            dataset: dataset,
-            display: order.date['stop-build']
-        },
         { elem: 'separator' },
         {
             block: 'field',

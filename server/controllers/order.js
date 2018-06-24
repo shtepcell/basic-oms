@@ -853,8 +853,7 @@ module.exports = {
             case 'pause':
                 order.pause = {
                     status: true,
-                    date: new Date(),
-                    deadline: Math.round((order.deadline - new Date()) / 1000 / 60 / 60 / 24)
+                    date: new Date()
                 };
                 order.history.push(helper.historyGenerator('pause-start', res.locals.__user));
                 notify.create(res.locals.__user, order, 'pause-start');

@@ -157,6 +157,10 @@ function parseOldHistory(hist) {
             isOld: true,
             deadline: orders[i].deadline,
             status: orders[i].status,
+            pause: {
+                status: orders[i].pause.status,
+                date: orders[i].pause.date
+            },
             info: {
                 initiator: initiator,
                 department: initiator.department,
