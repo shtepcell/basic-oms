@@ -73,6 +73,12 @@ var schema = new Schema({
         'date-sign': Date,
         'file-init': String
     },
+	sks: {
+		time: Number,
+		'cost-once': String,
+		'cost-monthly': String,
+		add_info: String
+	},
     gzp: {
         complete: Boolean,
         need: Boolean,
@@ -108,6 +114,8 @@ var schema = new Schema({
         'cs-stop-pre': Date,
         'cs-gzp-organization': Date,
         'cs-stop-organization': Date,
+		'cs-sks-pre': Date,
+		'cs-sks-organization': Date,
         'cs-client-match': Date,
         'cs-client-notify': Date,
         'client-match': Date,
@@ -117,6 +125,8 @@ var schema = new Schema({
         'install-devices': Date,
         'stop-pre': Date,
         'stop-build': Date,
+		'sks-pre': Date,
+		'sks-build': Date,
         'network': Date,
         'succes': Date,
         'reject': Date

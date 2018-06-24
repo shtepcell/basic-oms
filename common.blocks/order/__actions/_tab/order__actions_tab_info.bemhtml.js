@@ -63,7 +63,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-sks-pre',
                 id: order.id
             },
-            display: (isOwner && isMatch && isSKS) && !isPause
+            display: (isOwner && isMatch && isSKS && order.sks.time == undefined) && !isPause
         },
         {
             block: 'order',
@@ -73,7 +73,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-sks-build',
                 id: order.id
             },
-            display: (isOwner && isMatch && isSKS) && !isPause && incomeIsFill
+            display: (isOwner && isMatch && isSKS && order.sks.time != undefined) && !isPause && incomeIsFill
         },
         {
             block: 'order',

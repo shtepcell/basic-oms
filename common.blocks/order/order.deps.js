@@ -25,7 +25,7 @@
             block: 'order',
             elem: 'actions',
             mods: {
-                tab: ['info', 'gzp', 'stop']
+                tab: ['info', 'gzp', 'stop', 'sks']
             }
         },
         {

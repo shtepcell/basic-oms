@@ -691,6 +691,42 @@ module.exports = {
         } else res.status(404);
     },
 
+    endPreSKS: async (req, res) => {
+        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
+        if(order) {
+            Object.keys(req.body).forEach( item => {
+                req.body[item] = req.body[item].trim();
+                if(req.body[item] == '') req.body[item] = undefined;
+            });
+
+            if( isNaN(req.body.time) ) {
+                res.status(400).send({ errText: 'Срок организации должен быть числом' });
+                return;
+            }
+
+            if(!req.body['cost-once'] || !req.body['cost-monthly']) {
+                res.status(400).send({ errText: 'Укажите стоимость организации' });
+                return;
+            }
+
+            order.sks = req.body;
+
+            order.status = 'client-match';
+            order.deadline = await helper.calculateDeadline(10);
+            order.date['sks-pre'] = new Date();
+            order.date['cs-client-match'] = await helper.calculateDeadline(10);
+
+            order.history.push(helper.historyGenerator('sks-pre', res.locals.__user));
+            var done = await order.save();
+            if(done) {
+                notify.create(res.locals.__user, done, 'end-sks-pre');
+
+                logger.info(`Выполнена проработка СКС #${ done.id }`, res.locals.__user);
+                res.status(200).send({created: true})
+            } else res.status(400).send({errText: 'Что-то пошло не так!'});
+        } else res.status(404);
+    },
+
     endPreSTOP: async (req, res, io) => {
         var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
         if(order) {
@@ -858,7 +894,6 @@ module.exports = {
                 order.date['cs-stop-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
                 notify.create(res.locals.__user, order, 'start-stop-pre');
-                // sendMail(order, 'new-status');
                 break;
             case 'start-pre-gzp':
                 order.status = 'gzp-pre';
@@ -866,7 +901,13 @@ module.exports = {
                 order.date['cs-gzp-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
                 notify.create(res.locals.__user, done, 'start-gzp-pre');
-                // sendMail(order, 'new-status');
+                break;
+            case 'start-sks-gzp':
+                order.status = 'gzp-pre';
+                order.deadline = await helper.calculateDeadline(3);
+                order.date['cs-sks-pre'] = await helper.calculateDeadline(3);
+                order.date['client-match'] = new Date();
+                notify.create(res.locals.__user, done, 'start-sks-pre');
                 break;
             case 'end-network':
                 order.status = 'client-notify';
@@ -875,14 +916,18 @@ module.exports = {
                 order.date['network'] = new Date();
                 order.history.push(helper.historyGenerator('network', res.locals.__user));
                 notify.create(res.locals.__user, order, 'network');
-                // sendMail(order, 'new-status');
                 break;
             case 'end-build':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
                 order.history.push(helper.historyGenerator('gzp-build', res.locals.__user));
                 notify.create(res.locals.__user, order, 'end-gzp-build');
-                // sendMail(order, 'new-status');
+                break;
+            case 'end-sks-build':
+                order.status = 'network';
+                order.date['sks-build'] = new Date();
+                order.history.push(helper.historyGenerator('sks-build', res.locals.__user));
+                notify.create(res.locals.__user, order, 'sks-gzp-build');
                 break;
             case 'start-gzp-build':
                 if(order.gzp.need) {
@@ -897,14 +942,20 @@ module.exports = {
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
 
                 notify.create(res.locals.__user, order, `start-${order.status}`);
-                // sendMail(order, 'new-status');
+                break;
+            case 'start-sks-build':
+                order.status = 'sks-build';
+                order.deadline = await helper.calculateDeadline(order.sks.time);
+                order.date['cs-sks-organization'] = await helper.calculateDeadline(order.sks.time + 2);
+                order.date['client-match'] = new Date();
+                order.history.push(helper.historyGenerator('client-match', res.locals.__user));
+                notify.create(res.locals.__user, order, `start-sks-build`);
                 break;
             case 'end-install-devices':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
                 order.history.push(helper.historyGenerator('install-devices', res.locals.__user));
                 notify.create(res.locals.__user, order, `end-install-devices`);
-                // sendMail(order, 'new-status');
                 break;
             case 'start-stop-build':
                 order.status = 'stop-build';
@@ -913,14 +964,12 @@ module.exports = {
                 order.date['client-match'] = new Date();
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
                 notify.create(res.locals.__user, order, `start-stop-build`);
-                // sendMail(order, 'new-status');
                 break;
             case 'end-build-stop':
                 order.status = 'network';
                 order.date['stop-build'] = new Date();
                 order.history.push(helper.historyGenerator('stop-build', res.locals.__user));
                 notify.create(res.locals.__user, order, `end-stop-build`);
-                // sendMail(order, 'new-status');
                 break;
         }
 

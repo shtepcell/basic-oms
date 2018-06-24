@@ -85,9 +85,12 @@ module.exports = function (app, io) {
         return Order.endPreGZP(req, res, io);
     });
 
-    // app.post('/order/:id/sks', Order.endPreSKS);
     app.post('/order/:id/stop', (req, res) => {
         return Order.endPreSTOP(req, res, io);
+    });
+
+    app.post('/order/:id/sks', (req, res) => {
+        return Order.endPreSKS(req, res);
     });
 
     app.post('/order/:id/:tab/admin', (req, res) => {

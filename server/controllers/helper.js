@@ -457,6 +457,14 @@ module.exports = {
               var dep = await Department.findOne({type: 'net'});
               return dep.name;
               break;
+          case 'sks-pre':
+          case 'sks-build':
+              var dep = await Department.findOne({type: 'sks'});
+              if(!dep) dep = {
+                  name: 'Ответсвенный отдел не определён!'
+              }
+              return dep.name;
+              break;
           case 'client-match':
           case 'client-notify':
               return order.info.initiator.department.name;

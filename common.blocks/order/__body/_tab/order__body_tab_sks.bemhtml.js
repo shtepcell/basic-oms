@@ -4,10 +4,11 @@ block('order').elem('body').elemMod('tab', 'sks').content()(function () {
         tab = ctx.tab,
         user = ctx.user,
         order = ctx.order,
-        adminEdit = ctx.adminEdit;
+        adminEdit = ctx.adminEdit,
+        dataset = ctx.dataset;
 
-    var mustFill = (order.status == 'sks-pre' || order.status == 'sks-build');
-
+    var mustFill = (order.status == 'sks-pre');
+    
     return [
         {
             block: 'field',
@@ -32,26 +33,45 @@ block('order').elem('body').elemMod('tab', 'sks').content()(function () {
         },
         {
             block: 'field',
-            elem: 'cs-sks-end',
+            elem: 'cs-sks-active',
             order: order,
             dataset: dataset,
-            display: order.date['cs-sks-end']
+            display: order.date['cs-sks-organization']
         },
         {
             block: 'field',
-            elem: 'date-sks-end',
+            elem: 'date-sks-active',
             order: order,
             dataset: dataset,
-            display: order.date['date-sks-end']
+            display: order.date['network'] && order.date['sks-build']
         },
         { elem: 'separator' },
         {
-            elem: 'sks-info',
+            block: 'field',
+            elem: 'sks-time',
             elemMods: {
                 access: (adminEdit || mustFill),
             },
             order: order,
-            display: (mustFill || order.sks.capability)
+            display: (mustFill || order.sks.time != undefined)
+        },
+        {
+            block: 'field',
+            elem: 'sks-cost-once',
+            elemMods: {
+                access: (adminEdit || mustFill),
+            },
+            order: order,
+            display: (mustFill || order.sks.time != undefined)
+        },
+        {
+            block: 'field',
+            elem: 'sks-cost-monthly',
+            elemMods: {
+                access: (adminEdit || mustFill),
+            },
+            order: order,
+            display: (mustFill ||  order.sks.time != undefined)
         },
         {
             block: 'field',
