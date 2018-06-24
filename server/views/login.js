@@ -15,6 +15,14 @@ module.exports = function (opt, data) {
                 block: 'form',
                 elem: 'login',
                 url: data.trg
+            },
+            {
+                block: 'tip',
+                content: [
+                    {elem: 'appeal', content: 'Уважаемый пользователь!'},
+                    {elem: 'p', content: 'Пароль от Вашей учетной записи совпадает с логином.'},
+                    {elem: 'p', content: 'Не забудьте поменять его! 😉'}
+                 ]
             }
         ]
     };

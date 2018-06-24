@@ -1,6 +1,9 @@
 ({
     shouldDeps: [
         {
+            block: 'tip'
+        },
+        {
             block: 'field'
         },
         {

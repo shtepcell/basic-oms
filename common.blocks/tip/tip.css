@@ -1,0 +1,21 @@
+.tip
+{
+    font-size: 95%;
+
+    text-align: center;
+    width: 520px;
+    border-radius: 20px;
+
+    box-shadow: 0px 0px 25px #ccc;
+    padding: 5px 10px 5px 10px;
+    margin: 0 auto;
+}
+
+.tip__appeal
+{
+    font-size: 100%;
+    font-style: italic;
+    color: #44c;
+    padding-bottom: 5px;
+    font-weight: bold;
+}

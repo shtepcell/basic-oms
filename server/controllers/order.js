@@ -175,6 +175,8 @@ module.exports = {
 
         var total = orders.length;
 
+        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+
         if(req.query.sort)
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
 
@@ -1339,6 +1341,8 @@ module.exports = {
         var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length;
+
+        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
 
         if(req.query.sort)
             orders = helper.orderSort(orders, req.query.sort, req.query.value);

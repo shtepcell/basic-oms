@@ -426,6 +426,59 @@ block('searcher')(
                         ]
                     },
                     {
+                        elem: 'group',
+                        title: 'Фильтр по дате',
+                        content: [
+                            {
+                                elem: 'row',
+                                content: [
+                                    {
+                                        elem: 'label',
+                                        content: 'Дата инициации (в разработке)'
+                                    },
+                                    {
+                                        elem: 'cell',
+                                        content: [
+                                            {
+                                                block: 'input',
+                                                mods: {
+                                                    'has-calendar': true,
+                                                    size: 'l',
+                                                    disabled: true,
+                                                    theme: 'islands'
+                                                },
+                                                val: '',
+                                                name: 'date-start',
+                                                weekdays: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
+                                                months: ['Январь', 'Февраль', 'Март',
+                                                    'Апрель', 'Май', 'Июнь',
+                                                    'Июль', 'Август', 'Сентябрь',
+                                                    'Октябрь', 'Ноябрь', 'Декабрь']
+                                            },
+                                            {
+                                                block: 'input',
+                                                mods: {
+                                                    'has-calendar': true,
+                                                    size: 'l',
+                                                    disabled: true,
+                                                    theme: 'islands'
+                                                },
+                                                val: ``,
+                                                name: 'date-end',
+                                                weekdays: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
+                                                months: ['Январь', 'Февраль', 'Март',
+                                                    'Апрель', 'Май', 'Июнь',
+                                                    'Июль', 'Август', 'Сентябрь',
+                                                    'Октябрь', 'Ноябрь', 'Декабрь']
+                                            }
+                                        ]
+                                    }
+
+                                ]
+                            }
+                        ]
+                    },
+                    {
                         elem: 'actions',
                         content: [
                             {
