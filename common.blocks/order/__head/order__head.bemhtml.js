@@ -1,7 +1,6 @@
 block('order').elem('head').content()(function () {
     var order = this.ctx.order;
     var pause = '',
-        link = null,
         resp = null;
 
     if(order.pause.status) pause = ' (на паузе)';
@@ -22,30 +21,30 @@ block('order').elem('head').content()(function () {
         }
     }
 
-    if(order.isOld)
-        link = {
-            elem: 'head-item',
-            content: [
-                {
-                    elem: 'cell-name',
-                    content: 'Заявка в основном СУЗ-е'
-                },
-                {
-                    elem: 'cell-data',
-                    content: {
-                        block: 'link',
-                        mods: {
-                            theme: 'islands'
-                        },
-                        attrs: {
-                            target: '_blank'
-                        },
-                        url: `http://ops.miranda-media.ru/orders/${order.id}`,
-                        content: 'Ссылка'
-                    }
-                }
-            ]
-        }
+    // if(order.isOld)
+    //     link = {
+    //         elem: 'head-item',
+    //         content: [
+    //             {
+    //                 elem: 'cell-name',
+    //                 content: 'Заявка в основном СУЗ-е'
+    //             },
+    //             {
+    //                 elem: 'cell-data',
+    //                 content: {
+    //                     block: 'link',
+    //                     mods: {
+    //                         theme: 'islands'
+    //                     },
+    //                     attrs: {
+    //                         target: '_blank'
+    //                     },
+    //                     url: `http://ops.miranda-media.ru/orders/${order.id}`,
+    //                     content: 'Ссылка'
+    //                 }
+    //             }
+    //         ]
+    //     }
 
 
     return [
@@ -71,7 +70,6 @@ block('order').elem('head').content()(function () {
                         type: 'top'
                     },
                     content: [
-                        link,
                         {
                             elem: 'head-item',
                             content: [
