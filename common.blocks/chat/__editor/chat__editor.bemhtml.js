@@ -2,11 +2,7 @@ block('chat').elem('editor').content()(function () {
     var users = this.ctx.users;
     var options = [
         {
-            text: 'Всем ответсвенным за заказ',
-            val: 'all'
-        },
-        {
-            text: 'Иницатору',
+            text: 'Иницатору заказа',
             val: 'initiator'
         }
     ];

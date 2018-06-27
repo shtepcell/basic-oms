@@ -95,7 +95,8 @@ module.exports = {
 
             case "new-message":
                 recipients = recipients.map( item => {
-                    return { login: item };
+                    if(item == 'initiator') return { _id: order.info.initiator };
+                    else return { login: item };
                 });
                 worker = await Account.find({ $or: recipients });
                 break;
