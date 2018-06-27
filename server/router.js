@@ -38,7 +38,26 @@ module.exports = function (app, io) {
 
     app.get('/logout', Auth.logout);
 
-    app.get('/', Order.getMainPage);
+    app.get('/', function (req, res) {
+        switch (res.locals.__user.department.type) {
+            case 'gus':
+            case 'sks':
+                res.redirect('/pre');
+                break;
+            case 'b2o':
+            case 'b2b':
+                res.redirect('/client');
+                break;
+            default:
+                res.redirect('/pre');
+        }
+        return;
+    });
+
+    app.get('/my', Order.getMainPageMy);
+    app.get('/client', Order.getMainPageClient);
+    app.get('/pre', Order.getMainPagePre);
+    app.get('/build', Order.getMainPageBuild);
 
     app.post('/settings/:tab', Account.settings);
 

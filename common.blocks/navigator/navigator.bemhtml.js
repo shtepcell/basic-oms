@@ -1,8 +1,17 @@
 block('navigator').content()(function () {
     var user = this.ctx.user,
         deps = this.ctx.deps,
-        isAdmin = user && (user.department.type == 'admin');
+        isAdmin = user && (user.department.type == 'admin'),
+        isInit = user && (user.department.type == 'b2b' || user.department.type == 'b2o');
 
+    var init = {
+        block: 'link',
+        mods: { theme: 'islands', size : 'l' },
+        mix: { block: 'navigator', elem: 'link' },
+        url: '/init',
+        content: 'Инициация заказа'
+    };
+    if(!isInit) init = undefined;
     return [
         {
             block: 'link',
@@ -11,6 +20,7 @@ block('navigator').content()(function () {
             url: '/',
             content: (isAdmin)?'Главная страница':'Мои заказы'
         },
+        init,
         {
             block: 'link',
             mods: { theme: 'islands', size : 'l' },

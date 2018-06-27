@@ -89,7 +89,168 @@ module.exports = {
         }
     },
 
-    getMainPage: async (req, res) => {
+    getMainPageClient: async (req, res) => {
+        var pagerId = 'first',
+            pagers = [],
+            pageNumber = req.query['pager' + pagerId] || 1,
+            perPage = res.locals.__user.settings.table.perPage || 25;
+        res.locals.params = helper.trimObject(req.query);
+
+        if(res.locals.params.id && isNaN(res.locals.params.id)) {
+            res.locals.params.id_error = true;
+        }
+
+        if (!!(+pageNumber) && (+pageNumber) > 0) {
+            pageNumber = +pageNumber;
+            pagers[0] = pagerId;
+        }
+        else
+            res.redirect(req.path);
+
+        var query = {};
+        var subQ = await helper.makeQuery(req, res);
+
+        var user = res.locals.__user;
+        query = {
+            'info.initiator': user._id,
+            $or: [
+                {status: 'client-match'},
+                {status: 'client-notify'}
+            ]
+        };
+
+        var orders = await Order.find({
+            $and: [query, subQ],
+            status: {$ne: 'secret'}
+        }).populate([populateClient, populateCity, populateStreet]).lean();
+
+        var total = orders.length;
+
+        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+
+        if(req.query.sort)
+            orders = helper.orderSort(orders, req.query.sort, req.query.value);
+
+        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+
+        orders.forEach( item => {
+            item.status = stages[item.status];
+        });
+
+        if (!orders.length)
+        {
+            if (pageNumber !== 1) {
+                res.redirect(req.path);
+            } else {
+                render(req, res, {
+                    viewName: 'main',
+                    options: {
+                        tab: 'client'
+                    }
+                });
+            }
+        } else {
+            res.locals.pagers = {};
+            res.locals.pagers[pagerId] = {
+                pageNumber: +pageNumber,
+                records: total,
+                perPage: perPage
+            };
+
+            res.locals.orders = orders;
+            render(req, res, {
+                viewName: 'main',
+                options: {
+                    pagers: pagers,
+                    tab: 'client'
+                }
+            });
+        }
+    },
+
+    getMainPageMy: async (req, res) => {
+        var pagerId = 'first',
+            pagers = [],
+            pageNumber = req.query['pager' + pagerId] || 1,
+            perPage = res.locals.__user.settings.table.perPage || 25;
+        res.locals.params = helper.trimObject(req.query);
+
+        if(res.locals.params.id && isNaN(res.locals.params.id)) {
+            res.locals.params.id_error = true;
+        }
+
+        if (!!(+pageNumber) && (+pageNumber) > 0) {
+            pageNumber = +pageNumber;
+            pagers[0] = pagerId;
+        }
+        else
+            res.redirect(req.path);
+
+        var query = {};
+        var subQ = await helper.makeQuery(req, res);
+
+        var user = res.locals.__user;
+        query = {
+            'info.initiator': user._id,
+            $and: [
+                { status: {$ne: 'succes'}},
+                { status: {$ne: 'reject'}},
+                { status: {$ne:'client-match'}},
+                { status: {$ne:'client-notify'}}
+            ]
+
+        };
+
+        var orders = await Order.find({
+            $and: [query, subQ],
+            status: {$ne: 'secret'}
+        }).populate([populateClient, populateCity, populateStreet]).lean();
+
+        var total = orders.length;
+
+        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+
+        if(req.query.sort)
+            orders = helper.orderSort(orders, req.query.sort, req.query.value);
+
+        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+
+        orders.forEach( item => {
+            item.status = stages[item.status];
+        });
+
+        if (!orders.length)
+        {
+            if (pageNumber !== 1) {
+                res.redirect(req.path);
+            } else {
+                render(req, res, {
+                    viewName: 'main',
+                    options: {
+                        tab: 'my'
+                    }
+                });
+            }
+        } else {
+            res.locals.pagers = {};
+            res.locals.pagers[pagerId] = {
+                pageNumber: +pageNumber,
+                records: total,
+                perPage: perPage
+            };
+
+            res.locals.orders = orders;
+            render(req, res, {
+                viewName: 'main',
+                options: {
+                    pagers: pagers,
+                    tab: 'my'
+                }
+            });
+        }
+    },
+
+    getMainPagePre: async (req, res) => {
 
         var pagerId = 'first',
             pagers = [],
@@ -114,33 +275,11 @@ module.exports = {
         var user = res.locals.__user;
 
         switch (user.department.type) {
-            case 'b2b':
-                query = {
-                    '$or': [
-                        {'$and': [
-                            {'info.initiator': user._id},
-                            {status: 'client-match'}
-                        ]},
-                        {'$and': [
-                            {'info.initiator': user._id},
-                            {status: 'client-notify'}
-                        ]}
-                    ]
-                };
-                break;
             case 'b2o':
                 query = {
-                    '$or': [
-                        {'$and': [
-                            {'info.initiator': user._id},
-                            {status: 'client-match'}
-                        ]},
-                        {'$and': [
-                            {'info.initiator': user._id},
-                            {status: 'client-notify'}
-                        ]},
+                    $or: [
                         {status: 'stop-pre'},
-                        {status: 'stop-build'}
+                        {status: 'all-pre'}
                     ]
                 };
                 break;
@@ -148,23 +287,16 @@ module.exports = {
                 query = {
                     '$or': [
                         {status: 'gzp-pre'},
-                        {status: 'gzp-build'},
-                        {status: 'install-devices'},
                         {status: 'all-pre'}
                     ],
                     'info.city': user.department.cities
                 }
                 break;
-            case 'net':
-                query = {status: 'network'};
-                break;
             case 'sks':
-                query = {
-                    '$or': [
-                        {status: 'sks-pre'},
-                        {status: 'sks-build'}
-                    ]
-                }
+                query = { status: 'sks-pre' };
+                break;
+            case 'net':
+                query = { status: 'network' };
                 break;
         }
 
@@ -192,7 +324,10 @@ module.exports = {
                 res.redirect(req.path);
             } else {
                 render(req, res, {
-                    viewName: 'main'
+                    viewName: 'main',
+                    options: {
+                        tab: 'pre'
+                    }
                 });
             }
         } else {
@@ -207,7 +342,102 @@ module.exports = {
             render(req, res, {
                 viewName: 'main',
                 options: {
-                    pagers: pagers
+                    pagers: pagers,
+                    tab: 'pre'
+                }
+            });
+        }
+
+    },
+
+    getMainPageBuild: async (req, res) => {
+
+        var pagerId = 'first',
+            pagers = [],
+            pageNumber = req.query['pager' + pagerId] || 1,
+            perPage = res.locals.__user.settings.table.perPage || 25;
+        res.locals.params = helper.trimObject(req.query);
+
+        if(res.locals.params.id && isNaN(res.locals.params.id)) {
+            res.locals.params.id_error = true;
+        }
+
+        if (!!(+pageNumber) && (+pageNumber) > 0) {
+            pageNumber = +pageNumber;
+            pagers[0] = pagerId;
+        }
+        else
+            res.redirect(req.path);
+
+        var query = {};
+        var subQ = await helper.makeQuery(req, res);
+
+        var user = res.locals.__user;
+
+        switch (user.department.type) {
+            case 'b2o':
+                query = {
+                    status: 'stop-build'
+                };
+                break;
+            case 'gus':
+                query = {
+                    '$or': [
+                        {status: 'gzp-build'},
+                        {status: 'install-devices'}
+                    ],
+                    'info.city': user.department.cities
+                }
+                break;
+            case 'sks':
+                query = { status: 'sks-build' };
+                break;
+        }
+
+        var orders = await Order.find({
+            $and: [query, subQ],
+            status: {$ne: 'secret'}
+        }).populate([populateClient, populateCity, populateStreet]).lean();
+
+        var total = orders.length;
+
+        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+
+        if(req.query.sort)
+            orders = helper.orderSort(orders, req.query.sort, req.query.value);
+
+        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+
+        orders.forEach( item => {
+            item.status = stages[item.status];
+        });
+
+        if (!orders.length)
+        {
+            if (pageNumber !== 1) {
+                res.redirect(req.path);
+            } else {
+                render(req, res, {
+                    viewName: 'main',
+                    options: {
+                        tab: 'build'
+                    }
+                });
+            }
+        } else {
+            res.locals.pagers = {};
+            res.locals.pagers[pagerId] = {
+                pageNumber: +pageNumber,
+                records: total,
+                perPage: perPage
+            };
+
+            res.locals.orders = orders;
+            render(req, res, {
+                viewName: 'main',
+                options: {
+                    pagers: pagers,
+                    tab: 'build'
                 }
             });
         }

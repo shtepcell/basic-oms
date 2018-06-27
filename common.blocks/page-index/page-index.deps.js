@@ -4,6 +4,9 @@
             block: 'tip'
         },
         {
+            block: 'switcher'
+        },
+        {
             block: 'field'
         },
         {

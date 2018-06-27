@@ -4,13 +4,38 @@ module.exports = function(opt, data){
     var opt = opt || {},
         pagerId;
 
-    var users = data.users;
+    var users = data.users,
+        user = data.__user;
+
     if (opt.pagers && opt.pagers.length)
         pagerId = opt.pagers[0];
 
+    var tab = opt.tab;
+
+    var type = '';
+
+    switch (user.department.type) {
+        case 'gus':
+        case 'sks':
+            type = 'gus';
+            break;
+
+        case 'b2o':
+            type = 'b2o';
+            break;
+
+        case 'b2b':
+            type = 'b2b';
+            break;
+
+        case 'net':
+            type = 'default';
+            break;
+    }
+
     return {
         view: 'page-index',
-        title: 'Главная страница',
+        title: 'Мои заказы',
         meta: {
             description: 'СУЗ 2.0',
             og: {
@@ -20,31 +45,23 @@ module.exports = function(opt, data){
         },
         page: [
             {
-                block: 'title',
+                block: 'wrapper',
                 mods: {
-                    lvl: 3
+                    size: 'l'
                 },
-                content: 'Главная страница'
-            },
-            {
-                block: 'button-panel',
-                user: data.__user
-            },
-            {
-                block: 'wrap',
-                elem: 'main',
                 content: [
+                    {
+                        block: 'switcher',
+                        mods: {
+                            display: true,
+                            type: type
+                        },
+                        tab: tab
+                    },
                     {
                         block: 'short-filter',
                         dataset: data.dataset,
                         query: data.params
-                    },
-                    {
-                        block: 'title',
-                        mods: {
-                            lvl: 4
-                        },
-                        content: `Список заказов: `
                     },
                     {
                         block: 'table',
