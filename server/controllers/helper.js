@@ -139,16 +139,7 @@ module.exports = {
         }
     },
 
-    strToDate: function (date) {
-        if(date) {
-            date = date.split('.');
-            if(date.length == 3) {
-                if(date[1] >= 0 && date[1] <= 11 && date[0] > 0 &&  date[0] <= 31)
-                    return new Date(date[2], date[1]-1, date[0]);
-                else return false
-            } else return false;
-        } else return null;
-    },
+    strToDate: strToDate,
 
     parseDate: (date) => {
         date = date.split('.');
@@ -390,7 +381,6 @@ module.exports = {
             val = val.replace(/\(/g, '');
             val = val.replace(/\)/g, '');
             var rgx =  new RegExp('' + val + '', 'i');
-            console.log(rgx);
            if(qr['$and']) {
                qr['$and'].push({'info.adds': {$regex: rgx}})
            } else qr['$and'] = [{'info.adds': {$regex: rgx}}];
@@ -400,6 +390,152 @@ module.exports = {
            if(qr['$and']) {
                qr['$and'].push({'info.service': query.service})
            } else qr['$and'] = [{'info.service': query.service}];
+        }
+
+        if(query['date-status'] && (query['date-start'] != '' || query['date-end'] != '') ) {
+            var start,
+                end;
+
+            query['date-start'] = query['date-start'].trim();
+            query['date-end'] = query['date-end'].trim();
+
+            if(query['date-start'] == '') start = new Date(1990, 1, 1);
+            else start = strToDate(query['date-start']);
+            if(query['date-end'] == '') end = new Date(2200, 1, 1);
+            else end = strToDate(query['date-end']);
+
+
+            var _status;
+            if(query['date-status']) {
+                switch (query['date-status']) {
+                    case 'init':
+                        if(qr['$and']) {
+                            qr['$and'].push({'date.init': {
+                                $gte: start,
+                                $lte: end
+                            }})
+                        } else qr['$and'] = [{
+                            'date.init': {
+                                $gte: start,
+                                $lte: end
+                            }
+                        }];
+                        break;
+                    case 'gzp-pre':
+                        if(qr['$and']) {
+                            qr['$and'].push({'date.gzp-pre': {
+                                $gte: start,
+                                $lte: end
+                            }})
+                        } else qr['$and'] = [{
+                            'date.gzp-pre': {
+                                $gte: start,
+                                $lte: end
+                            }
+                        }];
+                        break;
+                    case 'sks-pre':
+                        if(qr['$and']) {
+                            qr['$and'].push({'date.sks-pre': {
+                                $gte: start,
+                                $lte: end
+                            }})
+                        } else qr['$and'] = [{
+                            'date.sks-pre': {
+                                $gte: start,
+                                $lte: end
+                            }
+                        }];
+                        break;
+                    case 'stop-pre':
+                        if(qr['$and']) {
+                            qr['$and'].push({'date.stop-pre': {
+                                $gte: start,
+                                $lte: end
+                            }})
+                        } else qr['$and'] = [{
+                            'date.stop-pre': {
+                                $gte: start,
+                                $lte: end
+                            }
+                        }];
+                        break;
+                    case 'gzp-build':
+                        if(qr['$and']) {
+                            qr['$and'].push({
+                                $or: [
+                                    {
+                                        'date.gzp-build': {
+                                            $gte: start,
+                                            $lte: end
+                                        }
+                                    },
+                                    {
+                                        'date.install-devices': {
+                                            $gte: start,
+                                            $lte: end
+                                        }
+                                    }
+                                ]
+                            })
+                        } else qr['$and'] = [{
+                                $or: [
+                                    {
+                                        'date.gzp-build': {
+                                            $gte: start,
+                                            $lte: end
+                                        }
+                                    },
+                                    {
+                                        'date.install-devices': {
+                                            $gte: start,
+                                            $lte: end
+                                        }
+                                    }
+                                ]
+                            }];
+                        break;
+                    case 'stop-build':
+                        if(qr['$and']) {
+                            qr['$and'].push({'date.stop-build': {
+                                $gte: start,
+                                $lte: end
+                            }})
+                        } else qr['$and'] = [{
+                            'date.stop-build': {
+                                $gte: start,
+                                $lte: end
+                            }
+                        }];
+                        break;
+                    case 'sks-build':
+                        if(qr['$and']) {
+                            qr['$and'].push({'date.sks-build': {
+                                $gte: start,
+                                $lte: end
+                            }})
+                        } else qr['$and'] = [{
+                            'date.sks-build': {
+                                $gte: start,
+                                $lte: end
+                            }
+                        }];
+                        break;
+                    case 'succes':
+                        if(qr['$and']) {
+                            qr['$and'].push({'date.succes': {
+                                $gte: start,
+                                $lte: end
+                            }})
+                        } else qr['$and'] = [{
+                            'date.succes': {
+                                $gte: start,
+                                $lte: end
+                            }
+                        }];
+                        break;
+                }
+            }
         }
         return qr;
     },
@@ -606,3 +742,14 @@ module.exports = {
        }
    }
 };
+
+function strToDate(date) {
+    if(date) {
+        date = date.split('.');
+        if(date.length == 3) {
+            if(date[1] >= 0 && date[1] <= 11 && date[0] > 0 &&  date[0] <= 31)
+                return new Date(date[2], date[1]-1, date[0]);
+            else return false
+        } else return false;
+    } else return null;
+}

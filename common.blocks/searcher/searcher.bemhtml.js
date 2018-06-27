@@ -432,46 +432,107 @@ block('searcher')(
                             {
                                 elem: 'row',
                                 content: [
+
                                     {
                                         elem: 'label',
-                                        content: 'Дата инициации (в разработке)'
+                                        content: 'Дата'
                                     },
                                     {
                                         elem: 'cell',
-                                        content: [
-                                            {
-                                                block: 'input',
-                                                mods: {
-                                                    'has-calendar': true,
-                                                    size: 'l',
-                                                    disabled: true,
-                                                    theme: 'islands'
+                                        content: {
+                                            block: 'control-group',
+                                            content: [
+                                                {
+                                                    block: 'select',
+                                                    mix: {
+                                                        block: 'searcher',
+                                                        elem: 'date'
+                                                    },
+                                                    name: 'date-status',
+                                                    val: query['date-status'],
+                                                    mods: {
+                                                        mode: 'radio-check',
+                                                        theme: 'islands',
+                                                        size: 'l'
+                                                    },
+                                                    text: 'Выберите этап',
+                                                    options: [
+                                                        {
+                                                            text: 'Инициация',
+                                                            val: 'init'
+                                                        },
+                                                        {
+                                                            text: 'Проработка ГЗП',
+                                                            val: 'gzp-pre'
+                                                        },
+                                                        {
+                                                            text: 'Проработка СКС',
+                                                            val: 'sks-pre'
+                                                        },
+                                                        {
+                                                            text: 'Проработка СТОП',
+                                                            val: 'stop-pre'
+                                                        },
+                                                        {
+                                                            text: 'Организация ГЗП',
+                                                            val: 'gzp-build'
+                                                        },
+                                                        {
+                                                            text: 'Организация СКС',
+                                                            val: 'sks-build'
+                                                        },
+                                                        {
+                                                            text: 'Организация СТОП',
+                                                            val: 'stop-build'
+                                                        },
+                                                        {
+                                                            text: 'Включен',
+                                                            val: 'succes'
+                                                        }
+                                                    ]
                                                 },
-                                                val: '',
-                                                name: 'date-start',
-                                                weekdays: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
-                                                months: ['Январь', 'Февраль', 'Март',
-                                                    'Апрель', 'Май', 'Июнь',
-                                                    'Июль', 'Август', 'Сентябрь',
-                                                    'Октябрь', 'Ноябрь', 'Декабрь']
-                                            },
-                                            {
-                                                block: 'input',
-                                                mods: {
-                                                    'has-calendar': true,
-                                                    size: 'l',
-                                                    disabled: true,
-                                                    theme: 'islands'
+                                                {
+                                                    block: 'input',
+                                                    mods: {
+                                                        'has-calendar': true,
+                                                        size: 'l',
+                                                        theme: 'islands'
+                                                    },
+                                                    mix: {
+                                                        block: 'searcher',
+                                                        elem: 'date'
+                                                    },
+                                                    val: query['date-start'],
+                                                    placeholder: 'От',
+                                                    name: 'date-start',
+                                                    weekdays: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
+                                                    months: ['Январь', 'Февраль', 'Март',
+                                                        'Апрель', 'Май', 'Июнь',
+                                                        'Июль', 'Август', 'Сентябрь',
+                                                        'Октябрь', 'Ноябрь', 'Декабрь']
                                                 },
-                                                val: ``,
-                                                name: 'date-end',
-                                                weekdays: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
-                                                months: ['Январь', 'Февраль', 'Март',
-                                                    'Апрель', 'Май', 'Июнь',
-                                                    'Июль', 'Август', 'Сентябрь',
-                                                    'Октябрь', 'Ноябрь', 'Декабрь']
-                                            }
-                                        ]
+                                                {
+                                                    block: 'input',
+                                                    mods: {
+                                                        'has-calendar': true,
+                                                        size: 'l',
+                                                        theme: 'islands'
+                                                    },
+                                                    mix: {
+                                                        block: 'searcher',
+                                                        elem: 'date'
+                                                    },
+                                                    placeholder: 'До',
+                                                    val: query['date-end'],
+                                                    name: 'date-end',
+                                                    weekdays: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
+                                                    months: ['Январь', 'Февраль', 'Март',
+                                                        'Апрель', 'Май', 'Июнь',
+                                                        'Июль', 'Август', 'Сентябрь',
+                                                        'Октябрь', 'Ноябрь', 'Декабрь']
+                                                }
+                                            ]
+                                        }
                                     }
 
                                 ]
