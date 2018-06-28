@@ -22,6 +22,10 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             incomeIsFill = (order.info['income-once'] && order.info['income-monthly'] && order.info.idoss)
         }
 
+        var display = {
+            'build-gzp': isOwner && isMatch && ( order.gzp.need != undefined || ( order.gzp.need  && order.gzp.capability ) && !isSKS) && !isPause && incomeIsFill
+        };
+        
     return [
         {
             block: 'order',
@@ -93,7 +97,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-gzp-build',
                 id: order.id
             },
-            display: (isOwner && isMatch &&  (order.gzp.need != undefined || ( order.gzp.need  && order.gzp.capability ) && !isSKS) && !isPause && incomeIsFill
+            display: display['build-gzp']
         },
         {
             block: 'order',
