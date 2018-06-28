@@ -51,7 +51,7 @@ module.exports.sendMail = (order, recipients, type) => {
 
     mailOptions.subject = subject;
 
-    mailOptions.html = header + `<p style="font-size: 12pt;"><a href="http://ops-test.miranda-media.ru/order/${order.id}">` +
+    mailOptions.html = header + `<p style="font-size: 12pt;"><a href="http://ops.miranda-media.ru/order/${order.id}">` +
 		`Заказ #${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
 		footer
 
