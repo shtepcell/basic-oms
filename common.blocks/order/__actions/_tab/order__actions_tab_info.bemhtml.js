@@ -93,7 +93,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-gzp-build',
                 id: order.id
             },
-            display: (isOwner && isMatch &&  order.gzp.need != undefined && order.gzp.capability && !isSKS) && !isPause && incomeIsFill
+            display: (isOwner && isMatch &&  (order.gzp.need != undefined || ( order.gzp.need  && order.gzp.capability ) && !isSKS) && !isPause && incomeIsFill
         },
         {
             block: 'order',
