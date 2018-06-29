@@ -343,8 +343,10 @@ module.exports = {
         if(query.client) {
             var clnt = query.client;
             clnt = clnt.trim();
-            var rgx =  new RegExp('' + clnt + '', 'i');
-            clnt = await Client.find({name: {$regex: rgx}});
+            // var rgx =  new RegExp('' + clnt + '', 'i');
+            // clnt = await Client.find({name: {$regex: rgx}});
+            clnt = await Client.find({name: clnt});
+
             if(clnt.length > 0) {
                var _q = [];
                clnt.forEach( itm => {
