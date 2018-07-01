@@ -77,7 +77,7 @@ module.exports = function(opt, data){
                         params: data.params,
                         services: data.dataset.services,
                         flags: data.dataset.flags,
-                        count: data.pagers.first.records,
+                        // count: data.pagers.first.records,
                         orders: orders
                     },
                     {
