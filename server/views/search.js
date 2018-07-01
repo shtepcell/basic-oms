@@ -31,7 +31,7 @@ module.exports = function(opt, data){
                         {
                             block: 'searcher',
                             elem: 'title',
-                            // content: `Найдено ${data.pagers.first.records} заказов: `
+                            content: `Найдено ${data.pagers.first.records} заказов: `
                         },
                         {
                             block: 'button',
