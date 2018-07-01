@@ -9,8 +9,11 @@ block('orders-table').elem('body')(
         var dom = [];
         if(orders.length > 0) {
             for (var i = 0; i < orders.length; i++) {
-                var adress;
-
+                var adress,
+                    pause;
+                if (orders[i].pause) {
+                    pause = orders[i].pause.status;
+                }
                 if(orders[i].isOld)
                     adress = `${orders[i].info.adds}`;
                 else {
@@ -24,7 +27,7 @@ block('orders-table').elem('body')(
                     url: orders[i].id,
                     flag: flags[orders[i].id],
                     elemMods: {
-                        pause: orders[i].pause.status
+                        pause: pause
                     },
                     content: [
                         {
