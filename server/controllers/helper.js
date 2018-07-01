@@ -198,7 +198,7 @@ module.exports = {
     },
 
     makeQuery: async  (req, res) => {
-        var qr = {};
+        var qr = {status: {$ne: 'secret'}};
         var query = req.query;
         var status = [];
         if(query.id) {
