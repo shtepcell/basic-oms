@@ -1,6 +1,9 @@
 ({
     shouldDeps: [
         {
+            block: 'orders-table'
+        },
+        {
             block: 'tip'
         },
         {

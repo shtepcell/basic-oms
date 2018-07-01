@@ -32,6 +32,10 @@ var schema = new Schema( {
         type: Schema.Types.ObjectId,
         ref: 'Notify'
 	}],
+	flags: [{
+		order: Number,
+		state: Number
+	}],
 	settings: {
 		table: {
 			perPage: Number

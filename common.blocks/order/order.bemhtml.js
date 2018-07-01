@@ -4,6 +4,7 @@ block('order').content()(function () {
         order = ctx.order,
         dataset = ctx.dataset;
 
+    order.flag = dataset.flags[order.id];
     if(tab == 'init') {
         return [
             {

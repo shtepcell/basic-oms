@@ -1,0 +1,8 @@
+.orders-table
+{
+    display: table;
+    width: 100%;
+    margin: 0 auto;
+    table-layout: fixed;
+    font-size: 10pt;
+}

@@ -1,0 +1,47 @@
+.order__flag
+{
+    width: 15px;
+    height: 15px;
+
+    border-radius: 15px;
+
+    position:absolute;
+
+    top: 30px;
+
+    left: 95px;
+
+    transition: 0.3s all;
+
+}
+
+.order__flag:hover
+{
+    box-shadow: 0 0 3px #333;
+}
+
+
+.order__flag_color_1
+{
+    background-color: red;
+}
+
+.order__flag_color_2
+{
+    background-color: orange;
+}
+
+.order__flag_color_3
+{
+    background-color: green;
+}
+
+.order__flag_color_4
+{
+    background-color: blue;
+}
+
+.order__flag_color_0
+{
+    background-color: inherit;
+}

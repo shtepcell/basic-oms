@@ -9,6 +9,7 @@ const Street = require('../models/Street');
 const mkdirp = require('mkdirp-promise');
 const Holiday = require('../models/Holiday');
 const Notify = require('../models/Notify');
+const Flag = require('../models/Flag');
 const notify = require('./notify');
 const { sendMail } = require('./mailer');
 const { getExcel } = require('./export');
@@ -133,7 +134,12 @@ module.exports = {
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
+        var now = new Date();
         orders.forEach( item => {
+            if(item.status != 'succes' && item.status != 'reject') {
+                now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+                item.cs = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
+            } else item.cs = '';
             item.status = stages[item.status];
         });
 
@@ -215,7 +221,12 @@ module.exports = {
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
+        var now = new Date();
         orders.forEach( item => {
+            if(item.status != 'succes' && item.status != 'reject') {
+                now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+                item.cs = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
+            } else item.cs = '';
             item.status = stages[item.status];
         });
 
@@ -314,7 +325,12 @@ module.exports = {
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
+        var now = new Date();
         orders.forEach( item => {
+            if(item.status != 'succes' && item.status != 'reject') {
+                now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+                item.cs = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
+            } else item.cs = '';
             item.status = stages[item.status];
         });
 
@@ -408,7 +424,12 @@ module.exports = {
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
+        var now = new Date();
         orders.forEach( item => {
+            if(item.status != 'succes' && item.status != 'reject') {
+                now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+                item.cs = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
+            } else item.cs = '';
             item.status = stages[item.status];
         });
 
@@ -1519,6 +1540,19 @@ module.exports = {
 
     },
 
+    setFlag: async (req, res) => {
+        var flag = await Flag.findOne({user: res.locals.__user._id, order: req.params.id});
+        if(!flag) {
+            flag = new Flag({
+                user: res.locals.__user._id,
+                order: req.params.id
+            });
+        }
+        flag.value = req.body.state;
+        flag.save();
+        res.send('ok');
+    },
+
     searchReset: async (req, res) => {
         var usr = await Account.findOne({_id: res.locals.__user._id});
         usr.settings.search.query = '/search';
@@ -1530,9 +1564,8 @@ module.exports = {
     },
 
     search: async (req, res) => {
-        res.locals.data = await helper.getData();
+        res.locals.data = await helper.getData(res);
         res.locals.err = {};
-
         if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
         if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
         if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
@@ -1579,7 +1612,12 @@ module.exports = {
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
+        var now = new Date();
         orders.forEach( item => {
+            if(item.status != 'succes' && item.status != 'reject') {
+                now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+                item.cs = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
+            } else item.cs = '';
             item.status = stages[item.status];
         });
 

@@ -23,54 +23,54 @@ module.exports = function(opt, data){
                 query: data.query
             },
             {
-                block: 'searcher',
-                elem: 'wrap',
+                block: 'wrapper',
+                mods: {
+                    size: 'l'
+                },
                 content: [
-                    {
-                        block: 'searcher',
-                        elem: 'title',
-                        content: `Найдено ${data.pagers.first.records} заказов: `
-                    },
-                    {
-                        block: 'button',
-                        mods: {
-                            theme: 'islands',
-                            disabled: false,
-                            size: 'm'
+                        {
+                            block: 'searcher',
+                            elem: 'title',
+                            content: `Найдено ${data.pagers.first.records} заказов: `
                         },
-                        mix:[
-                            {
-                                block: 'action',
-                                elem: 'export',
-                                js: {
-                                    query: data.query
-                                }
+                        {
+                            block: 'button',
+                            mods: {
+                                theme: 'islands',
+                                disabled: false,
+                                size: 'm'
                             },
-                            {
-                                block: 'searcher',
-                                elem: 'export'
-                            }
-                        ],
-                        text: 'Экспорт в Excel'
-                    },
-                    {
-                        block: 'table',
-                        mods: {
-                            type: 'order',
-                            width: 'available'
+                            mix:[
+                                {
+                                    block: 'action',
+                                    elem: 'export',
+                                    js: {
+                                        query: data.query
+                                    }
+                                },
+                                {
+                                    block: 'searcher',
+                                    elem: 'export'
+                                }
+                            ],
+                            text: 'Экспорт в Excel'
                         },
-                        params: data.query,
-                        data: orders
-                    },
-                    {
-                        block: 'pager',
-                        attrs: {
-                            id: pagerId
+                        {
+                            block: 'orders-table',
+                            params: data.query,
+                            flags: data.dataset.flags,
+                            services: data.dataset.services,
+                            count: data.pagers.first.records,
+                            orders: orders
+                        },
+                        {
+                            block: 'pager',
+                            attrs: {
+                                id: pagerId
+                            }
                         }
-                    }
-                ]
-            }
-
+                    ]
+                }
         ]
     };
 };

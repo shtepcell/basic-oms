@@ -1,0 +1,8 @@
+.orders-table__head .orders-table__td
+{
+    border-bottom: 1px solid #333;
+
+    font-weight: bold;
+
+    text-align: center;
+}

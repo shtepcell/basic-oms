@@ -7,6 +7,7 @@ const City = require('../models/City');
 const Street = require('../models/Street');
 const Holiday = require('../models/Holiday');
 const Notify = require('../models/Notify');
+const Flag = require('../models/Flag');
 
 const common = require('../common-data');
 
@@ -694,11 +695,12 @@ module.exports = {
        } else return false;
    },
 
-   getData: async () => {
+   getData: async (res) => {
        var clients = await Client.find().populate('type');
        var providers = await Provider.find();
        var cities = await City.find();
        var streets = await Street.find();
+       var _flags = await Flag.find({user: res.locals.__user._id});
        var deps = await Department.find({
            $and: [
                {type: {$ne: 'admin'}},
@@ -709,6 +711,10 @@ module.exports = {
        var services = common.services;
        var stages = common.stages;
 
+       var flags = {};
+       for (var i = 0; i < _flags.length; i++) {
+           flags[_flags[i].order] = _flags[i].value;
+       }
 
        clients = clients.map( i => `${i.name}`);
 
@@ -740,6 +746,7 @@ module.exports = {
            services: services,
            stages: stages,
            deps: deps,
+           flags: flags,
            pre: pre
        }
    }

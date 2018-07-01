@@ -1,0 +1,33 @@
+.orders-table__tr
+{
+    display: table-row;
+
+    transition: 0.1s all;
+    min-height: 30px;
+}
+
+.orders-table__id
+{
+    display: inline-block;
+    margin-left: 5px;
+    line-height: inherit;
+
+}
+.orders-table__body .orders-table__tr:hover
+{
+    background-color: #f0f0f0;
+}
+
+
+.orders-table__tr a
+{
+    text-decoration: none;
+
+    /* position: relative; */
+    color: black;
+}
+
+.orders-table__tr_pause .orders-table__td:last-child
+{
+    background-image: linear-gradient(-90deg, lightblue 5%, white);
+}

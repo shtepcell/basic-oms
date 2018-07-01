@@ -1,0 +1,61 @@
+.orders-table__td
+{
+    display: table-cell;
+    text-align: center;
+
+    vertical-align: middle;
+
+    padding: 5px 0 5px 0;
+
+    border-bottom: 1px solid #ccc;
+}
+
+.orders-table__td_type_id
+{
+    width: 75px;
+    text-align: left;
+}
+
+.orders-table__td_type_cs
+{
+    width: 50px;
+}
+
+.orders-table__td_type_client
+{
+    width: 400px;
+    padding: 5px 5px 5px 5px;
+}
+
+.orders-table__td_type_client div
+{
+    width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.orders-table__td_type_service
+{
+    width: 90px;
+    font-weight: lighter;
+    font-style: italic;
+}
+
+.orders-table__td_type_adress
+{
+    width: 275px;
+}
+
+.orders-table__td_type_status
+{
+    width: 100px;
+    font-weight: lighter;
+    font-style: italic;
+}
+
+.orders-table__td_warning
+{
+    color: red;
+    font-weight: bold;
+}

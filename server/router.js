@@ -32,7 +32,7 @@ module.exports = function (app, io) {
     app.all('*', Auth.isLoggedIn);
 
     app.get('*', async (req, res, next) => {
-        res.locals.dataset = await helper.getData();
+        res.locals.dataset = await helper.getData(res);        
         next();
     });
 
@@ -115,6 +115,7 @@ module.exports = function (app, io) {
     app.post('/order/:id/:tab/admin', (req, res) => {
         return Order.adminEdit(req, res, io);
     });
+    app.post('/flag/:id/', Order.setFlag);
 
     app.get('/chat/:anchor', Chat.get);
     app.post('/chat/:anchor',(req, res) => {

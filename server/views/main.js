@@ -63,14 +63,22 @@ module.exports = function(opt, data){
                         dataset: data.dataset,
                         query: data.params
                     },
+                    // {
+                    //     block: 'table',
+                    //     mods: {
+                    //         type: 'order',
+                    //         width: 'available'
+                    //     },
+                    //     params: data.params,
+                    //     data: orders
+                    // },
                     {
-                        block: 'table',
-                        mods: {
-                            type: 'order',
-                            width: 'available'
-                        },
+                        block: 'orders-table',
                         params: data.params,
-                        data: orders
+                        services: data.dataset.services,
+                        flags: data.dataset.flags,
+                        count: data.pagers.first.records,
+                        orders: orders
                     },
                     {
                         block: 'pager',

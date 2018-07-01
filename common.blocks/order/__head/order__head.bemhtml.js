@@ -49,6 +49,16 @@ block('order').elem('head').content()(function () {
 
     return [
         {
+            elem: 'flag',
+            elemMods: {
+                color: order.flag
+            },
+            js: {
+                state: order.flag,
+                id: order.id
+            }
+        },
+        {
             elem: 'head-cell',
             elemMods: {
                 type: 'left'

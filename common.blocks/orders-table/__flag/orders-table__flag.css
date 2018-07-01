@@ -1,0 +1,45 @@
+.orders-table__flag
+{
+    width: 15px;
+    height: 15px;
+
+    display:inline-block;
+    position: relative;
+    top: 2px;
+    /* left: -12px; */
+    border-radius: 0 15px 15px 0;
+
+    transition: 0.3s all;
+
+}
+
+.orders-table__flag:hover
+{
+    box-shadow: 0 0 3px #333;
+}
+
+
+.orders-table__flag_color_1
+{
+    background-color: red;
+}
+
+.orders-table__flag_color_2
+{
+    background-color: orange;
+}
+
+.orders-table__flag_color_3
+{
+    background-color: green;
+}
+
+.orders-table__flag_color_4
+{
+    background-color: blue;
+}
+
+.orders-table__flag_color_0
+{
+    background-color: #fff;
+}
