@@ -43,7 +43,7 @@ module.exports = {
             case 'pause-start':
                 ret.name = 'Пауза';
                 break;
-            case 'pause-start':
+            case 'pause-stop':
                 ret.name = 'Снятие с паузы';
                 break;
             case 'delete':

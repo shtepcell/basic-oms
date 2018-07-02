@@ -20,7 +20,7 @@ block('order').elem('actions').elemMod('tab', 'sks').content()(function () {
             data: {
                 text: 'Проработка завершена'
             },
-            display: (isOwner && isPre) && !isPause
+            display: (isOwner && isPre)
         },
         {
             block: 'order',
@@ -30,7 +30,7 @@ block('order').elem('actions').elemMod('tab', 'sks').content()(function () {
                 to: 'end-sks-build',
                 id: order.id
             },
-            display: (isOwner && isBuild) && !isPause
+            display: (isOwner && isBuild)
         },
         {
             block: 'order',

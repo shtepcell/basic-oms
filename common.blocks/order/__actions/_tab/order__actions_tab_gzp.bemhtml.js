@@ -21,7 +21,7 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
             data: {
                 text: 'Проработка завершена'
             },
-            display: (isOwner && isPre) && !isPause
+            display: (isOwner && isPre)
         },
         {
             block: 'order',
@@ -31,7 +31,7 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
                 to: 'end-build',
                 id: order.id
             },
-            display: (isOwner && isBuild) && !isPause
+            display: (isOwner && isBuild)
         },
         {
             block: 'order',
@@ -41,7 +41,7 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
                 to: 'end-install-devices',
                 id: order.id
             },
-            display: (isOwner && isInstall) && !isPause
+            display: (isOwner && isInstall)
         },
         {
             block: 'order',

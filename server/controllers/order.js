@@ -1104,6 +1104,20 @@ module.exports = {
             res.status(400).send({errText: 'Изменение несуществующей заявки!'});
             return;
         }
+
+        if(order.pause.status && reqData.to != 'stop-pause') {
+            var now = new Date();
+            var pause = order.pause.date;
+            pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
+            order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
+            order.pause = {
+                status: false,
+                date: undefined
+            };
+            order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
+            // notify.create(res.locals.__user, order, 'pause-stop');
+        }
+
         switch (reqData.to) {
             case 'adminEdit':
 
