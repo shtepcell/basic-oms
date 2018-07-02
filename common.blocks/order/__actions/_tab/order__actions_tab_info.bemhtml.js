@@ -23,7 +23,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
         }
 
         var display = {
-            'build-gzp': isOwner && isMatch && ( order.gzp.need != undefined || ( order.gzp.need  && order.gzp.capability ) && !isSKS) && !isPause && incomeIsFill
+            'build-gzp': isOwner && isMatch && ( order.gzp.need != undefined || ( order.gzp.need  && order.gzp.capability ) && !isSKS) && incomeIsFill
         };
 
     return [
@@ -36,7 +36,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             data: {
                 text: 'Сохранить изменения'
             },
-            display: ((isOwner && (isPre || isMatch)) && !isPause) || adminEdit
+            display: ((isOwner && (isPre || isMatch))) || adminEdit
         },
         {
             block: 'order',
@@ -47,7 +47,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             data: {
                 text: 'Заказ выполнен'
             },
-            display: (isOwner && isNotify) && !isPause
+            display: (isOwner && isNotify)
         },
         {
             block: 'order',
@@ -57,7 +57,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-pre-gzp',
                 id: order.id
             },
-            display: (isOwner && isMatch && order.gzp.need == undefined && !isSKS) && !isPause
+            display: (isOwner && isMatch && order.gzp.need == undefined && !isSKS)
         },
         {
             block: 'order',
@@ -67,7 +67,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-sks-pre',
                 id: order.id
             },
-            display: (isOwner && isMatch && isSKS && order.sks.time == undefined) && !isPause
+            display: (isOwner && isMatch && isSKS && order.sks.time == undefined)
         },
         {
             block: 'order',
@@ -77,7 +77,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-sks-build',
                 id: order.id
             },
-            display: (isOwner && isMatch && isSKS && order.sks.time != undefined) && !isPause && incomeIsFill
+            display: (isOwner && isMatch && isSKS && order.sks.time != undefined) && incomeIsFill
         },
         {
             block: 'order',
@@ -87,7 +87,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-pre-stop',
                 id: order.id
             },
-            display: (isOwner && isMatch &&  order.stop.capability == undefined && !isSKS) && !isPause
+            display: (isOwner && isMatch &&  order.stop.capability == undefined && !isSKS)
         },
         {
             block: 'order',
@@ -107,7 +107,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-stop-build',
                 id: order.id
             },
-            display: (isOwner && isMatch && order.stop.capability && !isSKS) && !isPause && incomeIsFill
+            display: (isOwner && isMatch && order.stop.capability && !isSKS) && incomeIsFill
         },
         {
             block: 'order',
@@ -137,7 +137,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'reject',
                 id: order.id
             },
-            display: (!isReject && (isOwner || isAdmin)) && !isPause && !isOn
+            display: (!isReject && (isOwner || isAdmin)) && !isOn
         },
         {
             block: 'order',
@@ -168,7 +168,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'pause',
                 id: order.id
             },
-            display: (!isPause && (isOwner || isAdmin) && !isOn)
+            display: (!isPause && (isOwner || isAdmin || (isNetStatus && isNetUser)) && !isOn)
         },
         {
             block: 'order',
@@ -178,7 +178,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'stop-pause',
                 id: order.id
             },
-            display: (isPause && (isOwner || isAdmin) && !isOn)
+            display: (isPause && (isOwner || isAdmin || (isNetStatus && isNetUser)) && !isOn)
         }
     ];
 })

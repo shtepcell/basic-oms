@@ -604,21 +604,22 @@ module.exports = {
 
     getOrderInfo: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
-        res.locals.users = await Account
-                .find({status: true})
-                .populate({
-                    path: 'department',
-                    select: 'name',
-                    options: {
-                        lean: true
-                    }
-                })
-                .sort('name')
-                .lean();
-        res.locals.department = await Department.find();
-        order.cs = helper.calculateCS(order);
 
         if(order) {
+            res.locals.users = await Account
+                    .find({status: true})
+                    .populate({
+                        path: 'department',
+                        select: 'name',
+                        options: {
+                            lean: true
+                        }
+                    })
+                    .sort('name')
+                    .lean();
+            res.locals.department = await Department.find();
+            order.cs = helper.calculateCS(order);
+
             order.stage = stages[order.status];
             order.resp = await helper.getRespDepName(order);
             res.locals.order = order;
@@ -635,21 +636,22 @@ module.exports = {
 
     getOrderSKS: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
-        res.locals.users = await Account
-                .find({status: true})
-                .populate({
-                    path: 'department',
-                    select: 'name',
-                    options: {
-                        lean: true
-                    }
-                })
-                .sort('name')
-                .lean();
-        res.locals.department = await Department.find();
-        order.cs = helper.calculateCS(order);
 
         if(order) {
+            res.locals.users = await Account
+                    .find({status: true})
+                    .populate({
+                        path: 'department',
+                        select: 'name',
+                        options: {
+                            lean: true
+                        }
+                    })
+                    .sort('name')
+                    .lean();
+            res.locals.department = await Department.find();
+            order.cs = helper.calculateCS(order);
+
             order.stage = stages[order.status];
             order.resp = await helper.getRespDepName(order);
             res.locals.order = order;
@@ -667,21 +669,22 @@ module.exports = {
 
     getOrderGZP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
-        res.locals.users = await Account
-                .find({status: true})
-                .populate({
-                    path: 'department',
-                    select: 'name',
-                    options: {
-                        lean: true
-                    }
-                })
-                .sort('name')
-                .lean();
-        res.locals.department = await Department.find();
-        order.cs = helper.calculateCS(order);
 
         if(order) {
+            res.locals.users = await Account
+                    .find({status: true})
+                    .populate({
+                        path: 'department',
+                        select: 'name',
+                        options: {
+                            lean: true
+                        }
+                    })
+                    .sort('name')
+                    .lean();
+            res.locals.department = await Department.find();
+            order.cs = helper.calculateCS(order);
+
             order.stage = stages[order.status];
             order.resp = await helper.getRespDepName(order);
             res.locals.order = order;
@@ -699,21 +702,22 @@ module.exports = {
 
     getOrderSTOP: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
-        res.locals.users = await Account
-                .find({status: true})
-                .populate({
-                    path: 'department',
-                    select: 'name',
-                    options: {
-                        lean: true
-                    }
-                })
-                .sort('name')
-                .lean();
-        res.locals.department = await Department.find();
-        order.cs = helper.calculateCS(order);
 
         if(order) {
+            res.locals.users = await Account
+                    .find({status: true})
+                    .populate({
+                        path: 'department',
+                        select: 'name',
+                        options: {
+                            lean: true
+                        }
+                    })
+                    .sort('name')
+                    .lean();
+            res.locals.department = await Department.find();
+            order.cs = helper.calculateCS(order);
+
             order.stage = stages[order.status];
             order.resp = await helper.getRespDepName(order);
             res.locals.order = order;
@@ -731,21 +735,22 @@ module.exports = {
 
     getOrderHistory: async (req, res) => {
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
-        res.locals.users = await Account
-                .find({status: true})
-                .populate({
-                    path: 'department',
-                    select: 'name',
-                    options: {
-                        lean: true
-                    }
-                })
-                .sort('name')
-                .lean();
-        res.locals.department = await Department.find();
-        order.cs = helper.calculateCS(order);
 
         if(order) {
+            res.locals.users = await Account
+                    .find({status: true})
+                    .populate({
+                        path: 'department',
+                        select: 'name',
+                        options: {
+                            lean: true
+                        }
+                    })
+                    .sort('name')
+                    .lean();
+            res.locals.department = await Department.find();
+            order.cs = helper.calculateCS(order);
+
             order.stage = stages[order.status];
             order.resp = await helper.getRespDepName(order);
             res.locals.order = order;
@@ -1123,7 +1128,6 @@ module.exports = {
                 };
                 order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
                 notify.create(res.locals.__user, order, 'pause-stop');
-                // sendMail(order, 'end-pause');
                 break;
             // case 'set-special':
             //     order.special = reqData.dep;

@@ -206,7 +206,7 @@ module.exports = {
         var status = [];
         if(query.id) {
            if(!isNaN(query.id))
-            return {id: query.id};
+            return query;
         }
         if(query.cms) {
            return {cms: query.cms};
