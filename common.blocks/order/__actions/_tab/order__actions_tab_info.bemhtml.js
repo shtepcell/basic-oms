@@ -25,7 +25,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
         var display = {
             'build-gzp': isOwner && isMatch && ( order.gzp.need != undefined || ( order.gzp.need  && order.gzp.capability ) && !isSKS) && !isPause && incomeIsFill
         };
-        
+
     return [
         {
             block: 'order',
@@ -108,6 +108,16 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 id: order.id
             },
             display: (isOwner && isMatch && order.stop.capability && !isSKS) && !isPause && incomeIsFill
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Вернуть обратно в организацию',
+                to: 'comeback',
+                id: order.id
+            },
+            display: (isNetUser && isNetStatus)
         },
         {
             block: 'order',

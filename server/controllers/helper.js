@@ -73,6 +73,9 @@ module.exports = {
             case 'client-notify':
                 ret.name = 'Уведомление клиента (заказ включен)';
                 break;
+            case 'comeback':
+                ret.name = 'Возврат в организацию';
+                break;
             case 'client-match':
                 ret.name = 'Согласование с клиентом';
                 break;

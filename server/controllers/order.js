@@ -1192,7 +1192,6 @@ module.exports = {
                 order.date['client-match'] = new Date();
 
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
-
                 notify.create(res.locals.__user, order, `start-${order.status}`);
                 break;
             case 'start-sks-build':
@@ -1222,6 +1221,22 @@ module.exports = {
                 order.date['stop-build'] = new Date();
                 order.history.push(helper.historyGenerator('stop-build', res.locals.__user));
                 notify.create(res.locals.__user, order, `end-stop-build`);
+                break;
+            case 'comeback':
+                if(order.date['gzp-build']) {
+                    if(order.gzp.need) {
+                        order.status = 'gzp-build';
+                        notify.create(res.locals.__user, order, `start-gzp-build`);
+                    } else {
+                        order.status = 'install-devices';
+                        notify.create(res.locals.__user, order, `start-install-devices`);
+                    }
+                }
+                if(order.date['stop-build']) {
+                    order.status = 'stop-build';
+                    notify.create(res.locals.__user, order, `start-stop-build`);
+                }
+                order.history.push(helper.historyGenerator('comeback', res.locals.__user));
                 break;
         }
 
