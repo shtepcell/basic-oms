@@ -1,5 +1,7 @@
 block('orders-table').elem('head')(
     content()(function () {
+        var params = this.ctx.params;
+
         return [{
             block: 'orders-table',
             elem: 'th',
@@ -7,6 +9,16 @@ block('orders-table').elem('head')(
                 {
                     block: 'orders-table',
                     elem: 'td',
+                    mix: {
+                        block: 'action',
+                        elem: 'add-params',
+                        js: {
+                            params: {
+                                sort: 'id',
+                                value: ('id' == params.sort)?-1*params.value:1
+                            }
+                        }
+                    },
                     elemMods: {
                         type: 'id'
                     },
@@ -15,6 +27,16 @@ block('orders-table').elem('head')(
                 {
                     block: 'orders-table',
                     elem: 'td',
+                    mix: {
+                        block: 'action',
+                        elem: 'add-params',
+                        js: {
+                            params: {
+                                sort: 'client',
+                                value: ('client' == params.sort)?-1*params.value:1
+                            }
+                        }
+                    },
                     elemMods: {
                         type: 'client'
                     },
@@ -23,6 +45,16 @@ block('orders-table').elem('head')(
                 {
                     block: 'orders-table',
                     elem: 'td',
+                    mix: {
+                        block: 'action',
+                        elem: 'add-params',
+                        js: {
+                            params: {
+                                sort: 'status',
+                                value: ('status' == params.sort)?-1*params.value:1
+                            }
+                        }
+                    },
                     elemMods: {
                         type: 'status'
                     },
@@ -31,6 +63,16 @@ block('orders-table').elem('head')(
                 {
                     block: 'orders-table',
                     elem: 'td',
+                    mix: {
+                        block: 'action',
+                        elem: 'add-params',
+                        js: {
+                            params: {
+                                sort: 'service',
+                                value: ('service' == params.sort)?-1*params.value:1
+                            }
+                        }
+                    },
                     elemMods: {
                         type: 'service'
                     },
@@ -39,6 +81,16 @@ block('orders-table').elem('head')(
                 {
                     block: 'orders-table',
                     elem: 'td',
+                    mix: {
+                        block: 'action',
+                        elem: 'add-params',
+                        js: {
+                            params: {
+                                sort: 'adress',
+                                value: ('adress' == params.sort)?-1*params.value:1
+                            }
+                        }
+                    },
                     elemMods: {
                         type: 'adress'
                     },
@@ -47,6 +99,16 @@ block('orders-table').elem('head')(
                 {
                     block: 'orders-table',
                     elem: 'td',
+                    mix: {
+                        block: 'action',
+                        elem: 'add-params',
+                        js: {
+                            params: {
+                                sort: 'deadline',
+                                value: ('deadline' == params.sort)?-1*params.value:1
+                            }
+                        }
+                    },
                     elemMods: {
                         type: 'cs'
                     },
