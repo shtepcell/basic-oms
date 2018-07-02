@@ -24,42 +24,45 @@ module.exports.sendMail = (order, recipients, type) => {
     }
 
     var to = [];
+    
+    if(recipients.length > 0) {
 
-    for (var i = 0; i < recipients.length; i++) {
-        if(recipients[i].settings.sendEmail && recipients[i].email) {
-            to.push(recipients[i].email);
-        }
-    }
-
-    var rps = '';
-
-    for (var i = 0; i < to.length; i++) {
-        var last = (i+1 == to.length);
-
-        rps += to[i];
-
-        if(!last) rps += ',';
-    }
-
-    mailOptions.to = rps;
-
-    var header = `<h2>СУЗ | Новое уведомление</h2>`;
-    if(type == 'new-message')
-        header = `<h2>СУЗ | Вас упомянули в чате заказа ${order.id}</h2>`;
-    else
-        header = `<h2>СУЗ | Статус заказа #${order.id}</h2>`;
-
-    mailOptions.subject = subject;
-
-    mailOptions.html = header + `<p style="font-size: 12pt;"><a href="http://ops.miranda-media.ru/order/${order.id}">` +
-		`Заказ #${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
-		footer
-
-    if (process.env.NODE_ENV != 'development')
-        transporter.sendMail(mailOptions, (error, info) => {
-            if(error) {
-                console.log(error);
+        for (var i = 0; i < recipients.length; i++) {
+            if(recipients[i].settings.sendEmail && recipients[i].email) {
+                to.push(recipients[i].email);
             }
-        })
-    console.log('Send mail to', rps);
+        }
+
+        var rps = '';
+
+        for (var i = 0; i < to.length; i++) {
+            var last = (i+1 == to.length);
+
+            rps += to[i];
+
+            if(!last) rps += ',';
+        }
+
+        mailOptions.to = rps;
+
+        var header = `<h2>СУЗ | Новое уведомление</h2>`;
+        if(type == 'new-message')
+            header = `<h2>СУЗ | Вас упомянули в чате заказа ${order.id}</h2>`;
+        else
+            header = `<h2>СУЗ | Статус заказа #${order.id}</h2>`;
+
+        mailOptions.subject = subject;
+
+        mailOptions.html = header + `<p style="font-size: 12pt;"><a href="http://ops.miranda-media.ru/order/${order.id}">` +
+    		`Заказ #${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
+    		footer
+
+        if (process.env.NODE_ENV != 'development')
+            transporter.sendMail(mailOptions, (error, info) => {
+                if(error) {
+                    console.log(error);
+                }
+            })
+        console.log('Send mail to', rps);
+    }
 }
