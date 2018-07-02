@@ -60,15 +60,15 @@ block('field').elem('gzp-need').elemMod('access', true).content()(function () {
                                     theme: 'islands',
                                     size: 'l'
                                 },
-                                val: order.gzp.need,
+                                val: (order.gzp.need == undefined)?1:order.gzp.need,
                                 options: [
-                                    {
-                                        text: 'Нет',
-                                        val: 0
-                                    },
                                     {
                                         text: 'Да',
                                         val: 1
+                                    },
+                                    {
+                                        text: 'Нет',
+                                        val: 0
                                     }
                                 ]
                             }

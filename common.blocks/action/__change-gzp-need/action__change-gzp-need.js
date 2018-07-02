@@ -15,6 +15,7 @@ provide(bemDom.declElem('action', 'change-gzp-need',
                             BEMHTML.apply({
                                 block: 'order',
                                 elem: 'gzp-info',
+                                display: true,
                                 elemMods: {
                                     need: (!!value)?'yes':'no',
                                     access: true

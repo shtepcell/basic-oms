@@ -63,7 +63,7 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
         {
             elem: 'gzp-info',
             elemMods: {
-                need: (order.gzp.need)?'yes':'no',
+                need: ((order.gzp.need == undefined)?1:order.gzp.need)?'yes':'no',
                 access: (adminEdit || mustFill),
             },
             order: order,

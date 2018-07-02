@@ -44,10 +44,13 @@ block('order').elem('gzp-info').elemMod('need', 'yes').elemMod('access', true).c
     if(!order) {
         order = {
             gzp: {
-                capability: false
+                capability: true
             }
         }
     }
+    var value = true;
+
+    if(order.gzp.capability != undefined) value = order.gzp.capability;
 
     return [
         {
@@ -73,14 +76,15 @@ block('order').elem('gzp-info').elemMod('need', 'yes').elemMod('access', true).c
                             mode: 'radio',
                             size: 'l'
                         },
+                        val: (value)?'1':'0',
                         options: [
-                            {
-                                text: 'Нет',
-                                val: 0
-                            },
                             {
                                 text: 'Да',
                                 val: 1
+                            },
+                            {
+                                text: 'Нет',
+                                val: 0
                             }
                         ]
                     }
@@ -94,7 +98,7 @@ block('order').elem('gzp-info').elemMod('need', 'yes').elemMod('access', true).c
             order: order,
             elemMods: {
                 access: true,
-                type: (order.gzp.capability)?'yes':'no'
+                type: (value)?'yes':'no'
             }
         }
     ]
