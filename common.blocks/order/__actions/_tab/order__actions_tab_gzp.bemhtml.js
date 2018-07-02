@@ -9,7 +9,8 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
         isBuild = (order.status == 'gzp-build'),
         isInstall = (order.status == 'install-devices'),
         isPause = (order.pause.status),
-        isAdmin = (user.department.type == 'admin');
+        isAdmin = (user.department.type == 'admin'),
+        special = (user.department._id == ''+order.special);
 
     return [
         {
@@ -21,7 +22,7 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
             data: {
                 text: 'Проработка завершена'
             },
-            display: (isOwner && isPre)
+            display: ((isOwner || special) && isPre)
         },
         {
             block: 'order',
@@ -31,7 +32,7 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
                 to: 'end-build',
                 id: order.id
             },
-            display: (isOwner && isBuild)
+            display: ((isOwner || special) && isBuild)
         },
         {
             block: 'order',
@@ -41,7 +42,7 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
                 to: 'end-install-devices',
                 id: order.id
             },
-            display: (isOwner && isInstall)
+            display: ((isOwner || special) && isInstall)
         },
         {
             block: 'order',

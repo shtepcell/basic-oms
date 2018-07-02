@@ -10,7 +10,10 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
     var isOwner = ( user.department.type == 'gus' &&
         user.department.cities.indexOf(order.info.city._id) >= 0);
 
-    var mustFill = ( (order.status == 'gzp-pre' || order.status == 'all-pre') && isOwner);
+    var special = (user.department._id == ''+order.special);
+
+    var mustFill = ( (order.status == 'gzp-pre' || order.status == 'all-pre') && (isOwner || special));
+    console.log(special);
     if(!order.date['cs-gzp-pre'])
         return 'Информации по ГЗП нет!'
     return [

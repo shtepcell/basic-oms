@@ -284,7 +284,6 @@ module.exports = {
         var subQ = await helper.makeQuery(req, res);
 
         var user = res.locals.__user;
-
         switch (user.department.type) {
             case 'b2o':
                 query = {
@@ -297,10 +296,11 @@ module.exports = {
             case 'gus':
                 query = {
                     '$or': [
-                        {status: 'gzp-pre'},
-                        {status: 'all-pre'}
-                    ],
-                    'info.city': user.department.cities
+                        {status: 'gzp-pre', 'info.city': user.department.cities},
+                        {status: 'all-pre', 'info.city': user.department.cities},
+                        {status: 'gzp-pre', 'special': user.department._id},
+                        {status: 'all-pre', 'special': user.department._id}
+                    ]
                 }
                 break;
             case 'sks':
@@ -1081,7 +1081,7 @@ module.exports = {
                 order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
                 // notify.create(res.locals.__user, order, 'pause-stop');
             }
-            
+
             order.history.push(helper.historyGenerator('stop-pre', res.locals.__user));
             var done = await order.save();
             if(done) {
