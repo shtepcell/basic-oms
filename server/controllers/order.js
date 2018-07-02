@@ -937,6 +937,19 @@ module.exports = {
                 order.gzp.complete = true;
             }
 
+            if(order.pause.status) {
+                var now = new Date();
+                var pause = order.pause.date;
+                pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
+                order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
+                order.pause = {
+                    status: false,
+                    date: undefined
+                };
+                order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
+                // notify.create(res.locals.__user, order, 'pause-stop');
+            }
+
             order.history.push(helper.historyGenerator('gzp-pre', res.locals.__user));
             var done = await order.save();
             if(done) {
@@ -973,6 +986,19 @@ module.exports = {
             order.deadline = await helper.calculateDeadline(10);
             order.date['sks-pre'] = new Date();
             order.date['cs-client-match'] = await helper.calculateDeadline(10);
+
+            if(order.pause.status) {
+                var now = new Date();
+                var pause = order.pause.date;
+                pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
+                order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
+                order.pause = {
+                    status: false,
+                    date: undefined
+                };
+                order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
+                // notify.create(res.locals.__user, order, 'pause-stop');
+            }
 
             order.history.push(helper.historyGenerator('sks-pre', res.locals.__user));
             var done = await order.save();
@@ -1043,6 +1069,19 @@ module.exports = {
                 order.stop.complete = true;
             }
 
+            if(order.pause.status) {
+                var now = new Date();
+                var pause = order.pause.date;
+                pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
+                order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
+                order.pause = {
+                    status: false,
+                    date: undefined
+                };
+                order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
+                // notify.create(res.locals.__user, order, 'pause-stop');
+            }
+            
             order.history.push(helper.historyGenerator('stop-pre', res.locals.__user));
             var done = await order.save();
             if(done) {
