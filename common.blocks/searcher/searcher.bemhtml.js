@@ -400,29 +400,33 @@ block('searcher')(
                                     }
                                 ]
                             },
-                            // {
-                            //     elem: 'row',
-                            //     content: [
-                            //         {
-                            //             elem: 'label',
-                            //             content: 'доп. адресс'
-                            //         },
-                            //         {
-                            //             elem: 'cell',
-                            //             content: {
-                            //                 block: 'input',
-                            //                 name: 'adress',
-                            //                 mods: {
-                            //                     width: 'available',
-                            //                     type: 'text',
-                            //                     theme: 'islands',
-                            //                     size: 'l'
-                            //                 },
-                            //                 placeholder: 'ул. Строителей, д. 7'
-                            //             }
-                            //         }
-                            //     ]
-                            // }
+                            {
+                                elem: 'row',
+                                content: [
+                                    {
+                                        elem: 'label',
+                                        content: 'Улица'
+                                    },
+                                    {
+                                        elem: 'cell',
+                                        content: {
+                                            block : 'suggest',
+                                            name: 'street',
+                                            val: query.street,
+                                            mods : {
+                                                width: 'available',
+                                                theme : 'islands',
+                                                size : 'l',
+                                                'has-dataprovider' : 'adress'
+                                            },
+                                            placeholder: 'ул. Строителей',
+                                            dataprovider: {
+                                                data: data.streets
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
                         ]
                     },
                     {

@@ -63,16 +63,19 @@ block('short-filter').content()(function () {
                 options: dataset.services
             },
             {
-                block: 'input',
+                block : 'suggest',
                 mix: 'short-filter__adress',
-                name: 'adress',
-                val: query.adress || '',
-                mods: {
-                    theme: 'islands',
-                    size: 'm',
-                    type: 'search'
+                mods : {
+                    theme : 'islands',
+                    size : 'm',
+                    'has-dataprovider' : 'adress'
                 },
-                placeholder: 'Адрес'
+                val: query.adress || '',
+                placeholder: 'Адрес',
+                name: 'street',
+                dataprovider: {
+                    data: dataset['streets']
+                }
             },
             {
                 block: 'button',

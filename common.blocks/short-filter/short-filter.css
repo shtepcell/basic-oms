@@ -25,6 +25,8 @@
 .short-filter__adress
 {
     width: 250px;
+    display: inline-block;
+
 }
 
 .short-filter__id

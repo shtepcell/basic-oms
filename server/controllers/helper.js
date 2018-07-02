@@ -379,6 +379,32 @@ module.exports = {
             }
         }
 
+        if(query.street) {
+            var _street = module.exports.parserStreet(query.street),
+                streetQuery = {'asdasd': 'sadasdas'};
+
+            if(_street == 'err') {
+                let rgx = new RegExp('' + query.street + '', 'i');
+                streetQuery = {'info.adds': {$regex: rgx}};
+            } else {
+                street = await Street.findOne({name: _street.name, type: _street.type});
+
+                if(street) {
+                    let rgx = new RegExp('' + _street.name + '', 'i');
+                    streetQuery = {$or: [
+                        {'info.street': street},
+                        {'info.adds': {$regex: rgx}}
+                    ]}
+                } else {
+                    let rgx = new RegExp('' + query.street + '', 'i');
+                    streetQuery = {'info.adds': {$regex: rgx}};
+                }
+            }
+
+            if(qr['$and']) {
+                qr['$and'].push(streetQuery)
+            } else qr['$and'] = [streetQuery];
+        }
 
         if(query.adress) {
             var val = query.adress;

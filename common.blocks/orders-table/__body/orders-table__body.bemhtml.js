@@ -14,7 +14,7 @@ block('orders-table').elem('body')(
                 if (orders[i].pause) {
                     pause = orders[i].pause.status;
                 }
-                if(orders[i].isOld)
+                if(orders[i].isOld && !orders[i].info.street)
                     adress = `${orders[i].info.adds}`;
                 else {
                     adress = `${orders[i].info.city.type} ${orders[i].info.city.name}, `;
