@@ -396,11 +396,19 @@ module.exports = {
         }
 
         if(query.street) {
-            var _street = module.exports.parserStreet(query.street),
+            var _street = module.exports.parserStreet(query.street.trim()),
                 streetQuery = {'asdasd': 'sadasdas'};
 
             if(_street == 'err') {
-                let rgx = new RegExp('' + query.street + '', 'i');
+                var val = query.street.trim();
+                val = val.replace(/\[/g, '');
+                val = val.replace(/\]/g, '');
+                val = val.replace(/\\/g, '');
+                val = val.replace(/\(/g, '');
+                val = val.replace(/\)/g, '');
+                val = val.replace(/\*/g, '');
+
+                let rgx = new RegExp('' + val + '', 'i');
                 streetQuery = {'info.adds': {$regex: rgx}};
             } else {
                 street = await Street.findOne({name: _street.name, type: _street.type});
