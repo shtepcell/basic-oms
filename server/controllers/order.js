@@ -27,7 +27,8 @@ var populateAll = [
     populateInitiator,
     populateCity,
     populateStreet,
-    populateProvider
+    populateProvider,
+    populateSpecial
 ];
 
 var populateClient = {
@@ -53,6 +54,13 @@ var populateProvider = {
 var populateInitiator = {
     path: 'info.initiator',
     select: 'name department',
+    options: {
+        lean: true
+    }
+};
+
+var populateSpecial = {
+    path: 'special',
     options: {
         lean: true
     }
@@ -622,6 +630,7 @@ module.exports = {
 
             order.stage = stages[order.status];
             order.resp = await helper.getRespDepName(order);
+            order.zone = await helper.getZone(order);
             res.locals.order = order;
             render(req, res, {
                 viewName: 'orders/order',
@@ -687,6 +696,7 @@ module.exports = {
 
             order.stage = stages[order.status];
             order.resp = await helper.getRespDepName(order);
+            order.zone = await helper.getZone(order);
             res.locals.order = order;
 
             render(req, res, {
@@ -1623,6 +1633,21 @@ module.exports = {
         flag.value = req.body.state;
         flag.save();
         res.send('ok');
+    },
+
+    changeRespDep: async (req, res) => {
+        var data = req.body;
+
+        var order = await Order.findOne({id: data.id}),
+            department = await Department.findOne({name: data.department});
+
+        if (order) {
+            order.special = department._id;
+            order.save();
+            res.send('ok');
+        }
+        res.status(400);
+        return;
     },
 
     searchReset: async (req, res) => {

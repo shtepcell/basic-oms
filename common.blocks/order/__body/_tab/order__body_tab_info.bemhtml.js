@@ -46,6 +46,16 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
         { elem: 'separator' },
         {
             block: 'field',
+            elem: 'zone',
+            order: order,
+            elemMods: {
+                access: false
+            },
+            dataset: dataset,
+            display: true
+        },
+        {
+            block: 'field',
             elem: 'city',
             order: order,
             elemMods: {
@@ -153,6 +163,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elemMods: {
                 tab: 'info'
             },
+            dataset: dataset,
             order: order,
             adminEdit: adminEdit,
             user: this.ctx.user

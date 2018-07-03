@@ -200,6 +200,19 @@ module.exports = {
        return array;
     },
 
+    getZone: async (order) => {
+        if(order.special) {
+            var dep = await Department.findOne({_id: order.special});
+            return dep.name;
+        }
+        else {
+            var dep = await Department.findOne({cities: order.info.city._id});
+
+            if(dep) return dep.name;
+            else return 'Неизвестно'
+        }
+    },
+
     makeQuery: async  (req, res) => {
         var qr = {status: {$ne: 'secret'}};
         var query = req.query;

@@ -9,6 +9,7 @@ block('order').elem('gzp-info').elemMod('need', 'yes').content()(function () {
             }
         }
     }
+    if(ctx.display)
     return [
         {
             block: 'order',

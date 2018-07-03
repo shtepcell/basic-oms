@@ -32,7 +32,7 @@ module.exports = function (app, io) {
     app.all('*', Auth.isLoggedIn);
 
     app.get('*', async (req, res, next) => {
-        res.locals.dataset = await helper.getData(res);        
+        res.locals.dataset = await helper.getData(res);
         next();
     });
 
@@ -99,6 +99,8 @@ module.exports = function (app, io) {
     app.post('/order/:id/info', (req, res) => {
         return Order.endClientNotify(req, res, io);
     });
+
+    app.post('/changeRespDep', Order.changeRespDep);
 
     app.post('/order/:id/gzp', (req, res) => {
         return Order.endPreGZP(req, res, io);

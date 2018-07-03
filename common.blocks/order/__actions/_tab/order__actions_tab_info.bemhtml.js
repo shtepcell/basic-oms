@@ -179,6 +179,16 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 id: order.id
             },
             display: (isPause && (isOwner || isAdmin || (isNetStatus && isNetUser)) && !isOn)
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            elemMods: {
+                type: 'redirect'
+            },
+            deps: ctx.dataset.deps,
+            id: order.id,
+            display: isAdmin
         }
     ];
 })

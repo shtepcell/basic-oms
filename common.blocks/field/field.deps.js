@@ -6,6 +6,7 @@
                 'client',
                 'contact',
                 'city',
+                'zone',
                 'street',
                 'adds',
                 'service',

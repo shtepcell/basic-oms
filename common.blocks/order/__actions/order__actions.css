@@ -1,9 +1,18 @@
 .order__actions
 {
-    padding-top: 1em;
+    padding-bottom: 15px;
 }
 
 .order__actions > .button
 {
-    margin: 0 0 1em 2em;
+    margin-top: 15px;
+
+    margin-left: 25px;
+}
+
+.order__actions > .select
+{
+    margin-top: 15px;
+
+    margin-left: 25px;
 }
