@@ -22,7 +22,7 @@ module.exports = {
         return obj;
     },
 
-    historyGenerator: function (type, user) {
+    historyGenerator: function (type, user, opt) {
         var usr = `[${user.department.name}] ${user.name}`,
             now = new Date(),
             ret = { author: usr, date: now };
@@ -78,6 +78,9 @@ module.exports = {
                 break;
             case 'client-match':
                 ret.name = 'Согласование с клиентом';
+                break;
+            case 'redirect':
+                ret.name = `Зона ответсвенности изменена -> ${opt.department}`;
                 break;
         }
         return ret;

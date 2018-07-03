@@ -1643,6 +1643,9 @@ module.exports = {
 
         if (order) {
             order.special = department._id;
+            order.history.push(helper.historyGenerator('redirect', res.locals.__user, {
+                department: department.name
+            }));
             order.save();
             res.send('ok');
         }

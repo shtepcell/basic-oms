@@ -5,6 +5,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
         adminEdit = ctx.adminEdit;
 
     var isOwner = (order.info.initiator.department._id == user.department._id + ''),
+        isGUS = (user.department.name == order.zone),
         isPre = (order.status == 'all-pre' || order.status == 'gzp-pre' || order.status == 'stop-pre'),
         isMatch = (order.status == 'client-match'),
         isNotify = (order.status == 'client-notify'),
@@ -188,7 +189,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             },
             deps: ctx.dataset.deps,
             id: order.id,
-            display: isAdmin
+            display: isAdmin || isOwner || isGUS
         }
     ];
 })
