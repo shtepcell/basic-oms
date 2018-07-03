@@ -701,7 +701,7 @@ module.exports = {
 
     parserStreet: (str) => {
        var res = { type: '', name: ''};
-       var types = ['ул.', 'пер.', 'кв.', 'пл.', 'пр-т.', 'ш.'];
+       var types = ['ул.', 'пер.', 'кв.', 'бул.', 'наб.', 'пл.', 'пр-т.', 'ш.'];
 
        for (var i = 0; i < str.length; i++) {
            if(str[i] === '.') {
