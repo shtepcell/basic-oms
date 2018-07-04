@@ -23,13 +23,13 @@
 
 .orders-table__td_type_client
 {
-    width: 400px;
+    width: 500px;
     padding: 5px 5px 5px 5px;
 }
 
 .orders-table__td_type_client div
 {
-    width: 400px;
+    width: 500px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -44,12 +44,12 @@
 
 .orders-table__td_type_adress
 {
-    width: 275px;
+    min-width: 350px;
 }
 
 .orders-table__td_type_status
 {
-    width: 100px;
+    width: 125px;
     font-weight: lighter;
     font-style: italic;
 }
@@ -58,4 +58,21 @@
 {
     color: red;
     font-weight: bold;
+}
+
+@media screen and (max-width: 1200px) and (orientation: landscape) {
+
+    .orders-table__td_type_client div
+    {
+        width: 250px;
+    }
+
+    .orders-table__td_type_client
+    {
+        width: 250px;
+    }
+    .orders-table__td_type_adress
+    {
+        width: 250px;
+    }
 }

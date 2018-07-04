@@ -1,16 +1,15 @@
 .orders-table__flag
 {
     width: 15px;
-    height: 15px;
+    height: 20px;
 
     display:inline-block;
     position: relative;
-    top: 2px;
+    top: 5px;
     background-color: white;
     border-radius: 0 15px 15px 0;
 
     transition: 0.3s all;
-
 }
 
 .orders-table__flag:hover

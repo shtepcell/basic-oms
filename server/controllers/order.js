@@ -599,6 +599,10 @@ module.exports = {
     },
 
     getOrderInfo: async (req, res) => {
+        if(isNaN(req.params.id)) {
+             render(req, res, { view: '404' });
+             return;
+        }
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
         if(order) {
@@ -632,6 +636,10 @@ module.exports = {
     },
 
     getOrderSKS: async (req, res) => {
+        if(isNaN(req.params.id)) {
+             render(req, res, { view: '404' });
+             return;
+        }
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
         if(order) {
@@ -665,6 +673,10 @@ module.exports = {
     },
 
     getOrderGZP: async (req, res) => {
+        if(isNaN(req.params.id)) {
+             render(req, res, { view: '404' });
+             return;
+        }
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
         if(order) {
@@ -699,6 +711,10 @@ module.exports = {
     },
 
     getOrderSTOP: async (req, res) => {
+        if(isNaN(req.params.id)) {
+             render(req, res, { view: '404' });
+             return;
+        }
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
         if(order) {
@@ -732,6 +748,10 @@ module.exports = {
     },
 
     getOrderHistory: async (req, res) => {
+        if(isNaN(req.params.id)) {
+             render(req, res, { view: '404' });
+             return;
+        }
         var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
 
         if(order) {

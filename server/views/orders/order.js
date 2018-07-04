@@ -11,21 +11,28 @@ module.exports = function(opt, data) {
         },
         page: [
             {
-                block: 'order',
-                action: `/order/${data.order.id}/${opt.tab}`,
-                order: data.order,
-                tab: opt.tab,
-                adminEdit: opt.admin,
-                user: data.__user,
-                dataset: data.dataset,
-                department: data.department
-            },
-            {
-                block: 'chat',
-                me: data.__user.name,
-                users: data.users,
-                order: data.order
+                block: 'wrap',
+                elem: 'order',
+                content: [
+                    {
+                        block: 'order',
+                        action: `/order/${data.order.id}/${opt.tab}`,
+                        order: data.order,
+                        tab: opt.tab,
+                        adminEdit: opt.admin,
+                        user: data.__user,
+                        dataset: data.dataset,
+                        department: data.department
+                    },
+                    {
+                        block: 'chat',
+                        me: data.__user.name,
+                        users: data.users,
+                        order: data.order
+                    }
+                ]
             }
+
         ]
     };
 };

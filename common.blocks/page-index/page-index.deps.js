@@ -171,7 +171,7 @@
         },
         {
             block: 'wrap',
-            elem: 'main'
+            elem: ['main', 'order']
         },
         {
             block: 'searcher'

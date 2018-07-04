@@ -20,12 +20,17 @@ module.exports = function(opt, data) {
                 content: 'Инициация заказа'
             },
             {
-                block: 'order',
-                action: `/init`,
-                tab: 'init',
-                user: data.__user,
-                dataset: data.dataset
+                block: 'wrap',
+                elem: 'order',
+                content: {
+                    block: 'order',
+                    action: `/init`,
+                    tab: 'init',
+                    user: data.__user,
+                    dataset: data.dataset
+                }
             }
+
         ]
     }
 };
