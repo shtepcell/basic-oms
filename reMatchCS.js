@@ -27,54 +27,70 @@ var his = {
             case 'stop-pre':
                 var date = findStageDate(orders[i], 'client-match') || findStageDate(orders[i], 'init');
 
-                var dl = calculateDeadline(3, date);
-                orders[i].deadline = dl
-                orders[i].date['cs-stop-pre'] = dl;
+                if(date) {
+                    var dl = calculateDeadline(3, date);
+                    orders[i].deadline = dl
+                    orders[i].date['cs-stop-pre'] = dl;
+                } else console.log(orders[i].id);
                 break;
             case 'gzp-pre':
                 var date = findStageDate(orders[i], 'client-match') || findStageDate(orders[i], 'init');
 
-                var dl = calculateDeadline(3, date);
-                orders[i].deadline = dl
-                orders[i].date['cs-gzp-pre'] = dl;
+                if(date) {
+                    var dl = calculateDeadline(3, date);
+                    orders[i].deadline = dl
+                    orders[i].date['cs-gzp-pre'] = dl;
+                } else console.log(orders[i].id);
                 break;
             case 'sks-pre':
                 var date = findStageDate(orders[i], 'client-match') || findStageDate(orders[i], 'init');
 
-                var dl = calculateDeadline(3, date);
-                orders[i].deadline = dl
-                orders[i].date['cs-sks-pre'] = dl;
+                if(date) {
+                    var dl = calculateDeadline(3, date);
+                    orders[i].deadline = dl
+                    orders[i].date['cs-sks-pre'] = dl;
+                } else console.log(orders[i].id);
                 break;
             case 'gzp-build':
                 var date = findStageDate(orders[i], 'client-match');
 
-                var dl = calculateDeadline(orders[i].gzp.time, date);
-                orders[i].deadline = dl
-                orders[i].date['cs-gzp-organization'] = dl;
+                if(date) {
+                    var dl = calculateDeadline(orders[i].gzp.time, date);
+                    orders[i].deadline = dl
+                    orders[i].date['cs-gzp-organization'] = dl;
+                } else console.log(orders[i].id);
                 break;
             case 'install-devices':
                 var date = findStageDate(orders[i], 'client-match');
 
-                var dl = calculateDeadline(orders[i].gzp.time, date);
-                orders[i].deadline = dl
-                orders[i].date['cs-gzp-organization'] = dl;
+                if(date) {
+                    var dl = calculateDeadline(orders[i].gzp.time, date);
+                    orders[i].deadline = dl
+                    orders[i].date['cs-gzp-organization'] = dl;
+                } else console.log(orders[i].id);
+
                 break;
             case 'stop-build':
                 var date = findStageDate(orders[i], 'client-match');
 
-                var dl = calculateDeadline(orders[i].stop.time, date);
-                orders[i].deadline = dl
-                orders[i].date['cs-stop-organization'] = dl;
+                if(date) {
+                    var dl = calculateDeadline(orders[i].stop.time, date);
+                    orders[i].deadline = dl
+                    orders[i].date['cs-stop-organization'] = dl;
+                } else console.log(orders[i].id);
                 break;
             case 'sks-build':
                 var date = findStageDate(orders[i], 'client-match');
-                if(orders[i].isOld)
-                    var dl = calculateDeadline(orders[i].gzp.time, date);
-                else
-                    var dl = calculateDeadline(orders[i].sks.time, date);
 
-                orders[i].deadline = dl
-                orders[i].date['cs-sks-organization'] = dl;
+                if(date) {
+                    if(orders[i].isOld)
+                        var dl = calculateDeadline(orders[i].gzp.time, date);
+                    else
+                        var dl = calculateDeadline(orders[i].sks.time, date);
+
+                    orders[i].deadline = dl
+                    orders[i].date['cs-sks-organization'] = dl;
+                } else console.log(orders[i].id);
                 break;
             case 'client-match':
                 var dates = [
@@ -88,19 +104,19 @@ var his = {
                 var date = dates[0];
 
                 if(date) {
-
                     var dl = calculateDeadline(10, date);
                     orders[i].deadline = dl
                     orders[i].date['cs-client-match'] = dl;
-                }
+                } else console.log(orders[i].id);
 
                 break;
             case 'client-notify':
                 var date = findStageDate(orders[i], 'network');
-
-                var dl = calculateDeadline(10, date);
-                orders[i].deadline = dl
-                orders[i].date['cs-client-notify'] = dl;
+                if(date) {
+                    var dl = calculateDeadline(10, date);
+                    orders[i].deadline = dl
+                    orders[i].date['cs-client-notify'] = dl;
+                } else console.log(orders[i].id);
                 break;
         }
         var done = await orders[i].save();
