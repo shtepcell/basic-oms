@@ -33,6 +33,17 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
         },
         {
             block: 'field',
+            elem: 'in-pause',
+            order: order,
+            elemMods: {
+                access: false
+            },
+            dataset: dataset,
+            display: order.pause.status
+        },
+        { elem: 'separator' },
+        {
+            block: 'field',
             elem: 'client',
             order: order,
             elemMods: {

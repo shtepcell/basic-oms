@@ -4,6 +4,7 @@
             block: 'field',
             elems: [
                 'client',
+                'in-pause',
                 'contact',
                 'initiator',
                 'city',

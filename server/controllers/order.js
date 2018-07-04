@@ -144,10 +144,7 @@ module.exports = {
 
         var now = new Date();
         orders.forEach( item => {
-            if(item.status != 'succes' && item.status != 'reject') {
-                now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
-                item.cs = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
-            } else item.cs = '';
+            item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
         });
 
@@ -231,10 +228,7 @@ module.exports = {
 
         var now = new Date();
         orders.forEach( item => {
-            if(item.status != 'succes' && item.status != 'reject') {
-                now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
-                item.cs = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
-            } else item.cs = '';
+            item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
         });
 
@@ -335,10 +329,7 @@ module.exports = {
 
         var now = new Date();
         orders.forEach( item => {
-            if(item.status != 'succes' && item.status != 'reject') {
-                now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
-                item.cs = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
-            } else item.cs = '';
+            item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
         });
 
@@ -434,10 +425,7 @@ module.exports = {
 
         var now = new Date();
         orders.forEach( item => {
-            if(item.status != 'succes' && item.status != 'reject') {
-                now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
-                item.cs = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
-            } else item.cs = '';
+            item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
         });
 
@@ -1718,10 +1706,7 @@ module.exports = {
 
         var now = new Date();
         orders.forEach( item => {
-            if(item.status != 'succes' && item.status != 'reject') {
-                now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
-                item.cs = Math.round((item.deadline - now) / 1000 / 60 / 60 / 24);
-            } else item.cs = '';
+            item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
         });
 
