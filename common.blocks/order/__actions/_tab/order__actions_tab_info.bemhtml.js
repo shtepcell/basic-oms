@@ -169,7 +169,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'pause',
                 id: order.id
             },
-            display: (!isPause && (isOwner || isAdmin || (isNetStatus && isNetUser)) && !isOn)
+            display: (!isPause && (isOwner || isAdmin || isGUS || (isNetStatus && isNetUser)) && !isOn)
         },
         {
             block: 'order',
@@ -179,7 +179,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'stop-pause',
                 id: order.id
             },
-            display: (isPause && (isOwner || isAdmin || (isNetStatus && isNetUser)) && !isOn)
+            display: (isPause && (isOwner || isAdmin || isGUS || (isNetStatus && isNetUser)) && !isOn)
         },
         {
             block: 'order',
