@@ -240,7 +240,7 @@ module.exports = {
                              { deadline: {'$lte': new Date()} },
                              { "pause.status": {$ne: true} }
                          ]},
-                         {$where: "this.deadline < this.pause.date"}
+                         {$where: "this.pause && this.deadline < this.pause.date"}
                    ]
                }
                qr['$and'] = [deadline];
