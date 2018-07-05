@@ -230,13 +230,20 @@ module.exports = {
         }
         if(query.func) {
            if(query.func.indexOf('1') >= 0) {
-               qr['$or'] = [
-                   {'info.initiator': res.locals.__user._id},
-                   {'history.author': res.locals.__user._id}
-               ]
+               qr['info.initiator'] = res.locals.__user._id;
            }
+
            if(query.func.indexOf('2') >= 0) {
-               qr['deadline'] = {'$lte': new Date()};
+               var deadline = {
+                  $or: [
+                         {$and: [
+                             { deadline: {'$lte': new Date()} },
+                             { "pause.status": {$ne: true} }
+                         ]},
+                         {$where: "this.deadline < this.pause.date"}
+                   ]
+               }
+               qr['$and'] = [deadline];
            }
            if(query.func.indexOf('3') >= 0) {
                qr['pause.status'] = true;
@@ -270,12 +277,18 @@ module.exports = {
                     ]}
                     break;
                 case 'gus':
-                    var cts = resp.cities.map( j => {
-                        return {
-                            'info.city': j
-                        }
-                    });
-                    respQ = { '$or': cts };
+                    respQ = {
+                        $or: [
+                            {status: 'gzp-pre', 'info.city': resp.cities, 'special': null},
+                            {status: 'all-pre', 'info.city': resp.cities, 'special': null},
+                            {status: 'gzp-pre', 'special': resp._id},
+                            {status: 'all-pre', 'special': resp._id},
+                            {status: 'gzp-build', 'info.city': resp.cities, 'special': null},
+                            {status: 'install-devices', 'info.city': resp.cities, 'special': null},
+                            {status: 'gzp-build', 'special': resp._id},
+                            {status: 'install-devices', 'special': resp._id}
+                        ]
+                    }
                     break;
                 case 'net':
                     respQ = { status: 'network' };
@@ -603,6 +616,7 @@ module.exports = {
            case 'gzp-build':
            case 'install-devices':
                var dep = await Department.findOne({cities: order.info.city}).lean();
+               if(order.special) dep = await Department.findOne({_id: order.special}).lean();
                return dep;
                break;
            case 'stop-pre':
@@ -615,6 +629,7 @@ module.exports = {
                    await Department.findOne({type: 'b2o'}).lean(),
                    await Department.findOne({cities: order.info.city}).lean()
                ];
+               if(order.special) deps[1] = await Department.findOne({_id: order.special}).lean();
               return deps;
               break;
            case 'network':
@@ -637,6 +652,7 @@ module.exports = {
           case 'gzp-build':
           case 'install-devices':
               var dep = await Department.findOne({cities: order.info.city._id});
+              if(order.special) dep = await Department.findOne({_id: order.special});
               // if(!dep) dep = await Department.findOne({type: 'b2o'});
               if(!dep) return 'Ответственный отдел не определён!'
               return dep.name;
@@ -652,6 +668,7 @@ module.exports = {
           case 'all-pre':
               var dep1 = await Department.findOne({type: 'b2o'});
               var dep2 = await Department.findOne({cities: order.info.city._id});
+              if(order.special) dep2 = await Department.findOne({_id: order.special});
               if(!dep2) return `${dep1.name}`;
               else return `${dep1.name} и ${dep2.name}`;
               break;
