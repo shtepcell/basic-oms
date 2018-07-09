@@ -58,6 +58,31 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                 ]
             },
             {
+                elem: 'body-row',
+                content: [
+                    {
+                        elem: 'body-row-name',
+                        content: 'Номер CMS'
+                    },
+                    {
+                        elem: 'body-row-data',
+                        content: [
+                            {
+                                block: 'input',
+                                name: 'cms',
+                                mods: {
+                                    width: 'available',
+                                    theme: 'islands',
+                                    size: 'l'
+                                },
+                                autocomplete: false,
+                                placeholder: '12-345678-90'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
                 elem: 'separator'
             },
             {

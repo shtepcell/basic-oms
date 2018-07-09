@@ -47,30 +47,6 @@ block('searcher')(
                                 content: [
                                     {
                                         elem: 'label',
-                                        content: 'Номер CMS'
-                                    },
-                                    {
-                                        elem: 'cell',
-                                        content: {
-                                            block: 'input',
-                                            name: 'cms',
-                                            val: query.cms,
-                                            mods: {
-                                                width: 'available',
-                                                type: 'text',
-                                                theme: 'islands',
-                                                size: 'l'
-                                            },
-                                            placeholder: '12-345678-9'
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                elem: 'row',
-                                content: [
-                                    {
-                                        elem: 'label',
                                         content: 'Дополнительные фильтры'
                                     },
                                     {
@@ -96,6 +72,10 @@ block('searcher')(
                                                 {
                                                     val: '3',
                                                     text: 'На паузе'
+                                                },
+                                                {
+                                                    val: '4',
+                                                    text: 'Наличие CMS'
                                                 }
                                             ]
                                         }

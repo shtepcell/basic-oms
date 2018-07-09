@@ -248,6 +248,10 @@ module.exports = {
            if(query.func.indexOf('3') >= 0) {
                qr['pause.status'] = true;
            }
+
+           if(query.func.indexOf('4') >= 0) {
+               qr['info.cms'] = {$ne: null};
+           }
         }
 
         if(query.resp) {

@@ -83,7 +83,15 @@ block('orders-table').elem('body')(
                             elemMods: {
                                 type: 'service'
                             },
-                            content: orders[i].info.service
+                            content: `${orders[i].info.service}`
+                        },
+                        {
+                            block: 'orders-table',
+                            elem: 'td',
+                            elemMods: {
+                                type: 'cms'
+                            },
+                            content: orders[i].info.cms
                         },
                         {
                             block: 'orders-table',

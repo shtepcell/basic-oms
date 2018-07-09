@@ -86,6 +86,24 @@ block('orders-table').elem('head')(
                         elem: 'add-params',
                         js: {
                             params: {
+                                sort: 'cms',
+                                value: ('cms' == params.sort)?-1*params.value:1
+                            }
+                        }
+                    },
+                    elemMods: {
+                        type: 'cms'
+                    },
+                    content: 'CMS'
+                },
+                {
+                    block: 'orders-table',
+                    elem: 'td',
+                    mix: {
+                        block: 'action',
+                        elem: 'add-params',
+                        js: {
+                            params: {
                                 sort: 'adress',
                                 value: ('adress' == params.sort)?-1*params.value:1
                             }

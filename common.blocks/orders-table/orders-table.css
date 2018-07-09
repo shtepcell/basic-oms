@@ -7,10 +7,10 @@
     font-size: 11pt;
 }
 
-@media screen and (max-width: 1200px) and (orientation: landscape) {
+/* @media screen and (max-width: 1200px) and (orientation: landscape) {
     .orders-table
     {
         font-size: 10pt;
         width: 890px;
     }
-}
+} */

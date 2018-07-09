@@ -61,6 +61,15 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             },
             display: true
         },
+        {
+            block: 'field',
+            elem: 'cms',
+            order: order,
+            elemMods: {
+                access: adminEdit
+            },
+            display: order.info.cms
+        },
         { elem: 'separator' },
         {
             block: 'field',
