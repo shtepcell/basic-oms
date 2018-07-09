@@ -298,8 +298,8 @@ module.exports = {
             case 'gus':
                 query = {
                     '$or': [
-                        {status: 'gzp-pre', 'info.city': user.department.cities},
-                        {status: 'all-pre', 'info.city': user.department.cities},
+                        {status: 'gzp-pre', 'info.city': user.department.cities, special: null},
+                        {status: 'all-pre', 'info.city': user.department.cities, special: null},
                         {status: 'gzp-pre', 'special': user.department._id},
                         {status: 'all-pre', 'special': user.department._id}
                     ]
@@ -398,10 +398,11 @@ module.exports = {
             case 'gus':
                 query = {
                     '$or': [
-                        {status: 'gzp-build'},
-                        {status: 'install-devices'}
-                    ],
-                    'info.city': user.department.cities
+                        {status: 'gzp-build', 'info.city': user.department.cities, special: null},
+                        {status: 'install-devices', 'info.city': user.department.cities, special: null},
+                        {status: 'gzp-build', special: user.department._id},
+                        {status: 'install-devices', special: user.department._id}
+                    ]
                 }
                 break;
             case 'sks':
