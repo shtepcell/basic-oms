@@ -18,7 +18,7 @@ block('settings').mod('tab', 'table').content()(function () {
                     content: [
                         {
                             elem: 'cell',
-                            content: 'Количество елементов на одной странице'
+                            content: 'Количество элементов на одной странице'
                         },
                         {
                             elem: 'cell',
