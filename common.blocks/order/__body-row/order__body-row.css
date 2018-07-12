@@ -9,6 +9,10 @@
 
 .order__body-row-name
 {
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    -webkit-user-select: none;
     display: table-cell;
     vertical-align: middle;
     width: 370px;
