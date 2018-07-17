@@ -123,6 +123,10 @@ block('field').elem('service').elemMod('access', true).content()(function () {
                                         val: 'sks'
                                     },
                                     {
+                                        text: 'РРЛ',
+                                        val: 'rrl'
+                                    },
+                                    {
                                         text: 'Аналоговые каналы (ТЧ)',
                                         val: 'analog'
                                     },

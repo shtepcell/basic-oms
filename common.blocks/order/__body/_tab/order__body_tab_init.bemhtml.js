@@ -197,6 +197,10 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                         val: 'sks'
                                     },
                                     {
+                                        text: 'РРЛ',
+                                        val: 'rrl'
+                                    },
+                                    {
                                         text: 'Аналоговые каналы (ТЧ)',
                                         val: 'analog'
                                     },
