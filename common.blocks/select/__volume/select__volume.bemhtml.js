@@ -498,6 +498,10 @@ block('select').elem('volume').replace()(function () {
                 val: '0.9Гб/c',
             },
             {
+                text: '1.0Гб/c',
+                val: '1.0Гб/c',
+            },
+            {
                 text: '1.1Гб/c',
                 val: '1.1Гб/c',
             },
@@ -532,6 +536,10 @@ block('select').elem('volume').replace()(function () {
             {
                 text: '1.9Гб/c',
                 val: '1.9Гб/c',
+            },
+            {
+                text: '2.0Гб/c',
+                val: '2.0Гб/c',
             },
             {
                 text: '2.1Гб/c',
@@ -570,6 +578,10 @@ block('select').elem('volume').replace()(function () {
                 val: '2.9Гб/c',
             },
             {
+                text: '3.0Гб/c',
+                val: '3.0Гб/c',
+            },
+            {
                 text: '3.1Гб/c',
                 val: '3.1Гб/c',
             },
@@ -604,6 +616,10 @@ block('select').elem('volume').replace()(function () {
             {
                 text: '3.9Гб/c',
                 val: '3.9Гб/c',
+            },
+            {
+                text: '4.0Гб/c',
+                val: '4.0Гб/c',
             },
             {
                 text: '4.1Гб/c',
@@ -642,6 +658,10 @@ block('select').elem('volume').replace()(function () {
                 val: '4.9Гб/c',
             },
             {
+                text: '5.0Гб/c',
+                val: '5.0Гб/c',
+            },
+            {
                 text: '5.1Гб/c',
                 val: '5.1Гб/c',
             },
@@ -676,6 +696,10 @@ block('select').elem('volume').replace()(function () {
             {
                 text: '5.9Гб/c',
                 val: '5.9Гб/c',
+            },
+            {
+                text: '6.0Гб/c',
+                val: '6.0Гб/c',
             },
             {
                 text: '6.1Гб/c',
@@ -714,6 +738,10 @@ block('select').elem('volume').replace()(function () {
                 val: '6.9Гб/c',
             },
             {
+                text: '7.0Гб/c',
+                val: '7.0Гб/c',
+            },
+            {
                 text: '7.1Гб/c',
                 val: '7.1Гб/c',
             },
@@ -750,6 +778,10 @@ block('select').elem('volume').replace()(function () {
                 val: '7.9Гб/c',
             },
             {
+                text: '8.0Гб/c',
+                val: '8.0Гб/c',
+            },
+            {
                 text: '8.1Гб/c',
                 val: '8.1Гб/c',
             },
@@ -784,6 +816,10 @@ block('select').elem('volume').replace()(function () {
             {
                 text: '8.9Гб/c',
                 val: '8.9Гб/c',
+            },
+            {
+                text: '9.0Гб/c',
+                val: '9.0Гб/c',
             },
             {
                 text: '9.1Гб/c',
