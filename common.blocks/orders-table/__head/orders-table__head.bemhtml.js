@@ -50,6 +50,24 @@ block('orders-table').elem('head')(
                         elem: 'add-params',
                         js: {
                             params: {
+                                sort: 'init',
+                                value: ('init' == params.sort)?-1*params.value:1
+                            }
+                        }
+                    },
+                    elemMods: {
+                        type: 'init'
+                    },
+                    content: 'Дата инициации'
+                },
+                {
+                    block: 'orders-table',
+                    elem: 'td',
+                    mix: {
+                        block: 'action',
+                        elem: 'add-params',
+                        js: {
+                            params: {
                                 sort: 'status',
                                 value: ('status' == params.sort)?-1*params.value:1
                             }

@@ -73,6 +73,14 @@ block('orders-table').elem('body')(
                             block: 'orders-table',
                             elem: 'td',
                             elemMods: {
+                                type: 'init'
+                            },
+                            content: orders[i].initDate
+                        },
+                        {
+                            block: 'orders-table',
+                            elem: 'td',
+                            elemMods: {
                                 type: 'status'
                             },
                             content: orders[i].status

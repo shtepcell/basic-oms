@@ -177,6 +177,9 @@ module.exports = {
            case 'status':
                path = 'status';
                break;
+           case 'init':
+               path = 'date.init';
+               break;
        }
 
        var paths = path.split('.');

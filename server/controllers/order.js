@@ -146,6 +146,7 @@ module.exports = {
         orders.forEach( item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
+            item.initDate = helper.dateToStr(item.date.init)
         });
 
         if (!orders.length)
@@ -230,6 +231,7 @@ module.exports = {
         orders.forEach( item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
+            item.initDate = helper.dateToStr(item.date.init)
         });
 
         if (!orders.length)
@@ -331,6 +333,7 @@ module.exports = {
         orders.forEach( item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
+            item.initDate = helper.dateToStr(item.date.init)
         });
 
         if (!orders.length)
@@ -428,6 +431,7 @@ module.exports = {
         orders.forEach( item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
+            item.initDate = helper.dateToStr(item.date.init)
         });
 
         if (!orders.length)
@@ -1763,6 +1767,7 @@ module.exports = {
         orders.forEach( item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
+            item.initDate = helper.dateToStr(item.date.init)
         });
 
         res.locals.pagers = {};
