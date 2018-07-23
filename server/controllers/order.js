@@ -130,15 +130,26 @@ module.exports = {
 
         var orders = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'}
+            status: {$ne: 'secret'},
+            'pause.status': {$ne : true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
-        var total = orders.length;
+        var orders1 = await Order.find({
+            $and: [query, subQ],
+            status: {$ne: 'secret'},
+            'pause.status': true
+        }).populate([populateClient, populateCity, populateStreet]).lean();
+
+        var total = orders.length + orders1.length;
 
         if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
 
-        if(req.query.sort)
+        if(req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
+            orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
+        }
+
+        orders = orders.concat(orders1)
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
@@ -215,15 +226,26 @@ module.exports = {
 
         var orders = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'}
+            status: {$ne: 'secret'},
+            'pause.status': {$ne : true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
-        var total = orders.length;
+        var orders1 = await Order.find({
+            $and: [query, subQ],
+            status: {$ne: 'secret'},
+            'pause.status': true
+        }).populate([populateClient, populateCity, populateStreet]).lean();
+
+        var total = orders.length + orders1.length;
 
         if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
 
-        if(req.query.sort)
+        if(req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
+            orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
+        }
+
+        orders = orders.concat(orders1)
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
@@ -317,15 +339,26 @@ module.exports = {
 
         var orders = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'}
+            status: {$ne: 'secret'},
+            'pause.status': {$ne : true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
-        var total = orders.length;
+        var orders1 = await Order.find({
+            $and: [query, subQ],
+            status: {$ne: 'secret'},
+            'pause.status': true
+        }).populate([populateClient, populateCity, populateStreet]).lean();
+
+        var total = orders.length + orders1.length;
 
         if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
 
-        if(req.query.sort)
+        if(req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
+            orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
+        }
+
+        orders = orders.concat(orders1)
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
@@ -415,15 +448,26 @@ module.exports = {
 
         var orders = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'}
+            status: {$ne: 'secret'},
+            'pause.status': {$ne : true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
-        var total = orders.length;
+        var orders1 = await Order.find({
+            $and: [query, subQ],
+            status: {$ne: 'secret'},
+            'pause.status': true
+        }).populate([populateClient, populateCity, populateStreet]).lean();
+
+        var total = orders.length + orders1.length;
 
         if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
 
-        if(req.query.sort)
+        if(req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
+            orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
+        }
+
+        orders = orders.concat(orders1)
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
