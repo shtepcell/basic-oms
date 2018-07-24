@@ -134,10 +134,10 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elem: 'init-file',
             order: order,
             elemMods: {
-                access: adminEdit
+                access: adminEdit || isOwner && !order.info['file-init']
             },
             dataset: dataset,
-            display: order.info['file-init']
+            display: true
         },
         { elem: 'separator' },
         {
