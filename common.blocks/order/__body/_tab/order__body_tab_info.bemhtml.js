@@ -137,7 +137,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
                 access: adminEdit || isOwner && !order.info['file-init']
             },
             dataset: dataset,
-            display: true
+            display: order.info['file-init'] || adminEdit || isOwner
         },
         { elem: 'separator' },
         {
