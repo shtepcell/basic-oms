@@ -1,5 +1,6 @@
 const Auth = require('./controllers/auth'),
     Account = require('./controllers/account'),
+    User = require('./models/Account'),
     City = require('./controllers/city'),
     ClientType = require('./controllers/clientType'),
     Provider = require('./controllers/provider'),
@@ -39,18 +40,26 @@ module.exports = function (app, io) {
     app.get('/logout', Auth.logout);
 
     app.get('/', function (req, res) {
+        if (res.locals.__user.last) {
+          res.redirect(res.locals.__user.last);
+          return
+        }
+
+        var redirect;
+
         switch (res.locals.__user.department.type) {
             case 'gus':
             case 'sks':
-                res.redirect('/pre');
+                redirect = '/pre';
                 break;
             case 'b2o':
             case 'b2b':
-                res.redirect('/client');
+                redirect = '/client';
                 break;
             default:
-                res.redirect('/pre');
+                redirect = '/pre';
         }
+        res.redirect(redirect);
         return;
     });
 

@@ -35,6 +35,7 @@ module.exports = {
                 name: acc.name,
                 department: acc.department,
                 notifies: count,
+                last: acc.last,
                 settings: acc.settings
             };
             next();

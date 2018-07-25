@@ -120,6 +120,11 @@ module.exports = {
         var subQ = await helper.makeQuery(req, res);
 
         var user = res.locals.__user;
+
+        var u = await Account.findOne({login: user.login});
+        u.last = '/client';
+        u.save();
+
         query = {
             'info.initiator': user._id,
             $or: [
@@ -213,6 +218,11 @@ module.exports = {
         var subQ = await helper.makeQuery(req, res);
 
         var user = res.locals.__user;
+
+        var u = await Account.findOne({login: user.login});
+        u.last = '/my';
+        u.save();
+
         query = {
             'info.initiator': user._id,
             $and: [
@@ -310,6 +320,11 @@ module.exports = {
         var subQ = await helper.makeQuery(req, res);
 
         var user = res.locals.__user;
+
+        var u = await Account.findOne({login: user.login});
+        u.last = '/pre';
+        u.save();
+
         switch (user.department.type) {
             case 'b2o':
                 query = {
@@ -424,6 +439,10 @@ module.exports = {
         var subQ = await helper.makeQuery(req, res);
 
         var user = res.locals.__user;
+
+        var u = await Account.findOne({login: user.login});
+        u.last = '/build';
+        u.save();
 
         switch (user.department.type) {
             case 'b2o':

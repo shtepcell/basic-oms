@@ -36,6 +36,7 @@ var schema = new Schema( {
 		order: Number,
 		state: Number
 	}],
+	last: String,
 	settings: {
 		table: {
 			perPage: Number
