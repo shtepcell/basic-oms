@@ -1403,6 +1403,16 @@ module.exports = {
             return;
         }
 
+        if (req.body.contact) {
+          order.info.contact = req.body.contact;
+          order.save()
+        }
+
+        if (req.body.add_info) {
+          order.info.add_info = req.body.add_info;
+          order.save()
+        }
+
         if(req.files && req.files['file-init']) {
           var id = order.id;
           var _dir;

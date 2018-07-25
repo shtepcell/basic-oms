@@ -57,7 +57,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elem: 'contact',
             order: order,
             elemMods: {
-                access: adminEdit
+                access: adminEdit || isOwner
             },
             display: true
         },
@@ -125,7 +125,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elem: 'add-info',
             order: order,
             elemMods: {
-                access: adminEdit
+                access: adminEdit || isOwner
             },
             display: !!order.info.add_info
         },
