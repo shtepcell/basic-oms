@@ -31,6 +31,7 @@ block('searcher')(
                                             block: 'input',
                                             name: 'id',
                                             val: query.id,
+                                            autocomplete: false,
                                             mods: {
                                                 width: 'available',
                                                 type: 'text',
@@ -38,6 +39,31 @@ block('searcher')(
                                                 size: 'l'
                                             },
                                             placeholder: '1234'
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                elem: 'row',
+                                content: [
+                                    {
+                                        elem: 'label',
+                                        content: 'Номер CMS'
+                                    },
+                                    {
+                                        elem: 'cell',
+                                        content: {
+                                            block: 'input',
+                                            name: 'cms',
+                                            val: query.cms,
+                                            autocomplete: false,
+                                            mods: {
+                                                width: 'available',
+                                                type: 'text',
+                                                theme: 'islands',
+                                                size: 'l'
+                                            },
+                                            placeholder: '12-345678'
                                         }
                                     }
                                 ]

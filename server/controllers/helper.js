@@ -229,7 +229,7 @@ module.exports = {
            }
         }
         if(query.cms) {
-           return {cms: query.cms};
+           return {'info.cms': query.cms, status: {$ne: 'secret'}};
         }
         if(query.func) {
            if(query.func.indexOf('1') >= 0) {
