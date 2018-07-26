@@ -1506,6 +1506,8 @@ module.exports = {
                 res.status(200).send({created: true});
             } else res.status(400).send({errText: 'Что-то пошло не так'})
         }
+        res.status(200).send({created: true});
+        return;
     },
 
     getStat: async (req, res) => {
