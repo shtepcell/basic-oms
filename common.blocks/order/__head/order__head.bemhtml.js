@@ -3,6 +3,17 @@ block('order').elem('head').content()(function () {
     var pause = '',
         resp = null;
 
+    var tClient = `[${order.info.client.type.shortName}] ${order.info.client.name}`,
+        tContact = order.info.contact,
+        tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.adds}`;
+
+        if(order.info.street)
+          var tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.street.type} ${order.info.street.name}, ${order.info.adds}`
+
+    var textInfo = `
+      ${order.id} | [${order.info.client.type.shortName}] ${order.info.client.name} | ${tContact} | ${tAdress}
+    `;
+
     if(order.pause.status) pause = ' (на паузе)';
 
     if(order.resp != null) {
@@ -56,6 +67,24 @@ block('order').elem('head').content()(function () {
             js: {
                 state: order.flag,
                 id: order.id
+            }
+        },
+        {
+            block: 'button',
+            mods: {
+                theme: 'islands',
+                view: 'plain'
+            },
+            mix: {
+              block: 'order',
+              elem: 'clipboard',
+              js: {
+                str: textInfo
+              }
+            },
+            icon: {
+                block: 'icon',
+                url: '/copy.png'
             }
         },
         {

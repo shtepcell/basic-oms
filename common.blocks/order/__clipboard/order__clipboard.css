@@ -1,0 +1,20 @@
+.order__clipboard
+{
+  position: absolute !important;
+  top: 72px;
+  left: 10px;
+}
+.order__clipboard > .icon
+{
+  border-radius: 2px;
+  background-color: #fafafa;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  transition: all 0.3s;
+}
+
+.order__clipboard:hover > .icon
+{
+  transform: scale(1.1);
+}
