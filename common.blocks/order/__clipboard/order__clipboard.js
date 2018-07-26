@@ -1,4 +1,4 @@
-modules.define('order__clipboard', ['i-bem-dom', 'jquery', 'order__hider'], function(provide, bemDom, $, Hider) {
+modules.define('order__clipboard', ['i-bem-dom', 'jquery'], function(provide, bemDom, $) {
 
 provide(bemDom.declElem('order', 'clipboard',
     {
