@@ -37,7 +37,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             data: {
                 text: 'Сохранить изменения'
             },
-            display: ((isOwner && (isPre || isMatch))) || adminEdit
+            display: isOwner || adminEdit
         },
         {
             block: 'order',

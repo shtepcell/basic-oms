@@ -127,7 +127,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elemMods: {
                 access: adminEdit || isOwner
             },
-            display: !!order.info.add_info
+            display: adminEdit || isOwner
         },
         {
             block: 'field',
