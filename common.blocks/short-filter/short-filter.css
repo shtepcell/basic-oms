@@ -14,7 +14,7 @@
 .short-filter__client
 {
     display: inline-block;
-    width: calc(100% - 200px - 250px - 60px - 200px);
+    width: calc(100% - 200px - 200px - 200px - 60px - 80px - 200px);
 }
 
 .short-filter__service
@@ -24,14 +24,18 @@
 
 .short-filter__adress
 {
-    width: 250px;
+    width: 200px;
     display: inline-block;
-
 }
 
 .short-filter__id
 {
     width: 60px;
+}
+
+.short-filter__cms
+{
+    width: 80px;
 }
 
 .short-filter__id_error.input_theme_islands

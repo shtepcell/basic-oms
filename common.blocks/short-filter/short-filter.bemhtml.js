@@ -35,6 +35,22 @@ block('short-filter').content()(function () {
                 placeholder: 'ID'
             },
             {
+                block: 'input',
+                mix: {
+                    block: 'short-filter',
+                    elem: 'cms'
+                },
+                name: 'cms',
+                val: query.cms || '',
+                mods: {
+                    theme: 'islands',
+                    size: 'm',
+                    type: 'search'
+                },
+                autocomplete: false,
+                placeholder: 'CMS'
+            },
+            {
                 block : 'suggest',
                 mix: 'short-filter__client',
                 mods : {
@@ -61,6 +77,21 @@ block('short-filter').content()(function () {
                 },
                 text: 'Услуга',
                 options: dataset.services
+            },
+            {
+                block : 'suggest',
+                mix: 'short-filter__adress',
+                mods : {
+                    theme : 'islands',
+                    size : 'm',
+                    'has-dataprovider' : 'adress'
+                },
+                val: query.city || '',
+                placeholder: 'Город',
+                name: 'city',
+                dataprovider: {
+                    data: dataset['cities']
+                }
             },
             {
                 block : 'suggest',
