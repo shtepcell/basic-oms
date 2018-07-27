@@ -557,6 +557,15 @@ module.exports = {
             return;
         }
 
+        if(order.info['date-request']) {
+            var date = helper.parseDate(order.info['date-request'])
+            if(!date) {
+                res.status(400).send({errText: 'Неверный формат даты'})
+                return;
+            }
+            order.info['date-request'] = date;
+        }
+
         var city = await validator.city(order.info.city);
         if(!city._id) {
             res.status(400).send({ errText: city });
@@ -1403,15 +1412,27 @@ module.exports = {
             return;
         }
 
+
+        if(!req.body['date-request']) {
+          order.info['date-request'] = undefined;
+          order.save()
+        } else {
+          var date = helper.parseDate(req.body['date-request'])
+          if(!date || date == 'Invalid Date') {
+              res.status(400).send({errText: 'Неверный формат даты'})
+              return;
+          }
+          order.info['date-request'] = date;
+          order.save()
+        }
+
         if (req.body.contact) {
           order.info.contact = req.body.contact;
           order.save()
         }
 
-        if (req.body.add_info) {
-          order.info.add_info = req.body.add_info;
-          order.save()
-        }
+        order.info.add_info = req.body.add_info;
+        order.save()
 
         if(req.files && req.files['file-init']) {
           var id = order.id;

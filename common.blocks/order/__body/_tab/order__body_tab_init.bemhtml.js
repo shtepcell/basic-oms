@@ -83,6 +83,14 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                 ]
             },
             {
+                block: 'field',
+                elem: 'date-request',
+                elemMods: {
+                    access: true
+                },
+                display: true
+            },
+            {
                 elem: 'separator'
             },
             {

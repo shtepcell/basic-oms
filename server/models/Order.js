@@ -71,6 +71,7 @@ var schema = new Schema({
         pool: String,
         order: String,
         'date-sign': Date,
+				'date-request': Date,
         'file-init': String
     },
 	sks: {

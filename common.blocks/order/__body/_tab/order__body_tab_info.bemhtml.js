@@ -70,6 +70,15 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             },
             display: order.info.cms
         },
+        {
+            block: 'field',
+            elem: 'date-request',
+            order: order,
+            elemMods: {
+                access: (adminEdit || isOwner)
+            },
+            display: order.info['date-request'] || isOwner || adminEdit
+        },
         { elem: 'separator' },
         {
             block: 'field',
@@ -127,7 +136,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elemMods: {
                 access: adminEdit || isOwner
             },
-            display: adminEdit || isOwner
+            display: order.info.add_info || adminEdit || isOwner
         },
         {
             block: 'field',

@@ -29,6 +29,7 @@
                 'sks-cost-once',
                 'sks-cost-monthly',
                 'date-init',
+                'date-request',
                 'date-gzp-active',
                 'date-gzp-build',
                 'gzp-need',
