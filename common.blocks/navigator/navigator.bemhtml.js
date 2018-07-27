@@ -11,6 +11,16 @@ block('navigator').content()(function () {
         url: '/init',
         content: 'Инициация заказа'
     };
+
+    var clients = {
+        block: 'link',
+        mods: { theme: 'islands', size : 'l' },
+        mix: { block: 'navigator', elem: 'link' },
+        url: '/admin/clients',
+        content: 'Клиенты'
+    };
+
+    if(!isInit) clients = undefined;
     if(!isInit) init = undefined;
     return [
         {
@@ -35,6 +45,7 @@ block('navigator').content()(function () {
             url: '/status',
             content: 'Статус'
         },
+        clients,
         {
             elem: 'admin-menu',
             elemMods: { display: isAdmin }

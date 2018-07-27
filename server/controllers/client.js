@@ -25,6 +25,12 @@ module.exports = {
             return;
         }
 
+        var isInit = res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o';
+
+        if(!isInit) {
+          render(req, res, { view: '404' });
+          return;
+        }
         res.locals.clientTypeArr = await ClientType.find({}).select({ shortName: 1, _id: 1 })
 
         var clients = await Client.paginate({}, { page: pageNumber, limit: perPage, populate: 'type'});

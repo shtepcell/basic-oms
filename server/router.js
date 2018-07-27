@@ -141,6 +141,13 @@ module.exports = function (app, io) {
 
     app.post('/notifies/:id', Notify.read);
 
+    app.route('/admin/clients')
+        .get(Client.getPage)
+        .delete(Client.delete);
+
+    app.post('/admin/clients/change', Client.edit);
+    app.post('/admin/clients/add', Client.create);
+
     app.all('/admin/*', Auth.isAdmin);
 
     app.get('/admin/users', Account.getPage);
@@ -195,12 +202,5 @@ module.exports = function (app, io) {
 
     app.post('/admin/providers/change', Provider.edit);
     app.post('/admin/providers/add', Provider.create);
-
-    app.route('/admin/clients')
-        .get(Client.getPage)
-        .delete(Client.delete);
-
-    app.post('/admin/clients/change', Client.edit);
-    app.post('/admin/clients/add', Client.create);
 
 }

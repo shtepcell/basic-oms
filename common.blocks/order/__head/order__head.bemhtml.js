@@ -84,6 +84,9 @@ block('order').elem('head').content()(function () {
             },
             icon: {
                 block: 'icon',
+                attrs: {
+                  title: 'Нажмите, чтобы скопировать данные'
+                },
                 url: '/copy.png'
             }
         },
