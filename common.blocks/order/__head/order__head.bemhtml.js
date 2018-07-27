@@ -3,15 +3,37 @@ block('order').elem('head').content()(function () {
     var pause = '',
         resp = null;
 
+    var services = {
+        internet: 'Интернет',
+         vpls: 'VPLS',
+         l3vpn: 'L3VPN',
+         l2vpn: 'L2VPN',
+         cloud: 'Облачная АТС',
+         digital: 'Цифровые каналы',
+         sks: 'СКС',
+         sputnik: 'Спутник',
+         devices: 'Размещение оборудования',
+         phone: 'Телефония (IP-телефония)',
+         analog: 'Аналоговые каналы (ТЧ)',
+         vibe: 'Волокно',
+         wifi: 'Авторизация Wi-Fi',
+         iptv: 'IP TV'
+    };
+
     var tClient = `[${order.info.client.type.shortName}] ${order.info.client.name}`,
         tContact = order.info.contact,
-        tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.adds}`;
+        tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.adds}`,
+        tService = `${services[order.info.service]}`,
+        tVolume = '';
 
+        if(order.info.volume)
+          tVolume = order.info.volume;
+        
         if(order.info.street)
           var tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.street.type} ${order.info.street.name}, ${order.info.adds}`
 
     var textInfo = `
-      ${order.id} | [${order.info.client.type.shortName}] ${order.info.client.name} | ${tContact} | ${tAdress}
+      ${order.id} | [${order.info.client.type.shortName}] ${order.info.client.name} | ${tContact} | ${tAdress} | ${tService} | ${tVolume}
     `;
 
     if(order.pause.status) pause = ' (на паузе)';
