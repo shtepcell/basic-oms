@@ -25,9 +25,10 @@ module.exports = {
             return;
         }
 
-        var isInit = res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o';
+        var isInit = res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o',
+            isAdmin = res.locals.__user.department.type == 'admin'
 
-        if(!isInit) {
+        if(!isInit && !isAdmin) {
           render(req, res, { view: '404' });
           return;
         }
