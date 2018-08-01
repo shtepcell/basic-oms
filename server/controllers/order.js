@@ -602,20 +602,21 @@ module.exports = {
 
         if(order.info.service == 'iptv' || order.info.service == 'l2vpn' || order.info.service == 'vpls') {
 
-          if(!order.info.relation) {
-            res.status(400).send({ errText: 'Укажите связанный заказ' });
-            return;
-          }
+          // if(!order.info.relation) {
+          //   res.status(400).send({ errText: 'Укажите связанный заказ' });
+          //   return;
+          // }
+          if(order.info.relation) {
+            if(isNaN(order.info.relation)) {
+              res.status(400).send({ errText: 'Связанный заказ - ID заказа должен быть числом' });
+              return;
+            }
+            var tep = await Order.findOne({id: order.info.relation});
 
-          if(isNaN(order.info.relation)) {
-            res.status(400).send({ errText: 'Связанный заказ - ID заказа должен быть числом' });
-            return;
-          }
-          var tep = await Order.findOne({id: order.info.relation});
-
-          if(!tep) {
-            res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
-            return;
+            if(!tep) {
+              res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
+              return;
+            }
           }
         }
 
@@ -1448,20 +1449,24 @@ module.exports = {
           var needNotify = (ser != order.info.service);
 
           if(ser == 'iptv' || ser == 'l2vpn' || ser == 'vpls') {
-            if(!req.body.relation) {
-              res.status(400).send({errText: 'Заполните связанный заказ!'})
-              return;
+            // if(!req.body.relation) {
+            //   res.status(400).send({errText: 'Заполните связанный заказ!'})
+            //   return;
+            // }
+            if(req.body.relation) {
+              if(req.body.relation && isNaN(req.body.relation)) {
+                res.status(400).send({errText: 'Связанный заказ - ID заказа должен быть числом!'})
+                return;
+              }
+              var tep = await Order.findOne({id: req.body.relation});
+              if(!tep) {
+                res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
+                return;
+              }
+              order.info.relation = req.body.relation;
+              
             }
-            if(isNaN(req.body.relation)) {
-              res.status(400).send({errText: 'Связанный заказ - ID заказа должен быть числом!'})
-              return;
-            }
-            var tep = await Order.findOne({id: req.body.relation});
-            if(!tep) {
-              res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
-              return;
-            }
-            order.info.relation = req.body.relation;
+
           } else order.info.relation = undefined;
 
           order.info.service = ser;
