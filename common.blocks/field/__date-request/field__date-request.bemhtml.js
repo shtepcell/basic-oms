@@ -3,7 +3,7 @@ block('field').elem('date-request').content()(function () {
         order = ctx.order,
         dataset = ctx.dataset;
 
-    if(ctx.display) {
+    if(ctx.display && order.info['date-request']) {
         var value = order.info['date-request'];
         var year = value.getFullYear();
         var month = value.getMonth() + 1;
@@ -59,7 +59,7 @@ block('field').elem('date-request').elemMod('access', true).content()(function (
             val = `${day}.${month}.${year}`;
           }
         }
-        
+
         return [
             {
                 block: 'order',

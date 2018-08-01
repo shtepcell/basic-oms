@@ -9,6 +9,7 @@
                 'contact',
                 'initiator',
                 'city',
+                'relation',
                 'zone',
                 'street',
                 'adds',

@@ -65,10 +65,20 @@ module.exports = {
             case "start-gzp-build":
             case "start-install-devices":
                 var gus = await Department.findOne({ cities: order.info.city });
-
+                if(order.special) gus = await Department.findOne({_id: order.special});
                 worker = await Account.find({ department: gus });
                 break;
 
+            case "change-params":
+              if (order.status == 'gzp-pre' || order.status == 'gzp-build' || order.status == 'install-devices') {
+                var gus = await Department.findOne({ cities: order.info.city });
+                if(order.special) gus = await Department.findOne({_id: order.special});
+                worker = await Account.find({ department: gus });
+              }
+              if (order.staus == 'network') {
+                worker = await Account.find({department: net});
+              }
+              break;
 
             case "start-stop-pre":
             case "start-stop-build":

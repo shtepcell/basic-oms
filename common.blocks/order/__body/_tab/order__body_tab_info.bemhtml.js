@@ -10,6 +10,8 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
     var isOwner = (user.department._id+'' == order.info.initiator.department._id+''),
         isMatch = (order.status == 'client-match'),
         isNotify = (order.status == 'client-notify'),
+        isEnd = (order.status == 'succes' || order.status == 'reject' || isNotify),
+        isRelation = (order.info.relation && !isNaN(order.info.relation)),
         isPre = (order.status == 'all-pre' || order.status == 'gzp-pre' || order.status == 'stop-pre'),
         mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0);
 
@@ -75,7 +77,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elem: 'date-request',
             order: order,
             elemMods: {
-                access: (adminEdit || isOwner)
+                access: adminEdit || isOwner && !isEnd
             },
             display: order.info['date-request'] || isOwner || adminEdit
         },
@@ -110,22 +112,29 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             order: order
         },
         { elem: 'separator' },
+
         {
             block: 'field',
             elem: 'service',
             order: order,
             elemMods: {
-                access: adminEdit || (isOwner && isPre)
+                access: adminEdit || isOwner && !isEnd
             },
             dataset: dataset,
             display: true
+        },
+        {
+            block: 'field',
+            elem: 'relation',
+            order: order,
+            display: isRelation
         },
         {
             block: 'order',
             elem: 'service-info',
             elemMods: {
                 type: order.info.service,
-                access: adminEdit || (isOwner && isPre)
+                access: adminEdit || isOwner && !isEnd
             },
             order: order
         },

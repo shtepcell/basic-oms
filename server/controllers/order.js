@@ -600,7 +600,24 @@ module.exports = {
             return;
         }
 
-        // TODO: Если услуга требует связанные заказы - проверить наличие
+        if(order.info.service == 'iptv' || order.info.service == 'l2vpn' || order.info.service == 'vpls') {
+
+          if(!order.info.relation) {
+            res.status(400).send({ errText: 'Укажите связанный заказ' });
+            return;
+          }
+
+          if(isNaN(order.info.relation)) {
+            res.status(400).send({ errText: 'Связанный заказ - ID заказа должен быть числом' });
+            return;
+          }
+          var tep = await Order.findOne({id: order.info.relation});
+
+          if(!tep) {
+            res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
+            return;
+          }
+        }
 
         order.info.pre = undefined;
         order.info.adressType = undefined;
@@ -1405,17 +1422,16 @@ module.exports = {
 
     endClientNotify: async (req, res, io) => {
         var reqData = req.body;
-        var order = await Order.findOne({id: req.params.id});
+        var order = await Order.findOne({id: req.params.id}).populate(populateClient);
 
         if(!order) {
             res.status(400).send({errText: 'Ошибка при сохранении!'});
             return;
         }
 
-
         if(!req.body['date-request']) {
           order.info['date-request'] = undefined;
-          order.save()
+          await order.save()
         } else {
           var date = helper.parseDate(req.body['date-request'])
           if(!date || date == 'Invalid Date') {
@@ -1423,16 +1439,55 @@ module.exports = {
               return;
           }
           order.info['date-request'] = date;
-          order.save()
+          await order.save()
+        }
+
+        if(req.body.service) {
+          var ser = req.body.service;
+
+          var needNotify = (ser != order.info.service);
+
+          if(ser == 'iptv' || ser == 'l2vpn' || ser == 'vpls') {
+            if(!req.body.relation) {
+              res.status(400).send({errText: 'Заполните связанный заказ!'})
+              return;
+            }
+            if(isNaN(req.body.relation)) {
+              res.status(400).send({errText: 'Связанный заказ - ID заказа должен быть числом!'})
+              return;
+            }
+            var tep = await Order.findOne({id: req.body.relation});
+            if(!tep) {
+              res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
+              return;
+            }
+            order.info.relation = req.body.relation;
+          } else order.info.relation = undefined;
+
+          order.info.service = ser;
+
+          if(req.body.volume && req.body.volume != order.info.volume) needNotify = true;
+          order.info.volume = req.body.volume;
+
+          if(req.body.ip && req.body.ip != order.info.ip) needNotify = true;
+          order.info.ip = req.body.ip;
+
+          if(needNotify) {
+            order.history.push(helper.historyGenerator('change-params', res.locals.__user));
+            notify.create(res.locals.__user, order, `change-params`);
+          }
+
+          await order.save();
+
         }
 
         if (req.body.contact) {
           order.info.contact = req.body.contact;
-          order.save()
+          await order.save()
         }
 
         order.info.add_info = req.body.add_info;
-        order.save()
+        await order.save()
 
         if(req.files && req.files['file-init']) {
           var id = order.id;
@@ -1450,7 +1505,7 @@ module.exports = {
             }
           });
           order.info['file-init'] = `${req.files['file-init'].name}`;
-          order.save()
+          await order.save()
         }
 
         if(order.status == 'client-notify') {
@@ -1461,29 +1516,30 @@ module.exports = {
                     _dir = `${(i)*1000}-${(i+1)*1000}`;
                 }
             }
-            if(!req.files.order) {
-                res.status(400).send({errText: 'Договор - обязателен!'})
-                return;
-            }
-            if(!reqData['date-sign']) {
-                res.status(400).send({errText: 'Дата подписания - обязательна!'})
-                return;
-            }
+            // if(!req.files.order) {
+            //     res.status(400).send({errText: 'Договор - обязателен!'})
+            //     return;
+            // }
+            // if(!reqData['date-sign']) {
+            //     res.status(400).send({errText: 'Дата подписания - обязательна!'})
+            //     return;
+            // }
             var date = helper.parseDate(reqData['date-sign'])
             if(!date) {
                 res.status(400).send({errText: 'Неверный формат даты'})
                 return;
             }
-            var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-            req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function(err) {
-                if (err) {
-                    logger.error(err);
-                    return res.status(500).send(err);
-                }
-            });
-
+            if(req.files.order) {
+              var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
+              req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function(err) {
+                  if (err) {
+                      logger.error(err);
+                      return res.status(500).send(err);
+                  }
+              });
+              order.info.order = `${req.files.order.name}`;
+            }
             order.info['date-sign'] = date;
-            order.info.order = `${req.files.order.name}`;
             order.status = 'succes';
             order.date['client-notify'] = new Date();
             order.deadline = null;
@@ -1497,6 +1553,7 @@ module.exports = {
                 // sendMail(done, 'new-status');
                 logger.info(`End client-notify order #${ done.id }`, res.locals.__user);
                 res.status(200).send({created: true});
+                return;
             } else res.status(400).send({errText: 'Что-то пошло не так'})
         }
 
@@ -1525,7 +1582,11 @@ module.exports = {
             if(done) {
                 logger.info(`Filling income order #${ done.id }`, res.locals.__user);
                 res.status(200).send({created: true});
-            } else res.status(400).send({errText: 'Что-то пошло не так'})
+                return;
+            } else {
+              res.status(400).send({errText: 'Что-то пошло не так'})
+              return;
+            }
         }
         res.status(200).send({created: true});
         return;

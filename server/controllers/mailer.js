@@ -24,7 +24,7 @@ module.exports.sendMail = (order, recipients, type) => {
     }
 
     var to = [];
-    
+
     if(recipients.length > 0) {
 
         for (var i = 0; i < recipients.length; i++) {
@@ -46,10 +46,18 @@ module.exports.sendMail = (order, recipients, type) => {
         mailOptions.to = rps;
 
         var header = `<h2>СУЗ | Новое уведомление</h2>`;
-        if(type == 'new-message')
+
+        switch (type) {
+          case 'new-message':
             header = `<h2>СУЗ | Вас упомянули в чате заказа ${order.id}</h2>`;
-        else
+            break;
+          case 'change-params':
+            header = `<h2>СУЗ | Обновление услуги или параметров услуги в заказе #${order.id}</h2>`;
+            break;
+          default:
             header = `<h2>СУЗ | Статус заказа #${order.id}</h2>`;
+            break;
+        }
 
         mailOptions.subject = subject;
 

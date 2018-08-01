@@ -11,6 +11,7 @@ block('field').elem('service').content()(function () {
          cloud: 'Облачная АТС',
          digital: 'Цифровые каналы',
          sks: 'СКС',
+         rrl: 'РРЛ',
          sputnik: 'Спутник',
          devices: 'Размещение оборудования',
          phone: 'Телефония (IP-телефония)',

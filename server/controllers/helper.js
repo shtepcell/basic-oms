@@ -82,6 +82,9 @@ module.exports = {
             case 'redirect':
                 ret.name = `Зона ответсвенности изменена -> ${opt.department}`;
                 break;
+            case 'change-params':
+                ret.name = `Обновление услуги/парметров услуги`;
+                break;
         }
         return ret;
     },

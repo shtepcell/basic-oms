@@ -20,19 +20,6 @@ block('order').elem('service-info').elemMod('type', 'l2vpn').content()(function 
                     content: order.info.volume || ''
                 }
             ]
-        },
-        {
-            elem: 'body-row',
-            content: [
-                {
-                    elem: 'body-row-name',
-                    content: 'Связанный заказ'
-                },
-                {
-                    elem: 'body-row-data',
-                    content: order.info.relation || ''
-                }
-            ]
         }
     ]
 })
@@ -41,10 +28,14 @@ block('order').elem('service-info').elemMod('type', 'l2vpn').elemMod('access', t
     var ctx = this.ctx,
         order = ctx.order;
 
+    var title = 'Связанный заказ *';
+
     if(!order)
         order = {
             info: {}
         }
+
+    if(order.info.relation && isNaN(order.info.relation)) title = 'Связанный заказ (некорректно указан) *'
 
     return [
         {
@@ -71,7 +62,7 @@ block('order').elem('service-info').elemMod('type', 'l2vpn').elemMod('access', t
             content: [
                 {
                     elem: 'body-row-name',
-                    content: 'Связанный заказ'
+                    content: title
                 },
                 {
                     elem: 'body-row-data',
