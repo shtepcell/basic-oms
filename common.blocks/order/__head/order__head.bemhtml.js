@@ -1,7 +1,8 @@
 block('order').elem('head').content()(function () {
     var order = this.ctx.order;
     var pause = '',
-        resp = null;
+        resp = null,
+        user = this.ctx.user;
 
     var services = {
         internet: 'Интернет',
@@ -19,6 +20,8 @@ block('order').elem('head').content()(function () {
          wifi: 'Авторизация Wi-Fi',
          iptv: 'IP TV'
     };
+
+    var isInit = (user.department.type == 'b2b' || user.department.type == 'b2o');
 
     var tClient = `[${order.info.client.type.shortName}] ${order.info.client.name}`,
         tContact = order.info.contact,
@@ -116,7 +119,10 @@ block('order').elem('head').content()(function () {
             block : 'link',
             mix: {
               block: 'order',
-              elem: 'dublicate'
+              elem: 'dublicate',
+              elemMods: {
+                visible: isInit
+              }
             },
             mods : { theme : 'islands', size : 'm' },
             url : `/init?rel=${order.id}`,

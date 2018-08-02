@@ -1,6 +1,12 @@
 .order__dublicate
 {
+  visibility:hidden;
   position: absolute !important;
   top: 73px;
   left: 50px;
+}
+
+.order__dublicate_visible
+{
+  visibility: visible;
 }
