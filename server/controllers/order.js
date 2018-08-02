@@ -1910,6 +1910,117 @@ module.exports = {
         return;
     },
 
+    changeStage: async (req, res) => {
+        var data = req.body;
+
+        var order = await Order.findOne({id: data.id}),
+            user = res.locals.__user;
+
+        var hist = {
+          author: `[${user.department.name}] ${user.name}`,
+          date: new Date()
+        };
+
+        switch (data.stage) {
+          case 'gzp-pre':
+            order.status = 'gzp-pre';
+            var deadline = await helper.calculateDeadline(3);
+            order.deadline = deadline;
+            order.date['cs-gzp-pre'] = deadline;
+            hist.name = 'Изменен этап -> Проработка ГЗП'
+            break;
+
+          case 'stop-pre':
+            order.status = 'stop-pre';
+            var deadline = await helper.calculateDeadline(3);
+            order.deadline = deadline;
+            order.date['cs-stop-pre'] = deadline;
+            hist.name = 'Изменен этап -> Проработка СТОП'
+            break;
+
+          case 'all-pre':
+            order.status = 'all-pre';
+            var deadline = await helper.calculateDeadline(3);
+            order.deadline = deadline;
+            order.date['cs-stop-pre'] = deadline;
+            order.date['cs-gzp-pre'] = deadline;
+            hist.name = 'Изменен этап -> Проработка ГЗП и СТОП'
+            break;
+
+          case 'sks-pre':
+            order.status = 'sks-pre';
+            var deadline = await helper.calculateDeadline(3);
+            order.deadline = deadline;
+            order.date['cs-sks-pre'] = deadline;
+            hist.name = 'Изменен этап -> Проработка СКС'
+            break;
+
+          case 'gzp-build':
+            if (order.gzp && order.gzp.time) {
+              order.status = 'gzp-build';
+              var deadline = await helper.calculateDeadline(order.gzp.time);
+              order.deadline = deadline;
+              order.date['cs-gzp-organization'] = deadline;
+              hist.name = 'Изменен этап -> Организация ГЗП'
+            } else {
+              res.send({error: 'Сначала заказ нужно проработать!'})
+              return;
+            }
+            break;
+
+          case 'stop-build':
+            if (order.stop && order.stop.time) {
+              order.status = 'stop-build';
+              var deadline = await helper.calculateDeadline(order.stop.time);
+              order.deadline = deadline;
+              order.date['cs-stop-organization'] = deadline;
+              hist.name = 'Изменен этап -> Организация СТОП'
+            } else {
+              res.send({error: 'Сначала заказ нужно проработать!'})
+              return;
+            }
+            break;
+
+          case 'sks-build':
+            if (order.sks && order.sks.time || order.gzp && order.gzp.time) {
+              order.status = 'sks-build';
+              var deadline = await helper.calculateDeadline(order.sks.time || order.sks.time);
+              order.deadline = deadline;
+              order.date['cs-sks-build'] = deadline;
+              hist.name = 'Изменен этап -> Организация СКС'
+            } else {
+              res.send({error: 'Сначала заказ нужно проработать!'})
+              return;
+            }
+            break;
+          case 'network':
+            order.status = 'network';
+            hist.name = 'Изменен этап -> Настройка сети'
+            break;
+
+          case 'client-match':
+            order.status = 'client-match';
+            var deadline = await helper.calculateDeadline(10);
+            order.deadline = deadline;
+            order.date['cs-client-match'] = deadline;
+            hist.name = 'Изменен этап -> Согласование с клиентом'
+            break;
+
+          case 'client-notify':
+            order.status = 'client-notify';
+            var deadline = await helper.calculateDeadline(10);
+            order.deadline = deadline;
+            order.date['cs-client-notify'] = deadline;
+            hist.name = 'Изменен этап -> Уведомление клиента'
+            break;
+        }
+        order.history.push(hist);
+        await order.save();
+
+        res.send({ok: 'ok'}).status(200);
+        return;
+    },
+
     searchReset: async (req, res) => {
         var usr = await Account.findOne({_id: res.locals.__user._id});
         usr.settings.search.query = '/search';

@@ -1,0 +1,12 @@
+.order__direct
+{
+  visibility:hidden;
+  position: absolute !important;
+  top: 73px;
+  left: 700px;
+}
+
+.order__direct_visible
+{
+  visibility: visible;
+}

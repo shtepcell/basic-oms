@@ -1,0 +1,15 @@
+.stages__item
+{
+  cursor: pointer;
+  font-size: 10pt;
+  width: 200px;
+  height: 25px;
+  text-align: center;
+  line-height: 25px;
+  padding: 1px 5px 1px 5px;
+}
+
+.stages__item:hover
+{
+  background-color: #ffeba0;
+}

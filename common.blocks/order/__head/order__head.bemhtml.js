@@ -22,6 +22,7 @@ block('order').elem('head').content()(function () {
     };
 
     var isInit = (user.department.type == 'b2b' || user.department.type == 'b2o');
+    var isAdmin = (user.department.type == 'admin');
 
     var tClient = `[${order.info.client.type.shortName}] ${order.info.client.name}`,
         tContact = order.info.contact,
@@ -127,6 +128,34 @@ block('order').elem('head').content()(function () {
             mods : { theme : 'islands', size : 'm' },
             url : `/init?rel=${order.id}`,
             content : 'Дублировать'
+        },
+        {
+            block: 'dropdown',
+            mods: {
+                switcher: 'link',
+                theme: 'islands',
+                size: 'm'
+            },
+            mix: {
+              block: 'order',
+              elem: 'direct',
+              elemMods: {
+                visible: isAdmin
+              }
+            },
+            switcher: {
+                block: 'link',
+                mods: {
+                    pseudo: true,
+                    theme: 'islands',
+                    size: 'm'
+                },
+                content: 'Изменить этап'
+            },
+            popup: {
+              block: 'stages',
+              id: order.id
+            }
         },
         {
             elem: 'head-cell',

@@ -110,6 +110,7 @@ module.exports = function (app, io) {
     });
 
     app.post('/changeRespDep', Order.changeRespDep);
+    app.post('/changeStage', Order.changeStage);
 
     app.post('/order/:id/gzp', (req, res) => {
         return Order.endPreGZP(req, res, io);
