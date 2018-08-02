@@ -41,7 +41,7 @@ block('field').elem('type-adress').elemMod('access', true).content()(function ()
                                         dataset: dataset
                                     }
                                 },
-                                val: 'location',
+                                val: order.info.coordinate?'coordination':'location',
                                 name: 'adressType',
                                 options: [
                                     {

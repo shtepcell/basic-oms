@@ -17,7 +17,7 @@ block('field').elem('adds').content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-data',
-                        content: `${order.info.adds}`
+                        content: order.info.adds
                     }
                 ]
             }
@@ -54,7 +54,7 @@ block('field').elem('adds').elemMod('access', true).content()(function () {
                                     theme: 'islands',
                                     size: 'l'
                                 },
-                                val: (order)?`${order.info.adds}`:'',
+                                val: order.info.adds,
                                 autocomplete: false,
                                 placeholder: 'д.32, кв.15'
                             }

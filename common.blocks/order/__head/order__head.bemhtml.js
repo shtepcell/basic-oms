@@ -28,7 +28,7 @@ block('order').elem('head').content()(function () {
 
         if(order.info.volume)
           tVolume = order.info.volume;
-        
+
         if(order.info.street)
           var tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.street.type} ${order.info.street.name}, ${order.info.adds}`
 
@@ -111,6 +111,16 @@ block('order').elem('head').content()(function () {
                 },
                 url: '/copy.png'
             }
+        },
+        {
+            block : 'link',
+            mix: {
+              block: 'order',
+              elem: 'dublicate'
+            },
+            mods : { theme : 'islands', size : 'm' },
+            url : `/init?rel=${order.id}`,
+            content : 'Дублировать'
         },
         {
             elem: 'head-cell',

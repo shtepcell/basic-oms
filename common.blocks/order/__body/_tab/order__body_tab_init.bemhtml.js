@@ -2,7 +2,8 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
 
     var ctx = this.ctx,
         tab = ctx.tab,
-        dataset = ctx.dataset;
+        dataset = ctx.dataset,
+        order = ctx.order;
 
     return [
             {
@@ -26,7 +27,8 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                 name: 'client',
                                 dataprovider: {
                                     data: dataset['clients']
-                                }
+                                },
+                                val: order.client
                             }
                         ]
                     }
@@ -51,7 +53,8 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                     size: 'l'
                                 },
                                 autocomplete: false,
-                                placeholder: 'Номер телефона и другая информация'
+                                placeholder: 'Номер телефона и другая информация',
+                                val: order.contact
                             }
                         ]
                     }
@@ -75,6 +78,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                     theme: 'islands',
                                     size: 'l'
                                 },
+                                val: order.cms,
                                 autocomplete: false,
                                 placeholder: '12-345678-90'
                             }
@@ -88,6 +92,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                 elemMods: {
                     access: true
                 },
+                order: {info: order},
                 display: true
             },
             {
@@ -114,7 +119,8 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                 name: 'city',
                                 dataprovider: {
                                     data: dataset['cities']
-                                }
+                                },
+                                val: order.city
                             }
                         ]
                     }
@@ -125,6 +131,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                 elem: 'type-adress',
                 display: true,
                 dataset: dataset,
+                order: {info: order},
                 elemMods: {
                     access: true
                 }
@@ -133,9 +140,10 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                 block: 'order',
                 elem: 'adress-info',
                 elemMods: {
-                    type: 'location',
+                    type: (order.coordinate)?'coordination':'location',
                     access: true
                 },
+                order: { info: order },
                 dataset: dataset
             },
             {
@@ -164,6 +172,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                     theme: 'islands',
                                     size: 'l'
                                 },
+                                val: order.service,
                                 options: [
                                     {
                                         text: ''
@@ -236,7 +245,12 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
             },
             {
                 block: 'order',
-                elem: 'service-info'
+                elem: 'service-info',
+                elemMods: {
+                    type: order.service,
+                    access: true
+                },
+                order: { info: order }
             },
             {
                 elem: 'separator'
@@ -259,6 +273,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                     theme: 'islands',
                                     size: 'l'
                                 },
+                                val: order.add_info,
                                 autocomplete: false,
                                 placeholder: 'Доп. информация по заказу'
                             }
@@ -293,7 +308,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
             { elem: 'separator' },
             {
                 elem: 'body-row',
-                mix: { block: 'gavno', elem: 'vkusnoe' },
+                mix: { block: 'gavno', elem: 'vkusnoe', elemMods: {visible: order.service!='sks'} },
                 content: [
                     {
                         elem: 'body-row-name',

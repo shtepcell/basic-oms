@@ -7,7 +7,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
         order = ctx.order,
         adminEdit = ctx.adminEdit;
 
-    var isOwner = (user.department._id+'' == order.info.initiator.department._id+''),
+    var isOwner = (user._id+'' == order.info.initiator._id+''),
         isMatch = (order.status == 'client-match'),
         isNotify = (order.status == 'client-notify'),
         isEnd = (order.status == 'succes' || order.status == 'reject' || isNotify),
@@ -112,7 +112,6 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             order: order
         },
         { elem: 'separator' },
-
         {
             block: 'field',
             elem: 'service',

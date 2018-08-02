@@ -90,8 +90,33 @@ module.exports = {
 
     getPageInit: async (req, res) => {
         if(res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o') {
+            var rel = req.query.rel;
+            var order = {};
+            if (rel && !isNaN(rel)) {
+              order = await Order.findOne({id: rel}).populate([populateClient, populateCity, populateStreet]);
+              if (order)
+                order = {
+                  client: order.info.client.name,
+                  contact: order.info.contact,
+                  cms: order.info.cms,
+                  'date-request': order.info['date-request'],
+                  city: `${order.info.city.type} ${order.info.city.name}`,
+                  street: order.info.street,
+                  adds: order.info.adds,
+                  coordinate: order.info.coordinate,
+                  service: order.info.service,
+                  ip: order.info.ip,
+                  volume: order.info.volume,
+                  add_info: order.info.add_info,
+                  relation: order.id
+                };
+            }
+
             render(req, res, {
-                viewName: 'orders/init'
+                viewName: 'orders/init',
+                options: {
+                  order: order
+                }
             });
         } else {
             render(req, res, { view: '404' });
@@ -1464,7 +1489,7 @@ module.exports = {
                 return;
               }
               order.info.relation = req.body.relation;
-              
+
             }
 
           } else order.info.relation = undefined;

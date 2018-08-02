@@ -5,7 +5,7 @@
         {
             elems: ['head', 'cell-name', 'cell-data', 'tab', 'control',
              'body-row', 'body-row-name', 'body-row-data', 'separator', 'actions',
-            'switcher', 'id', 'cs', 'flag', 'clipboard']
+            'switcher', 'id', 'cs', 'flag', 'clipboard', 'dublicate']
         },
         {
             block: 'order',

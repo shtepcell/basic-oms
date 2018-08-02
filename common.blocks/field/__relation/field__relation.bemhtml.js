@@ -22,7 +22,7 @@ block('field').elem('relation').content()(function () {
                             theme: 'islands',
                             size: 'l'
                           },
-                          url: `http://ops.miranda-media.ru/order/${order.info.relation}`,
+                          url: `/order/${order.info.relation}`,
                           content: order.info.relation
                         }
                     }

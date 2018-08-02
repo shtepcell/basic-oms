@@ -11,6 +11,7 @@ block('order').content()(function () {
                 elemMods: {
                     tab: 'init'
                 },
+                order: order,
                 action: '/init',
                 tab: 'init',
                 init: true,
