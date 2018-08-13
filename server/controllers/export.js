@@ -8,9 +8,17 @@ function get(order, field) {
             text: 'ID',
             value: () => { return order.id; }
         },
+        'date-init': {
+            text: 'Дата инициации',
+            value: () => { return order.date.init; }
+        },
         'status': {
             text: 'Статус',
             value: () => { return order.status; }
+        },
+        'cs': {
+            text: 'КС',
+            value: () => { return order.cs; }
         },
         'client': {
             text: 'Клиент',
@@ -209,7 +217,7 @@ function get(order, field) {
     return fields[field];
 }
 
-var def = ['id', 'status', 'client', 'client-type', 'city', 'street', 'adds',
+var def = ['id', 'date-init', 'status', 'cs', 'client', 'client-type', 'city', 'street', 'adds',
                 'coordinate', 'service', 'volume', 'relation', 'ip',
                 'init-add-info', 'income-once', 'income-monthly',
                 'gzp-need', 'gzp-capability', 'gzp-time', 'gzp-cost-once',
@@ -223,7 +231,9 @@ module.exports = {
 
     getExcel: async (orders, res) => {
 
-        var wb = new xl.Workbook();
+        var wb = new xl.Workbook({
+          dateFormat: 'dd/mm/yyyy'
+        });
 
         var ws = wb.addWorksheet('Таблица 1');
 
@@ -248,9 +258,11 @@ module.exports = {
             def.forEach( (col, j) => {
                 var val = null;
                 val = get(item, col).value();
-
-                if(!val) val = '';
-                ws.cell(i+2,j+1).string( val.toString() );
+                if (val == null) ws.cell(i+2,j+1).string('');
+                else {
+                  if (def[j] == 'date-init') ws.cell(i+2,j+1).date( val );
+                  else ws.cell(i+2,j+1).string( val.toString() );
+                }
             })
         });
 

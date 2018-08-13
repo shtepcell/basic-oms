@@ -1872,6 +1872,7 @@ module.exports = {
         // deepPopulate(populateQuery);
         orders.forEach( item => {
             item.status = stages[item.status];
+            item.cs = helper.calculateCS(item);
         });
 
         getExcel(orders, res);
