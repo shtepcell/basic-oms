@@ -42,7 +42,7 @@ module.exports = {
     },
 
     delete: async (req, res) => {
-        var date = common.strToDate(req.body.date);
+        var date = helper.strToDate(req.body.date);
         if(!date) {
             res.status(400).send({errText: 'Выберите дату'});
             return;
