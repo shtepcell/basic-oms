@@ -603,15 +603,37 @@ module.exports = {
                         break;
                     case 'succes':
                         if(qr['$and']) {
-                            qr['$and'].push({'date.succes': {
-                                $gte: start,
-                                $lte: end
-                            }})
+                            qr['$and'].push({
+                              $or: [
+                                {
+                                  'date.succes': {
+                                    $gte: start,
+                                    $lte: end
+                                  }
+                                },
+                                {
+                                  'date.client-notify' : {
+                                    $gte: start,
+                                    $lte: end
+                                  }
+                                }
+                              ]
+                          })
                         } else qr['$and'] = [{
-                            'date.succes': {
-                                $gte: start,
-                                $lte: end
-                            }
+                            $or: [
+                              {
+                                'date.succes': {
+                                  $gte: start,
+                                  $lte: end
+                                }
+                              },
+                              {
+                                'date.client-notify' : {
+                                  $gte: start,
+                                  $lte: end
+                                }
+                              }
+                            ]
                         }];
                         break;
                 }

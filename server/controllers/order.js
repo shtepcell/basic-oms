@@ -1383,7 +1383,7 @@ module.exports = {
                     order.status = 'install-devices';
                 }
                 order.deadline = await helper.calculateDeadline(order.gzp.time);
-                order.date['cs-gzp-organization'] = await helper.calculateDeadline(order.gzp.time + 2);
+                order.date['cs-gzp-organization'] = await helper.calculateDeadline(order.gzp.time);
                 order.date['client-match'] = new Date();
 
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
@@ -1392,7 +1392,7 @@ module.exports = {
             case 'start-sks-build':
                 order.status = 'sks-build';
                 order.deadline = await helper.calculateDeadline(order.sks.time);
-                order.date['cs-sks-organization'] = await helper.calculateDeadline(order.sks.time + 2);
+                order.date['cs-sks-organization'] = await helper.calculateDeadline(order.sks.time);
                 order.date['client-match'] = new Date();
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
                 notify.create(res.locals.__user, order, `start-sks-build`);
@@ -1406,7 +1406,7 @@ module.exports = {
             case 'start-stop-build':
                 order.status = 'stop-build';
                 order.deadline = await helper.calculateDeadline(order.stop.time);
-                order.date['cs-stop-organization'] = await helper.calculateDeadline(order.stop.time + 2);
+                order.date['cs-stop-organization'] = await helper.calculateDeadline(order.stop.time);
                 order.date['client-match'] = new Date();
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
                 notify.create(res.locals.__user, order, `start-stop-build`);

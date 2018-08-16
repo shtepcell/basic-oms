@@ -24,33 +24,6 @@ var his = {
 
     for (var i = 0; i < orders.length; i++) {
         switch (orders[i].status) {
-            case 'stop-pre':
-                var date = findStageDate(orders[i], 'client-match') || findStageDate(orders[i], 'init');
-
-                if(date) {
-                    var dl = calculateDeadline(3, date);
-                    orders[i].deadline = dl
-                    orders[i].date['cs-stop-pre'] = dl;
-                } else console.log(orders[i].id);
-                break;
-            case 'gzp-pre':
-                var date = findStageDate(orders[i], 'client-match') || findStageDate(orders[i], 'init');
-
-                if(date) {
-                    var dl = calculateDeadline(3, date);
-                    orders[i].deadline = dl
-                    orders[i].date['cs-gzp-pre'] = dl;
-                } else console.log(orders[i].id);
-                break;
-            case 'sks-pre':
-                var date = findStageDate(orders[i], 'client-match') || findStageDate(orders[i], 'init');
-
-                if(date) {
-                    var dl = calculateDeadline(3, date);
-                    orders[i].deadline = dl
-                    orders[i].date['cs-sks-pre'] = dl;
-                } else console.log(orders[i].id);
-                break;
             case 'gzp-build':
                 var date = findStageDate(orders[i], 'client-match');
 
@@ -92,33 +65,7 @@ var his = {
                     orders[i].date['cs-sks-organization'] = dl;
                 } else console.log(orders[i].id);
                 break;
-            case 'client-match':
-                var dates = [
-                    findStageDate(orders[i], 'gzp-pre'),
-                    findStageDate(orders[i], 'stop-pre'),
-                    findStageDate(orders[i], 'sks-pre')
-                ];
-
-                dates = dates.sort();
-
-                var date = dates[0];
-
-                if(date) {
-                    var dl = calculateDeadline(10, date);
-                    orders[i].deadline = dl
-                    orders[i].date['cs-client-match'] = dl;
-                } else console.log(orders[i].id);
-
-                break;
-            case 'client-notify':
-                var date = findStageDate(orders[i], 'network');
-                if(date) {
-                    var dl = calculateDeadline(10, date);
-                    orders[i].deadline = dl
-                    orders[i].date['cs-client-notify'] = dl;
-                } else console.log(orders[i].id);
-                break;
-        }
+          }
         var done = await orders[i].save();
     }
 
