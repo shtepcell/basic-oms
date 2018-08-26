@@ -41,6 +41,7 @@ block('order').elem('head').content()(function () {
     `;
 
     if(order.pause.status) pause = ' (на паузе)';
+    if(order.requestPause.status) pause = ' (запрос на паузу)';
 
     if(order.resp != null) {
         resp = {

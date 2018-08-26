@@ -123,6 +123,90 @@ module.exports = {
         }
     },
 
+    getMainPagePause: async (req, res) => {
+        var pagerId = 'first',
+            pagers = [],
+            pageNumber = req.query['pager' + pagerId] || 1,
+            perPage = res.locals.__user.settings.table.perPage || 25;
+        res.locals.params = helper.trimObject(req.query);
+
+        if(res.locals.params.id && isNaN(res.locals.params.id)) {
+            res.locals.params.id_error = true;
+        }
+
+        if (!!(+pageNumber) && (+pageNumber) > 0) {
+            pageNumber = +pageNumber;
+            pagers[0] = pagerId;
+        }
+        else
+            res.redirect(req.path);
+
+        var query = {};
+        var subQ = await helper.makeQuery(req, res);
+
+        var user = res.locals.__user;
+
+        var u = await Account.findOne({login: user.login});
+        u.last = '/pause';
+        u.save();
+
+        query = {
+            'info.initiator': user._id,
+            'requestPause.status': true
+        };
+
+        var orders = await Order.find({
+            $and: [query, subQ],
+            status: {$ne: 'secret'}
+        }).populate([populateClient, populateCity, populateStreet]).lean();
+
+        var total = orders.length;
+
+        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+
+        if(req.query.sort) {
+            orders = helper.orderSort(orders, req.query.sort, req.query.value);
+        }
+
+        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+
+        orders.forEach( item => {
+            item.cs = helper.calculateCS(item);
+            item.status = stages[item.status];
+            item.initDate = helper.dateToStr(item.date.init)
+        });
+
+        if (!orders.length)
+        {
+            if (pageNumber !== 1) {
+                res.redirect(req.path);
+            } else {
+                render(req, res, {
+                    viewName: 'main',
+                    options: {
+                        tab: 'pause'
+                    }
+                });
+            }
+        } else {
+            res.locals.pagers = {};
+            res.locals.pagers[pagerId] = {
+                pageNumber: +pageNumber,
+                records: total,
+                perPage: perPage
+            };
+
+            res.locals.orders = orders;
+            render(req, res, {
+                viewName: 'main',
+                options: {
+                    pagers: pagers,
+                    tab: 'pause'
+                }
+            });
+        }
+    },
+
     getMainPageClient: async (req, res) => {
         var pagerId = 'first',
             pagers = [],
@@ -1304,8 +1388,32 @@ module.exports = {
                     status: true,
                     date: new Date()
                 };
+                order.requestPause = {
+                    status: false,
+                    date: null,
+                    user: null
+                };
                 order.history.push(helper.historyGenerator('pause-start', res.locals.__user));
-                notify.create(res.locals.__user, order, 'pause-start');
+                // notify.create(res.locals.__user, order, 'pause-start');
+                // sendMail(order, 'pause');
+                break;
+            case 'reject-pause':
+                order.requestPause = {
+                    status: false,
+                    date: null,
+                    user: null
+                };
+                order.history.push(helper.historyGenerator('reject-pause', res.locals.__user));
+                // notify.create(res.locals.__user, order, 'reject-pause');
+                break;
+            case 'request-pause':
+                order.requestPause = {
+                    status: true,
+                    date: new Date(),
+                    user: res.locals.__user
+                };
+                order.history.push(helper.historyGenerator('request-pause', res.locals.__user));
+                notify.create(res.locals.__user, order, 'request-pause');
                 // sendMail(order, 'pause');
                 break;
             case 'stop-pause':

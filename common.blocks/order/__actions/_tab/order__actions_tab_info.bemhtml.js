@@ -6,6 +6,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
 
     var isOwner = (order.info.initiator.department._id == user.department._id + ''),
         isGUS = (user.department.name == order.zone),
+        isB2O = (!isOwner && user.department.type == 'b2o' && (order.status == 'all-pre' || order.status == 'stop-pre' || order.status == 'stop-build')),
         isPre = (order.status == 'all-pre' || order.status == 'gzp-pre' || order.status == 'stop-pre'),
         isMatch = (order.status == 'client-match'),
         isNotify = (order.status == 'client-notify'),
@@ -13,6 +14,8 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
         isNetUser = (user.department.type == 'net'),
         isAdmin = (user.department.type == 'admin'),
         isPause = (order.pause.status),
+        isRequest = (order.requestPause.status),
+        isRequester = (order.requestPause.user == user._id + ''),
         isReject = (order.status == 'reject'),
         isOn = (order.status == 'succes'),
         mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0),
@@ -165,11 +168,31 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             block: 'order',
             elem: 'action',
             data: {
-                text: 'Поcтавить на паузу',
+                text: 'Запросить паузу',
+                to: 'request-pause',
+                id: order.id
+            },
+            display: (!isPause && !isRequest && (isB2O || isGUS || (isNetStatus && isNetUser)) && !isOn)
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Отклонить запрос паузы',
+                to: 'reject-pause',
+                id: order.id
+            },
+            display: (isRequest && (isOwner || isRequester) && !isOn)
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Поставить на паузу',
                 to: 'pause',
                 id: order.id
             },
-            display: (!isPause && (isOwner || isAdmin || isGUS || (isNetStatus && isNetUser)) && !isOn)
+            display: (!isPause && (isOwner || isAdmin) && !isOn)
         },
         {
             block: 'order',
@@ -179,7 +202,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'stop-pause',
                 id: order.id
             },
-            display: (isPause && (isOwner || isAdmin || isGUS || (isNetStatus && isNetUser)) && !isOn)
+            display: (isPause && (isOwner || isAdmin) && !isOn)
         },
         {
             block: 'order',

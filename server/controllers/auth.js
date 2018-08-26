@@ -2,6 +2,7 @@
 
 const Account = require('../models/Account');
 const Department = require('../models/Department');
+const Order = require('../models/Order');
 const password = require('./password');
 const logger = require('./logger');
 const Render = require('../render'),
@@ -22,6 +23,15 @@ module.exports = {
         if (req.session.__user) {
             var acc = await Account.findOne({login: req.session.__user}).populate('department notifies');
             var deps = await Department.find({status: true, type: 'gus'}).lean();
+            var requestPause;
+
+            if (acc.department.type == 'b2o' || acc.department.type == 'b2b') {
+              requestPause = await Order.count({
+                'requestPause.status': true,
+                'info.initiator': acc._id + ''
+              });
+            }
+
             var count = 0;
 
             for (var i = 0; i < acc.notifies.length; i++) {
@@ -36,7 +46,8 @@ module.exports = {
                 department: acc.department,
                 notifies: count,
                 last: acc.last,
-                settings: acc.settings
+                settings: acc.settings,
+                request: requestPause
             };
             next();
         } else {

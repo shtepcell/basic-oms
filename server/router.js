@@ -64,6 +64,7 @@ module.exports = function (app, io) {
     });
 
     app.get('/my', Order.getMainPageMy);
+    app.get('/pause', Order.getMainPagePause);
     app.get('/client', Order.getMainPageClient);
     app.get('/pre', Order.getMainPagePre);
     app.get('/build', Order.getMainPageBuild);

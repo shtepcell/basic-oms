@@ -85,6 +85,12 @@ module.exports = {
             case 'change-params':
                 ret.name = `Обновление услуги/парметров услуги`;
                 break;
+            case 'request-pause':
+                ret.name = `Запрос паузы`;
+                break;
+            case 'reject-pause':
+                ret.name = `Отмена запроса паузы`;
+                break;
         }
         return ret;
     },

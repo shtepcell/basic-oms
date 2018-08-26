@@ -44,50 +44,52 @@ module.exports = function(opt, data){
             }
         },
         page: [
-            {
-                block: 'wrapper',
-                mods: {
-                    size: 'l'
-                },
-                content: [
-                    {
-                        block: 'switcher',
-                        mods: {
-                            display: true,
-                            type: type
-                        },
-                        tab: tab
-                    },
-                    {
-                        block: 'short-filter',
-                        dataset: data.dataset,
-                        query: data.params
-                    },
-                    // {
-                    //     block: 'table',
-                    //     mods: {
-                    //         type: 'order',
-                    //         width: 'available'
-                    //     },
-                    //     params: data.params,
-                    //     data: orders
-                    // },
-                    {
-                        block: 'orders-table',
-                        params: data.params,
-                        services: data.dataset.services,
-                        flags: data.dataset.flags,
-                        params: data.params,
-                        orders: orders
-                    },
-                    {
-                        block: 'pager',
-                        attrs: {
-                            id: pagerId
-                        }
-                    }
-                ]
-            }
+          {
+              block: 'switcher',
+              mods: {
+                  display: true,
+                  type: type
+              },
+              user: user,
+              tab: tab
+          },
+          {
+              block: 'wrapper',
+              mods: {
+                  size: 'l'
+              },
+              content: [
+
+                  {
+                      block: 'short-filter',
+                      dataset: data.dataset,
+                      query: data.params
+                  },
+                  // {
+                  //     block: 'table',
+                  //     mods: {
+                  //         type: 'order',
+                  //         width: 'available'
+                  //     },
+                  //     params: data.params,
+                  //     data: orders
+                  // },
+                  {
+                      block: 'orders-table',
+                      params: data.params,
+                      services: data.dataset.services,
+                      flags: data.dataset.flags,
+                      params: data.params,
+                      orders: orders
+                  },
+                  {
+                      block: 'pager',
+                      attrs: {
+                          id: pagerId
+                      }
+                  }
+              ]
+          }
         ]
     };
 };

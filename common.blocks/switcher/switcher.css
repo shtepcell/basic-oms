@@ -2,14 +2,17 @@
 {
     margin: 0 35px 0 0;
 
-    font-size: 175%;
+    font-size: 20px;
 
-    padding: 0px 15px 0 15px;
+    padding: 0px 10px 0 10px;
 }
 
 .switcher .link.link_theme_islands.link_disabled
 {
     border-radius: 15px;
+
+    padding-top: 5px;
+    padding-bottom: 5px;
 
     box-shadow: 0px 0px 25px #ccc;
 
@@ -20,5 +23,7 @@
 .switcher
 {
     text-align: center;
-    margin: 15px 0 15px 0;
+    padding: 10px 0 10px 0;
+
+    white-space: nowrap;
 }

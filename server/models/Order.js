@@ -27,6 +27,14 @@ var schema = new Schema({
         status: Boolean,
         date: Date
     },
+		requestPause: {
+				status: Boolean,
+				date: Date,
+				user: {
+            type: Schema.Types.ObjectId,
+            ref: 'Account'
+        }
+		},
     info: {
         initiator: {
             type: Schema.Types.ObjectId,

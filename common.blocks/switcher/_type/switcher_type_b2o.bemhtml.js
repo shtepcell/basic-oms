@@ -1,5 +1,12 @@
 block('switcher').mod('type', 'b2o').mod('display', true).content()(function () {
-    var tab = this.ctx.tab;
+    var tab = this.ctx.tab,
+        user = this.ctx.user;
+
+    var count = '';
+    
+    if (user.request > 0) {
+      count = `(${user.request})`
+    }
 
     return [
         {
@@ -20,12 +27,17 @@ block('switcher').mod('type', 'b2o').mod('display', true).content()(function () 
             url: '/pre',
             content: 'Проработка'
         },
-
         {
             block: 'link',
             mods: { theme: 'islands', size : 'xl', disabled: (tab=='build') },
             url: '/build',
             content: 'Реализация'
+        },
+        {
+            block: 'link',
+            mods: { theme: 'islands', size : 'xl', disabled: (tab=='pause') },
+            url: '/pause',
+            content: `Запросы паузы ${count}`
         }
     ]
 })
