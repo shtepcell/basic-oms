@@ -11,6 +11,24 @@ modules.define('order__button',
 
         _onClick: function () {
             var data = this.params;
+            if (data.to == 'start-sks-build' || data.to == 'start-gzp-build' || data.to == 'start-stop-build') {
+              data.incomeOnce = document.getElementsByName('income-once')[0].value;
+              data.incomeMonth = document.getElementsByName('income-monthly')[0].value;
+              var idExist = !!document.getElementsByName('idoss')[0];
+              if (idExist)
+                data.oss = document.getElementsByName('idoss')[0].value;
+
+              if (data.incomeOnce == '' || data.incomeMonth == '' || (idExist && data.oss == '') ) {
+                alert('Заполните требуемы поля!')
+                return;
+              }
+
+              if (isNaN(data.incomeOnce) || isNaN(data.incomeMonth)) {
+                alert('Доход должен быть числом!')
+                return;
+              }
+            }
+
             if (confirm(`Вы уверены, что хотите ${data.text}?`)) {
                 $.ajax({
                     url: this.params.url,

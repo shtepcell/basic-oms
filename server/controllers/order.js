@@ -1490,6 +1490,11 @@ module.exports = {
                 } else {
                     order.status = 'install-devices';
                 }
+                order.info['income-once'] = reqData.incomeOnce;
+                order.info['income-monthly'] = reqData.incomeMonth;
+                if (reqData.oss)
+                  order.info['idoss'] = reqData.oss;
+
                 order.deadline = await helper.calculateDeadline(order.gzp.time);
                 order.date['cs-gzp-organization'] = await helper.calculateDeadline(order.gzp.time);
                 order.date['client-match'] = new Date();
@@ -1499,6 +1504,12 @@ module.exports = {
                 break;
             case 'start-sks-build':
                 order.status = 'sks-build';
+
+                order.info['income-once'] = reqData.incomeOnce;
+                order.info['income-monthly'] = reqData.incomeMonth;
+                if (reqData.oss)
+                  order.info['idoss'] = reqData.oss;
+
                 order.deadline = await helper.calculateDeadline(order.sks.time);
                 order.date['cs-sks-organization'] = await helper.calculateDeadline(order.sks.time);
                 order.date['client-match'] = new Date();
@@ -1513,6 +1524,12 @@ module.exports = {
                 break;
             case 'start-stop-build':
                 order.status = 'stop-build';
+
+                order.info['income-once'] = reqData.incomeOnce;
+                order.info['income-monthly'] = reqData.incomeMonth;
+                if (reqData.oss)
+                  order.info['idoss'] = reqData.oss;
+
                 order.deadline = await helper.calculateDeadline(order.stop.time);
                 order.date['cs-stop-organization'] = await helper.calculateDeadline(order.stop.time);
                 order.date['client-match'] = new Date();
