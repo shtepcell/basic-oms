@@ -230,6 +230,10 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                         val: 'vpls'
                                     },
                                     {
+                                      text: "Защита от DDoS-атак",
+                                      val: 'ddos'
+                                    },
+                                    {
                                         text: 'Авторизация Wi-Fi',
                                         val: 'wifi'
                                     },

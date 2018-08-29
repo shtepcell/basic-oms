@@ -144,6 +144,10 @@ block('field').elem('service').elemMod('access', true).content()(function () {
                                         val: 'wifi'
                                     },
                                     {
+                                        text: 'Защита от DDoS-атак',
+                                        val: 'ddos'
+                                    },
+                                    {
                                         text: 'IP TV',
                                         val: 'iptv'
                                     }
