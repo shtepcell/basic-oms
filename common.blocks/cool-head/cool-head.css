@@ -1,0 +1,20 @@
+.cool-head {
+  width: 800px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: row;
+}
+
+.cool-head__title {
+  font-size: 24px;
+  font-family: 'Arial';
+  font-weight: bold;
+}
+
+.cool-head__action {
+  margin-left: auto;
+}
+
+.cool-head__action .button {
+  margin-left: 20px;
+}

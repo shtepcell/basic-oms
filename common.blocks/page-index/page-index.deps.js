@@ -4,6 +4,18 @@
             block: 'orders-table'
         },
         {
+            block: 'icon',
+            mods: {
+              action: 'download'
+            }
+        },
+        {
+            block: 'cool-head'
+        },
+        {
+            block: 'upload'
+        },
+        {
             block: 'tip'
         },
         {

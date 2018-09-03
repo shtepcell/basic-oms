@@ -12,6 +12,14 @@ function get(order, field) {
             text: 'Дата инициации',
             value: () => { return order.date.init; }
         },
+        'date-on': {
+            text: 'Дата включения',
+            value: () => { return order.date['client-notify']; }
+        },
+        'cms': {
+            text: 'Номер СMS',
+            value: () => { return order.info.cms; }
+        },
         'status': {
             text: 'Статус',
             value: () => { return order.status; }
@@ -217,7 +225,7 @@ function get(order, field) {
     return fields[field];
 }
 
-var def = ['id', 'date-init', 'status', 'cs', 'client', 'client-type', 'city', 'street', 'adds',
+var def = ['id', 'date-init', 'date-on', 'cms', 'status', 'cs', 'client', 'client-type', 'city', 'street', 'adds',
                 'coordinate', 'service', 'volume', 'relation', 'ip',
                 'init-add-info', 'income-once', 'income-monthly',
                 'gzp-need', 'gzp-capability', 'gzp-time', 'gzp-cost-once',
@@ -260,8 +268,15 @@ module.exports = {
                 val = get(item, col).value();
                 if (val == null) ws.cell(i+2,j+1).string('');
                 else {
-                  if (def[j] == 'date-init') ws.cell(i+2,j+1).date( val );
-                  else ws.cell(i+2,j+1).string( val.toString() );
+                  switch (def[j]) {
+                    case 'date-init':
+                    case 'date-on':
+                      ws.cell(i+2,j+1).date( val );
+                      break;
+                    default:
+                      ws.cell(i+2,j+1).string( val.toString() );
+                      break;
+                  }
                 }
             })
         });

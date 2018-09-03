@@ -12,6 +12,7 @@ const Auth = require('./controllers/auth'),
     Street = require('./controllers/street'),
     Chat = require('./controllers/chat'),
     Export = require('./controllers/export'),
+    Import = require('./controllers/import'),
     helper = require('./controllers/helper');
 
 const fileUpload = require('express-fileupload');
@@ -88,6 +89,11 @@ module.exports = function (app, io) {
     app.post('/init', (req, res) => {
         return Order.init(req, res, io);
     });
+
+    app.get('/multi-init', Import.getPage);
+    // app.post('/multi-init', (req, res) => {
+    //     return Order.init(req, res, io);
+    // });
 
     app.get('/order/:id', function (req, res) {
         res.redirect(`/order/${req.params.id}/info`)

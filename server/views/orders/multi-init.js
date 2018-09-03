@@ -2,9 +2,9 @@ module.exports = function(opt, data) {
 
     return {
         view: 'page-index',
-        title: 'Инициация заказа',
+        title: 'Инициация заказов',
         meta: {
-            description: 'Страница инициации заказа',
+            description: 'Страница множественной инициации',
             og: {
                 url: 'https://suz.miranda-media.ru',
                 siteName: 'СУЗ 2.0'
@@ -16,7 +16,7 @@ module.exports = function(opt, data) {
               content: [
                 {
                   elem: 'title',
-                  content: 'Инициация заказов'
+                  content: 'Инициация заказа'
                 },
                 {
                   elem: 'action',
@@ -28,26 +28,29 @@ module.exports = function(opt, data) {
                           size: 'l',
                           type: 'link'
                       },
+                      url: '/template.xlsx',
+                      text: 'Загрузить шаблон'
+                    },
+                    {
+                      block: 'button',
+                      mods: {
+                          theme: 'islands',
+                          size: 'l',
+                          type: 'link'
+                      },
                       url: '/multi-init',
-                      text: 'Инициировтаь из Excel'
+                      text: 'Загрузить справочники'
                     }
-                  ]
+                ]
                 }
               ]
             },
             {
-                block: 'wrap',
-                elem: 'order',
-                content: {
-                    block: 'order',
-                    action: `/init`,
-                    order: opt.order,
-                    tab: 'init',
-                    user: data.__user,
-                    dataset: data.dataset
-                }
+              block: 'upload'
+            },
+            {
+              block: 'errors'
             }
-
         ]
     }
 };

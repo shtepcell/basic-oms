@@ -1,0 +1,44 @@
+.upload {
+  width: 800px;
+  margin: 0 auto;
+  display: flex;
+
+  background-color: #f8f8f8;
+
+  box-shadow: 0 2px 6px 0 rgba(197,186,186,0.50);
+
+  border-radius: 20px;
+}
+
+.upload__action {
+  margin: 20px 20px;
+  margin-left: auto;
+}
+
+.upload__action .button {
+  color: #fff;
+  font-weight: 500;
+  font-family: 'Arial';
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  background-color: #0073ff;
+}
+
+.upload__action .button:hover {
+  background-color: #117dff;
+}
+
+.upload__action .button::before {
+  background-color: #0073ff;
+}
+
+
+.upload__action .button:hover::before {
+  background-color: #117dff;
+}
+
+
+.upload__title {
+  margin: 20px 20px;
+  font-size: 24px;
+  font-weight: bold;
+}
