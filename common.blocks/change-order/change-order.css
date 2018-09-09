@@ -1,0 +1,56 @@
+.change-order {
+  width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f8f8;
+
+  box-shadow: 0 2px 6px 0 rgba(197,186,186,0.50);
+
+  border-radius: 20px;
+}
+
+.change-order__action {
+  margin: 20px 20px;
+}
+
+.change-order__action .button {
+  width: 100%;
+  color: #fff;
+  font-weight: 500;
+  font-family: 'Arial';
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  background-color: #0073ff;
+}
+
+.change-order__action .button:hover {
+  background-color: #117dff;
+}
+
+.change-order__action .button::before {
+  background-color: #0073ff;
+}
+
+.change-order__action .button:hover::before {
+  background-color: #117dff;
+}
+
+.change-order__row {
+  margin: 10px 20px 10px 20px;
+  display: flex;
+  flex-direction: row;
+}
+
+.change-order__row-name {
+  display: flex;
+  align-self: center;
+  white-space: nowrap;
+  margin-right: 25px;
+
+  font-style: italic;
+}
+
+.change-order__row-data {
+  max-width: 600px;
+  font-size: 16px;
+}

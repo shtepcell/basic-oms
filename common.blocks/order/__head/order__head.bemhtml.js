@@ -24,8 +24,10 @@ block('order').elem('head').content()(function () {
     var isInit = (user.department.type == 'b2b' || user.department.type == 'b2o');
     var isAdmin = (user.department.type == 'admin');
 
-    var tClient = `[${order.info.client.type.shortName}] ${order.info.client.name}`,
-        tContact = order.info.contact,
+    const isOn = (order.status == 'succes');
+    const hasVolume = ['internet', 'l2vpn', 'l3vpn', 'vpls'].includes(order.info.service);
+
+    var tContact = order.info.contact,
         tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.adds}`,
         tService = `${services[order.info.service]}`,
         tVolume = '';
@@ -58,32 +60,6 @@ block('order').elem('head').content()(function () {
             ]
         }
     }
-
-    // if(order.isOld)
-    //     link = {
-    //         elem: 'head-item',
-    //         content: [
-    //             {
-    //                 elem: 'cell-name',
-    //                 content: 'Заявка в основном СУЗ-е'
-    //             },
-    //             {
-    //                 elem: 'cell-data',
-    //                 content: {
-    //                     block: 'link',
-    //                     mods: {
-    //                         theme: 'islands'
-    //                     },
-    //                     attrs: {
-    //                         target: '_blank'
-    //                     },
-    //                     url: `http://ops.miranda-media.ru/orders/${order.id}`,
-    //                     content: 'Ссылка'
-    //                 }
-    //             }
-    //         ]
-    //     }
-
 
     return [
         {
@@ -129,6 +105,19 @@ block('order').elem('head').content()(function () {
             mods : { theme : 'islands', size : 'm' },
             url : `/init?rel=${order.id}`,
             content : 'Дублировать'
+        },
+        {
+            block : 'link',
+            mix: {
+              block: 'order',
+              elem: 'change',
+              elemMods: {
+                visible: isOn && isInit && hasVolume
+              }
+            },
+            mods : { theme : 'islands', size : 'm' },
+            url : `/change-order/${order.id}`,
+            content : 'Изменить заказ'
         },
         {
             block: 'dropdown',

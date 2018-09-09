@@ -114,6 +114,13 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
         { elem: 'separator' },
         {
             block: 'field',
+            elem: 'preVolume',
+            order: order,
+            dataset: dataset,
+            display: order.preVolume && ['network', 'gzp-build', 'install-devices', 'stop-build'].includes(order.status)
+        },
+        {
+            block: 'field',
             elem: 'service',
             order: order,
             elemMods: {

@@ -4,6 +4,9 @@
             block: 'orders-table'
         },
         {
+            block: 'change-order'
+        },
+        {
             block: 'icon',
             mods: {
               action: 'download'

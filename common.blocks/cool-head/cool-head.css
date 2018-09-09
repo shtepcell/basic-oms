@@ -11,6 +11,11 @@
   font-weight: bold;
 }
 
+.cool-head__title > a.link {
+  margin-left: 10px;
+  font-size: 24px;
+}
+
 .cool-head__action {
   margin-left: auto;
 }

@@ -1,0 +1,12 @@
+.order__change
+{
+  visibility:hidden;
+  position: absolute !important;
+  top: 73px;
+  left: 690px;
+}
+
+.order__change_visible
+{
+  visibility: visible;
+}

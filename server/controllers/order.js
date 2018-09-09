@@ -802,6 +802,42 @@ module.exports = {
         } else res.send({errText: 'Что-то пошло не так'});
     },
 
+    getPageChange: async (req, res) => {
+        if(isNaN(req.params.id)) {
+             render(req, res, { view: '404' });
+             return;
+        }
+        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+
+        if(order) {
+            if (order.status != 'succes') render(req, res, { view: '404' });
+            res.locals.order = order;
+            render(req, res, {
+                viewName: 'orders/change-order'
+            });
+
+        } else render(req, res, { view: '404' });
+    },
+
+    getChangeV: async (req, res) => {
+        const order = await Order.findOne({id: req.params.id}),
+            volume = req.body.volume;
+
+        order.status = 'network';
+        order.deadline = await helper.calculateDeadline(3);
+
+        order.history.push(helper.historyGenerator('change-order', res.locals.__user, {
+            from: order.info.volume,
+            to: volume
+        }));
+        order.preVolume = order.info.volume;
+        order.info.volume = volume;
+
+        order.save();
+        
+        res.sendStatus(200);
+    },
+
     getOrderInfo: async (req, res) => {
         if(isNaN(req.params.id)) {
              render(req, res, { view: '404' });
@@ -1466,6 +1502,7 @@ module.exports = {
                 break;
             case 'end-network':
                 order.status = 'client-notify';
+                order.preVolume = null;
                 order.deadline = await helper.calculateDeadline(2);
                 order.date['cs-client-notify'] = await helper.calculateDeadline(2);
                 order.date['network'] = new Date();

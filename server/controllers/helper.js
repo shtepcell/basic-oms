@@ -91,6 +91,9 @@ module.exports = {
             case 'reject-pause':
                 ret.name = `Отмена запроса паузы`;
                 break;
+            case 'change-order':
+                ret.name = `Изменение ёмкости ( ${opt.from} -> ${opt.to} )`;
+                break;
         }
         return ret;
     },

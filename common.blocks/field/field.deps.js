@@ -4,6 +4,7 @@
             block: 'field',
             elems: [
                 'client',
+                'preVolume',
                 'cms',
                 'in-pause',
                 'contact',

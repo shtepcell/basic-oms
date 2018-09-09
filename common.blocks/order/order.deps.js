@@ -17,6 +17,10 @@
         },
         {
             block: 'order',
+            elem: 'change'
+        },
+        {
+            block: 'order',
             elem: 'action',
             mods: {
                 type: ['add-param', 'submit', 'redirect']
