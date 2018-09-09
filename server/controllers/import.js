@@ -11,20 +11,21 @@ module.exports = {
 
     getHandbook: async (req, res) => {
 
-        var wb = new xl.Workbook({
-          dateFormat: 'dd/mm/yyyy'
-        });
+        // var wb = new xl.Workbook({
+        //   dateFormat: 'dd/mm/yyyy'
+        // });
 
-        var ws = wb.addWorksheet('Справочники');
+        // var ws = wb.addWorksheet('Справочники');
 
-        ws.cell(1, 1).string('Город');
+        // ws.cell(1, 1).string('Город');
 
-        wb.write('Handbook.xlsx', res);
+        // wb.write('Handbook.xlsx', res);
+        console.log('asdasd');
+        
+        res.send(200);
     },
 
     getPage: async (req, res) => {
-
-      console.log(render);
 
       render(req, res, {
           viewName: 'orders/multi-init'

@@ -16,23 +16,23 @@ module.exports = function(opt, data) {
               content: [
                 {
                   elem: 'title',
-                  content: 'Инициация заказов'
-                },
-                {
-                  elem: 'action',
-                  content: [
-                    {
-                      block: 'button',
-                      mods: {
-                          theme: 'islands',
-                          size: 'l',
-                          type: 'link'
-                      },
-                      url: '/multi-init',
-                      text: 'Инициировтаь из Excel'
-                    }
-                  ]
+                  content: 'Инициация заказа'
                 }
+                // {
+                //   elem: 'action',
+                //   content: [
+                //     {
+                //       block: 'button',
+                //       mods: {
+                //           theme: 'islands',
+                //           size: 'l',
+                //           type: 'link'
+                //       },
+                //       url: '/multi-init',
+                //       text: 'Инициировтаь из Excel'
+                //     }
+                //   ]
+                // }
               ]
             },
             {
