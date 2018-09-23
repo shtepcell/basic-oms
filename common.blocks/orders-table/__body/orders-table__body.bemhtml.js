@@ -10,7 +10,7 @@ block('orders-table').elem('body')(
         if(orders.length > 0) {
             for (var i = 0; i < orders.length; i++) {
                 var adress,
-                    pause;
+                    pause = false;
                 if (orders[i].pause) {
                     pause = orders[i].pause.status;
                 }

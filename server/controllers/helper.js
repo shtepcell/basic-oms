@@ -651,6 +651,16 @@ module.exports = {
         return qr;
     },
 
+    getEndGzpDeadline: async (order) => {
+        const isGZP = order.date['gzp-build'] || order.date['install-devices'];
+        if (isGZP && order.date['client-match']) {
+            var plan = await calculate(order.gzp.time, order.date['client-match']);
+            var cs = Math.round((isGZP - plan) / 1000 / 60 / 60 / 24);
+            if (cs <= 0) return '-';
+            else return ''+cs;
+        } else return '-';
+    },
+
     getRespDep : async (order) => {
        switch (order.status) {
            case 'gzp-pre':
@@ -686,6 +696,13 @@ module.exports = {
                break;
        }
    },
+
+    getGUSName : async (order) => {
+        var dep = await Department.findOne({cities: order.info.city._id});
+        if(order.special) dep = await Department.findOne({_id: order.special});
+        if(!dep) return 'Ответственный отдел не определён!';
+        return dep.name;
+    },
 
    getRespDepName : async (order) => {
       switch (order.status) {
@@ -736,7 +753,6 @@ module.exports = {
   },
 
    calculateDeadline: async (time) => {
-       var holidays = await Holiday.find();
        var now = new Date();
 
        var i = 0;
@@ -873,4 +889,30 @@ function strToDate(date) {
             else return false
         } else return false;
     } else return null;
+}
+
+function findStageDate (order, stage)  {
+    var history = order.history,
+        res;
+
+    for (var i = 0; i < history.length; i++) {
+        if(his[stage] == history[i].name && history[i].author) res = history[i].date;
+    }
+
+    return res;
+}
+
+var calculate = async (time, now) => {
+    var i = 0;
+
+    while (time > 0) {
+        var day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+        var holi = await Holiday.findOne({date: day});
+
+        if(day.getDay() != 6 && day.getDay() != 0 && holi == null) {
+            time--;
+        }
+        i++;
+    }
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, 0, 0, 0, 0);
 }

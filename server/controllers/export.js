@@ -1,6 +1,7 @@
 'use strict';
 
 var xl = require('excel4node');
+const { getGUSName } = require('./helper');
 
 function get(order, field) {
     var fields = {
@@ -27,6 +28,14 @@ function get(order, field) {
         'cs': {
             text: 'КС',
             value: () => { return order.cs; }
+        },
+        'department': {
+            text: 'Ответсвенный ГУС',
+            value: () => { return order.gusName; }
+        },
+        'gzpDeadline': {
+            text: 'Просрочка организации',
+            value: () => { return order.prosrochka; }
         },
         'client': {
             text: 'Клиент',
@@ -225,7 +234,8 @@ function get(order, field) {
     return fields[field];
 }
 
-var def = ['id', 'date-init', 'date-on', 'cms', 'status', 'cs', 'client', 'client-type', 'city', 'street', 'adds',
+var def = ['id', 'date-init', 'date-on', 'gzpDeadline', 'cms', 'status', 'cs', 'department',
+                'client', 'client-type', 'city', 'street', 'adds',
                 'coordinate', 'service', 'volume', 'relation', 'ip',
                 'init-add-info', 'income-once', 'income-monthly',
                 'gzp-need', 'gzp-capability', 'gzp-time', 'gzp-cost-once',

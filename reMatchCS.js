@@ -16,56 +16,14 @@ var his = {
 
 (async () => {
 
-    var orders = await Order.find({
-        status: {$ne: 'secret'},
-        status: {$ne: 'reject'},
-        status: {$ne: 'succes'}
-    })
+    var orders = await Order.find()
 
     for (var i = 0; i < orders.length; i++) {
-        switch (orders[i].status) {
-            case 'gzp-build':
-                var date = findStageDate(orders[i], 'client-match');
+        var date = findStageDate(orders[i], 'client-match');
 
-                if(date) {
-                    var dl = calculateDeadline(orders[i].gzp.time, date);
-                    orders[i].deadline = dl
-                    orders[i].date['cs-gzp-organization'] = dl;
-                } else console.log(orders[i].id);
-                break;
-            case 'install-devices':
-                var date = findStageDate(orders[i], 'client-match');
-
-                if(date) {
-                    var dl = calculateDeadline(orders[i].gzp.time, date);
-                    orders[i].deadline = dl
-                    orders[i].date['cs-gzp-organization'] = dl;
-                } else console.log(orders[i].id);
-
-                break;
-            case 'stop-build':
-                var date = findStageDate(orders[i], 'client-match');
-
-                if(date) {
-                    var dl = calculateDeadline(orders[i].stop.time, date);
-                    orders[i].deadline = dl
-                    orders[i].date['cs-stop-organization'] = dl;
-                } else console.log(orders[i].id);
-                break;
-            case 'sks-build':
-                var date = findStageDate(orders[i], 'client-match');
-
-                if(date) {
-                    if(orders[i].isOld)
-                        var dl = calculateDeadline(orders[i].gzp.time, date);
-                    else
-                        var dl = calculateDeadline(orders[i].sks.time, date);
-
-                    orders[i].deadline = dl
-                    orders[i].date['cs-sks-organization'] = dl;
-                } else console.log(orders[i].id);
-                break;
-          }
+        if(date) {
+            orders[i].date['client-match'] = date;
+        }
         var done = await orders[i].save();
     }
 
