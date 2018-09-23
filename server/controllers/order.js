@@ -2036,7 +2036,6 @@ module.exports = {
         for (let i = 0; i < orders.length; i++) {
            orders[i].gusName = await helper.getGUSName(orders[i]);
            orders[i].prosrochka = await helper.getEndGzpDeadline(orders[i]);
-
         }
         
         orders.forEach( item => {
