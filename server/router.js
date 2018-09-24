@@ -78,6 +78,8 @@ module.exports = function (app, io) {
     app.get('/search/reset', Order.searchReset);
 
     app.get('/export', Order.excel);
+    app.get('/report', Order.report);
+
 
     app.get('/dev', function (req, res) {
         render(req, res, {

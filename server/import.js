@@ -1,5 +1,3 @@
-var db = require('./controllers/connect');
-
 var orders = require('./export'),
     Order = require('./models/Order'),
     Client = require('./models/Client'),

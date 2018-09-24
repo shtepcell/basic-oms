@@ -12,7 +12,7 @@ const Notify = require('../models/Notify');
 const Flag = require('../models/Flag');
 const notify = require('./notify');
 const { sendMail } = require('./mailer');
-const { getExcel } = require('./export');
+const { getExcel, getReportExcel } = require('./export');
 
 const helper = require('./helper');
 const validator = require('./validator');
@@ -2033,6 +2033,28 @@ module.exports = {
         var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
         // deepPopulate(populateQuery);
 
+        orders.forEach( item => {
+            item.status = stages[item.status];
+            item.cs = helper.calculateCS(item);
+        });
+
+        getExcel(orders, res);
+
+    },
+
+    report: async (req, res) => {
+
+        if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
+        if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
+        if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
+        if(req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
+
+        var query = await helper.makeQuery(req, res);
+        query.special = undefined;
+
+        var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        // deepPopulate(populateQuery);
+
         for (let i = 0; i < orders.length; i++) {
            orders[i].gusName = await helper.getGUSName(orders[i]);
            orders[i].prosrochka = await helper.getEndGzpDeadline(orders[i]);
@@ -2043,7 +2065,7 @@ module.exports = {
             item.cs = helper.calculateCS(item);
         });
 
-        getExcel(orders, res);
+        getReportExcel(orders, res);
 
     },
 

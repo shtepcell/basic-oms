@@ -56,6 +56,29 @@ module.exports = function(opt, data){
                             text: 'Экспорт в Excel'
                         },
                         {
+                            block: 'button',
+                            mods: {
+                                theme: 'islands',
+                                disabled: false,
+                                size: 'm'
+                            },
+                            mix:[
+                                {
+                                    block: 'action',
+                                    elem: 'export',
+                                    js: {
+                                        query: data.query,
+                                        type: 'report'
+                                    }
+                                },
+                                {
+                                    block: 'searcher',
+                                    elem: 'export'
+                                }
+                            ],
+                            text: 'Отчет по срокам организации'
+                        },
+                        {
                             block: 'orders-table',
                             params: data.query,
                             flags: data.dataset.flags,

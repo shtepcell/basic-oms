@@ -13,7 +13,11 @@ provide(bemDom.declElem('action', 'export',
                             }
                             str += key + "=" + encodeURIComponent(this.params.query[key]);
                         }
-                        window.open('/export?'+str);
+                        
+                        if (this.params.type == 'report')
+                            window.open('/report?'+str);
+                        else
+                            window.open('/export?'+str);
                     })
                 }
             }
