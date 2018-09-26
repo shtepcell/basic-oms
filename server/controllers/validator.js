@@ -58,6 +58,9 @@ module.exports = {
         if(!city)
             return 'Такого города не существует!'
 
+        if(city.name == 'Другое')
+            return 'Город "Другое" использовать нельзя!'
+
         return city;
     }
 

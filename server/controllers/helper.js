@@ -269,10 +269,18 @@ module.exports = {
         var query = req.query;
         var status = [];
         if(query.id) {
-           if(!isNaN(query.id)) {
-               return {id: query.id, status: {$ne: 'secret'}};
-           }
+            let ids = query.id.split(' ');
+            let ors = [];
+            for (let i = 0; i < ids.length; i++) {
+                if (!isNaN(ids[i])) {
+                    ors.push({id: ids[i]});
+                }
+            }
+            if (ors.length > 0)
+                return {$or: ors};
+            return {id: -1};
         }
+
         if(query.cms) {
            return {'info.cms': query.cms, status: {$ne: 'secret'}};
         }

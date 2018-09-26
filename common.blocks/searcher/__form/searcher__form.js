@@ -28,10 +28,7 @@ provide(bemDom.declElem('searcher', 'form',
             arr.forEach( item => {
                 data[item.name] = item.value;
             });
-            if(data.id.length > 0 && isNaN(data.id)) {
-                alert('ID должен быть числом')
-                return;
-            }
+
             var checkboxs = this.findChildBlocks(bemDom.declBlock('checkbox-group', {}));
             checkboxs.forEach( item => {
                 let val = item.getVal();
