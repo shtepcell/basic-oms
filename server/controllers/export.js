@@ -37,6 +37,10 @@ function get(order, field) {
             text: 'Статус',
             value: () => { return order.status; }
         },
+        'pause-time': {
+            text: 'Длительность пауз',
+            value: () => { return order.pauseTime; }
+        },
         'cs': {
             text: 'КС',
             value: () => { return order.cs; }
@@ -257,7 +261,7 @@ var def = ['id', 'date-init', 'date-on', 'gzpDeadline', 'cms', 'status', 'cs', '
                 'stop-time', 'stop-add-info', 'stop-org-info',
                 'stop-cost-once', 'stop-cost-monthly'];
 
-var reportDefs = ['id', 'date-start', 'date-plan', 'date-end', 'gzpDeadline', 'status', 'department',
+var reportDefs = ['id', 'date-start', 'date-plan', 'date-end', 'gzpDeadline', 'pause-time', 'status', 'department',
             'client', 'city', 'street', 'adds'];
 
 module.exports = {
@@ -310,25 +314,11 @@ module.exports = {
     },
 
     getReportExcel: async (orders, res) => {
-        console.log('asdas');
-        
         var wb = new xl.Workbook({
           dateFormat: 'dd/mm/yyyy'
         });
 
         var ws = wb.addWorksheet('Таблица 1');
-
-        var style = wb.createStyle({
-            font: {
-                color: '#000000',
-                size: 11,
-                bold: true
-            },
-            alignment: {
-                 wrapText: true,
-                 horizontal: 'center'
-            }
-        });
 
         reportDefs.forEach( (col, j) => {
             ws.cell(1, j+1).string(get(null, col).text)
@@ -341,18 +331,18 @@ module.exports = {
                 val = get(item, col).value();
                 if (val == null) ws.cell(i+2,j+1).string('');
                 else {
-                  switch (reportDefs[j]) {
-                    case 'date-init':
-                    case 'date-on':
-                    case 'date-start':
-                    case 'date-plan':
-                    case 'date-end':
-                      ws.cell(i+2,j+1).date( val );
-                      break;
-                    default:
-                      ws.cell(i+2,j+1).string( val.toString() );
-                      break;
-                  }
+                    switch (reportDefs[j]) {
+                        case 'date-init':
+                        case 'date-on':
+                        case 'date-start':
+                        case 'date-plan':
+                        case 'date-end':
+                            ws.cell(i+2,j+1).date( val );
+                            break;
+                        default:
+                            ws.cell(i+2,j+1).string( val.toString() );
+                            break;
+                    }
                 }
             })
         });

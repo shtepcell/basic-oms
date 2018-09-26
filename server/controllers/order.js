@@ -2053,11 +2053,14 @@ module.exports = {
         query.special = undefined;
 
         var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
-        // deepPopulate(populateQuery);
 
         for (let i = 0; i < orders.length; i++) {
-           orders[i].gusName = await helper.getGUSName(orders[i]);
-           orders[i].prosrochka = await helper.getEndGzpDeadline(orders[i]);
+            orders[i].gusName = await helper.getGUSName(orders[i]);
+            orders[i].prosrochka = await helper.getEndGzpDeadline(orders[i]);
+            let time = helper.calculatePauseTime(orders[i]);
+            if (time > 0) {
+                orders[i].pauseTime = time;
+            } else orders[i].pauseTime = '-';
         }
         
         orders.forEach( item => {
@@ -2271,7 +2274,6 @@ module.exports = {
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
-        var now = new Date();
         orders.forEach( item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];

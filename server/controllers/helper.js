@@ -22,6 +22,39 @@ module.exports = {
         return obj;
     },
 
+    findStageDate: function (name, order) {
+        var history = order.history,
+            res;
+
+        for (var i = 0; i < history.length; i++) {
+            if (name == history[i].name) res = history[i].date;
+        }
+
+        return res;
+    },
+
+    calculatePauseTime: function (order) {
+        var history = order.history,
+            res = 0;
+
+        for (var i = 0; i < history.length; i++) {
+            if ('Пауза' == history[i].name) {
+                let start = history[i].date,
+                    end;
+
+                if (i+1 < history.length) {
+                    end = history[i+1].date;
+                }
+
+                if (!end)
+                    end = new Date();
+
+                res+= end - start;
+            }
+        }
+        return Math.ceil(res / (1000 * 3600 * 24));
+    },
+
     historyGenerator: function (type, user, opt) {
         var usr = `[${user.department.name}] ${user.name}`,
             now = new Date(),

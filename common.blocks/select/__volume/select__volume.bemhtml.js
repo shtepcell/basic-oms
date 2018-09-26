@@ -422,12 +422,16 @@ block('select').elem('volume').replace()(function () {
                 val: '150Мб/c'
             },
             {
-                text: '200Мб/c',
-                val: '200Мб/c'
+                text: '155Мб/c',
+                val: '155Мб/c'
             },
             {
                 text: '200Мб/c',
                 val: '200Мб/c'
+            },
+            {
+                text: '250Мб/c',
+                val: '250Мб/c'
             },
             {
                 text: '300Мб/c',
