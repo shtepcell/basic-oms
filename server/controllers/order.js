@@ -2020,58 +2020,6 @@ module.exports = {
         });
     },
 
-    excel: async (req, res) => {
-
-        if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
-        if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
-        if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
-        if(req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
-
-        var query = await helper.makeQuery(req, res);
-        query.special = undefined;
-
-        var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
-        // deepPopulate(populateQuery);
-
-        orders.forEach( item => {
-            item.status = stages[item.status];
-            item.cs = helper.calculateCS(item);
-        });
-
-        getExcel(orders, res);
-
-    },
-
-    report: async (req, res) => {
-
-        if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
-        if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
-        if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
-        if(req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
-
-        var query = await helper.makeQuery(req, res);
-        query.special = undefined;
-
-        var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
-
-        for (let i = 0; i < orders.length; i++) {
-            orders[i].gusName = await helper.getGUSName(orders[i]);
-            orders[i].prosrochka = await helper.getEndGzpDeadline(orders[i]);
-            let time = helper.calculatePauseTime(orders[i]);
-            if (time > 0) {
-                orders[i].pauseTime = time;
-            } else orders[i].pauseTime = '-';
-        }
-        
-        orders.forEach( item => {
-            item.status = stages[item.status];
-            item.cs = helper.calculateCS(item);
-        });
-
-        getReportExcel(orders, res);
-
-    },
-
     setFlag: async (req, res) => {
         var flag = await Flag.findOne({user: res.locals.__user._id, order: req.params.id});
         if(!flag) {
@@ -2225,6 +2173,52 @@ module.exports = {
         } else return;
     },
 
+    excel: async (req, res) => {
+        if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
+        if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
+        if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
+        if(req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
+
+        var query = await helper.makeQuery(req, res);
+    
+        var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+
+        orders.forEach( item => {
+            item.status = stages[item.status];
+            item.cs = helper.calculateCS(item);
+        });
+
+        getExcel(orders, res);
+    },
+
+    report: async (req, res) => {
+        if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
+        if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
+        if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
+        if(req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
+
+        var query = await helper.makeQuery(req, res);
+        query.special = undefined;
+
+        var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+
+        for (let i = 0; i < orders.length; i++) {
+            orders[i].gusName = await helper.getGUSName(orders[i]);
+            orders[i].prosrochka = await helper.getEndGzpDeadline(orders[i]);
+            let time = helper.calculatePauseTime(orders[i]);
+            if (time > 0) {
+                orders[i].pauseTime = time;
+            } else orders[i].pauseTime = '-';
+        }
+        
+        orders.forEach( item => {
+            item.status = stages[item.status];
+            item.cs = helper.calculateCS(item);
+        });
+
+        getReportExcel(orders, res);
+    },
+
     search: async (req, res) => {
         res.locals.data = await helper.getData(res);
         res.locals.err = {};
@@ -2262,9 +2256,9 @@ module.exports = {
         }
         else
             res.redirect(req.path);
-
+        
         var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet]).lean();
-
+       
         var total = orders.length;
 
         if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };

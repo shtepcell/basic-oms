@@ -250,7 +250,7 @@ function get(order, field) {
     return fields[field];
 }
 
-var def = ['id', 'date-init', 'date-on', 'gzpDeadline', 'cms', 'status', 'cs', 'department',
+var def = ['id', 'date-init', 'date-on', 'cms', 'status', 'cs', 'department',
                 'client', 'client-type', 'city', 'street', 'adds',
                 'coordinate', 'service', 'volume', 'relation', 'ip',
                 'init-add-info', 'income-once', 'income-monthly',
