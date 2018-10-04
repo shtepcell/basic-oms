@@ -373,6 +373,10 @@ block('searcher')(
                                                 {
                                                     text: 'IP TV',
                                                     val: 'iptv'
+                                                },
+                                                {
+                                                    text: 'РРЛ',
+                                                    val: 'rrl'
                                                 }
                                             ]
                                         }
