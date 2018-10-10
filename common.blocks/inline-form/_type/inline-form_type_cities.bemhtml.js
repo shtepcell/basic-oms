@@ -18,6 +18,10 @@ block('inline-form').mod('type', 'cities').elem('controls').def()(function() {
                 {
                     val: 'пос.',
                     text: 'пос.'
+                },
+                {
+                    val: 'мыс.',
+                    text: 'мыс.'
                 }],
             name: 'type',
             val: 'г.',

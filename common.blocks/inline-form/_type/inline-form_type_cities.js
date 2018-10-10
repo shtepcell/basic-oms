@@ -26,7 +26,7 @@ provide(BEMDOM.declMod({ modName : 'type', modVal : 'cities' }, {
             return;
         }
 
-        if (['г.', 'пгт.', 'с.', 'пос.'].indexOf(select.getVal()) == -1)
+        if (['г.', 'пгт.', 'с.', 'пос.', 'мыс.'].indexOf(select.getVal()) == -1)
         {
             select.setMod('errored');
             this._errorText += 'Ошибка выбора типа населенного пункта\n';

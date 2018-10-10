@@ -9,7 +9,7 @@ var schema = new Schema( {
 	},
 	type : {
 		type: String,
-		enum: ['г.', 'пгт.', 'с.', 'пос.'],
+		enum: ['г.', 'пгт.', 'с.', 'пос.', 'мыс.'],
 		required : true
 	},
 	usage : {

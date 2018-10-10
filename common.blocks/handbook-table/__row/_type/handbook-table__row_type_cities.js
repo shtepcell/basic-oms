@@ -26,7 +26,7 @@ provide(Row.declMod({ modName : 'type', modVal : 'cities' }, {
             return;
         }
 
-        if (select.getVal().indexOf(['г.', 'пгт.', 'с.', 'пос.']) !== -1)
+        if (select.getVal().indexOf(['г.', 'пгт.', 'с.', 'пос.', 'мыс.']) !== -1)
         {
             select.setMod('errored');
             this._errorText += 'Ошибка выбора типа населенного пункта\n';

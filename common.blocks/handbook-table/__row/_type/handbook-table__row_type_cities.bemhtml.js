@@ -49,6 +49,10 @@ block('handbook-table').elem('row').elemMod('type', 'cities').elemMod('edited', 
                         {
                             val: 'пос.',
                             text: 'пос.'
+                        },
+                        {
+                            val: 'мыс.',
+                            text: 'мыс.'
                         }],
                     name: 'lalalal',
                     val: this.ctx.cellsData.type,
