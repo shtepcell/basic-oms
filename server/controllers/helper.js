@@ -655,16 +655,12 @@ module.exports = {
                         if(qr['$and']) {
                             qr['$and'].push({
                                 $or: [
-                                    { 'date.network': { $gte: start, $lte: end } },
-                                    { 'date.gzp-build': { $gte: start, $lte: end } },
-                                    { 'date.install-devices': { $gte: start, $lte: end } }
+                                    { 'date.network': { $gte: start, $lte: end } }
                                 ]
                             })
                         } else qr['$and'] = [{
                             $or: [
-                                { 'date.network': { $gte: start, $lte: end } },
-                                { 'date.gzp-build': { $gte: start, $lte: end } },
-                                { 'date.install-devices': { $gte: start, $lte: end } }
+                                { 'date.network': { $gte: start, $lte: end } }
                             ]
                         }];
                         break;
