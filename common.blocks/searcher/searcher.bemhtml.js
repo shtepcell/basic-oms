@@ -502,6 +502,10 @@ block('searcher')(
                                                         {
                                                             text: 'Включен',
                                                             val: 'succes'
+                                                        },
+                                                        {
+                                                            text: 'Отчёт',
+                                                            val: 'report'
                                                         }
                                                     ]
                                                 },
