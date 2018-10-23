@@ -310,6 +310,13 @@ module.exports = {
            }
         }
 
+        if(query.manager) {
+            let manager = await Account.findOne({login: query.manager});
+            if(qr['$and']) {
+                qr['$and'].push({'info.initiator': manager})
+            } else qr['$and'] = [{'info.initiator': manager}];
+        }
+
         if(query.resp) {
             var resp;
             try {
@@ -880,6 +887,18 @@ module.exports = {
    getData: async (res) => {
        var clients = await Client.find().populate('type');
        var providers = await Provider.find();
+
+       var manDeps = await Department.find({$or: [{type: 'b2b'}, {type: 'b2o'}]});
+
+       var managers = await Account.find({department: manDeps});
+
+       managers = managers.map( i => {
+            return {
+                text: i.name,
+                val: i.login
+            }
+       });
+       
        var cities = await City.find();
        var streets = await Street.find();
        var _flags = await Flag.find({user: res.locals.__user._id});
@@ -923,6 +942,7 @@ module.exports = {
        return {
            clients: clients,
            providers: providers,
+           managers: managers,
            cities: cities,
            streets: streets,
            services: services,

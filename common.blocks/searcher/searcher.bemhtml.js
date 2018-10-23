@@ -248,6 +248,31 @@ block('searcher')(
                                 content: [
                                     {
                                         elem: 'label',
+                                        content: 'Менеджер'
+                                    },
+                                    {
+                                        elem: 'cell',
+                                        content: {
+                                            block: 'select',
+                                            name: 'manager',
+                                            val: query.manager + '',
+                                            text: 'Не выбран',
+                                            mods: {
+                                                mode: 'radio-check',
+                                                theme: 'islands',
+                                                size: 'l',
+                                                width: 'available'
+                                            },
+                                            options: data.managers
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                elem: 'row',
+                                content: [
+                                    {
+                                        elem: 'label',
                                         content: 'Ответственный отдел'
                                     },
                                     {
