@@ -1095,6 +1095,7 @@ module.exports = {
                         }
                     });
                     order.info.order = `${req.files.order.name}`;
+                    await order.save();
                 }
 
                 order.info = Object.assign(order.info, tmp);
