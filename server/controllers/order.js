@@ -1098,6 +1098,25 @@ module.exports = {
                     await order.save();
                 }
 
+                if(req.files && req.files['file-init']) {
+                    var id = order.id;
+                    var _dir;
+                    for (var i = 0; i < 1000; i++) {
+                      if(id > i*1000) {
+                        _dir = `${(i)*1000}-${(i+1)*1000}`;
+                      }
+                    }
+                    var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
+                    req.files['file-init'].mv(`./static/files/${_dir}/${order.id}/${req.files['file-init'].name}`, function(err) {
+                      if (err) {
+                        logger.error(err);
+                        return res.status(500).send(err);
+                      }
+                    });
+                    order.info['file-init'] = `${req.files['file-init'].name}`;
+                    await order.save()
+                  }
+
                 order.info = Object.assign(order.info, tmp);
                 break;
 
