@@ -19,17 +19,17 @@ var init = async () => {
         }
     }
 
-    // if(accs.length === 0) {
-    //     var admin = new Account({
-    //             login : 'default',
-    //             password : password.createHash('default'),
-    //             department: await Department.findOne({ type: 'admin' }),
-    //             name : 'Admin',
-    //             role: 0,
-    //             status: true
-    //         })
-    //     return admin.save();
-    // }
+    if(accs.length === 0) {
+        var admin = new Account({
+            login : 'admin',
+            password : password.createHash('admin'),
+            department: await Department.findOne({ type: 'admin' }),
+            name : 'Admin',
+            role: 0,
+            status: true
+        })
+        return admin.save();
+    }
 }
 
 init().then( () => {

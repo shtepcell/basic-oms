@@ -6,6 +6,8 @@ block('root').replace()(function() {
 
     if (ctx.context) return ctx.context;
 
+    const bundle = data.view.slice(5, data.view.length);
+
     return {
         block: 'page',
         title: data.title,
@@ -13,7 +15,7 @@ block('root').replace()(function() {
         styles: [
             {
                 elem: 'css',
-                url: '/index.min.css'
+                url: `/${bundle}.min.css`
             }
         ],
         scripts: [
@@ -23,7 +25,7 @@ block('root').replace()(function() {
             },
             {
                 elem: 'js',
-                url: '/index.min.js'
+                url: `/${bundle}.min.js`
             }
         ],
         head: [

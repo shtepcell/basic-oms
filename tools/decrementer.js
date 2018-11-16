@@ -1,5 +1,5 @@
-var Order = require('./server/models/Order');
-var Holiday = require('./server/models/Holiday');
+var Order = require('../server/models/Order');
+var Holiday = require('../server/models/Holiday');
 
 var now = new Date();
 var day = new Date(now.getFullYear(), now.getMonth(), now.getDate());

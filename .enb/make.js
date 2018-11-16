@@ -33,7 +33,6 @@ var techs = {
     ];
 
 var isProd = process.env.YENV === 'production';
-isProd || levels.push('development.blocks');
 
 module.exports = function(config) {
     config.nodes('*.bundles/*', function(nodeConfig) {

@@ -1,5 +1,5 @@
-const Order = require('./server/models/Order'),
-  {orders} = require('./data');
+const Order = require('../server/models/Order');
+const {orders} = require('./data');
 
 for (var i = 0; i < orders.length; i++) {
   var id = orders[i];

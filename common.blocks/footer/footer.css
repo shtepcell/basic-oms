@@ -1,4 +1,5 @@
 .footer {
+    display: flex;
     margin-left: 2em;
     margin-right: 2em;
     border-top: solid 1px #ddd;
@@ -6,23 +7,14 @@
     margin-bottom: 1em;
     padding-top: 1em;
 }
-.footer__company {
-    display: inline-block;
-    margin-right: 3em;
-}
 
 .footer__support {
-    float: right;
-    margin-top: 23px;
-    margin-right: 1em;
-    display: inline-block;
-    margin-left: auto;
+    margin: 23px 1em 0 auto;
 }
 
 .footer__support .label, .footer__support a {
     color: #1a7abe;
     display: inline-block;
-    font-family: sans-serif;
     font-size: 10pt;
 }
 
@@ -31,13 +23,7 @@
 }
 
 .footer__company .icon {
-    background-size:contain;
+    background-size: contain;
     height: 80px;
     width: 100px;
-}
-
-.footer__copyright {
-    color: #1a7abe;
-    font-size: 10pt;
-    text-align: center;
 }

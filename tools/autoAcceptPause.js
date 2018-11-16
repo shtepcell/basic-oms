@@ -1,4 +1,4 @@
-const Order = require('./server/models/Order');
+const Order = require('../server/models/Order');
 
 (async () => {
   const now = new Date();
@@ -13,7 +13,6 @@ const Order = require('./server/models/Order');
 
   if (orders.length > 0) {
     for (var i = 0; i < orders.length; i++) {
-
 
       orders[i].pause = {
         status: true,

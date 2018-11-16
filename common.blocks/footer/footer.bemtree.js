@@ -1,18 +1,16 @@
 block('footer').content()(function() {
     return [
         {
-            block: 'footer',
-            elem: 'company',
-            content: [
-                {
-                    block: 'link',
-                    url: 'http://www.miranda-media.ru/',
-                    content: {
-                        block: 'icon',
-                        url: '/logo.png'
-                    }
-                }
-            ]
+            block: 'link',
+            url: 'http://www.miranda-media.ru/',
+            mix: {
+                block: 'footer',
+                elem: 'company'
+            },
+            content: {
+                block: 'icon',
+                url: '/logo.jpg'
+            }
         },
         {
             block: 'footer',
@@ -30,22 +28,6 @@ block('footer').content()(function() {
                     content: 'vladislav.telichko@miranda-media.ru'
                 }
             ]
-        },
-        {
-            block: 'footer',
-            elem: 'copyright',
-            content: 'Copyright (c) 2017 Copyright Holder All Rights Reserved.'
         }
     ];
 });
-
-block('footer').wrap()(function () {
-    if(this.data.url.pathname != '/login')
-        return [
-            {
-                block: 'footer-control',
-                content: this.ctx
-            }
-        ]
-    else return {};
-})

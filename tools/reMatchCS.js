@@ -1,6 +1,5 @@
-const Order = require('./server/models/Order'),
-    Holiday = require('./server/models/Holiday');
-
+const Order = require('../server/models/Order');
+const Holiday = require('../server/models/Holiday');
 
 var his = {
     'client-notify': 'Уведомление клиента',

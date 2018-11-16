@@ -1,5 +1,6 @@
 block('bell').content()(function () {
-    var user = this.ctx.user;
+    const user = this.ctx.user;
+    const {notifies} = user;
 
     return {
         block: 'link',
@@ -11,14 +12,14 @@ block('bell').content()(function () {
                 block: 'bell',
                 elem: 'count',
                 elemMods: {
-                    visible: (user.notifies>0)
+                    visible: (notifies > 0)
                 },
-                content: user.notifies
+                content: notifies
             },
             {
                 block: 'icon',
-                url: (user && user.notifies>0)?'/alarm.svg':'/alarm-empty.svg',
-                mix: (user && user.notifies>0)?'navigator__alarm':''
+                url: (user && notifies > 0)?'/alarm.svg':'/alarm-empty.svg',
+                mix: (user && notifies > 0)?'navigator__alarm':''
             }
         ]
     }
