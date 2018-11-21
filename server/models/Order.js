@@ -8,6 +8,10 @@ var schema = new Schema({
         required: true,
         unique: true
     },
+
+    isArchive: Boolean,
+    lastModified: Date,
+    
     isOld: Boolean,
     special: {
         type: Schema.Types.ObjectId,
@@ -80,7 +84,7 @@ var schema = new Schema({
         pool: String,
         order: String,
         'date-sign': Date,
-				'date-request': Date,
+        'date-request': Date,
         'file-init': String
     },
 	sks: {

@@ -107,6 +107,42 @@ block('searcher')(
                                         }
                                     }
                                 ]
+                            },
+                            {
+                                elem: 'row',
+                                content: [
+                                    {
+                                        elem: 'label',
+                                        content: 'Архив'
+                                    },
+                                    {
+                                        elem: 'cell',
+                                        content: {
+                                            block: 'radio-group',
+                                            mods: {
+                                                theme: 'islands',
+                                                size: 'l',
+                                                type: 'button'
+                                            },
+                                            val: query.archive || '1',
+                                            name: 'archive',
+                                            options: [
+                                                {
+                                                    val: '1',
+                                                    text: 'Только активные'
+                                                },
+                                                {
+                                                    val: '2',
+                                                    text: 'Только архивные'
+                                                },
+                                                {
+                                                    val: '3',
+                                                    text: 'Показать все'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
                             }
                         ]
                     },

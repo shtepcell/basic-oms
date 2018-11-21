@@ -1,0 +1,20 @@
+.order__archive {
+    display: none;
+    position: absolute;
+
+    left: -35px;
+    top: 18px;
+
+    cursor: help;
+}
+
+.order__archive .icon {
+    height: 25px;
+    width: 25px;
+
+    background-size: contain;
+}
+
+.order__archive_visible {
+    display: block;
+}

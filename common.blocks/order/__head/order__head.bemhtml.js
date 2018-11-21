@@ -63,6 +63,12 @@ block('order').elem('head').content()(function () {
 
     return [
         {
+            elem: 'archive',
+            elemMods: {
+                visible: order.isArchive
+            }
+        },
+        {
             elem: 'flag',
             elemMods: {
                 color: order.flag

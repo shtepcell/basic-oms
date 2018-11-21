@@ -157,7 +157,8 @@ module.exports = {
 
         var orders = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'}
+            status: {$ne: 'secret'},
+            isArchive: {$ne: true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length;
@@ -251,7 +252,8 @@ module.exports = {
         var orders1 = await Order.find({
             $and: [query, subQ],
             status: {$ne: 'secret'},
-            'pause.status': true
+            'pause.status': true,
+            isArchive: {$ne: true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length + orders1.length;
@@ -346,13 +348,15 @@ module.exports = {
         var orders = await Order.find({
             $and: [query, subQ],
             status: {$ne: 'secret'},
-            'pause.status': {$ne : true}
+            'pause.status': {$ne : true},
+            isArchive: {$ne: true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var orders1 = await Order.find({
             $and: [query, subQ],
             status: {$ne: 'secret'},
-            'pause.status': true
+            'pause.status': true,
+            isArchive: {$ne: true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length + orders1.length;
@@ -464,13 +468,15 @@ module.exports = {
         var orders = await Order.find({
             $and: [query, subQ],
             status: {$ne: 'secret'},
-            'pause.status': {$ne : true}
+            'pause.status': {$ne : true},
+            isArchive: {$ne: true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var orders1 = await Order.find({
             $and: [query, subQ],
             status: {$ne: 'secret'},
-            'pause.status': true
+            'pause.status': true,
+            isArchive: {$ne: true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length + orders1.length;
@@ -486,7 +492,6 @@ module.exports = {
 
         orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
 
-        var now = new Date();
         orders.forEach( item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
@@ -577,13 +582,15 @@ module.exports = {
         var orders = await Order.find({
             $and: [query, subQ],
             status: {$ne: 'secret'},
-            'pause.status': {$ne : true}
+            'pause.status': {$ne : true},
+            isArchive: {$ne: true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var orders1 = await Order.find({
             $and: [query, subQ],
             status: {$ne: 'secret'},
-            'pause.status': true
+            'pause.status': true,
+            isArchive: {$ne: true}
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length + orders1.length;
@@ -1229,6 +1236,7 @@ module.exports = {
             }
 
             order.history.push(helper.historyGenerator('gzp-pre', res.locals.__user));
+            order.isArchive = false;
             var done = await order.save();
             if(done) {
                 notify.create(res.locals.__user, done, 'end-gzp-pre');
@@ -1279,6 +1287,7 @@ module.exports = {
             }
 
             order.history.push(helper.historyGenerator('sks-pre', res.locals.__user));
+            order.isArchive = false;
             var done = await order.save();
             if(done) {
                 notify.create(res.locals.__user, done, 'end-sks-pre');
@@ -1361,6 +1370,7 @@ module.exports = {
             }
 
             order.history.push(helper.historyGenerator('stop-pre', res.locals.__user));
+            order.isArchive = false;
             var done = await order.save();
             if(done) {
                 notify.create(res.locals.__user, done, 'end-stop-pre');
@@ -1450,6 +1460,7 @@ module.exports = {
                     user: null
                 };
                 order.history.push(helper.historyGenerator('pause-start', res.locals.__user));
+                order.isArchive = false;
                 // notify.create(res.locals.__user, order, 'pause-start');
                 // sendMail(order, 'pause');
                 break;
@@ -1459,6 +1470,7 @@ module.exports = {
                     date: null,
                     user: null
                 };
+                order.isArchive = false;
                 order.history.push(helper.historyGenerator('reject-pause', res.locals.__user));
                 // notify.create(res.locals.__user, order, 'reject-pause');
                 break;
@@ -1469,6 +1481,7 @@ module.exports = {
                     user: res.locals.__user
                 };
                 order.history.push(helper.historyGenerator('request-pause', res.locals.__user));
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, 'request-pause');
                 // sendMail(order, 'pause');
                 break;
@@ -1482,6 +1495,7 @@ module.exports = {
                     date: undefined
                 };
                 order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, 'pause-stop');
                 break;
             // case 'set-special':
@@ -1493,17 +1507,20 @@ module.exports = {
                 order.status = 'secret';
                 order.deadline = null;
                 order.history.push(helper.historyGenerator('delete', res.locals.__user));
+                order.isArchive = false;
                 break;
             case 'reject':
                 order.status = 'reject';
                 order.deadline = null;
                 order.history.push(helper.historyGenerator('reject', res.locals.__user));
+                order.isArchive = false;
                 break;
             case 'start-pre-stop':
                 order.status = 'stop-pre';
                 order.deadline = await helper.calculateDeadline(3);
                 order.date['cs-stop-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, 'start-stop-pre');
                 break;
             case 'start-pre-gzp':
@@ -1511,6 +1528,7 @@ module.exports = {
                 order.deadline = await helper.calculateDeadline(3);
                 order.date['cs-gzp-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, 'start-gzp-pre');
                 break;
             case 'start-sks-pre':
@@ -1518,6 +1536,7 @@ module.exports = {
                 order.deadline = await helper.calculateDeadline(3);
                 order.date['cs-sks-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, 'start-sks-pre');
                 break;
             case 'end-network':
@@ -1527,18 +1546,21 @@ module.exports = {
                 order.date['cs-client-notify'] = await helper.calculateDeadline(2);
                 order.date['network'] = new Date();
                 order.history.push(helper.historyGenerator('network', res.locals.__user));
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, 'network');
                 break;
             case 'end-build':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
                 order.history.push(helper.historyGenerator('gzp-build', res.locals.__user));
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, 'end-gzp-build');
                 break;
             case 'end-sks-build':
                 order.status = 'network';
                 order.date['sks-build'] = new Date();
                 order.history.push(helper.historyGenerator('sks-build', res.locals.__user));
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, 'sks-gzp-build');
                 break;
             case 'start-gzp-build':
@@ -1557,6 +1579,7 @@ module.exports = {
                 order.date['client-match'] = new Date();
 
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, `start-${order.status}`);
                 break;
             case 'start-sks-build':
@@ -1571,12 +1594,14 @@ module.exports = {
                 order.date['cs-sks-organization'] = await helper.calculateDeadline(order.sks.time);
                 order.date['client-match'] = new Date();
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, `start-sks-build`);
                 break;
             case 'end-install-devices':
                 order.status = 'network';
                 order.date['gzp-build'] = new Date();
                 order.history.push(helper.historyGenerator('install-devices', res.locals.__user));
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, `end-install-devices`);
                 break;
             case 'start-stop-build':
@@ -1591,12 +1616,14 @@ module.exports = {
                 order.date['cs-stop-organization'] = await helper.calculateDeadline(order.stop.time);
                 order.date['client-match'] = new Date();
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, `start-stop-build`);
                 break;
             case 'end-build-stop':
                 order.status = 'network';
                 order.date['stop-build'] = new Date();
                 order.history.push(helper.historyGenerator('stop-build', res.locals.__user));
+                order.isArchive = false;
                 notify.create(res.locals.__user, order, `end-stop-build`);
                 break;
             case 'comeback':
@@ -1613,10 +1640,10 @@ module.exports = {
                     order.status = 'stop-build';
                     notify.create(res.locals.__user, order, `start-stop-build`);
                 }
+                order.isArchive = false;
                 order.history.push(helper.historyGenerator('comeback', res.locals.__user));
                 break;
         }
-
         var done = await order.save();
         if(done) {
             logger.info(`${reqData.to} order #${done.id}`, res.locals.__user);
@@ -1688,7 +1715,7 @@ module.exports = {
             order.history.push(helper.historyGenerator('change-params', res.locals.__user));
             notify.create(res.locals.__user, order, `change-params`);
           }
-
+          order.isArchive = false;
           await order.save();
 
         }
@@ -1757,7 +1784,7 @@ module.exports = {
             order.deadline = null;
 
             order.history.push(helper.historyGenerator('client-notify', res.locals.__user));
-
+            order.isArchive = false;
             var done = await order.save();
             if(done) {
                 // notify.create(res.locals.__user,er.id, `end-client-notify`);
@@ -1790,6 +1817,7 @@ module.exports = {
             order.info['income-once'] = reqData['income-once'];
             order.info['income-monthly'] = reqData['income-monthly'];
 
+            order.isArchive = false;
             var done = await order.save();
             if(done) {
                 logger.info(`Filling income order #${ done.id }`, res.locals.__user);
@@ -2064,6 +2092,7 @@ module.exports = {
             order.history.push(helper.historyGenerator('redirect', res.locals.__user, {
                 department: department.name
             }));
+            order.isArchive = false;
             order.save();
             res.send('ok');
             return;
@@ -2177,6 +2206,7 @@ module.exports = {
             break;
         }
         order.history.push(hist);
+        order.isArchive = false;
         await order.save();
 
         res.send({ok: 'ok'}).status(200);

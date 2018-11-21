@@ -21,6 +21,10 @@
         },
         {
             block: 'order',
+            elem: 'archive'
+        },
+        {
+            block: 'order',
             elem: 'action',
             mods: {
                 type: ['add-param', 'submit', 'redirect']

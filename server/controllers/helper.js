@@ -284,6 +284,7 @@ module.exports = {
         if(query.cms) {
            return {'info.cms': query.cms, status: {$ne: 'secret'}};
         }
+
         if(query.func) {
            if(query.func.indexOf('1') >= 0) {
                qr['info.initiator'] = res.locals.__user._id;
@@ -308,6 +309,22 @@ module.exports = {
            if(query.func.indexOf('4') >= 0) {
                qr['info.cms'] = {$ne: null};
            }
+           
+           if(query.func.indexOf('5') >= 0) {
+               qr['isArchive'] = true;
+           }
+        }
+
+        query.archive = query.archive || '1';
+
+        if (query.archive) {
+            if(query.archive == '1') {
+                qr.isArchive = { $ne: true };
+            }
+
+            if(query.archive == '2') {
+                qr.isArchive = true;
+            }
         }
 
         if(query.manager) {
