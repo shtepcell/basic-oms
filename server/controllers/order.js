@@ -1237,6 +1237,7 @@ module.exports = {
 
             order.history.push(helper.historyGenerator('gzp-pre', res.locals.__user));
             order.isArchive = false;
+            order.lastModified = new Date();
             var done = await order.save();
             if(done) {
                 notify.create(res.locals.__user, done, 'end-gzp-pre');
@@ -1288,6 +1289,7 @@ module.exports = {
 
             order.history.push(helper.historyGenerator('sks-pre', res.locals.__user));
             order.isArchive = false;
+            order.lastModified = new Date();
             var done = await order.save();
             if(done) {
                 notify.create(res.locals.__user, done, 'end-sks-pre');
@@ -1371,6 +1373,7 @@ module.exports = {
 
             order.history.push(helper.historyGenerator('stop-pre', res.locals.__user));
             order.isArchive = false;
+            order.lastModified = new Date();
             var done = await order.save();
             if(done) {
                 notify.create(res.locals.__user, done, 'end-stop-pre');
@@ -1461,6 +1464,7 @@ module.exports = {
                 };
                 order.history.push(helper.historyGenerator('pause-start', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 // notify.create(res.locals.__user, order, 'pause-start');
                 // sendMail(order, 'pause');
                 break;
@@ -1471,6 +1475,7 @@ module.exports = {
                     user: null
                 };
                 order.isArchive = false;
+                order.lastModified = new Date();
                 order.history.push(helper.historyGenerator('reject-pause', res.locals.__user));
                 // notify.create(res.locals.__user, order, 'reject-pause');
                 break;
@@ -1482,6 +1487,7 @@ module.exports = {
                 };
                 order.history.push(helper.historyGenerator('request-pause', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, 'request-pause');
                 // sendMail(order, 'pause');
                 break;
@@ -1496,6 +1502,7 @@ module.exports = {
                 };
                 order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, 'pause-stop');
                 break;
             // case 'set-special':
@@ -1508,12 +1515,14 @@ module.exports = {
                 order.deadline = null;
                 order.history.push(helper.historyGenerator('delete', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 break;
             case 'reject':
                 order.status = 'reject';
                 order.deadline = null;
                 order.history.push(helper.historyGenerator('reject', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 break;
             case 'start-pre-stop':
                 order.status = 'stop-pre';
@@ -1521,6 +1530,7 @@ module.exports = {
                 order.date['cs-stop-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, 'start-stop-pre');
                 break;
             case 'start-pre-gzp':
@@ -1529,6 +1539,7 @@ module.exports = {
                 order.date['cs-gzp-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, 'start-gzp-pre');
                 break;
             case 'start-sks-pre':
@@ -1537,6 +1548,7 @@ module.exports = {
                 order.date['cs-sks-pre'] = await helper.calculateDeadline(3);
                 order.date['client-match'] = new Date();
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, 'start-sks-pre');
                 break;
             case 'end-network':
@@ -1547,6 +1559,7 @@ module.exports = {
                 order.date['network'] = new Date();
                 order.history.push(helper.historyGenerator('network', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, 'network');
                 break;
             case 'end-build':
@@ -1554,6 +1567,7 @@ module.exports = {
                 order.date['gzp-build'] = new Date();
                 order.history.push(helper.historyGenerator('gzp-build', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, 'end-gzp-build');
                 break;
             case 'end-sks-build':
@@ -1561,6 +1575,7 @@ module.exports = {
                 order.date['sks-build'] = new Date();
                 order.history.push(helper.historyGenerator('sks-build', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, 'sks-gzp-build');
                 break;
             case 'start-gzp-build':
@@ -1580,6 +1595,7 @@ module.exports = {
 
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, `start-${order.status}`);
                 break;
             case 'start-sks-build':
@@ -1595,6 +1611,7 @@ module.exports = {
                 order.date['client-match'] = new Date();
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, `start-sks-build`);
                 break;
             case 'end-install-devices':
@@ -1602,6 +1619,7 @@ module.exports = {
                 order.date['gzp-build'] = new Date();
                 order.history.push(helper.historyGenerator('install-devices', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, `end-install-devices`);
                 break;
             case 'start-stop-build':
@@ -1617,6 +1635,7 @@ module.exports = {
                 order.date['client-match'] = new Date();
                 order.history.push(helper.historyGenerator('client-match', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, `start-stop-build`);
                 break;
             case 'end-build-stop':
@@ -1624,6 +1643,7 @@ module.exports = {
                 order.date['stop-build'] = new Date();
                 order.history.push(helper.historyGenerator('stop-build', res.locals.__user));
                 order.isArchive = false;
+                order.lastModified = new Date();
                 notify.create(res.locals.__user, order, `end-stop-build`);
                 break;
             case 'comeback':
@@ -1641,6 +1661,7 @@ module.exports = {
                     notify.create(res.locals.__user, order, `start-stop-build`);
                 }
                 order.isArchive = false;
+                order.lastModified = new Date();
                 order.history.push(helper.historyGenerator('comeback', res.locals.__user));
                 break;
         }
@@ -1716,6 +1737,7 @@ module.exports = {
             notify.create(res.locals.__user, order, `change-params`);
           }
           order.isArchive = false;
+          order.lastModified = new Date();
           await order.save();
 
         }
@@ -1785,6 +1807,7 @@ module.exports = {
 
             order.history.push(helper.historyGenerator('client-notify', res.locals.__user));
             order.isArchive = false;
+            order.lastModified = new Date();
             var done = await order.save();
             if(done) {
                 // notify.create(res.locals.__user,er.id, `end-client-notify`);
@@ -1818,6 +1841,7 @@ module.exports = {
             order.info['income-monthly'] = reqData['income-monthly'];
 
             order.isArchive = false;
+            order.lastModified = new Date();
             var done = await order.save();
             if(done) {
                 logger.info(`Filling income order #${ done.id }`, res.locals.__user);
@@ -2093,6 +2117,7 @@ module.exports = {
                 department: department.name
             }));
             order.isArchive = false;
+            order.lastModified = new Date();
             order.save();
             res.send('ok');
             return;
@@ -2207,6 +2232,7 @@ module.exports = {
         }
         order.history.push(hist);
         order.isArchive = false;
+        order.lastModified = new Date();
         await order.save();
 
         res.send({ok: 'ok'}).status(200);
