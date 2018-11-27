@@ -878,7 +878,7 @@ module.exports = {
     parseDate: (date) => {
        date = date.split('.');
        if(date.length == 3) {
-           if(date[1] >= 0 && date[1] <= 11 && date[0] > 0 &&  date[0] <= 31)
+           if(date[1] >= 1 && date[1] <= 12 && date[0] > 0 &&  date[0] <= 31)
                return new Date(date[2], date[1]-1, date[0]);
            else return false
        } else return false;
