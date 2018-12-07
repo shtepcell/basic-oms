@@ -22,13 +22,13 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
         incomeIsFill = (order.info['income-once'] && order.info['income-monthly']),
         isSKS = (order.info.service == 'sks');
 
-        if(mustIDOSS) {
-            incomeIsFill = (order.info['income-once'] && order.info['income-monthly'] && order.info.idoss)
-        }
+    if (mustIDOSS) {
+        incomeIsFill = (order.info['income-once'] && order.info['income-monthly'] && order.info.idoss)
+    }
 
-        var display = {
-            'build-gzp': isOwner && isMatch && ( order.gzp.need != undefined || ( order.gzp.need  && order.gzp.capability ) && !isSKS)
-        };
+    var display = {
+        'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need != undefined || (order.gzp.need && order.gzp.capability) && !isSKS)
+    };
 
     return [
         {
@@ -91,7 +91,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-pre-stop',
                 id: order.id
             },
-            display: (isOwner && isMatch &&  order.stop.capability == undefined && !isSKS)
+            display: (isOwner && isMatch && order.stop.capability == undefined && !isSKS)
         },
         {
             block: 'order',
@@ -111,7 +111,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-stop-build',
                 id: order.id
             },
-            display: (isOwner && isMatch && order.stop.capability && !isSKS)
+            display: (isOwner && (isPre || isMatch) && order.stop.capability && !isSKS)
         },
         {
             block: 'order',
