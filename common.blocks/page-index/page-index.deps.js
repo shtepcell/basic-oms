@@ -9,7 +9,7 @@
         {
             block: 'icon',
             mods: {
-              action: 'download'
+                action: 'download'
             }
         },
         {
@@ -132,37 +132,37 @@
         {
             block: 'inline-form',
             mods: {
-                type:  'cities'
+                type: 'cities'
             }
         },
         {
             block: 'inline-form',
             mods: {
-                type:  'street'
+                type: 'street'
             }
         },
         {
             block: 'inline-form',
             mods: {
-                type:  'client-types'
+                type: 'client-types'
             }
         },
         {
             block: 'inline-form',
             mods: {
-                type:  'providers'
+                type: 'providers'
             }
         },
         {
             block: 'inline-form',
             mods: {
-                type:  'services'
+                type: 'services'
             }
         },
         {
             block: 'inline-form',
             mods: {
-                type:  'clients'
+                type: 'clients'
             }
         },
         {

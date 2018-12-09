@@ -1,9 +1,9 @@
 'use strict';
 
 var views = ['login', 'main', 'users', 'user', 'search', 'handbook',
-                'departments/list', 'departments/create', 'departments/item',
-                'orders/init', 'orders/order', 'status', 'holidays', 'notifies',
-                'orders/multi-init', 'orders/change-order' ];
+    'departments/list', 'departments/create', 'departments/item',
+    'orders/init', 'orders/order', 'status', 'holidays', 'notifies',
+    'orders/multi-init', 'orders/change-order'];
 
 views.forEach(view => {
     module.exports[view] = require('./' + view);

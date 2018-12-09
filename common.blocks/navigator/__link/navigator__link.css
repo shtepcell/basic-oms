@@ -5,9 +5,8 @@
     outline: none;
     color: #fff;
     font-family: sans-serif;
-    font-weight: lighter;
+    font-weight: 500;
     line-height: 50px;
-
 
     transition: 0.2s all ease-in-out;
 }
@@ -22,13 +21,11 @@
     padding: 0 15px 0 15px;
 }
 
-
 .navigator__link.link:hover
 {
     color: #fff;
     background: #0a5a9e;
 }
-
 
 .navigator__link .icon
 {

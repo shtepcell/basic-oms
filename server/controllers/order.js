@@ -2,16 +2,10 @@
 const Order = require('../models/Order');
 const Department = require('../models/Department');
 const Account = require('../models/Account');
-const Client = require('../models/Client');
 const Provider = require('../models/Provider');
-const City = require('../models/City');
-const Street = require('../models/Street');
 const mkdirp = require('mkdirp-promise');
-const Holiday = require('../models/Holiday');
-const Notify = require('../models/Notify');
 const Flag = require('../models/Flag');
 const notify = require('./notify');
-const { sendMail } = require('./mailer');
 const { getExcel, getReportExcel } = require('./export');
 
 const helper = require('./helper');
@@ -20,16 +14,6 @@ const validator = require('./validator');
 var stages = require('../common-data').stages;
 
 var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.city info.street stop.provider`;
-var shortPop = 'info.client.type info.city info.street';
-
-var populateAll = [
-    populateClient,
-    populateInitiator,
-    populateCity,
-    populateStreet,
-    populateProvider,
-    populateSpecial
-];
 
 var populateClient = {
     path: 'info.client',
@@ -81,41 +65,41 @@ var populateStreet = {
         lean: true
     }
 }
-const Render = require('../render'),
-    render = Render.render;
+const Render = require('../render');
+const render = Render.render;
 
 const logger = require('./logger');
 
 module.exports = {
 
     getPageInit: async (req, res) => {
-        if(res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o') {
+        if (res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o') {
             var rel = req.query.rel;
             var order = {};
             if (rel && !isNaN(rel)) {
-              order = await Order.findOne({id: rel}).populate([populateClient, populateCity, populateStreet]);
-              if (order)
-                order = {
-                  client: order.info.client.name,
-                  contact: order.info.contact,
-                  cms: order.info.cms,
-                  'date-request': order.info['date-request'],
-                  city: `${order.info.city.type} ${order.info.city.name}`,
-                  street: order.info.street,
-                  adds: order.info.adds,
-                  coordinate: order.info.coordinate,
-                  service: order.info.service,
-                  ip: order.info.ip,
-                  volume: order.info.volume,
-                  add_info: order.info.add_info,
-                  relation: order.id
-                };
+                order = await Order.findOne({ id: rel }).populate([populateClient, populateCity, populateStreet]);
+                if (order)
+                    order = {
+                        client: order.info.client.name,
+                        contact: order.info.contact,
+                        cms: order.info.cms,
+                        'date-request': order.info['date-request'],
+                        city: `${order.info.city.type} ${order.info.city.name}`,
+                        street: order.info.street,
+                        adds: order.info.adds,
+                        coordinate: order.info.coordinate,
+                        service: order.info.service,
+                        ip: order.info.ip,
+                        volume: order.info.volume,
+                        add_info: order.info.add_info,
+                        relation: order.id
+                    };
             }
 
             render(req, res, {
                 viewName: 'orders/init',
                 options: {
-                  order: order
+                    order: order
                 }
             });
         } else {
@@ -130,7 +114,7 @@ module.exports = {
             perPage = res.locals.__user.settings.table.perPage || 25;
         res.locals.params = helper.trimObject(req.query);
 
-        if(res.locals.params.id && isNaN(res.locals.params.id)) {
+        if (res.locals.params.id && isNaN(res.locals.params.id)) {
             res.locals.params.id_error = true;
         }
 
@@ -146,7 +130,7 @@ module.exports = {
 
         var user = res.locals.__user;
 
-        var u = await Account.findOne({login: user.login});
+        var u = await Account.findOne({ login: user.login });
         u.last = '/pause';
         u.save();
 
@@ -157,27 +141,26 @@ module.exports = {
 
         var orders = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'}
+            status: { $ne: 'secret' }
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length;
 
-        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
 
-        if(req.query.sort) {
+        if (req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
         }
 
-        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
 
-        orders.forEach( item => {
+        orders.forEach(item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
             item.initDate = helper.dateToStr(item.date.init)
         });
 
-        if (!orders.length)
-        {
+        if (!orders.length) {
             if (pageNumber !== 1) {
                 res.redirect(req.path);
             } else {
@@ -214,7 +197,7 @@ module.exports = {
             perPage = res.locals.__user.settings.table.perPage || 25;
         res.locals.params = helper.trimObject(req.query);
 
-        if(res.locals.params.id && isNaN(res.locals.params.id)) {
+        if (res.locals.params.id && isNaN(res.locals.params.id)) {
             res.locals.params.id_error = true;
         }
 
@@ -230,52 +213,50 @@ module.exports = {
 
         var user = res.locals.__user;
 
-        var u = await Account.findOne({login: user.login});
+        var u = await Account.findOne({ login: user.login });
         u.last = '/client';
         u.save();
 
         query = {
             'info.initiator': user._id,
             $or: [
-                {status: 'client-match'},
-                {status: 'client-notify'}
+                { status: 'client-match' },
+                { status: 'client-notify' }
             ]
         };
 
         var orders = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'},
-            'pause.status': {$ne : true}
+            status: { $ne: 'secret' },
+            'pause.status': { $ne: true }
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var orders1 = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'},
+            status: { $ne: 'secret' },
             'pause.status': true
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length + orders1.length;
 
-        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
 
-        if(req.query.sort) {
+        if (req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
             orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
         }
 
         orders = orders.concat(orders1)
 
-        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
 
-        var now = new Date();
-        orders.forEach( item => {
+        orders.forEach(item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
             item.initDate = helper.dateToStr(item.date.init)
         });
 
-        if (!orders.length)
-        {
+        if (!orders.length) {
             if (pageNumber !== 1) {
                 res.redirect(req.path);
             } else {
@@ -312,7 +293,7 @@ module.exports = {
             perPage = res.locals.__user.settings.table.perPage || 25;
         res.locals.params = helper.trimObject(req.query);
 
-        if(res.locals.params.id && isNaN(res.locals.params.id)) {
+        if (res.locals.params.id && isNaN(res.locals.params.id)) {
             res.locals.params.id_error = true;
         }
 
@@ -328,55 +309,54 @@ module.exports = {
 
         var user = res.locals.__user;
 
-        var u = await Account.findOne({login: user.login});
+        const u = await Account.findOne({ login: user.login });
         u.last = '/my';
         u.save();
 
         query = {
             'info.initiator': user._id,
             $and: [
-                { status: {$ne: 'succes'}},
-                { status: {$ne: 'reject'}},
-                { status: {$ne:'client-match'}},
-                { status: {$ne:'client-notify'}}
+                { status: { $ne: 'succes' } },
+                { status: { $ne: 'reject' } },
+                { status: { $ne: 'client-match' } },
+                { status: { $ne: 'client-notify' } }
             ]
 
         };
 
         var orders = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'},
-            'pause.status': {$ne : true}
+            status: { $ne: 'secret' },
+            'pause.status': { $ne: true }
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var orders1 = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'},
+            status: { $ne: 'secret' },
             'pause.status': true
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length + orders1.length;
 
-        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
 
-        if(req.query.sort) {
+        if (req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
             orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
         }
 
         orders = orders.concat(orders1)
 
-        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
 
         var now = new Date();
-        orders.forEach( item => {
+        orders.forEach(item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
             item.initDate = helper.dateToStr(item.date.init)
         });
 
-        if (!orders.length)
-        {
+        if (!orders.length) {
             if (pageNumber !== 1) {
                 res.redirect(req.path);
             } else {
@@ -414,7 +394,7 @@ module.exports = {
             perPage = res.locals.__user.settings.table.perPage || 25;
         res.locals.params = helper.trimObject(req.query);
 
-        if(res.locals.params.id && isNaN(res.locals.params.id)) {
+        if (res.locals.params.id && isNaN(res.locals.params.id)) {
             res.locals.params.id_error = true;
         }
 
@@ -430,7 +410,7 @@ module.exports = {
 
         var user = res.locals.__user;
 
-        var u = await Account.findOne({login: user.login});
+        var u = await Account.findOne({ login: user.login });
         u.last = '/pre';
         u.save();
 
@@ -438,18 +418,18 @@ module.exports = {
             case 'b2o':
                 query = {
                     $or: [
-                        {status: 'stop-pre'},
-                        {status: 'all-pre'}
+                        { status: 'stop-pre' },
+                        { status: 'all-pre' }
                     ]
                 };
                 break;
             case 'gus':
                 query = {
                     '$or': [
-                        {status: 'gzp-pre', 'info.city': user.department.cities, special: null},
-                        {status: 'all-pre', 'info.city': user.department.cities, special: null},
-                        {status: 'gzp-pre', 'special': user.department._id},
-                        {status: 'all-pre', 'special': user.department._id}
+                        { status: 'gzp-pre', 'info.city': user.department.cities, special: null },
+                        { status: 'all-pre', 'info.city': user.department.cities, special: null },
+                        { status: 'gzp-pre', 'special': user.department._id },
+                        { status: 'all-pre', 'special': user.department._id }
                     ]
                 }
                 break;
@@ -463,38 +443,36 @@ module.exports = {
 
         var orders = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'},
-            'pause.status': {$ne : true}
+            status: { $ne: 'secret' },
+            'pause.status': { $ne: true }
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var orders1 = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'},
+            status: { $ne: 'secret' },
             'pause.status': true
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length + orders1.length;
 
-        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
 
-        if(req.query.sort) {
+        if (req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
             orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
         }
 
         orders = orders.concat(orders1)
 
-        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
 
-        var now = new Date();
-        orders.forEach( item => {
+        orders.forEach(item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
             item.initDate = helper.dateToStr(item.date.init)
         });
 
-        if (!orders.length)
-        {
+        if (!orders.length) {
             if (pageNumber !== 1) {
                 res.redirect(req.path);
             } else {
@@ -533,7 +511,7 @@ module.exports = {
             perPage = res.locals.__user.settings.table.perPage || 25;
         res.locals.params = helper.trimObject(req.query);
 
-        if(res.locals.params.id && isNaN(res.locals.params.id)) {
+        if (res.locals.params.id && isNaN(res.locals.params.id)) {
             res.locals.params.id_error = true;
         }
 
@@ -549,7 +527,7 @@ module.exports = {
 
         var user = res.locals.__user;
 
-        var u = await Account.findOne({login: user.login});
+        var u = await Account.findOne({ login: user.login });
         u.last = '/build';
         u.save();
 
@@ -562,10 +540,10 @@ module.exports = {
             case 'gus':
                 query = {
                     '$or': [
-                        {status: 'gzp-build', 'info.city': user.department.cities, special: null},
-                        {status: 'install-devices', 'info.city': user.department.cities, special: null},
-                        {status: 'gzp-build', special: user.department._id},
-                        {status: 'install-devices', special: user.department._id}
+                        { status: 'gzp-build', 'info.city': user.department.cities, special: null },
+                        { status: 'install-devices', 'info.city': user.department.cities, special: null },
+                        { status: 'gzp-build', special: user.department._id },
+                        { status: 'install-devices', special: user.department._id }
                     ]
                 }
                 break;
@@ -576,38 +554,37 @@ module.exports = {
 
         var orders = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'},
-            'pause.status': {$ne : true}
+            status: { $ne: 'secret' },
+            'pause.status': { $ne: true }
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var orders1 = await Order.find({
             $and: [query, subQ],
-            status: {$ne: 'secret'},
+            status: { $ne: 'secret' },
             'pause.status': true
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length + orders1.length;
 
-        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
 
-        if(req.query.sort) {
+        if (req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
             orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
         }
 
         orders = orders.concat(orders1)
 
-        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
 
         var now = new Date();
-        orders.forEach( item => {
+        orders.forEach(item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
             item.initDate = helper.dateToStr(item.date.init)
         });
 
-        if (!orders.length)
-        {
+        if (!orders.length) {
             if (pageNumber !== 1) {
                 res.redirect(req.path);
             } else {
@@ -641,13 +618,13 @@ module.exports = {
     init: async (req, res, io) => {
         var data = req.body;
 
-        Object.keys(data).forEach( item => {
+        Object.keys(data).forEach(item => {
             data[item] = data[item].trim();
-            if(data[item] == '') data[item] = undefined;
+            if (data[item] == '') data[item] = undefined;
         });
 
-        data.initiator = await Account.findOne({login: res.locals.__user.login});
-        data.department = await Department.findOne({_id: res.locals.__user.department._id + ''});
+        data.initiator = await Account.findOne({ login: res.locals.__user.login });
+        data.department = await Department.findOne({ _id: res.locals.__user.department._id + '' });
 
         var order = {
             status: data.pre,
@@ -655,28 +632,28 @@ module.exports = {
         };
 
         var clnt = await validator.client(order.info.client);
-        if(!clnt._id) {
+        if (!clnt._id) {
             res.status(400).send({ errText: clnt });
             return;
         }
         order.info.client = clnt;
 
-        if(!order.info.contact) {
+        if (!order.info.contact) {
             res.status(400).send({ errText: 'Укажите контактные данные клиента!' });
             return;
         }
 
-        if(order.info['date-request']) {
+        if (order.info['date-request']) {
             var date = helper.parseDate(order.info['date-request'])
-            if(!date) {
-                res.status(400).send({errText: 'Неверный формат даты'})
+            if (!date) {
+                res.status(400).send({ errText: 'Неверный формат даты' })
                 return;
             }
             order.info['date-request'] = date;
         }
 
         var city = await validator.city(order.info.city);
-        if(!city._id) {
+        if (!city._id) {
             res.status(400).send({ errText: city });
             return;
         }
@@ -685,48 +662,48 @@ module.exports = {
         switch (req.body.adressType) {
             case 'location':
                 var strt = await validator.street(order.info.street);
-                if(!strt._id) {
+                if (!strt._id) {
                     res.status(400).send({ errText: strt });
                     return;
                 }
                 order.info.street = strt;
 
-                if(!order.info.adds) {
+                if (!order.info.adds) {
                     res.status(400).send({ errText: 'Уточните адрес!' });
                     return;
                 }
                 break;
             case 'coordination':
-                if(!order.info.coordinate) {
+                if (!order.info.coordinate) {
                     res.status(400).send({ errText: 'Укажите координаты!' });
                     return;
                 }
                 break;
         }
 
-        if(!order.info.service) {
+        if (!order.info.service) {
             res.status(400).send({ errText: 'Выберите услугу' });
             return;
         }
 
-        if(order.info.service == 'iptv' || order.info.service == 'l2vpn' || order.info.service == 'vpls') {
+        if (order.info.service == 'iptv' || order.info.service == 'l2vpn' || order.info.service == 'vpls') {
 
-          // if(!order.info.relation) {
-          //   res.status(400).send({ errText: 'Укажите связанный заказ' });
-          //   return;
-          // }
-          if(order.info.relation) {
-            if(isNaN(order.info.relation)) {
-              res.status(400).send({ errText: 'Связанный заказ - ID заказа должен быть числом' });
-              return;
-            }
-            var tep = await Order.findOne({id: order.info.relation});
+            // if(!order.info.relation) {
+            //   res.status(400).send({ errText: 'Укажите связанный заказ' });
+            //   return;
+            // }
+            if (order.info.relation) {
+                if (isNaN(order.info.relation)) {
+                    res.status(400).send({ errText: 'Связанный заказ - ID заказа должен быть числом' });
+                    return;
+                }
+                var tep = await Order.findOne({ id: order.info.relation });
 
-            if(!tep) {
-              res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
-              return;
+                if (!tep) {
+                    res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
+                    return;
+                }
             }
-          }
         }
 
         order.info.pre = undefined;
@@ -736,7 +713,7 @@ module.exports = {
             init: new Date()
         };
 
-        if(order.info.service == 'sks') order.status = 'sks-pre';
+        if (order.info.service == 'sks') order.status = 'sks-pre';
 
         var deadline = await helper.calculateDeadline(3);
         switch (order.status) {
@@ -761,24 +738,24 @@ module.exports = {
             info: order.info,
             date: kk,
             history: [helper.historyGenerator('init', res.locals.__user)]
-         });
+        });
 
-        if(req.files['file-init'])
+        if (req.files['file-init'])
             ordr.info['file-init'] = `${req.files['file-init'].name}`;
 
         var done = await Order.create(ordr);
-        if(done) {
-            if(req.files['file-init']) {
+        if (done) {
+            if (req.files['file-init']) {
                 var id = done.id;
                 var _dir;
                 for (var i = 0; i < 1000; i++) {
-                    if(id > i*1000) {
-                        _dir = `${(i)*1000}-${(i+1)*1000}`;
+                    if (id > i * 1000) {
+                        _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
                     }
                 }
 
                 var dir = await mkdirp(`./static/files/${_dir}/${done.id}`);
-                req.files['file-init'].mv(`./static/files/${_dir}/${done.id}/${req.files['file-init'].name}`, function(err) {
+                req.files['file-init'].mv(`./static/files/${_dir}/${done.id}/${req.files['file-init'].name}`, function (err) {
                     if (err) {
                         logger.error(err);
                         return res.status(500).send(err);
@@ -786,7 +763,7 @@ module.exports = {
                 });
             }
 
-            if(done.status == 'all-pre') {
+            if (done.status == 'all-pre') {
                 notify.create(res.locals.__user, done, 'start-gzp-pre');
                 notify.create(res.locals.__user, done, 'start-stop-pre');
                 // sendMail(done, 'new-status');
@@ -797,19 +774,19 @@ module.exports = {
                 // sendMail(done, 'new-status');
             }
 
-            logger.info(`Init Order #${ done.id } | ${ done.status } | ${ done.info.client.name } | ${done.info.city.type} ${done.info.city.name}`, res.locals.__user);
-            res.send({created: true})
-        } else res.send({errText: 'Что-то пошло не так'});
+            logger.info(`Init Order #${done.id} | ${done.status} | ${done.info.client.name} | ${done.info.city.type} ${done.info.city.name}`, res.locals.__user);
+            res.send({ created: true })
+        } else res.send({ errText: 'Что-то пошло не так' });
     },
 
     getPageChange: async (req, res) => {
-        if(isNaN(req.params.id)) {
-             render(req, res, { view: '404' });
-             return;
+        if (isNaN(req.params.id)) {
+            render(req, res, { view: '404' });
+            return;
         }
-        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+        var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
 
-        if(order) {
+        if (order) {
             if (order.status != 'succes') render(req, res, { view: '404' });
             res.locals.order = order;
             render(req, res, {
@@ -820,7 +797,7 @@ module.exports = {
     },
 
     getChangeV: async (req, res) => {
-        const order = await Order.findOne({id: req.params.id}),
+        const order = await Order.findOne({ id: req.params.id }),
             volume = req.body.volume;
 
         order.status = 'network';
@@ -834,29 +811,29 @@ module.exports = {
         order.info.volume = volume;
 
         order.save();
-        
+
         res.sendStatus(200);
     },
 
     getOrderInfo: async (req, res) => {
-        if(isNaN(req.params.id)) {
-             render(req, res, { view: '404' });
-             return;
+        if (isNaN(req.params.id)) {
+            render(req, res, { view: '404' });
+            return;
         }
-        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+        var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
 
-        if(order) {
+        if (order) {
             res.locals.users = await Account
-                    .find({status: true})
-                    .populate({
-                        path: 'department',
-                        select: 'name',
-                        options: {
-                            lean: true
-                        }
-                    })
-                    .sort('name')
-                    .lean();
+                .find({ status: true })
+                .populate({
+                    path: 'department',
+                    select: 'name',
+                    options: {
+                        lean: true
+                    }
+                })
+                .sort('name')
+                .lean();
             res.locals.department = await Department.find();
             order.cs = helper.calculateCS(order);
 
@@ -876,24 +853,24 @@ module.exports = {
     },
 
     getOrderSKS: async (req, res) => {
-        if(isNaN(req.params.id)) {
-             render(req, res, { view: '404' });
-             return;
+        if (isNaN(req.params.id)) {
+            render(req, res, { view: '404' });
+            return;
         }
-        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+        var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
 
-        if(order) {
+        if (order) {
             res.locals.users = await Account
-                    .find({status: true})
-                    .populate({
-                        path: 'department',
-                        select: 'name',
-                        options: {
-                            lean: true
-                        }
-                    })
-                    .sort('name')
-                    .lean();
+                .find({ status: true })
+                .populate({
+                    path: 'department',
+                    select: 'name',
+                    options: {
+                        lean: true
+                    }
+                })
+                .sort('name')
+                .lean();
             res.locals.department = await Department.find();
             order.cs = helper.calculateCS(order);
 
@@ -913,24 +890,24 @@ module.exports = {
     },
 
     getOrderGZP: async (req, res) => {
-        if(isNaN(req.params.id)) {
-             render(req, res, { view: '404' });
-             return;
+        if (isNaN(req.params.id)) {
+            render(req, res, { view: '404' });
+            return;
         }
-        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+        var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
 
-        if(order) {
+        if (order) {
             res.locals.users = await Account
-                    .find({status: true})
-                    .populate({
-                        path: 'department',
-                        select: 'name',
-                        options: {
-                            lean: true
-                        }
-                    })
-                    .sort('name')
-                    .lean();
+                .find({ status: true })
+                .populate({
+                    path: 'department',
+                    select: 'name',
+                    options: {
+                        lean: true
+                    }
+                })
+                .sort('name')
+                .lean();
             res.locals.department = await Department.find();
             order.cs = helper.calculateCS(order);
 
@@ -951,24 +928,24 @@ module.exports = {
     },
 
     getOrderSTOP: async (req, res) => {
-        if(isNaN(req.params.id)) {
-             render(req, res, { view: '404' });
-             return;
+        if (isNaN(req.params.id)) {
+            render(req, res, { view: '404' });
+            return;
         }
-        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+        var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
 
-        if(order) {
+        if (order) {
             res.locals.users = await Account
-                    .find({status: true})
-                    .populate({
-                        path: 'department',
-                        select: 'name',
-                        options: {
-                            lean: true
-                        }
-                    })
-                    .sort('name')
-                    .lean();
+                .find({ status: true })
+                .populate({
+                    path: 'department',
+                    select: 'name',
+                    options: {
+                        lean: true
+                    }
+                })
+                .sort('name')
+                .lean();
             res.locals.department = await Department.find();
             order.cs = helper.calculateCS(order);
 
@@ -988,24 +965,24 @@ module.exports = {
     },
 
     getOrderHistory: async (req, res) => {
-        if(isNaN(req.params.id)) {
-             render(req, res, { view: '404' });
-             return;
+        if (isNaN(req.params.id)) {
+            render(req, res, { view: '404' });
+            return;
         }
-        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+        var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
 
-        if(order) {
+        if (order) {
             res.locals.users = await Account
-                    .find({status: true})
-                    .populate({
-                        path: 'department',
-                        select: 'name',
-                        options: {
-                            lean: true
-                        }
-                    })
-                    .sort('name')
-                    .lean();
+                .find({ status: true })
+                .populate({
+                    path: 'department',
+                    select: 'name',
+                    options: {
+                        lean: true
+                    }
+                })
+                .sort('name')
+                .lean();
             res.locals.department = await Department.find();
             order.cs = helper.calculateCS(order);
 
@@ -1026,11 +1003,11 @@ module.exports = {
     adminEdit: async (req, res, io) => {
         var data = req.body;
 
-        var order = await Order.findOne({id: req.params.id});
+        var order = await Order.findOne({ id: req.params.id });
 
-        Object.keys(data).forEach( item => {
+        Object.keys(data).forEach(item => {
             data[item] = data[item].trim();
-            if(data[item] == '') data[item] = undefined;
+            if (data[item] == '') data[item] = undefined;
         });
 
         switch (req.params.tab) {
@@ -1042,7 +1019,7 @@ module.exports = {
                 //Клиент
                 var clnt = await validator.client(data.client);
 
-                if(!clnt._id) {
+                if (!clnt._id) {
                     res.status(400).send({ errText: clnt });
                     return;
                 }
@@ -1055,7 +1032,7 @@ module.exports = {
                 // Улица
                 var strt = await validator.street(data.street);
 
-                if(!strt._id) {
+                if (!strt._id) {
                     res.status(400).send({ errText: strt });
                     return;
                 }
@@ -1064,31 +1041,31 @@ module.exports = {
                 // Город
                 var city = await validator.city(data.city);
 
-                if(!city._id) {
+                if (!city._id) {
                     res.status(400).send({ errText: city });
                     return;
                 }
                 tmp.city = city;
 
-                if(data['date-sign']) {
+                if (data['date-sign']) {
                     var date = helper.parseDate(data['date-sign'])
-                    if(date == 'err') {
-                        res.status(400).send({errText: 'Неверный формат даты'})
+                    if (date == 'err') {
+                        res.status(400).send({ errText: 'Неверный формат даты' })
                         return;
                     }
                     tmp['date-sign'] = date;
                 }
 
-                if(req.files && req.files.order) {
+                if (req.files && req.files.order) {
                     var id = order.id;
                     var _dir;
                     for (var i = 0; i < 1000; i++) {
-                        if(id > i*1000) {
-                            _dir = `${(i)*1000}-${(i+1)*1000}`;
+                        if (id > i * 1000) {
+                            _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
                         }
                     }
                     var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-                    req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function(err) {
+                    req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function (err) {
                         if (err) {
                             logger.error(err);
                             return res.status(500).send(err);
@@ -1098,31 +1075,31 @@ module.exports = {
                     await order.save();
                 }
 
-                if(req.files && req.files['file-init']) {
+                if (req.files && req.files['file-init']) {
                     var id = order.id;
                     var _dir;
                     for (var i = 0; i < 1000; i++) {
-                      if(id > i*1000) {
-                        _dir = `${(i)*1000}-${(i+1)*1000}`;
-                      }
+                        if (id > i * 1000) {
+                            _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
+                        }
                     }
                     var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-                    req.files['file-init'].mv(`./static/files/${_dir}/${order.id}/${req.files['file-init'].name}`, function(err) {
-                      if (err) {
-                        logger.error(err);
-                        return res.status(500).send(err);
-                      }
+                    req.files['file-init'].mv(`./static/files/${_dir}/${order.id}/${req.files['file-init'].name}`, function (err) {
+                        if (err) {
+                            logger.error(err);
+                            return res.status(500).send(err);
+                        }
                     });
                     order.info['file-init'] = `${req.files['file-init'].name}`;
                     await order.save()
-                  }
+                }
 
                 order.info = Object.assign(order.info, tmp);
                 break;
 
             case 'gzp':
 
-                if(isNaN(data.time)) {
+                if (isNaN(data.time)) {
                     res.status(400).send({ errText: 'Срок организации должен быть числом' });
                     return;
                 }
@@ -1132,22 +1109,22 @@ module.exports = {
 
             case 'stop':
 
-                if(isNaN(data.time)) {
-                    res.status(400).send({errText: 'Срок организации должен быть числом'});
+                if (isNaN(data.time)) {
+                    res.status(400).send({ errText: 'Срок организации должен быть числом' });
                     return;
                 }
 
-                if(!data.provider) {
-                    res.status(400).send({errText: 'Провайдер - обязательное поле!'});
+                if (!data.provider) {
+                    res.status(400).send({ errText: 'Провайдер - обязательное поле!' });
                     return;
                 }
 
                 var prvdr = helper.parseClient(data.provider);
 
-                var provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
+                var provider = await Provider.findOne({ type: prvdr.type, name: prvdr.name });
 
-                if(!provider) {
-                    res.status(400).send({errText : 'Такого провайдера не существует!'});
+                if (!provider) {
+                    res.status(400).send({ errText: 'Такого провайдера не существует!' });
                     return;
                 }
                 data.provider = provider;
@@ -1158,42 +1135,42 @@ module.exports = {
         order.history.push(helper.historyGenerator('admin', res.locals.__user));
         notify.create(res.locals.__user, order, 'admin');
         var done = await order.save();
-        if(done) {
-            logger.info(`Admin edit order #${ done.id }`, res.locals.__user);
-            res.status(200).send({url: `/order/${done.id}/${req.params.tab}`});
+        if (done) {
+            logger.info(`Admin edit order #${done.id}`, res.locals.__user);
+            res.status(200).send({ url: `/order/${done.id}/${req.params.tab}` });
             return;
         } else {
-            logger.error(`Admin edit error order #${ done.id }`, res.locals.__user);
-            res.status(400).send({errText: 'Неизвестная ошибка!'});
+            logger.error(`Admin edit error order #${done.id}`, res.locals.__user);
+            res.status(400).send({ errText: 'Неизвестная ошибка!' });
             return;
         }
     },
 
     endPreGZP: async (req, res, io) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
-        if(order) {
-            Object.keys(req.body).forEach( item => {
+        var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
+        if (order) {
+            Object.keys(req.body).forEach(item => {
                 req.body[item] = req.body[item].trim();
-                if(req.body[item] == '') req.body[item] = undefined;
+                if (req.body[item] == '') req.body[item] = undefined;
             });
 
-            if( ((req.body.need == '1' && req.body.capability == '1')
+            if (((req.body.need == '1' && req.body.capability == '1')
                 || (req.body.need == '0')) && isNaN(req.body.time)) {
-                    res.status(400).send({ errText: 'Срок организации должен быть числом' });
-                    return;
+                res.status(400).send({ errText: 'Срок организации должен быть числом' });
+                return;
             }
 
-            if((req.body.need == '1' && req.body.capability == '1') || (req.body.need == '0')) {
+            if ((req.body.need == '1' && req.body.capability == '1') || (req.body.need == '0')) {
 
-                if(!req.body['cost-once'] || !req.body['cost-monthly']) {
+                if (!req.body['cost-once'] || !req.body['cost-monthly']) {
                     res.status(400).send({ errText: 'Укажите стоимость организации' });
                     return;
                 }
 
             }
 
-            if( req.body.need == '1' && req.body.capability == '0' ) {
-                if(!req.body.reason) {
+            if (req.body.need == '1' && req.body.capability == '0') {
+                if (!req.body.reason) {
                     res.status(400).send({ errText: 'Укажите причину технической не возможности!' });
                     return;
                 }
@@ -1201,7 +1178,7 @@ module.exports = {
 
             order.gzp = req.body;
 
-            if(order.status == 'gzp-pre') {
+            if (order.status == 'gzp-pre') {
                 order.status = 'client-match';
                 order.deadline = await helper.calculateDeadline(10);
                 order.date['gzp-pre'] = new Date();
@@ -1209,13 +1186,13 @@ module.exports = {
                 order.gzp.complete = true;
             }
 
-            if(order.status == 'all-pre') {
+            if (order.status == 'all-pre') {
                 order.status = 'stop-pre';
                 order.date['gzp-pre'] = new Date();
                 order.gzp.complete = true;
             }
 
-            if(order.pause.status) {
+            if (order.pause.status) {
                 var now = new Date();
                 var pause = order.pause.date;
                 pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
@@ -1230,30 +1207,30 @@ module.exports = {
 
             order.history.push(helper.historyGenerator('gzp-pre', res.locals.__user));
             var done = await order.save();
-            if(done) {
+            if (done) {
                 notify.create(res.locals.__user, done, 'end-gzp-pre');
                 // done = await done.deepPopulate(populateQuery);
                 // sendMail(done, 'new-status');
-                logger.info(`End pre-gzp order #${ done.id }`, res.locals.__user);
-                res.status(200).send({created: true})
-            } else res.status(400).send({errText: 'Что-то пошло не так!'});
+                logger.info(`End pre-gzp order #${done.id}`, res.locals.__user);
+                res.status(200).send({ created: true })
+            } else res.status(400).send({ errText: 'Что-то пошло не так!' });
         } else res.status(404);
     },
 
     endPreSKS: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
-        if(order) {
-            Object.keys(req.body).forEach( item => {
+        var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
+        if (order) {
+            Object.keys(req.body).forEach(item => {
                 req.body[item] = req.body[item].trim();
-                if(req.body[item] == '') req.body[item] = undefined;
+                if (req.body[item] == '') req.body[item] = undefined;
             });
 
-            if( isNaN(req.body.time) ) {
+            if (isNaN(req.body.time)) {
                 res.status(400).send({ errText: 'Срок организации должен быть числом' });
                 return;
             }
 
-            if(!req.body['cost-once'] || !req.body['cost-monthly']) {
+            if (!req.body['cost-once'] || !req.body['cost-monthly']) {
                 res.status(400).send({ errText: 'Укажите стоимость организации' });
                 return;
             }
@@ -1265,7 +1242,7 @@ module.exports = {
             order.date['sks-pre'] = new Date();
             order.date['cs-client-match'] = await helper.calculateDeadline(10);
 
-            if(order.pause.status) {
+            if (order.pause.status) {
                 var now = new Date();
                 var pause = order.pause.date;
                 pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
@@ -1280,60 +1257,60 @@ module.exports = {
 
             order.history.push(helper.historyGenerator('sks-pre', res.locals.__user));
             var done = await order.save();
-            if(done) {
+            if (done) {
                 notify.create(res.locals.__user, done, 'end-sks-pre');
 
-                logger.info(`Выполнена проработка СКС #${ done.id }`, res.locals.__user);
-                res.status(200).send({created: true})
-            } else res.status(400).send({errText: 'Что-то пошло не так!'});
+                logger.info(`Выполнена проработка СКС #${done.id}`, res.locals.__user);
+                res.status(200).send({ created: true })
+            } else res.status(400).send({ errText: 'Что-то пошло не так!' });
         } else res.status(404);
     },
 
     endPreSTOP: async (req, res, io) => {
-        var order = await Order.findOne({id: req.params.id}).deepPopulate(populateQuery);
-        if(order) {
-            Object.keys(req.body).forEach( item => {
+        var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
+        if (order) {
+            Object.keys(req.body).forEach(item => {
                 req.body[item] = req.body[item].trim();
-                if(req.body[item] == '') req.body[item] = undefined;
+                if (req.body[item] == '') req.body[item] = undefined;
             });
 
             order.stop = req.body;
-            if(req.body.capability == '1') {
+            if (req.body.capability == '1') {
 
-                if(!req.body.provider) {
-                    res.status(400).send({errText: 'Провайдер - обязательное поле!'});
+                if (!req.body.provider) {
+                    res.status(400).send({ errText: 'Провайдер - обязательное поле!' });
                     return;
                 }
 
                 var prvdr = helper.parseClient(req.body.provider);
 
-                var provider = await Provider.findOne({type: prvdr.type, name: prvdr.name});
+                var provider = await Provider.findOne({ type: prvdr.type, name: prvdr.name });
 
-                if(!provider) {
-                    res.status(400).send({errText : 'Такого провайдера не существует!'});
+                if (!provider) {
+                    res.status(400).send({ errText: 'Такого провайдера не существует!' });
                     return;
                 }
 
                 order.stop.provider = provider;
 
-                if(isNaN(req.body.time)) {
-                    res.status(400).send({errText: 'Срок организации должен быть числом'});
+                if (isNaN(req.body.time)) {
+                    res.status(400).send({ errText: 'Срок организации должен быть числом' });
                     return;
                 }
 
-                if(!req.body['cost-once'] || !req.body['cost-monthly']) {
-                    res.status(400).send({errText: 'Укажите стоимость организации'});
+                if (!req.body['cost-once'] || !req.body['cost-monthly']) {
+                    res.status(400).send({ errText: 'Укажите стоимость организации' });
                     return;
                 }
             } else {
 
-                if(!req.body.reason) {
-                    res.status(400).send({errText: 'Укажите причину'});
+                if (!req.body.reason) {
+                    res.status(400).send({ errText: 'Укажите причину' });
                     return;
                 }
             }
 
-            if(order.status == 'stop-pre') {
+            if (order.status == 'stop-pre') {
                 order.status = 'client-match';
                 order.deadline = await helper.calculateDeadline(10);
                 order.date['cs-client-match'] = await helper.calculateDeadline(10);
@@ -1341,13 +1318,13 @@ module.exports = {
                 order.stop.complete = true;
             }
 
-            if(order.status == 'all-pre') {
+            if (order.status == 'all-pre') {
                 order.status = 'gzp-pre';
                 order.date['stop-pre'] = new Date();
                 order.stop.complete = true;
             }
 
-            if(order.pause.status) {
+            if (order.pause.status) {
                 var now = new Date();
                 var pause = order.pause.date;
                 pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
@@ -1362,25 +1339,25 @@ module.exports = {
 
             order.history.push(helper.historyGenerator('stop-pre', res.locals.__user));
             var done = await order.save();
-            if(done) {
+            if (done) {
                 notify.create(res.locals.__user, done, 'end-stop-pre');
                 // done = await done.deepPopulate(populateQuery);
                 // sendMail(done, 'new-status');
-                logger.info(`End pre-stop order #${ done.id }`, res.locals.__user);
-                res.status(200).send({created: true});
-            } else res.status(400).send({errText: 'Что-то пошло не так!'})
+                logger.info(`End pre-stop order #${done.id}`, res.locals.__user);
+                res.status(200).send({ created: true });
+            } else res.status(400).send({ errText: 'Что-то пошло не так!' })
         } else res.status(404);
     },
 
     getFile: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id});
+        var order = await Order.findOne({ id: req.params.id });
 
-        if(order) {
+        if (order) {
             var id = order.id;
             var _dir;
             for (var i = 0; i < 1000; i++) {
-                if(id > i*1000) {
-                    _dir = `${(i)*1000}-${(i+1)*1000}`;
+                if (id > i * 1000) {
+                    _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
                 }
             }
             var filePath = `./static/files/${_dir}/${order.id}/${req.params.file}`;
@@ -1388,26 +1365,26 @@ module.exports = {
                 root: './',
                 dotfiles: 'deny',
                 headers: {
-                   'x-timestamp': Date.now(),
-                   'x-sent': true
-               }
+                    'x-timestamp': Date.now(),
+                    'x-sent': true
+                }
             }
             res.sendFile(filePath, options);
         }
     },
 
     getFileOld: async (req, res) => {
-        var order = await Order.findOne({id: req.params.id});
+        var order = await Order.findOne({ id: req.params.id });
         var params = req.params;
-        if(order) {
+        if (order) {
             var filePath = `./static/files/docs/${params.dir}/${params.number}/${params.name}`;
             var options = {
                 root: './',
                 dotfiles: 'deny',
                 headers: {
-                   'x-timestamp': Date.now(),
-                   'x-sent': true
-               }
+                    'x-timestamp': Date.now(),
+                    'x-sent': true
+                }
             }
             res.sendFile(filePath, options);
         }
@@ -1415,14 +1392,14 @@ module.exports = {
 
     changeStatus: async (req, res, io) => {
         var reqData = req.body;
-        var order = await Order.findOne({id: req.params.id, status: {'$ne': 'secret'}}).deepPopulate(populateQuery);
+        var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
 
-        if(!order) {
-            res.status(400).send({errText: 'Изменение несуществующей заявки!'});
+        if (!order) {
+            res.status(400).send({ errText: 'Изменение несуществующей заявки!' });
             return;
         }
 
-        if(order.pause.status && reqData.to != 'stop-pause') {
+        if (order.pause.status && reqData.to != 'stop-pause') {
             var now = new Date();
             var pause = order.pause.date;
             pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
@@ -1542,7 +1519,7 @@ module.exports = {
                 notify.create(res.locals.__user, order, 'sks-gzp-build');
                 break;
             case 'start-gzp-build':
-                if(order.gzp.need) {
+                if (order.gzp.need) {
                     order.status = 'gzp-build';
                 } else {
                     order.status = 'install-devices';
@@ -1550,7 +1527,7 @@ module.exports = {
                 order.info['income-once'] = reqData.incomeOnce;
                 order.info['income-monthly'] = reqData.incomeMonth;
                 if (reqData.oss)
-                  order.info['idoss'] = reqData.oss;
+                    order.info['idoss'] = reqData.oss;
 
                 order.deadline = await helper.calculateDeadline(order.gzp.time);
                 order.date['cs-gzp-organization'] = await helper.calculateDeadline(order.gzp.time);
@@ -1565,7 +1542,7 @@ module.exports = {
                 order.info['income-once'] = reqData.incomeOnce;
                 order.info['income-monthly'] = reqData.incomeMonth;
                 if (reqData.oss)
-                  order.info['idoss'] = reqData.oss;
+                    order.info['idoss'] = reqData.oss;
 
                 order.deadline = await helper.calculateDeadline(order.sks.time);
                 order.date['cs-sks-organization'] = await helper.calculateDeadline(order.sks.time);
@@ -1585,7 +1562,7 @@ module.exports = {
                 order.info['income-once'] = reqData.incomeOnce;
                 order.info['income-monthly'] = reqData.incomeMonth;
                 if (reqData.oss)
-                  order.info['idoss'] = reqData.oss;
+                    order.info['idoss'] = reqData.oss;
 
                 order.deadline = await helper.calculateDeadline(order.stop.time);
                 order.date['cs-stop-organization'] = await helper.calculateDeadline(order.stop.time);
@@ -1600,8 +1577,8 @@ module.exports = {
                 notify.create(res.locals.__user, order, `end-stop-build`);
                 break;
             case 'comeback':
-                if(order.date['gzp-build']) {
-                    if(order.gzp.need) {
+                if (order.date['gzp-build']) {
+                    if (order.gzp.need) {
                         order.status = 'gzp-build';
                         notify.create(res.locals.__user, order, `start-gzp-build`);
                     } else {
@@ -1609,7 +1586,7 @@ module.exports = {
                         notify.create(res.locals.__user, order, `start-install-devices`);
                     }
                 }
-                if(order.date['stop-build']) {
+                if (order.date['stop-build']) {
                     order.status = 'stop-build';
                     notify.create(res.locals.__user, order, `start-stop-build`);
                 }
@@ -1618,114 +1595,114 @@ module.exports = {
         }
 
         var done = await order.save();
-        if(done) {
+        if (done) {
             logger.info(`${reqData.to} order #${done.id}`, res.locals.__user);
-            if(reqData.to == 'delete') return res.status(200).send({url: '/'});
-            if(reqData.to == 'adminEdit') res.status(200).send({url: `/order/${done.id}/info/admin`});
+            if (reqData.to == 'delete') return res.status(200).send({ url: '/' });
+            if (reqData.to == 'adminEdit') res.status(200).send({ url: `/order/${done.id}/info/admin` });
 
-            else res.status(200).send({created: true});
-        } else res.status(400).send({errText: 'Изменение несуществующей заявки!'});
+            else res.status(200).send({ created: true });
+        } else res.status(400).send({ errText: 'Изменение несуществующей заявки!' });
 
     },
 
     endClientNotify: async (req, res, io) => {
         var reqData = req.body;
-        var order = await Order.findOne({id: req.params.id}).populate(populateClient);
+        var order = await Order.findOne({ id: req.params.id }).populate(populateClient);
 
-        if(!order) {
-            res.status(400).send({errText: 'Ошибка при сохранении!'});
+        if (!order) {
+            res.status(400).send({ errText: 'Ошибка при сохранении!' });
             return;
         }
 
-        if(!req.body['date-request']) {
-          order.info['date-request'] = undefined;
-          await order.save()
+        if (!req.body['date-request']) {
+            order.info['date-request'] = undefined;
+            await order.save()
         } else {
-          var date = helper.parseDate(req.body['date-request'])
-          if(!date || date == 'Invalid Date') {
-              res.status(400).send({errText: 'Неверный формат даты'})
-              return;
-          }
-          order.info['date-request'] = date;
-          await order.save()
+            var date = helper.parseDate(req.body['date-request'])
+            if (!date || date == 'Invalid Date') {
+                res.status(400).send({ errText: 'Неверный формат даты' })
+                return;
+            }
+            order.info['date-request'] = date;
+            await order.save()
         }
 
-        if(req.body.service) {
-          var ser = req.body.service;
+        if (req.body.service) {
+            var ser = req.body.service;
 
-          var needNotify = (ser != order.info.service);
+            var needNotify = (ser != order.info.service);
 
-          if(ser == 'iptv' || ser == 'l2vpn' || ser == 'vpls') {
-            // if(!req.body.relation) {
-            //   res.status(400).send({errText: 'Заполните связанный заказ!'})
-            //   return;
-            // }
-            if(req.body.relation) {
-              if(req.body.relation && isNaN(req.body.relation)) {
-                res.status(400).send({errText: 'Связанный заказ - ID заказа должен быть числом!'})
-                return;
-              }
-              var tep = await Order.findOne({id: req.body.relation});
-              if(!tep) {
-                res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
-                return;
-              }
-              order.info.relation = req.body.relation;
+            if (ser == 'iptv' || ser == 'l2vpn' || ser == 'vpls') {
+                // if(!req.body.relation) {
+                //   res.status(400).send({errText: 'Заполните связанный заказ!'})
+                //   return;
+                // }
+                if (req.body.relation) {
+                    if (req.body.relation && isNaN(req.body.relation)) {
+                        res.status(400).send({ errText: 'Связанный заказ - ID заказа должен быть числом!' })
+                        return;
+                    }
+                    var tep = await Order.findOne({ id: req.body.relation });
+                    if (!tep) {
+                        res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
+                        return;
+                    }
+                    order.info.relation = req.body.relation;
 
+                }
+
+            } else order.info.relation = undefined;
+
+            order.info.service = ser;
+
+            if (req.body.volume && req.body.volume != order.info.volume) needNotify = true;
+            order.info.volume = req.body.volume;
+
+            if (req.body.ip && req.body.ip != order.info.ip) needNotify = true;
+            order.info.ip = req.body.ip;
+
+            if (needNotify) {
+                order.history.push(helper.historyGenerator('change-params', res.locals.__user));
+                notify.create(res.locals.__user, order, `change-params`);
             }
 
-          } else order.info.relation = undefined;
-
-          order.info.service = ser;
-
-          if(req.body.volume && req.body.volume != order.info.volume) needNotify = true;
-          order.info.volume = req.body.volume;
-
-          if(req.body.ip && req.body.ip != order.info.ip) needNotify = true;
-          order.info.ip = req.body.ip;
-
-          if(needNotify) {
-            order.history.push(helper.historyGenerator('change-params', res.locals.__user));
-            notify.create(res.locals.__user, order, `change-params`);
-          }
-
-          await order.save();
+            await order.save();
 
         }
 
         if (req.body.contact) {
-          order.info.contact = req.body.contact;
-          await order.save()
+            order.info.contact = req.body.contact;
+            await order.save()
         }
 
         order.info.add_info = req.body.add_info;
         await order.save()
 
-        if(req.files && req.files['file-init']) {
-          var id = order.id;
-          var _dir;
-          for (var i = 0; i < 1000; i++) {
-            if(id > i*1000) {
-              _dir = `${(i)*1000}-${(i+1)*1000}`;
-            }
-          }
-          var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-          req.files['file-init'].mv(`./static/files/${_dir}/${order.id}/${req.files['file-init'].name}`, function(err) {
-            if (err) {
-              logger.error(err);
-              return res.status(500).send(err);
-            }
-          });
-          order.info['file-init'] = `${req.files['file-init'].name}`;
-          await order.save()
-        }
-
-        if(order.status == 'client-notify') {
+        if (req.files && req.files['file-init']) {
             var id = order.id;
             var _dir;
             for (var i = 0; i < 1000; i++) {
-                if(id > i*1000) {
-                    _dir = `${(i)*1000}-${(i+1)*1000}`;
+                if (id > i * 1000) {
+                    _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
+                }
+            }
+            var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
+            req.files['file-init'].mv(`./static/files/${_dir}/${order.id}/${req.files['file-init'].name}`, function (err) {
+                if (err) {
+                    logger.error(err);
+                    return res.status(500).send(err);
+                }
+            });
+            order.info['file-init'] = `${req.files['file-init'].name}`;
+            await order.save()
+        }
+
+        if (order.status == 'client-notify') {
+            var id = order.id;
+            var _dir;
+            for (var i = 0; i < 1000; i++) {
+                if (id > i * 1000) {
+                    _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
                 }
             }
             // if(!req.files.order) {
@@ -1737,19 +1714,19 @@ module.exports = {
             //     return;
             // }
             var date = helper.parseDate(reqData['date-sign'])
-            if(!date) {
-                res.status(400).send({errText: 'Неверный формат даты'})
+            if (!date) {
+                res.status(400).send({ errText: 'Неверный формат даты' })
                 return;
             }
-            if(req.files.order) {
-              var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-              req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function(err) {
-                  if (err) {
-                      logger.error(err);
-                      return res.status(500).send(err);
-                  }
-              });
-              order.info.order = `${req.files.order.name}`;
+            if (req.files.order) {
+                var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
+                req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function (err) {
+                    if (err) {
+                        logger.error(err);
+                        return res.status(500).send(err);
+                    }
+                });
+                order.info.order = `${req.files.order.name}`;
             }
             order.info['date-sign'] = date;
             order.status = 'succes';
@@ -1759,30 +1736,30 @@ module.exports = {
             order.history.push(helper.historyGenerator('client-notify', res.locals.__user));
 
             var done = await order.save();
-            if(done) {
+            if (done) {
                 // notify.create(res.locals.__user,er.id, `end-client-notify`);
                 // done = await done.deepPopulate(populateQuery);
                 // sendMail(done, 'new-status');
-                logger.info(`End client-notify order #${ done.id }`, res.locals.__user);
-                res.status(200).send({created: true});
+                logger.info(`End client-notify order #${done.id}`, res.locals.__user);
+                res.status(200).send({ created: true });
                 return;
-            } else res.status(400).send({errText: 'Что-то пошло не так'})
+            } else res.status(400).send({ errText: 'Что-то пошло не так' })
         }
 
-        if(order.status == 'client-match') {
+        if (order.status == 'client-match') {
             var mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0);
 
-            if(mustIDOSS && !reqData.idoss) {
-                res.status(400).send({errText: 'Укажите ID OSS'});
+            if (mustIDOSS && !reqData.idoss) {
+                res.status(400).send({ errText: 'Укажите ID OSS' });
                 return;
             }
-            if(reqData['income-once'] == '' || reqData['income-once'] == null) {
-                res.status(400).send({errText: 'Укажите доход!'});
+            if (reqData['income-once'] == '' || reqData['income-once'] == null) {
+                res.status(400).send({ errText: 'Укажите доход!' });
                 return;
             }
 
-            if(reqData['income-monthly'] == '' || reqData['income-once'] == null) {
-                res.status(400).send({errText: 'Укажите доход!'});
+            if (reqData['income-monthly'] == '' || reqData['income-once'] == null) {
+                res.status(400).send({ errText: 'Укажите доход!' });
                 return;
             }
 
@@ -1791,49 +1768,53 @@ module.exports = {
             order.info['income-monthly'] = reqData['income-monthly'];
 
             var done = await order.save();
-            if(done) {
-                logger.info(`Filling income order #${ done.id }`, res.locals.__user);
-                res.status(200).send({created: true});
+            if (done) {
+                logger.info(`Filling income order #${done.id}`, res.locals.__user);
+                res.status(200).send({ created: true });
                 return;
             } else {
-              res.status(400).send({errText: 'Что-то пошло не так'})
-              return;
+                res.status(400).send({ errText: 'Что-то пошло не так' })
+                return;
             }
         }
-        res.status(200).send({created: true});
+        res.status(200).send({ created: true });
         return;
     },
 
     getStat: async (req, res) => {
-        var preQuery =[
-            {status: 'gzp-pre'},
-            {status: 'stop-pre'},
-            {status: 'all-pre'},
-            {status: 'sks-pre'},
-            {status: 'client-match'}
+        var preQuery = [
+            { status: 'gzp-pre' },
+            { status: 'stop-pre' },
+            { status: 'all-pre' },
+            { status: 'sks-pre' },
+            { status: 'client-match' }
         ]
 
         var buildQuery = [
-            {status: 'gzp-build'},
-            {status: 'stop-build'},
-            {status: 'sks-build'},
-            {status: 'install-devices'},
-            {status: 'client-notify'},
-            {status: 'network'}
+            { status: 'gzp-build' },
+            { status: 'stop-build' },
+            { status: 'sks-build' },
+            { status: 'install-devices' },
+            { status: 'client-notify' },
+            { status: 'network' }
         ];
 
-        var deadlineQuery = {$or: [
-            {$and: [
-                { deadline: {'$lte': new Date()} },
-                { "pause.status": {$ne: true} }
-            ]},
-            {$where: "this.pause && this.deadline < this.pause.date"}
-        ]};
+        var deadlineQuery = {
+            $or: [
+                {
+                    $and: [
+                        { deadline: { '$lte': new Date() } },
+                        { "pause.status": { $ne: true } }
+                    ]
+                },
+                { $where: "this.pause && this.deadline < this.pause.date" }
+            ]
+        };
 
         var counter = {
-            all: await Order.count({status: {$ne: 'secret'}}),
-            succes: await Order.count({status: 'succes'}),
-            reject: await Order.count({status: 'reject'}),
+            all: await Order.count({ status: { $ne: 'secret' } }),
+            succes: await Order.count({ status: 'succes' }),
+            reject: await Order.count({ status: 'reject' }),
             pre: await Order.count({
                 $or: preQuery
             }),
@@ -1843,21 +1824,21 @@ module.exports = {
             'pre-deadline': await Order.count({
                 $and: [
                     deadlineQuery,
-                    {$or: preQuery}
+                    { $or: preQuery }
                 ]
             }),
             'build-deadline': await Order.count({
                 $and: [
                     deadlineQuery,
-                    {$or: buildQuery}
+                    { $or: buildQuery }
                 ]
             })
         };
 
         var deps = await Department.find({
             $and: [
-                {type: {$ne: 'admin'}},
-                {type: {$ne: 'man'}}
+                { type: { $ne: 'admin' } },
+                { type: { $ne: 'man' } }
             ]
         }).lean();
 
@@ -1867,39 +1848,43 @@ module.exports = {
                     counter[deps[i]._id] = {
                         pre: await Order.count({
                             $or: [
-                                {status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null},
-                                {status: 'all-pre', 'info.city': deps[i].cities, 'special': null},
-                                {status: 'gzp-pre', 'special': deps[i]._id},
-                                {status: 'all-pre', 'special': deps[i]._id}
+                                { status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null },
+                                { status: 'all-pre', 'info.city': deps[i].cities, 'special': null },
+                                { status: 'gzp-pre', 'special': deps[i]._id },
+                                { status: 'all-pre', 'special': deps[i]._id }
                             ]
                         }),
                         build: await Order.count({
                             $or: [
-                                {status: 'gzp-build', 'info.city': deps[i].cities, 'special': null},
-                                {status: 'install-devices', 'info.city': deps[i].cities,  'special': null},
-                                {status: 'gzp-build', 'special': deps[i]._id},
-                                {status: 'install-devices', 'special': deps[i]._id}
+                                { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
+                                { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
+                                { status: 'gzp-build', 'special': deps[i]._id },
+                                { status: 'install-devices', 'special': deps[i]._id }
                             ]
                         }),
                         'pre-deadline': await Order.count({
                             $and: [
-                                {$or: [
-                                    {status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null},
-                                    {status: 'all-pre', 'info.city': deps[i].cities, 'special': null},
-                                    {status: 'gzp-pre', 'special': deps[i]._id},
-                                    {status: 'all-pre', 'special': deps[i]._id}
-                                ]},
+                                {
+                                    $or: [
+                                        { status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null },
+                                        { status: 'all-pre', 'info.city': deps[i].cities, 'special': null },
+                                        { status: 'gzp-pre', 'special': deps[i]._id },
+                                        { status: 'all-pre', 'special': deps[i]._id }
+                                    ]
+                                },
                                 deadlineQuery
                             ]
                         }),
                         'build-deadline': await Order.count({
                             $and: [
-                                {$or: [
-                                    {status: 'gzp-build', 'info.city': deps[i].cities, 'special': null},
-                                    {status: 'install-devices', 'info.city': deps[i].cities,  'special': null},
-                                    {status: 'gzp-build', 'special': deps[i]._id},
-                                    {status: 'install-devices', 'special': deps[i]._id}
-                                ]},
+                                {
+                                    $or: [
+                                        { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
+                                        { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
+                                        { status: 'gzp-build', 'special': deps[i]._id },
+                                        { status: 'install-devices', 'special': deps[i]._id }
+                                    ]
+                                },
                                 deadlineQuery
                             ]
                         })
@@ -1909,32 +1894,36 @@ module.exports = {
                     counter[deps[i]._id] = {
                         pre: await Order.count({
                             $or: [
-                                {status: 'client-match'}
+                                { status: 'client-match' }
                             ],
                             'info.department': deps[i]._id
                         }),
                         build: await Order.count({
                             $or: [
-                                {status: 'client-notify'}
+                                { status: 'client-notify' }
                             ],
                             'info.department': deps[i]._id
                         }),
                         'pre-deadline': await Order.count({
                             $and: [
                                 deadlineQuery,
-                                {$or: [
-                                    {status: 'client-match'}
-                                ]},
-                                {'info.department': deps[i]._id}
+                                {
+                                    $or: [
+                                        { status: 'client-match' }
+                                    ]
+                                },
+                                { 'info.department': deps[i]._id }
                             ]
                         }),
                         'build-deadline': await Order.count({
                             $and: [
                                 deadlineQuery,
-                                {$or: [
-                                    {status: 'client-notify'}
-                                ]},
-                                {'info.department': deps[i]._id}
+                                {
+                                    $or: [
+                                        { status: 'client-notify' }
+                                    ]
+                                },
+                                { 'info.department': deps[i]._id }
                             ]
                         })
                     }
@@ -1945,52 +1934,56 @@ module.exports = {
                             $or: [
                                 {
                                     $or: [
-                                        {status: 'client-match'}
+                                        { status: 'client-match' }
                                     ],
                                     'info.department': deps[i]._id
                                 },
-                                {status: 'all-pre'},
-                                {status: 'stop-pre'}
+                                { status: 'all-pre' },
+                                { status: 'stop-pre' }
                             ]
                         }),
                         build: await Order.count({
                             $or: [
                                 {
                                     $or: [
-                                        {status: 'client-notify'}
+                                        { status: 'client-notify' }
                                     ],
                                     'info.department': deps[i]._id
                                 },
-                                {status: 'stop-build'}
+                                { status: 'stop-build' }
                             ]
                         }),
                         'pre-deadline': await Order.count({
                             $and: [
                                 deadlineQuery,
-                                {$or: [
-                                    {
-                                        $or: [
-                                            {status: 'client-match'}
-                                        ],
-                                        'info.department': deps[i]._id
-                                    },
-                                    {status: 'all-pre'},
-                                    {status: 'stop-pre'}
-                                ]}
+                                {
+                                    $or: [
+                                        {
+                                            $or: [
+                                                { status: 'client-match' }
+                                            ],
+                                            'info.department': deps[i]._id
+                                        },
+                                        { status: 'all-pre' },
+                                        { status: 'stop-pre' }
+                                    ]
+                                }
                             ]
                         }),
                         'build-deadline': await Order.count({
                             $and: [
                                 deadlineQuery,
-                                {$or: [
-                                    {
-                                        $or: [
-                                            {status: 'client-notify'}
-                                        ],
-                                        'info.department': deps[i]._id
-                                    },
-                                    {status: 'stop-build'}
-                                ]}
+                                {
+                                    $or: [
+                                        {
+                                            $or: [
+                                                { status: 'client-notify' }
+                                            ],
+                                            'info.department': deps[i]._id
+                                        },
+                                        { status: 'stop-build' }
+                                    ]
+                                }
                             ]
                         })
                     }
@@ -2006,13 +1999,13 @@ module.exports = {
                         'pre-deadline': await Order.count({
                             $and: [
                                 deadlineQuery,
-                                {status: 'sks-pre'}
+                                { status: 'sks-pre' }
                             ]
                         }),
                         'build-deadline': await Order.count({
                             $and: [
                                 deadlineQuery,
-                                {status: 'sks-build'}
+                                { status: 'sks-build' }
                             ]
                         })
                     }
@@ -2025,7 +2018,7 @@ module.exports = {
                         'build-deadline': await Order.count({
                             $and: [
                                 deadlineQuery,
-                                {status: 'network'}
+                                { status: 'network' }
                             ]
                         })
                     }
@@ -2041,8 +2034,8 @@ module.exports = {
     },
 
     setFlag: async (req, res) => {
-        var flag = await Flag.findOne({user: res.locals.__user._id, order: req.params.id});
-        if(!flag) {
+        var flag = await Flag.findOne({ user: res.locals.__user._id, order: req.params.id });
+        if (!flag) {
             flag = new Flag({
                 user: res.locals.__user._id,
                 order: req.params.id
@@ -2056,8 +2049,8 @@ module.exports = {
     changeRespDep: async (req, res) => {
         var data = req.body;
 
-        var order = await Order.findOne({id: data.id}),
-            department = await Department.findOne({name: data.department});
+        var order = await Order.findOne({ id: data.id }),
+            department = await Department.findOne({ name: data.department });
 
         if (order) {
             order.special = department._id;
@@ -2075,135 +2068,135 @@ module.exports = {
     changeStage: async (req, res) => {
         var data = req.body;
 
-        var order = await Order.findOne({id: data.id}),
+        var order = await Order.findOne({ id: data.id }),
             user = res.locals.__user;
 
         var hist = {
-          author: `[${user.department.name}] ${user.name}`,
-          date: new Date()
+            author: `[${user.department.name}] ${user.name}`,
+            date: new Date()
         };
 
         switch (data.stage) {
-          case 'gzp-pre':
-            order.status = 'gzp-pre';
-            var deadline = await helper.calculateDeadline(3);
-            order.deadline = deadline;
-            order.date['cs-gzp-pre'] = deadline;
-            hist.name = 'Изменен этап -> Проработка ГЗП'
-            break;
+            case 'gzp-pre':
+                order.status = 'gzp-pre';
+                var deadline = await helper.calculateDeadline(3);
+                order.deadline = deadline;
+                order.date['cs-gzp-pre'] = deadline;
+                hist.name = 'Изменен этап -> Проработка ГЗП'
+                break;
 
-          case 'stop-pre':
-            order.status = 'stop-pre';
-            var deadline = await helper.calculateDeadline(3);
-            order.deadline = deadline;
-            order.date['cs-stop-pre'] = deadline;
-            hist.name = 'Изменен этап -> Проработка СТОП'
-            break;
+            case 'stop-pre':
+                order.status = 'stop-pre';
+                var deadline = await helper.calculateDeadline(3);
+                order.deadline = deadline;
+                order.date['cs-stop-pre'] = deadline;
+                hist.name = 'Изменен этап -> Проработка СТОП'
+                break;
 
-          case 'all-pre':
-            order.status = 'all-pre';
-            var deadline = await helper.calculateDeadline(3);
-            order.deadline = deadline;
-            order.date['cs-stop-pre'] = deadline;
-            order.date['cs-gzp-pre'] = deadline;
-            hist.name = 'Изменен этап -> Проработка ГЗП и СТОП'
-            break;
+            case 'all-pre':
+                order.status = 'all-pre';
+                var deadline = await helper.calculateDeadline(3);
+                order.deadline = deadline;
+                order.date['cs-stop-pre'] = deadline;
+                order.date['cs-gzp-pre'] = deadline;
+                hist.name = 'Изменен этап -> Проработка ГЗП и СТОП'
+                break;
 
-          case 'sks-pre':
-            order.status = 'sks-pre';
-            var deadline = await helper.calculateDeadline(3);
-            order.deadline = deadline;
-            order.date['cs-sks-pre'] = deadline;
-            hist.name = 'Изменен этап -> Проработка СКС'
-            break;
+            case 'sks-pre':
+                order.status = 'sks-pre';
+                var deadline = await helper.calculateDeadline(3);
+                order.deadline = deadline;
+                order.date['cs-sks-pre'] = deadline;
+                hist.name = 'Изменен этап -> Проработка СКС'
+                break;
 
-          case 'gzp-build':
-            if (order.gzp && order.gzp.time) {
-              order.status = 'gzp-build';
-              var deadline = await helper.calculateDeadline(order.gzp.time);
-              order.deadline = deadline;
-              order.date['cs-gzp-organization'] = deadline;
-              hist.name = 'Изменен этап -> Организация ГЗП'
-            } else {
-              res.send({error: 'Сначала заказ нужно проработать!'})
-              return;
-            }
-            break;
+            case 'gzp-build':
+                if (order.gzp && order.gzp.time) {
+                    order.status = 'gzp-build';
+                    var deadline = await helper.calculateDeadline(order.gzp.time);
+                    order.deadline = deadline;
+                    order.date['cs-gzp-organization'] = deadline;
+                    hist.name = 'Изменен этап -> Организация ГЗП'
+                } else {
+                    res.send({ error: 'Сначала заказ нужно проработать!' })
+                    return;
+                }
+                break;
 
-          case 'stop-build':
-            if (order.stop && order.stop.time) {
-              order.status = 'stop-build';
-              var deadline = await helper.calculateDeadline(order.stop.time);
-              order.deadline = deadline;
-              order.date['cs-stop-organization'] = deadline;
-              hist.name = 'Изменен этап -> Организация СТОП'
-            } else {
-              res.send({error: 'Сначала заказ нужно проработать!'})
-              return;
-            }
-            break;
+            case 'stop-build':
+                if (order.stop && order.stop.time) {
+                    order.status = 'stop-build';
+                    var deadline = await helper.calculateDeadline(order.stop.time);
+                    order.deadline = deadline;
+                    order.date['cs-stop-organization'] = deadline;
+                    hist.name = 'Изменен этап -> Организация СТОП'
+                } else {
+                    res.send({ error: 'Сначала заказ нужно проработать!' })
+                    return;
+                }
+                break;
 
-          case 'sks-build':
-            if (order.sks && order.sks.time || order.gzp && order.gzp.time) {
-              order.status = 'sks-build';
-              var deadline = await helper.calculateDeadline(order.sks.time || order.sks.time);
-              order.deadline = deadline;
-              order.date['cs-sks-build'] = deadline;
-              hist.name = 'Изменен этап -> Организация СКС'
-            } else {
-              res.send({error: 'Сначала заказ нужно проработать!'})
-              return;
-            }
-            break;
-          case 'network':
-            order.status = 'network';
-            hist.name = 'Изменен этап -> Настройка сети'
-            break;
+            case 'sks-build':
+                if (order.sks && order.sks.time || order.gzp && order.gzp.time) {
+                    order.status = 'sks-build';
+                    var deadline = await helper.calculateDeadline(order.sks.time || order.sks.time);
+                    order.deadline = deadline;
+                    order.date['cs-sks-build'] = deadline;
+                    hist.name = 'Изменен этап -> Организация СКС'
+                } else {
+                    res.send({ error: 'Сначала заказ нужно проработать!' })
+                    return;
+                }
+                break;
+            case 'network':
+                order.status = 'network';
+                hist.name = 'Изменен этап -> Настройка сети'
+                break;
 
-          case 'client-match':
-            order.status = 'client-match';
-            var deadline = await helper.calculateDeadline(10);
-            order.deadline = deadline;
-            order.date['cs-client-match'] = deadline;
-            hist.name = 'Изменен этап -> Согласование с клиентом'
-            break;
+            case 'client-match':
+                order.status = 'client-match';
+                var deadline = await helper.calculateDeadline(10);
+                order.deadline = deadline;
+                order.date['cs-client-match'] = deadline;
+                hist.name = 'Изменен этап -> Согласование с клиентом'
+                break;
 
-          case 'client-notify':
-            order.status = 'client-notify';
-            var deadline = await helper.calculateDeadline(10);
-            order.deadline = deadline;
-            order.date['cs-client-notify'] = deadline;
-            hist.name = 'Изменен этап -> Уведомление клиента'
-            break;
+            case 'client-notify':
+                order.status = 'client-notify';
+                var deadline = await helper.calculateDeadline(10);
+                order.deadline = deadline;
+                order.date['cs-client-notify'] = deadline;
+                hist.name = 'Изменен этап -> Уведомление клиента'
+                break;
         }
         order.history.push(hist);
         await order.save();
 
-        res.send({ok: 'ok'}).status(200);
+        res.send({ ok: 'ok' }).status(200);
         return;
     },
 
     searchReset: async (req, res) => {
-        var usr = await Account.findOne({_id: res.locals.__user._id});
+        var usr = await Account.findOne({ _id: res.locals.__user._id });
         usr.settings.search.query = '/search';
         var done = await usr.save();
-        if(done) {
+        if (done) {
             res.redirect('/search?');
             return;
         } else return;
     },
 
     excel: async (req, res) => {
-        if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
-        if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
-        if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
-        if(req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
+        if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
+        if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
+        if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
+        if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
 
         var query = await helper.makeQuery(req, res);
-    
+
         var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
-        orders.forEach( item => {
+        orders.forEach(item => {
             item.status = stages[item.status];
             item.cs = helper.calculateCS(item);
         });
@@ -2212,10 +2205,10 @@ module.exports = {
     },
 
     report: async (req, res) => {
-        if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
-        if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
-        if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
-        if(req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
+        if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
+        if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
+        if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
+        if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
 
         var query = await helper.makeQuery(req, res);
         query.special = undefined;
@@ -2230,8 +2223,8 @@ module.exports = {
                 orders[i].pauseTime = time;
             } else orders[i].pauseTime = '-';
         }
-        
-        orders.forEach( item => {
+
+        orders.forEach(item => {
             item.status = stages[item.status];
             item.cs = helper.calculateCS(item);
         });
@@ -2242,15 +2235,15 @@ module.exports = {
     search: async (req, res) => {
         res.locals.data = await helper.getData(res);
         res.locals.err = {};
-        if(req.query.func && req.query.func.length == 1)  req.query.func = [req.query.func]
-        if(req.query.pre && req.query.pre.length == 1)  req.query.pre = [req.query.pre]
-        if(req.query.build && req.query.build.length == 1)  req.query.build = [req.query.build]
-        if(req.query.final && req.query.final.length == 1)  req.query.final = [req.query.final]
+        if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
+        if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
+        if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
+        if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
 
-        var usr = await Account.findOne({_id: res.locals.__user._id});
+        var usr = await Account.findOne({ _id: res.locals.__user._id });
 
-        if(Object.keys(req.query).length == 0) {
-            if( usr.settings.search.query && usr.settings.search.query != req.originalUrl ) {
+        if (Object.keys(req.query).length == 0) {
+            if (usr.settings.search.query && usr.settings.search.query != req.originalUrl) {
                 res.redirect(usr.settings.search.query);
                 return;
             }
@@ -2260,7 +2253,7 @@ module.exports = {
         res.locals.query = req.query;
         usr.save();
 
-        if(req.query.id && isNaN(req.query.id)) {
+        if (req.query.id && isNaN(req.query.id)) {
             res.locals.err.id = 'ID должен быть числом';
         }
         var query = await helper.makeQuery(req, res);
@@ -2276,19 +2269,19 @@ module.exports = {
         }
         else
             res.redirect(req.path);
-        
+
         var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet]).lean();
-       
+
         var total = orders.length;
 
-        if(!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
 
-        if(req.query.sort)
+        if (req.query.sort)
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
 
-        orders = orders.slice((pageNumber - 1)*perPage, (pageNumber - 1)*perPage + perPage);
+        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
 
-        orders.forEach( item => {
+        orders.forEach(item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
             item.initDate = helper.dateToStr(item.date.init)
