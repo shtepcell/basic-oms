@@ -1,24 +1,23 @@
 block('field').elem('service').content()(function () {
     var ctx = this.ctx,
-        order = ctx.order,
-        dataset = ctx.dataset;
+        order = ctx.order;
 
     var services = {
         internet: 'Интернет',
-         vpls: 'VPLS',
-         l3vpn: 'L3VPN',
-         l2vpn: 'L2VPN',
-         cloud: 'Облачная АТС',
-         digital: 'Цифровые каналы',
-         sks: 'СКС',
-         rrl: 'РРЛ',
-         sputnik: 'Спутник',
-         devices: 'Размещение оборудования',
-         phone: 'Телефония (IP-телефония)',
-         analog: 'Аналоговые каналы (ТЧ)',
-         vibe: 'Волокно',
-         wifi: 'Авторизация Wi-Fi',
-         iptv: 'IP TV'
+        vpls: 'VPLS',
+        l3vpn: 'L3VPN',
+        l2vpn: 'L2VPN',
+        cloud: 'Облачная АТС',
+        digital: 'Цифровые каналы',
+        sks: 'СКС',
+        rrl: 'РРЛ',
+        sputnik: 'Спутник',
+        devices: 'Размещение оборудования',
+        phone: 'Телефония (IP-телефония)',
+        analog: 'Аналоговые каналы (ТЧ)',
+        vibe: 'Волокно',
+        wifi: 'Авторизация Wi-Fi',
+        iptv: 'IP TV'
     };
 
     if(ctx.display) {
@@ -45,8 +44,7 @@ block('field').elem('service').content()(function () {
 
 block('field').elem('service').elemMod('access', true).content()(function () {
     var ctx = this.ctx,
-        order = ctx.order,
-        dataset = ctx.dataset;
+        order = ctx.order;
 
     if(ctx.display) {
         return [

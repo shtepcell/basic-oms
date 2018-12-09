@@ -44,7 +44,7 @@
             block: 'order',
             elem: 'service-info',
             mods: {
-                type: ['internet', 'vpls', 'l3vpn', 'l2vpn', 'iptv']
+                type: ['internet', 'vpls', 'l3vpn', 'l2vpn', 'iptv', 'digital', 'phone']
             }
         },
         {
