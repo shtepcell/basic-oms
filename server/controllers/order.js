@@ -1203,9 +1203,9 @@ module.exports = {
 
             if(order.status == 'gzp-pre') {
                 order.status = 'client-match';
-                order.deadline = await helper.calculateDeadline(10);
+                order.deadline = null;
                 order.date['gzp-pre'] = new Date();
-                order.date['cs-client-match'] = await helper.calculateDeadline(10);
+                // order.date['cs-client-match'] = await helper.calculateDeadline(10);
                 order.gzp.complete = true;
             }
 
@@ -1261,9 +1261,9 @@ module.exports = {
             order.sks = req.body;
 
             order.status = 'client-match';
-            order.deadline = await helper.calculateDeadline(10);
+            order.deadline = null;
             order.date['sks-pre'] = new Date();
-            order.date['cs-client-match'] = await helper.calculateDeadline(10);
+            // order.date['cs-client-match'] = await helper.calculateDeadline(10);
 
             if(order.pause.status) {
                 var now = new Date();
@@ -1335,8 +1335,8 @@ module.exports = {
 
             if(order.status == 'stop-pre') {
                 order.status = 'client-match';
-                order.deadline = await helper.calculateDeadline(10);
-                order.date['cs-client-match'] = await helper.calculateDeadline(10);
+                order.deadline = null;
+                // order.date['cs-client-match'] = await helper.calculateDeadline(10);
                 order.date['stop-pre'] = new Date();
                 order.stop.complete = true;
             }
@@ -1919,15 +1919,6 @@ module.exports = {
                             ],
                             'info.department': deps[i]._id
                         }),
-                        'pre-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                {$or: [
-                                    {status: 'client-match'}
-                                ]},
-                                {'info.department': deps[i]._id}
-                            ]
-                        }),
                         'build-deadline': await Order.count({
                             $and: [
                                 deadlineQuery,
@@ -2162,15 +2153,15 @@ module.exports = {
 
           case 'client-match':
             order.status = 'client-match';
-            var deadline = await helper.calculateDeadline(10);
+            var deadline = null;
             order.deadline = deadline;
-            order.date['cs-client-match'] = deadline;
+            // order.date['cs-client-match'] = deadline;
             hist.name = 'Изменен этап -> Согласование с клиентом'
             break;
 
           case 'client-notify':
             order.status = 'client-notify';
-            var deadline = await helper.calculateDeadline(10);
+            var deadline = null;
             order.deadline = deadline;
             order.date['cs-client-notify'] = deadline;
             hist.name = 'Изменен этап -> Уведомление клиента'
