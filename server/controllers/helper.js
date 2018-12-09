@@ -313,7 +313,8 @@ module.exports = {
         }
 
         if (query.manager) {
-            let manager = await Account.findOne({ login: query.manager });
+            let manager = await Account.find({ login: query.manager });
+
             if (qr['$and']) {
                 qr['$and'].push({ 'info.initiator': manager })
             } else qr['$and'] = [{ 'info.initiator': manager }];

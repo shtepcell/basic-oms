@@ -2235,10 +2235,13 @@ module.exports = {
     search: async (req, res) => {
         res.locals.data = await helper.getData(res);
         res.locals.err = {};
+        console.log(req.query);
+
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
         if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
+        if (req.query.manager && req.query.manager.length == 1) req.query.manager = [req.query.manager]
 
         var usr = await Account.findOne({ _id: res.locals.__user._id });
 

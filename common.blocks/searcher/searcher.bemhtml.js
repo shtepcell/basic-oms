@@ -3,7 +3,7 @@ block('searcher')(
         var data = this.ctx.data,
             query = this.ctx.query;
 
-        data.deps = data.deps.map( item => {
+        data.deps = data.deps.map(item => {
             return {
                 text: item.name,
                 val: item._id + ''
@@ -255,10 +255,10 @@ block('searcher')(
                                         content: {
                                             block: 'select',
                                             name: 'manager',
-                                            val: query.manager + '',
+                                            val: query.manager,
                                             text: 'Не выбран',
                                             mods: {
-                                                mode: 'radio-check',
+                                                mode: 'check',
                                                 theme: 'islands',
                                                 size: 'l',
                                                 width: 'available'
@@ -304,13 +304,13 @@ block('searcher')(
                                     {
                                         elem: 'cell',
                                         content: {
-                                            block : 'suggest',
+                                            block: 'suggest',
                                             name: 'client',
                                             val: query.client,
-                                            mods : {
-                                                theme : 'islands',
-                                                size : 'l',
-                                                'has-dataprovider' : 'adress'
+                                            mods: {
+                                                theme: 'islands',
+                                                size: 'l',
+                                                'has-dataprovider': 'adress'
                                             },
                                             placeholder: '[РП] РНКБ',
                                             dataprovider: {
@@ -418,14 +418,14 @@ block('searcher')(
                                     {
                                         elem: 'cell',
                                         content: {
-                                            block : 'suggest',
+                                            block: 'suggest',
                                             name: 'city',
                                             val: query.city,
-                                            mods : {
+                                            mods: {
                                                 width: 'available',
-                                                theme : 'islands',
-                                                size : 'l',
-                                                'has-dataprovider' : 'adress'
+                                                theme: 'islands',
+                                                size: 'l',
+                                                'has-dataprovider': 'adress'
                                             },
                                             placeholder: 'г. Симферополь',
                                             dataprovider: {
@@ -445,14 +445,14 @@ block('searcher')(
                                     {
                                         elem: 'cell',
                                         content: {
-                                            block : 'suggest',
+                                            block: 'suggest',
                                             name: 'street',
                                             val: query.street,
-                                            mods : {
+                                            mods: {
                                                 width: 'available',
-                                                theme : 'islands',
-                                                size : 'l',
-                                                'has-dataprovider' : 'adress'
+                                                theme: 'islands',
+                                                size: 'l',
+                                                'has-dataprovider': 'adress'
                                             },
                                             placeholder: 'ул. Строителей',
                                             dataprovider: {
