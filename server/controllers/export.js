@@ -13,6 +13,10 @@ function get(order, field) {
             text: 'Дата инициации',
             value: () => { return order.date.init; }
         },
+        'initiator': {
+            text: 'Инициатор',
+            value: () => { return order.info.initiator.name; }
+        },
         'date-on': {
             text: 'Дата включения',
             value: () => { return order.date['client-notify']; }
@@ -56,28 +60,28 @@ function get(order, field) {
         'client': {
             text: 'Клиент',
             value: () => {
-                if(order.info.client)
+                if (order.info.client)
                     return order.info.client.name;
             }
         },
         'client-type': {
             text: 'Тип клиента',
             value: () => {
-                if(order.info.client)
+                if (order.info.client)
                     return order.info.client.type.name
             }
         },
         'city': {
             text: 'Город',
             value: () => {
-                if(order.info.city)
+                if (order.info.city)
                     return `${order.info.city.type} ${order.info.city.name}`
             }
         },
         'street': {
             text: 'Улица',
             value: () => {
-                if(order.info.street)
+                if (order.info.street)
                     return `${order.info.street.type} ${order.info.street.name}`
             }
         },
@@ -121,127 +125,127 @@ function get(order, field) {
         'gzp-need': {
             text: 'Необходимость ГЗП',
             value: () => {
-                if(order.gzp)
+                if (order.gzp)
                     return order.gzp.need;
             }
         },
         'gzp-capability': {
             text: 'Техническая возможность ГЗП',
             value: () => {
-                if(order.gzp)
+                if (order.gzp)
                     return order.gzp.capability;
             }
         },
         'gzp-time': {
             text: 'Срок организации',
             value: () => {
-                if(order.gzp)
+                if (order.gzp)
                     return order.gzp.time;
             }
         },
         'gzp-cost-once': {
             text: 'Одноразовая стоимость организации',
             value: () => {
-                if(order.gzp)
+                if (order.gzp)
                     return order.gzp['cost-once'];
             }
         },
         'gzp-cost-monthly': {
             text: 'Операционные затраты ежемесячные',
             value: () => {
-                if(order.gzp)
+                if (order.gzp)
                     return order.gzp['cost-monthly'];
             }
         },
         'gzp-add-info': {
             text: 'Дополнительная информация',
             value: () => {
-                if(order.gzp)
+                if (order.gzp)
                     return order.gzp.add_info;
             }
         },
         'gzp-reason': {
             text: 'Причина технической невозможности',
             value: () => {
-                if(order.gzp)
+                if (order.gzp)
                     return order.gzp.reason;
             }
         },
         'stop-capability': {
             text: 'Техническая возможность СТОП',
             value: () => {
-                if(order.stop)
+                if (order.stop)
                     return order.stop.reason;
             }
         },
         'stop-provider': {
             text: 'Провайдер',
             value: () => {
-                if(order.stop)
-                    if(order.stop.provider)
+                if (order.stop)
+                    if (order.stop.provider)
                         return order.stop.provider.name;
             }
         },
         'stop-contact': {
             text: 'Контакт с провайдером',
             value: () => {
-                if(order.stop)
+                if (order.stop)
                     return order.stop.contact;
             }
         },
         'stop-devices': {
             text: 'Оборудование',
             value: () => {
-                if(order.stop)
+                if (order.stop)
                     return order.stop.devices;
             }
         },
         'stop-add-devices': {
             text: 'Дополнительное оборудование',
             value: () => {
-                if(order.stop)
+                if (order.stop)
                     return order.stop.add_devices;
             }
         },
         'stop-interfaces': {
             text: 'Интерфейсы',
             value: () => {
-                if(order.stop)
+                if (order.stop)
                     return order.stop.interfaces;
             }
         },
         'stop-time': {
             text: 'Срок организации СТОП',
             value: () => {
-                if(order.stop)
+                if (order.stop)
                     return order.stop.time;
             }
         },
         'stop-add-info': {
             text: 'Дополнительная информация',
             value: () => {
-                if(order.stop)
+                if (order.stop)
                     return order.stop.add_info;
             }
         },
         'stop-org-info': {
             text: 'Информация об организации',
             value: () => {
-                if(order.stop)
+                if (order.stop)
                     return order.stop.organization_info;
             }
         },
         'stop-cost-once': {
             text: 'Одноразовая стоимость организации СТОП',
             value: () => {
-                if(order.stop)
+                if (order.stop)
                     return order.stop['cost-once'];
             }
         },
         'stop-cost-monthly': {
             text: 'Операционные затраты ежемесячные СТОП',
             value: () => {
-                if(order.stop)
+                if (order.stop)
                     return order.stop['cost-monthly'];
             }
         }
@@ -250,26 +254,26 @@ function get(order, field) {
     return fields[field];
 }
 
-var def = ['id', 'date-init', 'date-on', 'cms', 'status', 'cs', 'department',
-                'client', 'client-type', 'city', 'street', 'adds',
-                'coordinate', 'service', 'volume', 'relation', 'ip',
-                'init-add-info', 'income-once', 'income-monthly',
-                'gzp-need', 'gzp-capability', 'gzp-time', 'gzp-cost-once',
-                'gzp-cost-monthly', 'gzp-add-info', 'gzp-reason',
-                'stop-capability', 'stop-provider', 'stop-contact',
-                'stop-devices', 'stop-add-devices', 'stop-interfaces',
-                'stop-time', 'stop-add-info', 'stop-org-info',
-                'stop-cost-once', 'stop-cost-monthly'];
+var def = ['id', 'date-init', 'initiator', 'date-on', 'cms', 'status', 'cs', 'department',
+    'client', 'client-type', 'city', 'street', 'adds',
+    'coordinate', 'service', 'volume', 'relation', 'ip',
+    'init-add-info', 'income-once', 'income-monthly',
+    'gzp-need', 'gzp-capability', 'gzp-time', 'gzp-cost-once',
+    'gzp-cost-monthly', 'gzp-add-info', 'gzp-reason',
+    'stop-capability', 'stop-provider', 'stop-contact',
+    'stop-devices', 'stop-add-devices', 'stop-interfaces',
+    'stop-time', 'stop-add-info', 'stop-org-info',
+    'stop-cost-once', 'stop-cost-monthly'];
 
 var reportDefs = ['id', 'date-start', 'date-plan', 'date-end', 'gzpDeadline', 'pause-time', 'status', 'department',
-            'client', 'city', 'street', 'adds'];
+    'client', 'city', 'street', 'adds'];
 
 module.exports = {
 
     getExcel: async (orders, res) => {
 
         var wb = new xl.Workbook({
-          dateFormat: 'dd/mm/yyyy'
+            dateFormat: 'dd/mm/yyyy'
         });
 
         var ws = wb.addWorksheet('Таблица 1');
@@ -281,31 +285,31 @@ module.exports = {
                 bold: true
             },
             alignment: {
-                 wrapText: true,
-                 horizontal: 'center'
+                wrapText: true,
+                horizontal: 'center'
             }
         });
 
-        def.forEach( (col, j) => {
-            ws.cell(1, j+1).string(get(null, col).text)
+        def.forEach((col, j) => {
+            ws.cell(1, j + 1).string(get(null, col).text)
         })
 
-        orders.forEach( (item, i) => {
+        orders.forEach((item, i) => {
 
-            def.forEach( (col, j) => {
+            def.forEach((col, j) => {
                 var val = null;
                 val = get(item, col).value();
-                if (val == null) ws.cell(i+2,j+1).string('');
+                if (val == null) ws.cell(i + 2, j + 1).string('');
                 else {
-                  switch (def[j]) {
-                    case 'date-init':
-                    case 'date-on':
-                      ws.cell(i+2,j+1).date( val );
-                      break;
-                    default:
-                      ws.cell(i+2,j+1).string( val.toString() );
-                      break;
-                  }
+                    switch (def[j]) {
+                        case 'date-init':
+                        case 'date-on':
+                            ws.cell(i + 2, j + 1).date(val);
+                            break;
+                        default:
+                            ws.cell(i + 2, j + 1).string(val.toString());
+                            break;
+                    }
                 }
             })
         });
@@ -315,21 +319,21 @@ module.exports = {
 
     getReportExcel: async (orders, res) => {
         var wb = new xl.Workbook({
-          dateFormat: 'dd/mm/yyyy'
+            dateFormat: 'dd/mm/yyyy'
         });
 
         var ws = wb.addWorksheet('Таблица 1');
 
-        reportDefs.forEach( (col, j) => {
-            ws.cell(1, j+1).string(get(null, col).text)
+        reportDefs.forEach((col, j) => {
+            ws.cell(1, j + 1).string(get(null, col).text)
         })
 
-        orders.forEach( (item, i) => {
+        orders.forEach((item, i) => {
 
-            reportDefs.forEach( (col, j) => {
+            reportDefs.forEach((col, j) => {
                 var val = null;
                 val = get(item, col).value();
-                if (val == null) ws.cell(i+2,j+1).string('');
+                if (val == null) ws.cell(i + 2, j + 1).string('');
                 else {
                     switch (reportDefs[j]) {
                         case 'date-init':
@@ -337,10 +341,10 @@ module.exports = {
                         case 'date-start':
                         case 'date-plan':
                         case 'date-end':
-                            ws.cell(i+2,j+1).date( val );
+                            ws.cell(i + 2, j + 1).date(val);
                             break;
                         default:
-                            ws.cell(i+2,j+1).string( val.toString() );
+                            ws.cell(i + 2, j + 1).string(val.toString());
                             break;
                     }
                 }

@@ -1,36 +1,38 @@
-var mongoose = require('../controllers/connect'),
-	Schema = mongoose.Schema,
-	mongoosePaginate = require('mongoose-paginate');
+const mongoose = require('../controllers/connect');
+const Schema = mongoose.Schema;
+const mongoosePaginate = require('mongoose-paginate');
 
-var schema = new Schema( {
-	login : {
-		type : String,
-		required : true,
-		unique : true,
-		lowercase : true
+const { ObjectId } = Schema.Types;
+
+const schema = new Schema({
+	login: {
+		type: String,
+		required: true,
+		unique: true,
+		lowercase: true
 	},
-	password : {
-		type : String,
-		required : true
+	password: {
+		type: String,
+		required: true
 	},
-	name : {
-		type : String,
-		required : true
+	name: {
+		type: String,
+		required: true
 	},
-	email : String,
-	phone : String,
-	department : {
-        type: Schema.Types.ObjectId,
-        ref: 'Department',
-		required : true
+	email: String,
+	phone: String,
+	department: {
+		type: ObjectId,
+		ref: 'Department',
+		required: true
 	},
-	status : {
-		type : Boolean,
-		required : true
+	status: {
+		type: Boolean,
+		required: true
 	},
 	notifies: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Notify'
+		type: ObjectId,
+		ref: 'Notify'
 	}],
 	flags: [{
 		order: Number,
@@ -49,7 +51,7 @@ var schema = new Schema( {
 			initiators: [
 				{
 					type: Schema.Types.ObjectId,
-		        	ref: 'Department'
+					ref: 'Department'
 				}
 			],
 			zone: [String],
@@ -67,7 +69,7 @@ schema.plugin(deepPopulate);
 schema.plugin(mongoosePaginate);
 
 schema.methods.remove = function () {
-	if(this.status) {
+	if (this.status) {
 		this.login = Date.now() + this.login;
 		this.status = false;
 		return this.save();

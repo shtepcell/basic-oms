@@ -7,16 +7,14 @@ const Auth = require('./controllers/auth'),
     Client = require('./controllers/client'),
     Department = require('./controllers/departments'),
     Order = require('./controllers/order'),
-    Holiday = require('./controllers/holiday')
+    Holiday = require('./controllers/holiday'),
     Notify = require('./controllers/notify'),
     Street = require('./controllers/street'),
     Chat = require('./controllers/chat'),
-    Export = require('./controllers/export'),
     Import = require('./controllers/import'),
     helper = require('./controllers/helper');
 
 const fileUpload = require('express-fileupload');
-const mkdirp = require('mkdirp-promise');
 
 var Render = require('./render'),
     render = Render.render;
@@ -24,7 +22,7 @@ var Render = require('./render'),
 module.exports = function (app, io) {
 
     app.use(fileUpload());
-    app.get('/ping/', function(req, res) {
+    app.get('/ping/', function (req, res) {
         res.send('ok');
     });
 
@@ -42,8 +40,8 @@ module.exports = function (app, io) {
 
     app.get('/', function (req, res) {
         if (res.locals.__user.last) {
-          res.redirect(res.locals.__user.last);
-          return
+            res.redirect(res.locals.__user.last);
+            return
         }
 
         var redirect;
@@ -142,7 +140,7 @@ module.exports = function (app, io) {
     app.post('/flag/:id/', Order.setFlag);
 
     app.get('/chat/:anchor', Chat.get);
-    app.post('/chat/:anchor',(req, res) => {
+    app.post('/chat/:anchor', (req, res) => {
         return Chat.send(req, res, io);
     });
 
