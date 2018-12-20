@@ -1005,8 +1005,11 @@ module.exports = {
 
         var order = await Order.findOne({ id: req.params.id });
 
+        console.log(data);
+
         Object.keys(data).forEach(item => {
-            data[item] = data[item].trim();
+            if (item != 'adds')
+                data[item] = data[item].trim();
             if (data[item] == '') data[item] = undefined;
         });
 
@@ -1029,14 +1032,24 @@ module.exports = {
                 var service = data.service;
                 tmp.service = service;
 
+                // Координаты 
+
+                var coordinate = data.coordinate;
+
+                if (coordinate) {
+                    tmp.coordinate = coordinate;
+                }
+
                 // Улица
                 var strt = await validator.street(data.street);
 
-                if (!strt._id) {
+                if (!strt._id && !coordinate) {
                     res.status(400).send({ errText: strt });
                     return;
                 }
-                tmp.street = strt;
+
+                if (!coordinate)
+                    tmp.street = strt;
 
                 // Город
                 var city = await validator.city(data.city);
@@ -2153,21 +2166,21 @@ module.exports = {
                 hist.name = 'Изменен этап -> Настройка сети'
                 break;
 
-          case 'client-match':
-            order.status = 'client-match';
-            var deadline = null;
-            order.deadline = deadline;
-            // order.date['cs-client-match'] = deadline;
-            hist.name = 'Изменен этап -> Согласование с клиентом'
-            break;
+            case 'client-match':
+                order.status = 'client-match';
+                var deadline = null;
+                order.deadline = deadline;
+                // order.date['cs-client-match'] = deadline;
+                hist.name = 'Изменен этап -> Согласование с клиентом'
+                break;
 
-          case 'client-notify':
-            order.status = 'client-notify';
-            var deadline = null;
-            order.deadline = deadline;
-            order.date['cs-client-notify'] = deadline;
-            hist.name = 'Изменен этап -> Уведомление клиента'
-            break;
+            case 'client-notify':
+                order.status = 'client-notify';
+                var deadline = null;
+                order.deadline = deadline;
+                order.date['cs-client-notify'] = deadline;
+                hist.name = 'Изменен этап -> Уведомление клиента'
+                break;
         }
         order.history.push(hist);
         await order.save();
