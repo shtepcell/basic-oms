@@ -3,6 +3,8 @@
         {
             block: 'field',
             elems: [
+                'odf',
+                'node',
                 'client',
                 'preVolume',
                 'cms',

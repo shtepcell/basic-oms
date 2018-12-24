@@ -1519,12 +1519,12 @@ module.exports = {
                 order.history.push(helper.historyGenerator('network', res.locals.__user));
                 notify.create(res.locals.__user, order, 'network');
                 break;
-            case 'end-build':
-                order.status = 'network';
-                order.date['gzp-build'] = new Date();
-                order.history.push(helper.historyGenerator('gzp-build', res.locals.__user));
-                notify.create(res.locals.__user, order, 'end-gzp-build');
-                break;
+            // case 'end-build':
+            //     order.status = 'network';
+            //     order.date['gzp-build'] = new Date();
+            //     order.history.push(helper.historyGenerator('gzp-build', res.locals.__user));
+            //     notify.create(res.locals.__user, order, 'end-gzp-build');
+            //     break;
             case 'end-sks-build':
                 order.status = 'network';
                 order.date['sks-build'] = new Date();
@@ -2075,6 +2075,25 @@ module.exports = {
             return;
         }
         res.status(400);
+        return;
+    },
+
+    endBuild: async (req, res) => {
+        const order = await Order.findOne({ id: req.params.id });
+
+        if (!req.body.odf || !req.body.node) {
+            res.status(400).send({ errText: 'ODF и узел агрегации обязательны к заполнению!' });
+            return;
+        }
+
+        order.gzp.odf = req.body.odf;
+        order.gzp.node = req.body.node;
+        order.date[order.status] = new Date();
+        order.history.push(helper.historyGenerator(order.status, res.locals.__user));
+        notify.create(res.locals.__user, order, `end-${order.status}`);
+        order.status = 'network';
+        order.save();
+        res.status(200).send({ created: true });
         return;
     },
 

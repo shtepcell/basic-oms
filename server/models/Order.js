@@ -1,6 +1,6 @@
 var mongoose = require('../controllers/connect'),
-	Schema = mongoose.Schema,
-	mongoosePaginate = require('mongoose-paginate');
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate');
 
 var schema = new Schema({
     id: {
@@ -40,12 +40,12 @@ var schema = new Schema({
         initiator: {
             type: Schema.Types.ObjectId,
             ref: 'Account',
-            required : true
+            required: true
         },
         department: {
             type: Schema.Types.ObjectId,
             ref: 'Department',
-            required : true
+            required: true
         },
         relation: String,
         cms: String,
@@ -56,18 +56,18 @@ var schema = new Schema({
         client: {
             type: Schema.Types.ObjectId,
             ref: 'Client',
-            required : true
+            required: true
         },
         contact: String,
         service: {
             type: String,
-            required : true
+            required: true
         },
         options: String,
         city: {
             type: Schema.Types.ObjectId,
             ref: 'City',
-            required : true
+            required: true
         },
         coordinate: String,
         street: {
@@ -80,15 +80,15 @@ var schema = new Schema({
         pool: String,
         order: String,
         'date-sign': Date,
-				'date-request': Date,
+        'date-request': Date,
         'file-init': String
     },
-	sks: {
-		time: Number,
-		'cost-once': String,
-		'cost-monthly': String,
-		add_info: String
-	},
+    sks: {
+        time: Number,
+        'cost-once': String,
+        'cost-monthly': String,
+        add_info: String
+    },
     gzp: {
         complete: Boolean,
         need: Boolean,
@@ -97,7 +97,9 @@ var schema = new Schema({
         'cost-once': String,
         'cost-monthly': String,
         reason: String,
-        add_info: String
+        add_info: String,
+        odf: String,
+        node: String
     },
     stop: {
         complete: Boolean,
@@ -124,8 +126,8 @@ var schema = new Schema({
         'cs-stop-pre': Date,
         'cs-gzp-organization': Date,
         'cs-stop-organization': Date,
-		'cs-sks-pre': Date,
-		'cs-sks-organization': Date,
+        'cs-sks-pre': Date,
+        'cs-sks-organization': Date,
         'cs-client-match': Date,
         'cs-client-notify': Date,
         'client-match': Date,
@@ -135,8 +137,8 @@ var schema = new Schema({
         'install-devices': Date,
         'stop-pre': Date,
         'stop-build': Date,
-		'sks-pre': Date,
-		'sks-build': Date,
+        'sks-pre': Date,
+        'sks-build': Date,
         'network': Date,
         'succes': Date,
         'reject': Date
@@ -156,13 +158,13 @@ var order;
 schema.statics.getNextId = async () => { //TODO: Сделать counter
     var ret = await order.find().sort('id').lean();
 
-    if(ret.length == 0)
+    if (ret.length == 0)
         return 1;
 
     return ret[ret.length - 1].id + 1;
 };
 
-schema.statics.create = async(ordr) => {
+schema.statics.create = async (ordr) => {
     var id = await order.getNextId();
     ordr.id = id;
     return ordr.save();

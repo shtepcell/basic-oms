@@ -10,7 +10,7 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
         isInstall = (order.status == 'install-devices'),
         isPause = (order.pause.status),
         isAdmin = (user.department.type == 'admin'),
-        special = (user.department._id == ''+order.special);
+        special = (user.department._id == '' + order.special);
 
     return [
         {
@@ -27,20 +27,32 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
         {
             block: 'order',
             elem: 'action',
+            elemMods: {
+                type: 'submit'
+            },
             data: {
-                text: 'Организация завершена',
-                to: 'end-build',
-                id: order.id
+                text: 'Организация завершена'
             },
             display: ((isOwner || special) && isBuild)
         },
+        // {
+        //     block: 'order',
+        //     elem: 'action',
+        //     data: {
+        //         text: 'Организация завершена',
+        //         to: 'end-build',
+        //         id: order.id
+        //     },
+        //     display: ((isOwner || special) && isBuild)
+        // },
         {
             block: 'order',
             elem: 'action',
+            elemMods: {
+                type: 'submit'
+            },
             data: {
-                text: 'Оборудование установлено',
-                to: 'end-install-devices',
-                id: order.id
+                text: 'Оборудование установлено'
             },
             display: ((isOwner || special) && isInstall)
         },

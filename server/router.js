@@ -116,6 +116,8 @@ module.exports = function (app, io) {
         return Order.endClientNotify(req, res, io);
     });
 
+    app.post('/order/:id/gzp', Order.endBuild);
+
     app.get('/change-order/:id', Order.getPageChange);
     app.post('/change-order/:id', Order.getChangeV);
 

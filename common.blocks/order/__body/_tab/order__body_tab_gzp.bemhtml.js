@@ -1,18 +1,20 @@
 block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
 
     var ctx = this.ctx,
-        tab = ctx.tab,
         dataset = ctx.dataset,
         user = ctx.user,
         order = ctx.order,
         adminEdit = ctx.adminEdit;
 
-    var isOwner = ( user.department.name == order.zone );
+    var isOwner = (user.department.name == order.zone);
 
-    var mustFill = ( (order.status == 'gzp-pre' || order.status == 'all-pre') && isOwner);
+    var mustFill = ((order.status == 'gzp-pre' || order.status == 'all-pre') && isOwner);
+    const onGoToNet = ((order.status == 'gzp-build' || order.status == 'install-devices') && isOwner);
 
-    if(!order.date['cs-gzp-pre'])
+    if (!order.date['cs-gzp-pre']) {
         return 'Информации по ГЗП нет!'
+    }
+
     return [
         {
             block: 'field',
@@ -63,7 +65,7 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
         {
             elem: 'gzp-info',
             elemMods: {
-                need: ((order.gzp.need == undefined)?1:order.gzp.need)?'yes':'no',
+                need: ((order.gzp.need == undefined) ? 1 : order.gzp.need) ? 'yes' : 'no',
                 access: (adminEdit || mustFill),
             },
             order: order,
@@ -78,6 +80,26 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
             },
             dataset: dataset,
             display: (mustFill || order.gzp.add_info)
+        },
+        {
+            block: 'field',
+            elem: 'odf',
+            order: order,
+            elemMods: {
+                access: (adminEdit || onGoToNet),
+            },
+            dataset: dataset,
+            display: (onGoToNet || order.gzp.odf)
+        },
+        {
+            block: 'field',
+            elem: 'node',
+            order: order,
+            elemMods: {
+                access: (adminEdit || onGoToNet),
+            },
+            dataset: dataset,
+            display: (onGoToNet || order.gzp.node)
         },
         {
             elem: 'actions',
