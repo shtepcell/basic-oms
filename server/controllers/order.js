@@ -1005,8 +1005,6 @@ module.exports = {
 
         var order = await Order.findOne({ id: req.params.id });
 
-        console.log(data);
-
         Object.keys(data).forEach(item => {
             if (item != 'adds')
                 data[item] = data[item].trim();
@@ -2267,7 +2265,6 @@ module.exports = {
     search: async (req, res) => {
         res.locals.data = await helper.getData(res);
         res.locals.err = {};
-        console.log(req.query);
 
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]

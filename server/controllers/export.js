@@ -271,7 +271,6 @@ var reportDefs = ['id', 'date-start', 'date-plan', 'date-end', 'gzpDeadline', 'p
 module.exports = {
 
     getExcel: async (orders, res) => {
-
         var wb = new xl.Workbook({
             dateFormat: 'dd/mm/yyyy'
         });
