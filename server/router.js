@@ -116,7 +116,7 @@ module.exports = function (app, io) {
         return Order.endClientNotify(req, res, io);
     });
 
-    app.post('/order/:id/gzp', Order.endBuild);
+    app.post('/order/:id/gzp', Order.postGzp);
 
     app.get('/change-order/:id', Order.getPageChange);
     app.post('/change-order/:id', Order.getChangeV);
@@ -124,9 +124,9 @@ module.exports = function (app, io) {
     app.post('/changeRespDep', Order.changeRespDep);
     app.post('/changeStage', Order.changeStage);
 
-    app.post('/order/:id/gzp', (req, res) => {
-        return Order.endPreGZP(req, res, io);
-    });
+    // app.post('/order/:id/gzp', (req, res) => {
+    //     return Order.endPreGZP(req, res, io);
+    // });
 
     app.post('/order/:id/stop', (req, res) => {
         return Order.endPreSTOP(req, res, io);

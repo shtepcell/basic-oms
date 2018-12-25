@@ -11,6 +11,8 @@ const { getExcel, getReportExcel } = require('./export');
 const helper = require('./helper');
 const validator = require('./validator');
 
+const GZP = require('./order-gzp');
+
 var stages = require('../common-data').stages;
 
 var populateQuery = `info.initiator info.initiator.department info.client info.client.type info.city info.street stop.provider`;
@@ -1157,76 +1159,76 @@ module.exports = {
         }
     },
 
-    endPreGZP: async (req, res, io) => {
-        var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
-        if (order) {
-            Object.keys(req.body).forEach(item => {
-                req.body[item] = req.body[item].trim();
-                if (req.body[item] == '') req.body[item] = undefined;
-            });
+    // endPreGZP: async (req, res) => {
+    //     var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
+    //     if (order) {
+    //         Object.keys(req.body).forEach(item => {
+    //             req.body[item] = req.body[item].trim();
+    //             if (req.body[item] == '') req.body[item] = undefined;
+    //         });
 
-            if (((req.body.need == '1' && req.body.capability == '1')
-                || (req.body.need == '0')) && isNaN(req.body.time)) {
-                res.status(400).send({ errText: 'Срок организации должен быть числом' });
-                return;
-            }
+    //         if (((req.body.need == '1' && req.body.capability == '1')
+    //             || (req.body.need == '0')) && isNaN(req.body.time)) {
+    //             res.status(400).send({ errText: 'Срок организации должен быть числом' });
+    //             return;
+    //         }
 
-            if ((req.body.need == '1' && req.body.capability == '1') || (req.body.need == '0')) {
+    //         if ((req.body.need == '1' && req.body.capability == '1') || (req.body.need == '0')) {
 
-                if (!req.body['cost-once'] || !req.body['cost-monthly']) {
-                    res.status(400).send({ errText: 'Укажите стоимость организации' });
-                    return;
-                }
+    //             if (!req.body['cost-once'] || !req.body['cost-monthly']) {
+    //                 res.status(400).send({ errText: 'Укажите стоимость организации' });
+    //                 return;
+    //             }
 
-            }
+    //         }
 
-            if (req.body.need == '1' && req.body.capability == '0') {
-                if (!req.body.reason) {
-                    res.status(400).send({ errText: 'Укажите причину технической не возможности!' });
-                    return;
-                }
-            }
+    //         if (req.body.need == '1' && req.body.capability == '0') {
+    //             if (!req.body.reason) {
+    //                 res.status(400).send({ errText: 'Укажите причину технической не возможности!' });
+    //                 return;
+    //             }
+    //         }
 
-            order.gzp = req.body;
+    //         order.gzp = req.body;
 
-            if (order.status == 'gzp-pre') {
-                order.status = 'client-match';
-                order.deadline = null;
-                order.date['gzp-pre'] = new Date();
-                // order.date['cs-client-match'] = await helper.calculateDeadline(10);
-                order.gzp.complete = true;
-            }
+    //         if (order.status == 'gzp-pre') {
+    //             order.status = 'client-match';
+    //             order.deadline = null;
+    //             order.date['gzp-pre'] = new Date();
+    //             // order.date['cs-client-match'] = await helper.calculateDeadline(10);
+    //             order.gzp.complete = true;
+    //         }
 
-            if (order.status == 'all-pre') {
-                order.status = 'stop-pre';
-                order.date['gzp-pre'] = new Date();
-                order.gzp.complete = true;
-            }
+    //         if (order.status == 'all-pre') {
+    //             order.status = 'stop-pre';
+    //             order.date['gzp-pre'] = new Date();
+    //             order.gzp.complete = true;
+    //         }
 
-            if (order.pause.status) {
-                var now = new Date();
-                var pause = order.pause.date;
-                pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
-                order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
-                order.pause = {
-                    status: false,
-                    date: undefined
-                };
-                order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
-                // notify.create(res.locals.__user, order, 'pause-stop');
-            }
+    //         if (order.pause.status) {
+    //             var now = new Date();
+    //             var pause = order.pause.date;
+    //             pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
+    //             order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
+    //             order.pause = {
+    //                 status: false,
+    //                 date: undefined
+    //             };
+    //             order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
+    //             // notify.create(res.locals.__user, order, 'pause-stop');
+    //         }
 
-            order.history.push(helper.historyGenerator('gzp-pre', res.locals.__user));
-            var done = await order.save();
-            if (done) {
-                notify.create(res.locals.__user, done, 'end-gzp-pre');
-                // done = await done.deepPopulate(populateQuery);
-                // sendMail(done, 'new-status');
-                logger.info(`End pre-gzp order #${done.id}`, res.locals.__user);
-                res.status(200).send({ created: true })
-            } else res.status(400).send({ errText: 'Что-то пошло не так!' });
-        } else res.status(404);
-    },
+    //         order.history.push(helper.historyGenerator('gzp-pre', res.locals.__user));
+    //         var done = await order.save();
+    //         if (done) {
+    //             notify.create(res.locals.__user, done, 'end-gzp-pre');
+    //             // done = await done.deepPopulate(populateQuery);
+    //             // sendMail(done, 'new-status');
+    //             logger.info(`End pre-gzp order #${done.id}`, res.locals.__user);
+    //             res.status(200).send({ created: true })
+    //         } else res.status(400).send({ errText: 'Что-то пошло не так!' });
+    //     } else res.status(404);
+    // },
 
     endPreSKS: async (req, res) => {
         var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
@@ -1614,6 +1616,18 @@ module.exports = {
             else res.status(200).send({ created: true });
         } else res.status(400).send({ errText: 'Изменение несуществующей заявки!' });
 
+    },
+
+    postGzp: async function (req, res) {
+        var order = await Order.findOne({ id: req.params.id }).populate(populateQuery);;
+
+        if (order.status == 'gzp-pre' || order.status == 'all-pre') {
+            return GZP.endPreGZP(req, res, order);
+        }
+
+        if (order.status == 'gzp-build' || order.status == 'install-devices') {
+            return GZP.endBuild(req, res, order);
+        }
     },
 
     endClientNotify: async (req, res, io) => {
