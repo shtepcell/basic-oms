@@ -16,7 +16,13 @@ module.exports = {
         order.date[order.status] = new Date();
         order.history.push(helper.historyGenerator(order.status, res.locals.__user));
         notify.create(res.locals.__user, order, `end-${order.status}`);
-        order.status = 'network';
+
+        if (order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl") {
+            order.status = 'client-notify';
+        } else {
+            order.status = 'network';
+        }
+        
         order.save();
         res.status(200).send({ created: true });
         return;

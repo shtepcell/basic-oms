@@ -1584,7 +1584,11 @@ module.exports = {
                 notify.create(res.locals.__user, order, `start-stop-build`);
                 break;
             case 'end-build-stop':
-                order.status = 'network';
+                if (order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl") {
+                    order.status = 'client-notify';
+                } else {
+                    order.status = 'network';
+                }
                 order.date['stop-build'] = new Date();
                 order.history.push(helper.historyGenerator('stop-build', res.locals.__user));
                 notify.create(res.locals.__user, order, `end-stop-build`);
@@ -2087,25 +2091,6 @@ module.exports = {
             return;
         }
         res.status(400);
-        return;
-    },
-
-    endBuild: async (req, res) => {
-        const order = await Order.findOne({ id: req.params.id });
-
-        // if (!req.body.odf || !req.body.node) {
-        //     res.status(400).send({ errText: 'ODF и узел агрегации обязательны к заполнению!' });
-        //     return;
-        // }
-
-        order.gzp.odf = req.body.odf;
-        order.gzp.node = req.body.node;
-        order.date[order.status] = new Date();
-        order.history.push(helper.historyGenerator(order.status, res.locals.__user));
-        notify.create(res.locals.__user, order, `end-${order.status}`);
-        order.status = 'network';
-        order.save();
-        res.status(200).send({ created: true });
         return;
     },
 
