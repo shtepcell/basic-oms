@@ -28,6 +28,11 @@ block('order').elem('service-info').elemMod('type', 'iptv').elemMod('access', tr
     var ctx = this.ctx,
         order = ctx.order;
 
+    if(!order)
+        order = {
+            info: {}
+        }
+
 
     return [
         {
@@ -48,7 +53,7 @@ block('order').elem('service-info').elemMod('type', 'iptv').elemMod('access', tr
                                 theme: 'islands',
                                 size: 'l'
                             },
-                            val: order.info.presentationMethod,
+                            val: order.info.presentationMethod || null,
                             options: [
                                 {
                                     text: 'ОТТ',

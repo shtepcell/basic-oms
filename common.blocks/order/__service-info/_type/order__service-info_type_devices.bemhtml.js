@@ -286,7 +286,7 @@ block('order').elem('service-info').elemMod('type', 'devices').elemMod('access',
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Требуется ли прокладка соед. линий до других стоек'
+                    content: 'Подтверждающий документ ответной стороны'
                 },
                 {
                     block: 'order',
