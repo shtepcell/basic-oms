@@ -7,27 +7,65 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-const addDeadline = async (answer) => {
+const addDeadline = async (answer, query) => {
     const days = answer;
     
-    var orders = await Order.find({deadline: {$ne: null}, "pause.status": { $ne: true }  });
+    var orders = await Order.find(query);
 
-    for (var i = 0; i < orders.length; i++) {
-        orders[i].deadline = calculateDeadline(days, orders[i].deadline);
-        orders[i].save();
+    let results = [];
+
+    if (orders.length == 0) {
+        console.log('Order not found!');
+        process.exit(1);
+        return;
     }
 
-    console.log('Done!');
+    if (orders.length > 1) {
+        console.log(`Found ${orders.length} orders!`)
+    }
+    
+    for (var i = 0; i < orders.length; i++) {
+        const order =  orders[i];
+        order.deadline = calculateDeadline(days, order.deadline);
+        results.push(order.save());
+    }
+
+    Promise.all(results).then( () => {
+        console.log('Done!');
+        process.exit(0);
+    })
 }
 
 (async () => {
+    rl.question('Input ID order or type "all": ', (order) => {
+        let query;
 
-    rl.question('Input count of days: ', (answer) => {
-        if (!isNaN(answer)) {
-            addDeadline(answer);
+        if (order.match((/^a(ll)?$/i))) {
+            query = {deadline: {$ne: null}, "pause.status": { $ne: true }  };
         }
-        rl.close();
-      });
+
+        if (!isNaN(order)) {
+            query = {id: order}
+        }
+
+        if (!query) {
+            console.log('Wrong answer!');
+            process.exit(1);
+        }
+
+        rl.question('Input count of days: ', (answer) => {
+            if (!isNaN(answer) && answer != '' && Number.isInteger(+answer) && answer > 0) {
+                addDeadline(answer, query);
+            } else {
+                console.log('Incorrect number of days!');
+                process.exit(1);
+            }
+            rl.close();
+        });
+    })
+    
+
+
 })();
 
 
