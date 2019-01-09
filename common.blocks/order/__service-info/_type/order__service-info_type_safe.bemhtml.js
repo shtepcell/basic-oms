@@ -1,4 +1,4 @@
-block('order').elem('service-info').elemMod('type', 'digital').content()(function () {
+block('order').elem('service-info').elemMod('type', 'safe').content()(function () {
     var ctx = this.ctx,
         order = ctx.order;
 
@@ -14,12 +14,12 @@ block('order').elem('service-info').elemMod('type', 'digital').content()(functio
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Выберите один из вариантов'
+                    content: 'Использовать черный список по умолчанию?'
                 },
                 {
                     block: 'order',
                     elem: 'body-row-data',
-                    content: order.info.g70x
+                    content: order.info.useDefaultBlackList
                 }
             ]
         },
@@ -29,12 +29,12 @@ block('order').elem('service-info').elemMod('type', 'digital').content()(functio
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Связанный заказ'
+                    content: 'Список нежелательного контента'
                 },
                 {
                     block: 'order',
                     elem: 'body-row-data',
-                    content: order.info.relation
+                    content: order.info.blackListFile
                 }
             ]
         }
@@ -42,7 +42,7 @@ block('order').elem('service-info').elemMod('type', 'digital').content()(functio
 })
 
 
-block('order').elem('service-info').elemMod('type', 'digital').elemMod('access', true).content()(function () {
+block('order').elem('service-info').elemMod('type', 'safe').elemMod('access', true).content()(function () {
     var ctx = this.ctx,
         order = ctx.order;
 
@@ -59,7 +59,7 @@ block('order').elem('service-info').elemMod('type', 'digital').elemMod('access',
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Выберите один из вариантов'
+                    content: 'Использовать черный список по умолчанию?'
                 },
                 {
                     block: 'order',
@@ -67,21 +67,21 @@ block('order').elem('service-info').elemMod('type', 'digital').elemMod('access',
                     content: [
                         {
                             block: 'select',
-                            name: 'g70x',
+                            name: 'useDefaultBlackList',
                             mods: {
                                 mode: 'radio',
                                 theme: 'islands',
                                 size: 'l'
                             },
-                            val: order.info.g70x,
+                            val: order.info.useDefaultBlackList,
                             options: [
                                 {
-                                    text: 'G.701',
-                                    val: 'G.701'
+                                    text: 'Да',
+                                    val: 'Да'
                                 },
                                 {
-                                    text: 'G.703',
-                                    val: 'G.703'
+                                    text: 'Нет',
+                                    val: 'Нет'
                                 }
                             ]
                         }
@@ -96,26 +96,22 @@ block('order').elem('service-info').elemMod('type', 'digital').elemMod('access',
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Связанный заказ *'
+                    content: 'Список нежелательного контента'
                 },
                 {
                     block: 'order',
                     elem: 'body-row-data',
                     content: [
                         {
-                            block: 'input',
-                            mods: {
-                                theme: 'islands',
-                                width: 'available',
-                                size: 'l'
-                            },
-                            val: order.info.relation || '',
-                            name: 'relation',
-                            placeholder: ''
+                            block : 'attach',
+                            name: 'blackListFile',
+                            mods : { theme : 'islands', size : 'm', focused : true },
+                            button : 'Выберите файл',
+                            noFileText : 'Файл не выбран'
                         }
                     ]
                 }
             ]
-        },
+        }
     ]
 })

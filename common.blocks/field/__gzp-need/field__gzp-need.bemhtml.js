@@ -41,7 +41,7 @@ block('field').elem('gzp-need').elemMod('access', true).content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-name',
-                        content: 'Небходимость ГЗП'
+                        content: 'Необходимость ГЗП'
                     },
                     {
                         block: 'order',

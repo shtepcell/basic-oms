@@ -1,6 +1,6 @@
 modules.define('chat__send', ['i-bem-dom', 'jquery', 'button', 'textarea',
-    'chat__editor', 'chat', 'chat__body', 'select'],
-    function(provide, bemDom, $, Button, Input, Tree, Chat, Body, Select) {
+    'chat__editor', 'chat', 'chat__body', 'select', 'BEMHTML'],
+    function(provide, bemDom, $, Button, Input, Tree, Chat, Body, Select, BEMHTML) {
 
 provide(bemDom.declElem('chat', 'send',
     {

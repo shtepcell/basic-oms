@@ -44,7 +44,29 @@
             block: 'order',
             elem: 'service-info',
             mods: {
-                type: ['internet', 'vpls', 'l3vpn', 'l2vpn', 'iptv', 'digital', 'phone']
+                type:[
+                    'internet',
+                    'vpls',
+                    'l3vpn',
+                    'l2vpn',
+                    'cloud',
+                    'digital',
+                    'sks',
+                    'rrl',
+                    'sputnik',
+                    'devices',
+                    'phone',
+                    'analog',
+                    'vibe',
+                    'wifi',
+                    'ddos',
+                    'iptv',
+                    'e1',
+                    'sip',
+                    'wifiorg',
+                    'rentip',
+                    'safe'
+                ]
             }
         },
         {

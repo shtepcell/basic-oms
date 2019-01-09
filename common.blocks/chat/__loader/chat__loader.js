@@ -1,4 +1,4 @@
-modules.define('chat__loader', ['i-bem-dom', 'jquery', 'chat__body'], function(provide, bemDom, $, Chat) {
+modules.define('chat__loader', ['i-bem-dom', 'jquery', 'chat__body', 'BEMHTML'], function(provide, bemDom, $, Chat, BEMHTML) {
 
 provide(bemDom.declElem('chat', 'loader',
     {
@@ -39,7 +39,7 @@ provide(bemDom.declElem('chat', 'loader',
                                         text: item.text,
                                         time: item.time
                                     })
-                                })
+                                });
 
                                 bemDom.replace(
                                     this.domElem,

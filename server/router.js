@@ -216,4 +216,15 @@ module.exports = function (app, io) {
     app.post('/admin/providers/change', Provider.edit);
     app.post('/admin/providers/add', Provider.create);
 
+    app.get('/test/', (req, res) => {
+
+        const access = (req.query.access == 'yes');
+
+        render(req, res, {
+            viewName: 'testServices',
+            options: {
+                access: access
+            }
+        })
+    })
 }
