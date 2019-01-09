@@ -95,6 +95,8 @@ var schema = new Schema({
 
         countOfLines: Number,
         countOfNumbers: Number,
+        countOfOutNumbers: Number,
+
         typeOfClient: String,
 
         mikrotik: String,

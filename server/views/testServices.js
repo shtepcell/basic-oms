@@ -70,6 +70,7 @@ module.exports = function(opt, data){
             
                     countOfLines: 4,
                     countOfNumbers: 16,
+                    countOfOutNumbers: 12,
                     typeOfClient: 'Какой-то тип клиента',
             
                     mikrotik: 'Клиента',
