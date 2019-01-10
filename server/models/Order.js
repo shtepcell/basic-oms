@@ -87,15 +87,15 @@ var schema = new Schema({
 
         e1Stream: String,
         alertType: String,
-        countOfConnectionLine: Number,
+        countOfConnectionLine: String,
         crc4Support: String,
         networkPart: String,
 
         presentationMethod: String,
 
-        countOfLines: Number,
-        countOfNumbers: Number,
-        countOfOutNumbers: Number,
+        countOfLines: String,
+        countOfNumbers: String,
+        countOfOutNumbers: String,
 
         typeOfClient: String,
 
@@ -108,18 +108,18 @@ var schema = new Schema({
 
         pref: String,
         
-        useDefaultBlackList: Boolean,
+        useDefaultBlackList: String,
         blackListFile: String, // File
 
         layingMethod: String,
-        countOfPorts: Number,
+        countOfPorts: String,
         objectPhoto: String, // File
 
-        countOfUtits: Number,
+        countOfUtits: String,
         rack: String,
         powerConsumption: String,
-        montageNeed: Boolean,
-        connetionNeed: Boolean,
+        montageNeed: String,
+        connetionNeed: String,
         confirmDocument: String // File
     },
     sks: {

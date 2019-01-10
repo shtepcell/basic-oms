@@ -34,7 +34,18 @@ block('order').elem('service-info').elemMod('type', 'safe').content()(function (
                 {
                     block: 'order',
                     elem: 'body-row-data',
-                    content: order.info.blackListFile
+                    content: {
+                        block: 'link',
+                        mods: {
+                            theme: 'islands',
+                            size: 'l'
+                        },
+                        attrs: {
+                            target: "_blank"
+                        },
+                        url: `/storage/${order.info.blackListFile}`,
+                        content: order.info.blackListFile
+                    }
                 }
             ]
         }
@@ -50,6 +61,39 @@ block('order').elem('service-info').elemMod('type', 'safe').elemMod('access', tr
         order = {
             info: {}
         }
+
+    let previewBlackList;
+    let titleBlackList = 'Список нежелательного контента';
+    
+    if (order.info.blackListFile) {
+        previewBlackList = {
+            elem: 'body-row',
+            content: [
+                {
+                    block: 'order',
+                    elem: 'body-row-name',
+                    content: titleBlackList
+                },
+                {
+                    block: 'order',
+                    elem: 'body-row-data',
+                    content: {
+                        block: 'link',
+                        mods: {
+                            theme: 'islands',
+                            size: 'l'
+                        },
+                        attrs: {
+                            target: "_blank"
+                        },
+                        url: `/storage/${order.info.blackListFile}`,
+                        content: order.info.blackListFile
+                    }
+                }
+            ]
+        };
+        titleBlackList = 'Загрузить новый список'
+    }
 
     return [
         {
@@ -89,6 +133,7 @@ block('order').elem('service-info').elemMod('type', 'safe').elemMod('access', tr
                 }
             ]
         },
+        previewBlackList,
         {
             block: 'order',
             elem: 'body-row',
@@ -96,7 +141,7 @@ block('order').elem('service-info').elemMod('type', 'safe').elemMod('access', tr
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Список нежелательного контента'
+                    content: titleBlackList
                 },
                 {
                     block: 'order',

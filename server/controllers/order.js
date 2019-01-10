@@ -9,6 +9,8 @@ const notify = require('./notify');
 const { getExcel, getReportExcel } = require('./export');
 const { saveFile } = require('./file-manager');
 
+const { validateService } = require('./order-services');
+
 const helper = require('./helper');
 const validator = require('./validator');
 
@@ -688,24 +690,11 @@ module.exports = {
             return;
         }
 
-        if (order.info.service == 'iptv' || order.info.service == 'l2vpn' || order.info.service == 'vpls') {
+        const serviceInfo = validateService(order.info, req.files);
 
-            // if(!order.info.relation) {
-            //   res.status(400).send({ errText: 'Укажите связанный заказ' });
-            //   return;
-            // }
-            if (order.info.relation) {
-                if (isNaN(order.info.relation)) {
-                    res.status(400).send({ errText: 'Связанный заказ - ID заказа должен быть числом' });
-                    return;
-                }
-                var tep = await Order.findOne({ id: order.info.relation });
-
-                if (!tep) {
-                    res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
-                    return;
-                }
-            }
+        if (serviceInfo.error) {
+            res.status(400).send({ errText: serviceInfo.error });
+            return;
         }
 
         order.info.pre = undefined;
@@ -746,6 +735,12 @@ module.exports = {
             ordr.info['file-init'] = saveFile(req.files['file-init']);
         }
 
+        if (serviceInfo.mustUpload) {
+            serviceInfo.mustUpload.forEach( item => {
+                ordr.info[item] = saveFile(req.files[item]);
+            })
+        }
+
         var done = await Order.create(ordr);
         if (done) {
             if (done.status == 'all-pre') {
@@ -758,9 +753,9 @@ module.exports = {
                 done.status = stages[done.status];
                 // sendMail(done, 'new-status');
             }
-
+            
             logger.info(`Init Order #${done.id} | ${done.status} | ${done.info.client.name} | ${done.info.city.type} ${done.info.city.name}`, res.locals.__user);
-            res.send({ created: true })
+            res.send({ created: true, id: done.id })
         } else res.send({ errText: 'Что-то пошло не так' });
     },
 
@@ -1014,6 +1009,19 @@ module.exports = {
                 // Услуга
                 var service = data.service;
                 tmp.service = service;
+
+                const serviceInfo = validateService(tmp, req.files, order);
+
+                if (serviceInfo.error) {
+                    res.status(400).send({ errText: serviceInfo.error });
+                    return;
+                }
+
+                serviceInfo.mustUpload.forEach( item => {
+                    if (req.files[item]) {
+                        tmp[item] = saveFile(req.files[item]);
+                    }
+                })        
 
                 // Координаты 
 
@@ -1493,34 +1501,22 @@ module.exports = {
 
             var needNotify = (ser != order.info.service);
 
-            if (ser == 'iptv' || ser == 'l2vpn' || ser == 'vpls') {
-                // if(!req.body.relation) {
-                //   res.status(400).send({errText: 'Заполните связанный заказ!'})
-                //   return;
-                // }
-                if (req.body.relation) {
-                    if (req.body.relation && isNaN(req.body.relation)) {
-                        res.status(400).send({ errText: 'Связанный заказ - ID заказа должен быть числом!' })
-                        return;
-                    }
-                    var tep = await Order.findOne({ id: req.body.relation });
-                    if (!tep) {
-                        res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
-                        return;
-                    }
-                    order.info.relation = req.body.relation;
+            const serviceInfo = validateService(req.body, req.files, order.info);
 
+            if (serviceInfo.error) {
+                res.status(400).send({ errText: serviceInfo.error });
+                return;
+            }
+
+            Object.assign(order.info, req.body);
+
+            serviceInfo.mustUpload.forEach( item => {
+                if (req.files[item]) {
+                    order.info[item] = saveFile(req.files[item]);
                 }
-
-            } else order.info.relation = undefined;
+            })
 
             order.info.service = ser;
-
-            if (req.body.volume && req.body.volume != order.info.volume) needNotify = true;
-            order.info.volume = req.body.volume;
-
-            if (req.body.ip && req.body.ip != order.info.ip) needNotify = true;
-            order.info.ip = req.body.ip;
 
             if (needNotify) {
                 order.history.push(helper.historyGenerator('change-params', res.locals.__user));
@@ -1528,7 +1524,6 @@ module.exports = {
             }
 
             await order.save();
-
         }
 
         if (req.body.contact) {

@@ -94,7 +94,18 @@ block('order').elem('service-info').elemMod('type', 'devices').content()(functio
                 {
                     block: 'order',
                     elem: 'body-row-data',
-                    content: order.info.confirmDocument
+                    content: {
+                        block: 'link',
+                        mods: {
+                            theme: 'islands',
+                            size: 'l'
+                        },
+                        attrs: {
+                            target: "_blank"
+                        },
+                        url: `/storage/${order.info.confirmDocument}`,
+                        content: order.info.confirmDocument
+                    }
                 }
             ]
         }
@@ -110,6 +121,39 @@ block('order').elem('service-info').elemMod('type', 'devices').elemMod('access',
         order = {
             info: {}
         }
+
+    let previewDoc;
+    let titleDoc = 'Подтверждающий документ ответной стороны';
+    
+    if (order.info.confirmDocument) {
+        previewDoc = {
+            elem: 'body-row',
+            content: [
+                {
+                    block: 'order',
+                    elem: 'body-row-name',
+                    content: titleDoc
+                },
+                {
+                    block: 'order',
+                    elem: 'body-row-data',
+                    content: {
+                        block: 'link',
+                        mods: {
+                            theme: 'islands',
+                            size: 'l'
+                        },
+                        attrs: {
+                            target: "_blank"
+                        },
+                        url: `/storage/${order.info.confirmDocument}`,
+                        content: order.info.confirmDocument
+                    }
+                }
+            ]
+        };
+        titleDoc = 'Загрузить новый документ'
+    }
 
     return [
         {
@@ -279,6 +323,7 @@ block('order').elem('service-info').elemMod('type', 'devices').elemMod('access',
                 }
             ]
         },
+        previewDoc,
         {
             block: 'order',
             elem: 'body-row',
@@ -286,7 +331,7 @@ block('order').elem('service-info').elemMod('type', 'devices').elemMod('access',
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Подтверждающий документ ответной стороны'
+                    content: titleDoc
                 },
                 {
                     block: 'order',
