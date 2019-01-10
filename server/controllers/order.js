@@ -1,5 +1,6 @@
 'use strict';
 const Order = require('../models/Order');
+const Static = require('../models/Static');
 const Department = require('../models/Department');
 const Account = require('../models/Account');
 const Provider = require('../models/Provider');
@@ -722,8 +723,10 @@ module.exports = {
                 kk['cs-sks-pre'] = deadline;
                 break;
         }
+        
 
         var ordr = new Order({
+            id: await Static.getOrderId(),
             status: order.status,
             deadline: deadline,
             info: order.info,
@@ -741,7 +744,8 @@ module.exports = {
             })
         }
 
-        var done = await Order.create(ordr);
+        var done = await ordr.save();
+
         if (done) {
             if (done.status == 'all-pre') {
                 notify.create(res.locals.__user, done, 'start-gzp-pre');
