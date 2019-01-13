@@ -5,9 +5,6 @@ block('field').elem('order').content()(function () {
 
     if(this.ctx.display) {
 
-        if(fileName[0] == '/')
-            fileName = fileName.replace('/', '');
-
         return [
             {
                 block: 'order',
@@ -28,7 +25,7 @@ block('field').elem('order').content()(function () {
                                     theme: 'islands',
                                     size: 'l'
                                 },
-                                url: `/order/${order.id}/file/${fileName}`,
+                                url: `/storage/${fileName}`,
                                 content: order.info.order
                             }
                         ]
@@ -66,7 +63,7 @@ block('field').elem('order').elemMod('access', true).content()(function () {
                                     size: 'l'
                                 },
                                 button: 'Выберите файл',
-                                noFileText: 'Файл не выбран'
+                                noFileText: order.info.order || 'Файл не выбран'
                             }
                         ]
                     }

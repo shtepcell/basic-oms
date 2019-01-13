@@ -7,21 +7,32 @@ block('order').elem('service-info').elemMod('type', 'iptv').content()(function (
             info: {}
         }
 
-    return []
+    return [{
+        elem: 'body-row',
+        content: [
+            {
+                block: 'order',
+                elem: 'body-row-name',
+                content: 'Метод предоставления'
+            },
+            {
+                block: 'order',
+                elem: 'body-row-data',
+                content: order.info.presentationMethod
+            }
+        ]
+    }];
 })
 
 block('order').elem('service-info').elemMod('type', 'iptv').elemMod('access', true).content()(function () {
     var ctx = this.ctx,
         order = ctx.order;
 
-    var title = 'Связанный заказ *';
-
     if(!order)
         order = {
             info: {}
         }
 
-    if(order.info.relation && isNaN(order.info.relation)) title = 'Связанный заказ (некорректно указан) *'
 
     return [
         {
@@ -29,21 +40,30 @@ block('order').elem('service-info').elemMod('type', 'iptv').elemMod('access', tr
             content: [
                 {
                     elem: 'body-row-name',
-                    content: title
+                    content: 'Метод предоставления'
                 },
                 {
                     elem: 'body-row-data',
                     content: [
                         {
-                            block: 'input',
+                            block: 'select',
+                            name: 'presentationMethod',
                             mods: {
+                                mode: 'radio',
                                 theme: 'islands',
-                                width: 'available',
                                 size: 'l'
                             },
-                            val: order.info.relation || '',
-                            name: 'relation',
-                            placeholder: 'ID заказа (1234)'
+                            val: order.info.presentationMethod || null,
+                            options: [
+                                {
+                                    text: 'ОТТ',
+                                    val: 'ОТТ'
+                                },
+                                {
+                                    text: 'MCAST',
+                                    val: 'MCAST'
+                                }
+                            ]
                         }
                     ]
                 }

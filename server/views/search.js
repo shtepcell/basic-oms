@@ -20,7 +20,8 @@ module.exports = function(opt, data){
             {
                 block: 'searcher',
                 data: data.data,
-                query: data.query
+                query: data.query,
+                dataset: data.dataset
             },
             {
                 block: 'wrapper',

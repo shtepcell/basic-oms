@@ -1,7 +1,9 @@
 block('searcher')(
     content()(function () {
-        var data = this.ctx.data,
-            query = this.ctx.query;
+        const ctx = this.ctx;
+        const data = ctx.data;
+        const query = ctx.query;
+        const { services } = ctx.dataset;
 
         data.deps = data.deps.map(item => {
             return {
@@ -9,6 +11,15 @@ block('searcher')(
                 val: item._id + ''
             }
         });
+
+        const srvs = Object.keys(services).map( (item) => {
+            return {
+                val: item,
+                text: services[item]
+            };
+        });
+
+        srvs.unshift({text: 'Не выбрано'});
 
         return [
             {
@@ -339,71 +350,7 @@ block('searcher')(
                                                 size: 'l',
                                                 width: 'available'
                                             },
-                                            options: [
-                                                {
-                                                    text: 'Не выбрано'
-                                                },
-                                                {
-                                                    text: 'Интернет',
-                                                    val: 'internet'
-                                                },
-                                                {
-                                                    text: 'L3VPN',
-                                                    val: 'l3vpn'
-                                                },
-                                                {
-                                                    text: 'L2VPN',
-                                                    val: 'l2vpn'
-                                                },
-                                                {
-                                                    text: 'Облачная АТС',
-                                                    val: 'cloud'
-                                                },
-                                                {
-                                                    text: 'Цифровые каналы',
-                                                    val: 'digital'
-                                                },
-                                                {
-                                                    text: 'Спутник',
-                                                    val: 'sputnik'
-                                                },
-                                                {
-                                                    text: 'Размещение оборудования',
-                                                    val: 'devices'
-                                                },
-                                                {
-                                                    text: 'Телефония (IP-телефония)',
-                                                    val: 'phone'
-                                                },
-                                                {
-                                                    text: 'СКС',
-                                                    val: 'sks'
-                                                },
-                                                {
-                                                    text: 'Аналоговые каналы (ТЧ)',
-                                                    val: 'analog'
-                                                },
-                                                {
-                                                    text: 'Волокно',
-                                                    val: 'vibe'
-                                                },
-                                                {
-                                                    text: 'VPLS',
-                                                    val: 'vpls'
-                                                },
-                                                {
-                                                    text: 'Авторизация Wi-Fi',
-                                                    val: 'wifi'
-                                                },
-                                                {
-                                                    text: 'IP TV',
-                                                    val: 'iptv'
-                                                },
-                                                {
-                                                    text: 'РРЛ',
-                                                    val: 'rrl'
-                                                }
-                                            ]
+                                            options: srvs
                                         }
                                     }
                                 ]

@@ -1,9 +1,20 @@
 block('order').elem('body').elemMod('tab', 'init').content()(function () {
 
-    var ctx = this.ctx,
-        tab = ctx.tab,
-        dataset = ctx.dataset,
-        order = ctx.order;
+    const ctx = this.ctx;
+    const tab = ctx.tab;
+    const dataset = ctx.dataset;
+    const order = ctx.order;
+
+    const services = dataset.services;
+
+    const srvs = Object.keys(services).map( (item) => {
+        return {
+            val: item,
+            text: services[item]
+        };
+    });
+    
+    srvs.unshift({text: ''});
 
     return [
             {
@@ -173,75 +184,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                     size: 'l'
                                 },
                                 val: order.service,
-                                options: [
-                                    {
-                                        text: ''
-                                    },
-                                    {
-                                        text: 'Интернет',
-                                        val: 'internet'
-                                    },
-                                    {
-                                        text: 'L3VPN',
-                                        val: 'l3vpn'
-                                    },
-                                    {
-                                        text: 'L2VPN',
-                                        val: 'l2vpn'
-                                    },
-                                    {
-                                        text: 'Облачная АТС',
-                                        val: 'cloud'
-                                    },
-                                    {
-                                        text: 'Цифровые каналы',
-                                        val: 'digital'
-                                    },
-                                    {
-                                        text: 'Спутник',
-                                        val: 'sputnik'
-                                    },
-                                    {
-                                        text: 'Размещение оборудования',
-                                        val: 'devices'
-                                    },
-                                    {
-                                        text: 'Телефония (IP-телефония)',
-                                        val: 'phone'
-                                    },
-                                    {
-                                        text: 'СКС',
-                                        val: 'sks'
-                                    },
-                                    {
-                                        text: 'РРЛ',
-                                        val: 'rrl'
-                                    },
-                                    {
-                                        text: 'Аналоговые каналы (ТЧ)',
-                                        val: 'analog'
-                                    },
-                                    {
-                                        text: 'Волокно',
-                                        val: 'vibe'
-                                    },
-                                    {
-                                        text: 'VPLS',
-                                        val: 'vpls'
-                                    },
-                                    {
-                                      text: "Защита от DDoS-атак",
-                                      val: 'ddos'
-                                    },
-                                    {
-                                        text: 'Авторизация Wi-Fi',
-                                        val: 'wifi'
-                                    },
-                                    {
-                                        text: 'IP TV',
-                                        val: 'iptv'
-                                    }
-                                ]
+                                options: srvs
                             }
                         ]
                     }

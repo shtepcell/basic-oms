@@ -144,6 +144,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             },
             order: order
         },
+        { elem: 'separator' },
         {
             block: 'field',
             elem: 'add-info',

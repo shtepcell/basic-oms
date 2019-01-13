@@ -12,12 +12,29 @@ block('order').elem('service-info').elemMod('type', 'digital').content()(functio
             elem: 'body-row',
             content: [
                 {
+                    block: 'order',
                     elem: 'body-row-name',
-                    content: 'Ёмкость'
+                    content: 'Выберите один из вариантов'
                 },
                 {
+                    block: 'order',
                     elem: 'body-row-data',
-                    content: order.info.volume || ''
+                    content: order.info.g70x
+                }
+            ]
+        },
+        {
+            elem: 'body-row',
+            content: [
+                {
+                    block: 'order',
+                    elem: 'body-row-name',
+                    content: 'Связанный заказ'
+                },
+                {
+                    block: 'order',
+                    elem: 'body-row-data',
+                    content: order.info.relation
                 }
             ]
         }
@@ -36,23 +53,69 @@ block('order').elem('service-info').elemMod('type', 'digital').elemMod('access',
 
     return [
         {
+            block: 'order',
             elem: 'body-row',
             content: [
                 {
+                    block: 'order',
                     elem: 'body-row-name',
-                    content: 'Ёмкость'
+                    content: 'Выберите один из вариантов'
                 },
                 {
+                    block: 'order',
                     elem: 'body-row-data',
                     content: [
                         {
                             block: 'select',
-                            elem: 'volume',
-                            val: order.info.volume || null
+                            name: 'g70x',
+                            mods: {
+                                mode: 'radio',
+                                theme: 'islands',
+                                size: 'l'
+                            },
+                            val: order.info.g70x,
+                            options: [
+                                {
+                                    text: 'G.701',
+                                    val: 'G.701'
+                                },
+                                {
+                                    text: 'G.703',
+                                    val: 'G.703'
+                                }
+                            ]
                         }
                     ]
                 }
             ]
-        }
+        },
+        {
+            block: 'order',
+            elem: 'body-row',
+            content: [
+                {
+                    block: 'order',
+                    elem: 'body-row-name',
+                    content: 'Связанный заказ *'
+                },
+                {
+                    block: 'order',
+                    elem: 'body-row-data',
+                    content: [
+                        {
+                            block: 'input',
+                            mods: {
+                                theme: 'islands',
+                                width: 'available',
+                                size: 'l'
+                            },
+                            val: order.info.relation || '',
+                            name: 'relation',
+                            placeholder: ''
+                        }
+                    ]
+                }
+            ]
+        },
     ]
 })

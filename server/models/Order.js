@@ -81,7 +81,46 @@ var schema = new Schema({
         order: String,
         'date-sign': Date,
         'date-request': Date,
-        'file-init': String
+        'file-init': String,
+
+        g70x: String,
+
+        e1Stream: String,
+        alertType: String,
+        countOfConnectionLine: String,
+        crc4Support: String,
+        networkPart: String,
+
+        presentationMethod: String,
+
+        countOfLines: String,
+        countOfNumbers: String,
+        countOfOutNumbers: String,
+
+        typeOfClient: String,
+
+        mikrotik: String,
+        internet: String,
+        needAgree: String,
+
+        schema: String, // File
+        pm: String,
+
+        pref: String,
+        
+        useDefaultBlackList: String,
+        blackListFile: String, // File
+
+        layingMethod: String,
+        countOfPorts: String,
+        objectPhoto: String, // File
+
+        countOfUtits: String,
+        rack: String,
+        powerConsumption: String,
+        montageNeed: String,
+        connetionNeed: String,
+        confirmDocument: String // File
     },
     sks: {
         time: Number,

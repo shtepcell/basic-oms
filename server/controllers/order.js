@@ -1,5 +1,6 @@
 'use strict';
 const Order = require('../models/Order');
+const Static = require('../models/Static');
 const Department = require('../models/Department');
 const Account = require('../models/Account');
 const Provider = require('../models/Provider');
@@ -7,6 +8,9 @@ const mkdirp = require('mkdirp-promise');
 const Flag = require('../models/Flag');
 const notify = require('./notify');
 const { getExcel, getReportExcel } = require('./export');
+const { saveFile } = require('./file-manager');
+
+const { validateService } = require('./order-services');
 
 const helper = require('./helper');
 const validator = require('./validator');
@@ -351,7 +355,6 @@ module.exports = {
 
         orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
 
-        var now = new Date();
         orders.forEach(item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
@@ -688,24 +691,11 @@ module.exports = {
             return;
         }
 
-        if (order.info.service == 'iptv' || order.info.service == 'l2vpn' || order.info.service == 'vpls') {
+        const serviceInfo = validateService(order.info, req.files);
 
-            // if(!order.info.relation) {
-            //   res.status(400).send({ errText: 'Укажите связанный заказ' });
-            //   return;
-            // }
-            if (order.info.relation) {
-                if (isNaN(order.info.relation)) {
-                    res.status(400).send({ errText: 'Связанный заказ - ID заказа должен быть числом' });
-                    return;
-                }
-                var tep = await Order.findOne({ id: order.info.relation });
-
-                if (!tep) {
-                    res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
-                    return;
-                }
-            }
+        if (serviceInfo.error) {
+            res.status(400).send({ errText: serviceInfo.error });
+            return;
         }
 
         order.info.pre = undefined;
@@ -733,8 +723,10 @@ module.exports = {
                 kk['cs-sks-pre'] = deadline;
                 break;
         }
+        
 
         var ordr = new Order({
+            id: await Static.getOrderId(),
             status: order.status,
             deadline: deadline,
             info: order.info,
@@ -742,29 +734,19 @@ module.exports = {
             history: [helper.historyGenerator('init', res.locals.__user)]
         });
 
-        if (req.files['file-init'])
-            ordr.info['file-init'] = `${req.files['file-init'].name}`;
+        if (req.files['file-init']) {
+            ordr.info['file-init'] = saveFile(req.files['file-init']);
+        }
 
-        var done = await Order.create(ordr);
+        if (serviceInfo.mustUpload) {
+            serviceInfo.mustUpload.forEach( item => {
+                ordr.info[item] = saveFile(req.files[item]);
+            })
+        }
+
+        var done = await ordr.save();
+
         if (done) {
-            if (req.files['file-init']) {
-                var id = done.id;
-                var _dir;
-                for (var i = 0; i < 1000; i++) {
-                    if (id > i * 1000) {
-                        _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
-                    }
-                }
-
-                var dir = await mkdirp(`./static/files/${_dir}/${done.id}`);
-                req.files['file-init'].mv(`./static/files/${_dir}/${done.id}/${req.files['file-init'].name}`, function (err) {
-                    if (err) {
-                        logger.error(err);
-                        return res.status(500).send(err);
-                    }
-                });
-            }
-
             if (done.status == 'all-pre') {
                 notify.create(res.locals.__user, done, 'start-gzp-pre');
                 notify.create(res.locals.__user, done, 'start-stop-pre');
@@ -775,9 +757,9 @@ module.exports = {
                 done.status = stages[done.status];
                 // sendMail(done, 'new-status');
             }
-
+            
             logger.info(`Init Order #${done.id} | ${done.status} | ${done.info.client.name} | ${done.info.city.type} ${done.info.city.name}`, res.locals.__user);
-            res.send({ created: true })
+            res.send({ created: true, id: done.id })
         } else res.send({ errText: 'Что-то пошло не так' });
     },
 
@@ -1032,6 +1014,19 @@ module.exports = {
                 var service = data.service;
                 tmp.service = service;
 
+                const serviceInfo = validateService(tmp, req.files, order);
+
+                if (serviceInfo.error) {
+                    res.status(400).send({ errText: serviceInfo.error });
+                    return;
+                }
+
+                serviceInfo.mustUpload.forEach( item => {
+                    if (req.files[item]) {
+                        tmp[item] = saveFile(req.files[item]);
+                    }
+                })        
+
                 // Координаты 
 
                 var coordinate = data.coordinate;
@@ -1070,40 +1065,12 @@ module.exports = {
                 }
 
                 if (req.files && req.files.order) {
-                    var id = order.id;
-                    var _dir;
-                    for (var i = 0; i < 1000; i++) {
-                        if (id > i * 1000) {
-                            _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
-                        }
-                    }
-                    var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-                    req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function (err) {
-                        if (err) {
-                            logger.error(err);
-                            return res.status(500).send(err);
-                        }
-                    });
-                    order.info.order = `${req.files.order.name}`;
+                    order.info.order = saveFile(req.files.order);
                     await order.save();
                 }
 
                 if (req.files && req.files['file-init']) {
-                    var id = order.id;
-                    var _dir;
-                    for (var i = 0; i < 1000; i++) {
-                        if (id > i * 1000) {
-                            _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
-                        }
-                    }
-                    var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-                    req.files['file-init'].mv(`./static/files/${_dir}/${order.id}/${req.files['file-init'].name}`, function (err) {
-                        if (err) {
-                            logger.error(err);
-                            return res.status(500).send(err);
-                        }
-                    });
-                    order.info['file-init'] = `${req.files['file-init'].name}`;
+                    order.info['file-init'] = saveFile(req.files['file-init']);
                     await order.save()
                 }
 
@@ -1158,77 +1125,6 @@ module.exports = {
             return;
         }
     },
-
-    // endPreGZP: async (req, res) => {
-    //     var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
-    //     if (order) {
-    //         Object.keys(req.body).forEach(item => {
-    //             req.body[item] = req.body[item].trim();
-    //             if (req.body[item] == '') req.body[item] = undefined;
-    //         });
-
-    //         if (((req.body.need == '1' && req.body.capability == '1')
-    //             || (req.body.need == '0')) && isNaN(req.body.time)) {
-    //             res.status(400).send({ errText: 'Срок организации должен быть числом' });
-    //             return;
-    //         }
-
-    //         if ((req.body.need == '1' && req.body.capability == '1') || (req.body.need == '0')) {
-
-    //             if (!req.body['cost-once'] || !req.body['cost-monthly']) {
-    //                 res.status(400).send({ errText: 'Укажите стоимость организации' });
-    //                 return;
-    //             }
-
-    //         }
-
-    //         if (req.body.need == '1' && req.body.capability == '0') {
-    //             if (!req.body.reason) {
-    //                 res.status(400).send({ errText: 'Укажите причину технической не возможности!' });
-    //                 return;
-    //             }
-    //         }
-
-    //         order.gzp = req.body;
-
-    //         if (order.status == 'gzp-pre') {
-    //             order.status = 'client-match';
-    //             order.deadline = null;
-    //             order.date['gzp-pre'] = new Date();
-    //             // order.date['cs-client-match'] = await helper.calculateDeadline(10);
-    //             order.gzp.complete = true;
-    //         }
-
-    //         if (order.status == 'all-pre') {
-    //             order.status = 'stop-pre';
-    //             order.date['gzp-pre'] = new Date();
-    //             order.gzp.complete = true;
-    //         }
-
-    //         if (order.pause.status) {
-    //             var now = new Date();
-    //             var pause = order.pause.date;
-    //             pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
-    //             order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
-    //             order.pause = {
-    //                 status: false,
-    //                 date: undefined
-    //             };
-    //             order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
-    //             // notify.create(res.locals.__user, order, 'pause-stop');
-    //         }
-
-    //         order.history.push(helper.historyGenerator('gzp-pre', res.locals.__user));
-    //         var done = await order.save();
-    //         if (done) {
-    //             notify.create(res.locals.__user, done, 'end-gzp-pre');
-    //             // done = await done.deepPopulate(populateQuery);
-    //             // sendMail(done, 'new-status');
-    //             logger.info(`End pre-gzp order #${done.id}`, res.locals.__user);
-    //             res.status(200).send({ created: true })
-    //         } else res.status(400).send({ errText: 'Что-то пошло не так!' });
-    //     } else res.status(404);
-    // },
 
     endPreSKS: async (req, res) => {
         var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
@@ -1362,47 +1258,6 @@ module.exports = {
         } else res.status(404);
     },
 
-    getFile: async (req, res) => {
-        var order = await Order.findOne({ id: req.params.id });
-
-        if (order) {
-            var id = order.id;
-            var _dir;
-            for (var i = 0; i < 1000; i++) {
-                if (id > i * 1000) {
-                    _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
-                }
-            }
-            var filePath = `./static/files/${_dir}/${order.id}/${req.params.file}`;
-            var options = {
-                root: './',
-                dotfiles: 'deny',
-                headers: {
-                    'x-timestamp': Date.now(),
-                    'x-sent': true
-                }
-            }
-            res.sendFile(filePath, options);
-        }
-    },
-
-    getFileOld: async (req, res) => {
-        var order = await Order.findOne({ id: req.params.id });
-        var params = req.params;
-        if (order) {
-            var filePath = `./static/files/docs/${params.dir}/${params.number}/${params.name}`;
-            var options = {
-                root: './',
-                dotfiles: 'deny',
-                headers: {
-                    'x-timestamp': Date.now(),
-                    'x-sent': true
-                }
-            }
-            res.sendFile(filePath, options);
-        }
-    },
-
     changeStatus: async (req, res, io) => {
         var reqData = req.body;
         var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
@@ -1474,11 +1329,6 @@ module.exports = {
                 order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
                 notify.create(res.locals.__user, order, 'pause-stop');
                 break;
-            // case 'set-special':
-            //     order.special = reqData.dep;
-            //     var dp = await Department.findOne({_id: reqData.dep});
-            //     order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
-            //     break;
             case 'delete':
                 order.status = 'secret';
                 order.deadline = null;
@@ -1519,12 +1369,6 @@ module.exports = {
                 order.history.push(helper.historyGenerator('network', res.locals.__user));
                 notify.create(res.locals.__user, order, 'network');
                 break;
-            // case 'end-build':
-            //     order.status = 'network';
-            //     order.date['gzp-build'] = new Date();
-            //     order.history.push(helper.historyGenerator('gzp-build', res.locals.__user));
-            //     notify.create(res.locals.__user, order, 'end-gzp-build');
-            //     break;
             case 'end-sks-build':
                 order.status = 'network';
                 order.date['sks-build'] = new Date();
@@ -1661,34 +1505,22 @@ module.exports = {
 
             var needNotify = (ser != order.info.service);
 
-            if (ser == 'iptv' || ser == 'l2vpn' || ser == 'vpls') {
-                // if(!req.body.relation) {
-                //   res.status(400).send({errText: 'Заполните связанный заказ!'})
-                //   return;
-                // }
-                if (req.body.relation) {
-                    if (req.body.relation && isNaN(req.body.relation)) {
-                        res.status(400).send({ errText: 'Связанный заказ - ID заказа должен быть числом!' })
-                        return;
-                    }
-                    var tep = await Order.findOne({ id: req.body.relation });
-                    if (!tep) {
-                        res.status(400).send({ errText: 'Заказа с таким ID нет в системе!' });
-                        return;
-                    }
-                    order.info.relation = req.body.relation;
+            const serviceInfo = validateService(req.body, req.files, order.info);
 
+            if (serviceInfo.error) {
+                res.status(400).send({ errText: serviceInfo.error });
+                return;
+            }
+
+            Object.assign(order.info, req.body);
+
+            serviceInfo.mustUpload.forEach( item => {
+                if (req.files[item]) {
+                    order.info[item] = saveFile(req.files[item]);
                 }
-
-            } else order.info.relation = undefined;
+            })
 
             order.info.service = ser;
-
-            if (req.body.volume && req.body.volume != order.info.volume) needNotify = true;
-            order.info.volume = req.body.volume;
-
-            if (req.body.ip && req.body.ip != order.info.ip) needNotify = true;
-            order.info.ip = req.body.ip;
 
             if (needNotify) {
                 order.history.push(helper.historyGenerator('change-params', res.locals.__user));
@@ -1696,7 +1528,6 @@ module.exports = {
             }
 
             await order.save();
-
         }
 
         if (req.body.contact) {
@@ -1708,55 +1539,21 @@ module.exports = {
         await order.save()
 
         if (req.files && req.files['file-init']) {
-            var id = order.id;
-            var _dir;
-            for (var i = 0; i < 1000; i++) {
-                if (id > i * 1000) {
-                    _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
-                }
-            }
-            var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-            req.files['file-init'].mv(`./static/files/${_dir}/${order.id}/${req.files['file-init'].name}`, function (err) {
-                if (err) {
-                    logger.error(err);
-                    return res.status(500).send(err);
-                }
-            });
-            order.info['file-init'] = `${req.files['file-init'].name}`;
-            await order.save()
+            order.info['file-init'] = saveFile(req.files['file-init']);
+            await order.save();
         }
 
         if (order.status == 'client-notify') {
-            var id = order.id;
-            var _dir;
-            for (var i = 0; i < 1000; i++) {
-                if (id > i * 1000) {
-                    _dir = `${(i) * 1000}-${(i + 1) * 1000}`;
-                }
-            }
-            // if(!req.files.order) {
-            //     res.status(400).send({errText: 'Договор - обязателен!'})
-            //     return;
-            // }
-            // if(!reqData['date-sign']) {
-            //     res.status(400).send({errText: 'Дата подписания - обязательна!'})
-            //     return;
-            // }
             var date = helper.parseDate(reqData['date-sign'])
             if (!date) {
                 res.status(400).send({ errText: 'Неверный формат даты' })
                 return;
             }
-            if (req.files.order) {
-                var dir = await mkdirp(`./static/files/${_dir}/${order.id}`);
-                req.files.order.mv(`./static/files/${_dir}/${order.id}/${req.files.order.name}`, function (err) {
-                    if (err) {
-                        logger.error(err);
-                        return res.status(500).send(err);
-                    }
-                });
-                order.info.order = `${req.files.order.name}`;
+
+            if (req.files && req.files.order) {
+                order.info.order = saveFile(req.files.order);
             }
+
             order.info['date-sign'] = date;
             order.status = 'succes';
             order.date['client-notify'] = new Date();

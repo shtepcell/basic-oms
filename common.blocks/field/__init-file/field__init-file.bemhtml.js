@@ -22,7 +22,10 @@ block('field').elem('init-file').content()(function () {
                                 theme: 'islands',
                                 size: 'l'
                             },
-                            url: `/order/${order.id}/file/${order.info['file-init']}`,
+                            attrs: {
+                                target: "_blank"
+                            },
+                            url: `/storage/${order.info['file-init']}`,
                             content: order.info['file-init']
                         }
                     ]

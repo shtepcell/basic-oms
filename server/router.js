@@ -109,8 +109,6 @@ module.exports = function (app, io) {
     app.get('/order/:id/sks', Order.getOrderSKS);
     app.get('/order/:id/stop', Order.getOrderSTOP);
     app.get('/order/:id/history', Order.getOrderHistory);
-    app.get('/order/:id/file/:file', Order.getFile);
-    app.get('/order/:id/file/docs/:dir/:number/:name', Order.getFileOld);
 
     app.post('/order/:id/info', (req, res) => {
         return Order.endClientNotify(req, res, io);
@@ -216,4 +214,15 @@ module.exports = function (app, io) {
     app.post('/admin/providers/change', Provider.edit);
     app.post('/admin/providers/add', Provider.create);
 
+    app.get('/test/', (req, res) => {
+
+        const access = (req.query.access == 'yes');
+
+        render(req, res, {
+            viewName: 'testServices',
+            options: {
+                access: access
+            }
+        })
+    })
 }

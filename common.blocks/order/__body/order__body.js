@@ -69,7 +69,26 @@ modules.define('order__body',
                                     popup.show();
                                 },
                                 success: function(res) {
-                                    popup.setModalSectionContent('Информация', 'Данные успешно изменены');
+                                    if (res.id) {
+                                        popup.setModalSectionContent(
+                                            'Информация',
+                                            [
+                                                `Заказ `,
+                                                {
+                                                    tag: 'a',
+                                                    attrs: {
+                                                        href: `/order/${res.id}`,
+                                                        style: 'text-decoration: none;',
+                                                        target: "_blank"
+                                                    },
+                                                    content: `#${res.id} `
+                                                },
+                                                'успешно создан!'
+                                            ]
+                                        );
+                                    } else {
+                                        popup.setModalSectionContent('Информация', 'Данные успешно изменены');
+                                    }
                                     popup.show();
                                     _this._reinitPopupEvents();
                                     _this._events(popup)
