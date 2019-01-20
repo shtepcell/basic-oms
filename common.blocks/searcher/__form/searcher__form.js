@@ -20,6 +20,7 @@ modules.define('searcher__form', ['i-bem-dom', 'location'], function (provide, b
                     func: [],
                     pre: [],
                     build: [],
+                    shutdown: [],
                     final: [],
                     manager: [],
                     client: '',

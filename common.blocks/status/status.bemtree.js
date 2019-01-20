@@ -210,13 +210,13 @@ block('status').content()(function () {
                                                             stages = 'build=3&build=5';
                                                             break;
                                                         case 'gus':
-                                                            stages = 'build=1&build=2';
+                                                            stages = 'build=1&build=2&shutdown=2';
                                                             break;
                                                         case 'sks':
                                                             stages = 'build=6';
                                                             break;
                                                         case 'net':
-                                                            stages = 'build=4';
+                                                            stages = 'build=4&shutdown=1';
                                                             break;
                                                     }
 

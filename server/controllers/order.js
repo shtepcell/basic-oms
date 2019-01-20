@@ -442,7 +442,12 @@ module.exports = {
                 query = { status: 'sks-pre' };
                 break;
             case 'net':
-                query = { status: 'network' };
+                query = {
+                    '$or': [
+                        { status: 'network' },
+                        { status: 'pre-shutdown' }
+                    ]
+                }
                 break;
         }
 
@@ -547,8 +552,10 @@ module.exports = {
                     '$or': [
                         { status: 'gzp-build', 'info.city': user.department.cities, special: null },
                         { status: 'install-devices', 'info.city': user.department.cities, special: null },
+                        { status: 'build-shutdown', 'info.city': user.department.cities, special: null },
                         { status: 'gzp-build', special: user.department._id },
-                        { status: 'install-devices', special: user.department._id }
+                        { status: 'install-devices', special: user.department._id },
+                        { status: 'build-shutdown', special: user.department._id }
                     ]
                 }
                 break;
@@ -1369,6 +1376,36 @@ module.exports = {
                 order.history.push(helper.historyGenerator('network', res.locals.__user));
                 notify.create(res.locals.__user, order, 'network');
                 break;
+            case 'start-pre-shutdown':
+                order.status = 'pre-shutdown';
+                order.deadline = await helper.calculateDeadline(1);
+                order.date['cs-pre-shutdown'] = await helper.calculateDeadline(1);
+                order.date['start-pre-shutdown'] = new Date();
+                order.history.push(helper.historyGenerator('start-pre-shutdown', res.locals.__user));
+                notify.create(res.locals.__user, order, 'start-pre-shutdown');
+                break;
+            case 'start-gzp-shutdown':
+                order.status = 'build-shutdown';
+                order.deadline = null;
+                order.date['pre-shutdown'] = new Date();
+                order.history.push(helper.historyGenerator('start-build-shutdown', res.locals.__user));
+                notify.create(res.locals.__user, order, 'start-build-shutdown');
+                break;
+            case 'start-stop-shutdown':
+                order.status = 'shutdown';
+                order.deadline = null;
+                order.date['shutdown'] = new Date();
+                order.history.push(helper.historyGenerator('shutdown', res.locals.__user));
+                notify.create(res.locals.__user, order, 'stop-shutdown');
+                notify.create(res.locals.__user, order, 'shutdown');
+                break;
+            case 'end-gzp-shutdown':
+                order.status = 'shutdown';
+                order.deadline = null;
+                order.date['shutdown'] = new Date();
+                order.history.push(helper.historyGenerator('shutdown', res.locals.__user));
+                notify.create(res.locals.__user, order, 'shutdown');
+                break;
             case 'end-sks-build':
                 order.status = 'network';
                 order.date['sks-build'] = new Date();
@@ -1622,7 +1659,9 @@ module.exports = {
             { status: 'sks-build' },
             { status: 'install-devices' },
             { status: 'client-notify' },
-            { status: 'network' }
+            { status: 'network' },
+            { status: 'pre-shutdown' },
+            { status: 'build-shutdown' }
         ];
 
         var deadlineQuery = {
@@ -1685,7 +1724,9 @@ module.exports = {
                                 { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
                                 { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
                                 { status: 'gzp-build', 'special': deps[i]._id },
-                                { status: 'install-devices', 'special': deps[i]._id }
+                                { status: 'install-devices', 'special': deps[i]._id },
+                                { status: 'build-shutdown', 'info.city': deps[i].cities, 'special': null },
+                                { status: 'build-shutdown', 'special': deps[i]._id },
                             ]
                         }),
                         'pre-deadline': await Order.count({
@@ -1708,7 +1749,9 @@ module.exports = {
                                         { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
                                         { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
                                         { status: 'gzp-build', 'special': deps[i]._id },
-                                        { status: 'install-devices', 'special': deps[i]._id }
+                                        { status: 'install-devices', 'special': deps[i]._id },
+                                        { status: 'build-shutdown', 'info.city': deps[i].cities, 'special': null },
+                                        { status: 'build-shutdown', 'special': deps[i]._id },
                                     ]
                                 },
                                 deadlineQuery
@@ -1839,12 +1882,20 @@ module.exports = {
                 case 'net':
                     counter[deps[i]._id] = {
                         build: await Order.count({
-                            status: 'network'
+                            $or: [
+                                { status: 'network' },
+                                { status: 'pre-shutdown' }
+                            ]
                         }),
                         'build-deadline': await Order.count({
                             $and: [
                                 deadlineQuery,
-                                { status: 'network' }
+                                {
+                                    $or: [
+                                        { status: 'network' },
+                                        { status: 'pre-shutdown' }
+                                    ]
+                                },
                             ]
                         })
                     }
@@ -2033,8 +2084,10 @@ module.exports = {
     report: async (req, res) => {
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
+        if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
         if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
         if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
+        if (req.query.manager && req.query.manager.length == 1) req.query.manager = [req.query.manager]
 
         var query = await helper.makeQuery(req, res);
         query.special = undefined;
@@ -2065,6 +2118,7 @@ module.exports = {
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
+        if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
         if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
         if (req.query.manager && req.query.manager.length == 1) req.query.manager = [req.query.manager]
 

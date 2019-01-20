@@ -27,7 +27,8 @@ block('order').content()(function () {
             elem: 'head',
             order: order,
             user: ctx.user,
-            tab: tab
+            tab: tab,
+            dataset: dataset
         },
         {
             elem: 'body',

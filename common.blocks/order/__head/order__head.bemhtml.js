@@ -1,28 +1,14 @@
 block('order').elem('head').content()(function () {
-    var order = this.ctx.order;
+    const ctx = this.ctx;
+    const { order, dataset, user } = ctx;
+
     var pause = '',
-        resp = null,
-        user = this.ctx.user;
+        resp = null;
+        
+    const { services } = dataset;
 
-    var services = {
-        internet: 'Интернет',
-         vpls: 'VPLS',
-         l3vpn: 'L3VPN',
-         l2vpn: 'L2VPN',
-         cloud: 'Облачная АТС',
-         digital: 'Цифровые каналы',
-         sks: 'СКС',
-         sputnik: 'Спутник',
-         devices: 'Размещение оборудования',
-         phone: 'Телефония (IP-телефония)',
-         analog: 'Аналоговые каналы (ТЧ)',
-         vibe: 'Волокно',
-         wifi: 'Авторизация Wi-Fi',
-         iptv: 'IP TV'
-    };
-
-    var isInit = (user.department.type == 'b2b' || user.department.type == 'b2o');
-    var isAdmin = (user.department.type == 'admin');
+    const isInit = (user.department.type == 'b2b' || user.department.type == 'b2o');
+    const isAdmin = (user.department.type == 'admin');
 
     const isOn = (order.status == 'succes');
     const hasVolume = ['internet', 'l2vpn', 'l3vpn', 'vpls'].includes(order.info.service);

@@ -217,6 +217,42 @@ block('searcher')(
                                 content: [
                                     {
                                         elem: 'label',
+                                        content: 'Отключение'
+                                    },
+                                    {
+                                        elem: 'cell',
+                                        content: {
+                                            block: 'checkbox-group',
+                                            mods: {
+                                                theme: 'islands',
+                                                size: 'l',
+                                                type: 'button'
+                                            },
+                                            val: query.shutdown || [],
+                                            name: 'shutdown',
+                                            options: [
+                                                {
+                                                    val: '1',
+                                                    text: 'Отключение'
+                                                },
+                                                {
+                                                    val: '2',
+                                                    text: 'Демонтаж'
+                                                },
+                                                {
+                                                    val: '3',
+                                                    text: 'Отключён'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                elem: 'row',
+                                content: [
+                                    {
+                                        elem: 'label',
                                         content: 'Завершение'
                                     },
                                     {

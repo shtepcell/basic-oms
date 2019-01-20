@@ -18,8 +18,9 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
         isRequester = (order.requestPause.user == user._id + ''),
         isReject = (order.status == 'reject'),
         isOn = (order.status == 'succes'),
+        isShut = (order.status == 'pre-shutdown'),
+        isDemontage = (order.status == 'build-shutdown'),
         mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0),
-        incomeIsFill = (order.info['income-once'] && order.info['income-monthly']),
         isSKS = (order.info.service == 'sks');
 
     if (mustIDOSS) {
@@ -142,6 +143,46 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 id: order.id
             },
             display: (!isReject && (isOwner || isAdmin)) && !isOn
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Направить на отключение',
+                to: 'start-pre-shutdown',
+                id: order.id
+            },
+            display: (isOwner || isAdmin) && isOn
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Отключить без демонтажа СРЕ',
+                to: 'start-stop-shutdown',
+                id: order.id
+            },
+            display: (isNetUser || isAdmin) && isShut
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Отключить и демонтировать',
+                to: 'start-gzp-shutdown',
+                id: order.id
+            },
+            display: (isNetUser || isAdmin) && isShut
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Демонтаж выполнен',
+                to: 'end-gzp-shutdown',
+                id: order.id
+            },
+            display: (isGUS || isAdmin) && isDemontage
         },
         {
             block: 'order',

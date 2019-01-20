@@ -180,7 +180,12 @@ var schema = new Schema({
         'sks-build': Date,
         'network': Date,
         'succes': Date,
-        'reject': Date
+        'reject': Date,
+
+        'cs-pre-shutdown': Date,
+        'start-pre-shutdown': Date,
+        'pre-shutdown': Date,
+        'shutdown': Date,
     },
     history: [{
         name: String,

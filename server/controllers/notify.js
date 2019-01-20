@@ -2,14 +2,12 @@ const helper = require('./helper'),
     Notify = require('../models/Notify'),
     Account = require('../models/Account'),
     Department = require('../models/Department'),
-    Order = require('../models/Order'),
 
     Render = require('../render'),
     render = Render.render,
 
     { sendMail } = require('./mailer'),
 
-    common = require('./helper'),
     events = require('../common-data').notifies;
 
 module.exports = {
@@ -60,10 +58,10 @@ module.exports = {
         var worker = [];
 
         switch (type) {
-
             case "start-gzp-pre":
             case "start-gzp-build":
             case "start-install-devices":
+            case "start-build-shutdown":
                 var gus = await Department.findOne({ cities: order.info.city });
                 if(order.special) gus = await Department.findOne({_id: order.special});
                 worker = await Account.find({ department: gus });
@@ -82,6 +80,7 @@ module.exports = {
 
             case "start-stop-pre":
             case "start-stop-build":
+            case "stop-shutdown":
                 worker = await Account.find({ department: b2o });
                 break;
 
@@ -93,6 +92,7 @@ module.exports = {
             case "end-gzp-build":
             case "end-sks-build":
             case "end-install-devices":
+            case "start-pre-shutdown":
                 worker = await Account.find({department: net});
                 break;
 
@@ -100,6 +100,7 @@ module.exports = {
             case "end-stop-pre":
             case "end-gzp-pre":
             case "end-sks-pre":
+            case "shutdown":
                 worker = await Account.find({ _id: order.info.initiator });
                 break;
 
@@ -116,7 +117,11 @@ module.exports = {
 
         for (var i = 0; i < worker.length; i++) {
             worker[i].notifies.unshift(ntf);
-            worker[i].save();
+            try {
+                await worker[i].save();
+            } catch (err) {
+                console.error(err);
+            }
         }
 
         sendMail(order, worker, type);

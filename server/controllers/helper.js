@@ -127,6 +127,18 @@ module.exports = {
             case 'change-order':
                 ret.name = `Изменение ёмкости ( ${opt.from} -> ${opt.to} )`;
                 break;
+            case 'start-pre-shutdown':
+                ret.name = 'Запрос отключения услуги';
+                break;
+            case 'start-build-shutdown':
+                ret.name = 'Отключение услуги. Запрос демонтажа';
+                break;
+            case 'shutdown':
+                ret.name = 'Услуга отключена';
+                break;
+            default:
+                ret.name = 'Неизвестное событие'
+                break;
         }
         return ret;
     },
@@ -358,12 +370,19 @@ module.exports = {
                                 { status: 'gzp-build', 'info.city': resp.cities, 'special': null },
                                 { status: 'install-devices', 'info.city': resp.cities, 'special': null },
                                 { status: 'gzp-build', 'special': resp._id },
-                                { status: 'install-devices', 'special': resp._id }
+                                { status: 'install-devices', 'special': resp._id },
+                                { status: 'build-shutdown', 'special': resp._id },
+                                { status: 'build-shutdown', 'info.city': resp.cities, 'special': null }
                             ]
                         }
                         break;
                     case 'net':
-                        respQ = { status: 'network' };
+                        respQ = { 
+                            $or: [
+                                { status: 'network' },
+                                { status: 'pre-shutdown' }
+                            ]
+                        };
                         break;
                     case 'sks':
                         respQ = {
@@ -417,6 +436,18 @@ module.exports = {
             }
             if (query.build.indexOf('6') >= 0) {
                 status.push({ status: 'sks-build' });
+            }
+        }
+
+        if (query.shutdown) {
+            if (query.shutdown.indexOf('1') >= 0) {
+                status.push({ status: 'pre-shutdown' });
+            }
+            if (query.shutdown.indexOf('2') >= 0) {
+                status.push({ status: 'build-shutdown' });
+            }
+            if (query.shutdown.indexOf('3') >= 0) {
+                status.push({ status: 'shutdown' });
             }
         }
 
@@ -796,6 +827,7 @@ module.exports = {
             case 'gzp-pre':
             case 'gzp-build':
             case 'install-devices':
+            case 'build-shutdown':
                 var dep = await Department.findOne({ cities: order.info.city._id });
                 if (order.special) dep = await Department.findOne({ _id: order.special });
                 // if(!dep) dep = await Department.findOne({type: 'b2o'});
@@ -818,6 +850,7 @@ module.exports = {
                 else return `${dep1.name} и ${dep2.name}`;
                 break;
             case 'network':
+            case 'pre-shutdown':
                 var dep = await Department.findOne({ type: 'net' });
                 return dep.name;
                 break;

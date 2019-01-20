@@ -10,6 +10,7 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
         isInstall = (order.status == 'install-devices'),
         isPause = (order.pause.status),
         isAdmin = (user.department.type == 'admin'),
+        isDemontage = (order.status == 'build-shutdown'),
         special = (user.department._id == '' + order.special);
 
     return [
@@ -45,6 +46,16 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
         //     },
         //     display: ((isOwner || special) && isBuild)
         // },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Демонтаж выполнен',
+                to: 'end-gzp-shutdown',
+                id: order.id
+            },
+            display: (isOwner || isAdmin) && isDemontage
+        },
         {
             block: 'order',
             elem: 'action',
