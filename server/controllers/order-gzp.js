@@ -6,10 +6,10 @@ const logger = require('./logger');
 module.exports = {
     endBuild: async (req, res, order) => {
 
-        // if (!req.body.odf || !req.body.node) {
-        //     res.status(400).send({ errText: 'ODF и узел агрегации обязательны к заполнению!' });
-        //     return;
-        // }
+        if (!req.body.odf || !req.body.node) {
+            res.status(400).send({ errText: 'ODF и узел агрегации обязательны к заполнению!' });
+            return;
+        }
 
         order.gzp.odf = req.body.odf;
         order.gzp.node = req.body.node;
