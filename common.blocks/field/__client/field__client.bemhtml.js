@@ -1,7 +1,6 @@
 block('field').elem('client').content()(function () {
-    var ctx = this.ctx,
-        order = ctx.order,
-        dataset = ctx.dataset;
+    const ctx = this.ctx;
+    const order = ctx.order;
 
     if(ctx.display) {
         return [
@@ -26,9 +25,9 @@ block('field').elem('client').content()(function () {
 })
 
 block('field').elem('client').elemMod('access', true).content()(function () {
-    var ctx = this.ctx,
-        order = ctx.order,
-        dataset = ctx.dataset;
+    const ctx = this.ctx;
+    const order = ctx.order;
+    const dataset = ctx.dataset;
 
     if(ctx.display) {
         return [

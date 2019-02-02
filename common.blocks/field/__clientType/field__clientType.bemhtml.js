@@ -1,31 +1,4 @@
-block('field').elem('cms').content()(function () {
-    var ctx = this.ctx,
-        order = ctx.order,
-        dataset = ctx.dataset;
-
-    if(ctx.display) {
-        return [
-            {
-                block: 'order',
-                elem: 'body-row',
-                content: [
-                    {
-                        block: 'order',
-                        elem: 'body-row-name',
-                        content: 'Номер CMS'
-                    },
-                    {
-                        block: 'order',
-                        elem: 'body-row-data',
-                        content: `${order.info.cms}`
-                    }
-                ]
-            }
-        ]
-    }
-})
-
-block('field').elem('cms').elemMod('access', true).content()(function () {
+block('field').elem('clientType').content()(function () {
     var ctx = this.ctx,
         order = ctx.order;
 
@@ -38,24 +11,63 @@ block('field').elem('cms').elemMod('access', true).content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-name',
-                        content: 'Номер CMS'
+                        content: 'Тип клиента'
+                    },
+                    {
+                        block: 'order',
+                        elem: 'body-row-data',
+                        content: order.info.clientType || 'Не указан'
+                    }
+                ]
+            }
+        ]
+    }
+})
+
+block('field').elem('clientType').elemMod('access', true).content()(function () {
+    var ctx = this.ctx,
+        order = ctx.order,
+        dataset = ctx.dataset;
+
+    const types = dataset.types.map( item => {
+        return {
+            text: item,
+            val: item
+        }
+    });
+
+    if (order && !order.info.clientType) {
+        types.unshift({
+            text: 'Не указан',
+            val: null
+        })
+    }
+    
+    if(ctx.display) {
+        return [
+            {
+                block: 'order',
+                elem: 'body-row',
+                content: [
+                    {
+                        block: 'order',
+                        elem: 'body-row-name',
+                        content: 'Тип клиента'
                     },
                     {
                         block: 'order',
                         elem: 'body-row-data',
                         content: [
                             {
-                                block: 'input',
-                                name: 'cms',
+                                block: 'select',
+                                name: 'clientType',
                                 mods: {
-                                    width: 'available',
+                                    mode: 'radio',
                                     theme: 'islands',
-                                    type: 'cms',
                                     size: 'l'
                                 },
-                                val: (order)?`${order.info.cms}`:'',
-                                autocomplete: false,
-                                placeholder: '__-______-__'
+                                val: order.info.clientType || null,
+                                options: types
                             }
                         ]
                     }

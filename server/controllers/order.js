@@ -4,7 +4,6 @@ const Static = require('../models/Static');
 const Department = require('../models/Department');
 const Account = require('../models/Account');
 const Provider = require('../models/Provider');
-const mkdirp = require('mkdirp-promise');
 const Flag = require('../models/Flag');
 const notify = require('./notify');
 const { getExcel, getReportExcel } = require('./export');
@@ -1533,6 +1532,8 @@ module.exports = {
                 res.status(400).send({ errText: 'Неверный формат даты' })
                 return;
             }
+
+            req.body['date-request'] = date;
             order.info['date-request'] = date;
             await order.save()
         }

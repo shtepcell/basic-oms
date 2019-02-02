@@ -7,7 +7,7 @@
         {
             block: 'input',
             mods: {
-                type: 'text',
+                type: ['text', 'cms'],
                 theme: 'islands',
                 size: 'm'
             }

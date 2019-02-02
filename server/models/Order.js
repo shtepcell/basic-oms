@@ -58,6 +58,7 @@ var schema = new Schema({
             ref: 'Client',
             required: true
         },
+        clientType: String,
         contact: String,
         service: {
             type: String,

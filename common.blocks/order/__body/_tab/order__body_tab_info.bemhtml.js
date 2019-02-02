@@ -1,18 +1,17 @@
 block('order').elem('body').elemMod('tab', 'info').content()(function () {
 
     var ctx = this.ctx,
-        tab = ctx.tab,
         dataset = ctx.dataset,
         user = ctx.user,
         order = ctx.order,
         adminEdit = ctx.adminEdit;
 
-    var isOwner = (user._id+'' == order.info.initiator._id+''),
+    var isOwner = (order.info.initiator.department._id == user.department._id + ''),
         isMatch = (order.status == 'client-match'),
         isNotify = (order.status == 'client-notify'),
         isEnd = (order.status == 'succes' || order.status == 'reject' || isNotify),
         isRelation = (order.info.relation && !isNaN(order.info.relation)),
-        isPre = (order.status == 'all-pre' || order.status == 'gzp-pre' || order.status == 'stop-pre'),
+        // isPre = (order.status == 'all-pre' || order.status == 'gzp-pre' || order.status == 'stop-pre'),
         mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0);
 
     return [
@@ -50,6 +49,16 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             order: order,
             elemMods: {
                 access: adminEdit
+            },
+            dataset: dataset,
+            display: true
+        },
+        {
+            block: 'field',
+            elem: 'clientType',
+            order: order,
+            elemMods: {
+                access: adminEdit || isOwner
             },
             dataset: dataset,
             display: true

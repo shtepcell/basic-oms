@@ -294,8 +294,10 @@ module.exports = {
         }
 
         if (query.cms) {
-            return { 'info.cms': query.cms, status: { $ne: 'secret' } };
+            var rgx =  new RegExp('' + query.cms + '', 'i');
+            return { 'info.cms': {$regex: rgx} }
         }
+        
         if (query.func) {
             if (query.func.indexOf('1') >= 0) {
                 qr['info.initiator'] = res.locals.__user._id;
@@ -501,6 +503,12 @@ module.exports = {
             } else {
                 qr['$and'] = [{ 'asdasd': 'asdasdasd' }]
             }
+        }
+
+        if (query.clientType) {
+            if (qr['$and']) {
+                qr['$and'].push({ 'info.clientType': query.clientType })
+            } else qr['$and'] = [{ 'info.clientType': query.clientType }];
         }
 
         if (query.city) {
@@ -970,6 +978,8 @@ module.exports = {
 
         var services = common.services;
         var stages = common.stages;
+        var { types } = common.types;
+
 
         var flags = {};
         for (var i = 0; i < _flags.length; i++) {
@@ -1006,6 +1016,7 @@ module.exports = {
             streets: streets,
             services: services,
             stages: stages,
+            types: types,
             deps: deps,
             flags: flags,
             pre: pre

@@ -1,17 +1,22 @@
 block('order').elem('body').elemMod('tab', 'init').content()(function () {
-
     const ctx = this.ctx;
-    const tab = ctx.tab;
     const dataset = ctx.dataset;
     const order = ctx.order;
 
-    const services = dataset.services;
+    const { services, types } = dataset;
 
     const srvs = Object.keys(services).map( (item) => {
         return {
             val: item,
             text: services[item]
         };
+    });
+
+    const typesOption = types.map( item => {
+        return {
+            text: item,
+            val: item
+        }
     });
     
     srvs.unshift({text: ''});
@@ -40,6 +45,30 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                     data: dataset['clients']
                                 },
                                 val: order.client
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                elem: 'body-row',
+                content: [
+                    {
+                        elem: 'body-row-name',
+                        content: 'Тип клиента'
+                    },
+                    {
+                        elem: 'body-row-data',
+                        content: [
+                            {
+                                block: 'select',
+                                name: 'clientType',
+                                mods: {
+                                    mode: 'radio',
+                                    theme: 'islands',
+                                    size: 'l'
+                                },
+                                options: typesOption
                             }
                         ]
                     }
@@ -87,11 +116,12 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                 mods: {
                                     width: 'available',
                                     theme: 'islands',
+                                    type: 'cms',
                                     size: 'l'
                                 },
                                 val: order.cms,
                                 autocomplete: false,
-                                placeholder: '12-345678-90'
+                                placeholder: '__-______-__'
                             }
                         ]
                     }

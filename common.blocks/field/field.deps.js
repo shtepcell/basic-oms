@@ -3,6 +3,7 @@
         {
             block: 'field',
             elems: [
+                'clientType',
                 'odf',
                 'node',
                 'client',

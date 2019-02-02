@@ -1,33 +1,28 @@
 block('order').elem('actions').elemMod('tab', 'info').content()(function () {
-    var ctx = this.ctx,
-        order = ctx.order,
-        user = ctx.user,
-        adminEdit = ctx.adminEdit;
+    const ctx = this.ctx;
+    const order = ctx.order;
+    const user = ctx.user;
+    const adminEdit = ctx.adminEdit;
 
-    var isOwner = (order.info.initiator.department._id == user.department._id + ''),
-        isGUS = (user.department.name == order.zone),
-        isB2O = (!isOwner && user.department.type == 'b2o' && (order.status == 'all-pre' || order.status == 'stop-pre' || order.status == 'stop-build')),
-        isPre = (order.status == 'all-pre' || order.status == 'gzp-pre' || order.status == 'stop-pre'),
-        isMatch = (order.status == 'client-match'),
-        isNotify = (order.status == 'client-notify'),
-        isNetStatus = (order.status == 'network'),
-        isNetUser = (user.department.type == 'net'),
-        isAdmin = (user.department.type == 'admin'),
-        isPause = (order.pause.status),
-        isRequest = (order.requestPause.status),
-        isRequester = (order.requestPause.user == user._id + ''),
-        isReject = (order.status == 'reject'),
-        isOn = (order.status == 'succes'),
-        isShut = (order.status == 'pre-shutdown'),
-        isDemontage = (order.status == 'build-shutdown'),
-        mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0),
-        isSKS = (order.info.service == 'sks');
+    const isOwner = (order.info.initiator.department._id == user.department._id + '');
+    const isGUS = (user.department.name == order.zone);
+    const isB2O = (!isOwner && user.department.type == 'b2o' && (order.status == 'all-pre' || order.status == 'stop-pre' || order.status == 'stop-build'));
+    const isPre = (order.status == 'all-pre' || order.status == 'gzp-pre' || order.status == 'stop-pre');
+    const isMatch = (order.status == 'client-match');
+    const isNotify = (order.status == 'client-notify');
+    const isNetStatus = (order.status == 'network');
+    const isNetUser = (user.department.type == 'net');
+    const isAdmin = (user.department.type == 'admin');
+    const isPause = (order.pause.status);
+    const isRequest = (order.requestPause.status);
+    const isRequester = (order.requestPause.user == user._id + '');
+    const isReject = (order.status == 'reject');
+    const isOn = (order.status == 'succes');
+    const isShut = (order.status == 'pre-shutdown');
+    const isDemontage = (order.status == 'build-shutdown');
+    const isSKS = (order.info.service == 'sks');
 
-    if (mustIDOSS) {
-        incomeIsFill = (order.info['income-once'] && order.info['income-monthly'] && order.info.idoss)
-    }
-
-    var display = {
+    const display = {
         'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need != undefined || (order.gzp.need && order.gzp.capability) && !isSKS)
     };
 

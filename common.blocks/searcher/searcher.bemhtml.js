@@ -21,6 +21,16 @@ block('searcher')(
 
         srvs.unshift({text: 'Не выбрано'});
 
+
+        const types = ctx.dataset.types.map( item => {
+            return {
+                text: item,
+                val: item
+            }
+        });
+
+        types.unshift({text: 'Не выбрано'});
+
         return [
             {
                 elem: 'form',
@@ -70,11 +80,11 @@ block('searcher')(
                                             autocomplete: false,
                                             mods: {
                                                 width: 'available',
-                                                type: 'text',
+                                                type: 'cms',
                                                 theme: 'islands',
                                                 size: 'l'
                                             },
-                                            placeholder: '12-345678'
+                                            placeholder: '__-______-_'
                                         }
                                     }
                                 ]
@@ -363,6 +373,29 @@ block('searcher')(
                                             dataprovider: {
                                                 data: data.clients
                                             }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                elem: 'row',
+                                content: [
+                                    {
+                                        elem: 'label',
+                                        content: 'Тип клиента'
+                                    },
+                                    {
+                                        elem: 'cell',
+                                        content: {
+                                            block: 'select',
+                                            name: 'clientType',
+                                            val: query.clientType,
+                                            mods: {
+                                                mode: 'radio',
+                                                theme: 'islands',
+                                                size: 'l'
+                                            },
+                                            options: types
                                         }
                                     }
                                 ]
