@@ -21,6 +21,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const isShut = (order.status == 'pre-shutdown');
     const isDemontage = (order.status == 'build-shutdown');
     const isSKS = (order.info.service == 'sks');
+    const isStartPause = (order.status == 'pre-pause');
 
     const display = {
         'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need != undefined || (order.gzp.need && order.gzp.capability) && !isSKS)
@@ -138,6 +139,26 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 id: order.id
             },
             display: (!isReject && (isOwner || isAdmin)) && !isOn
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Приостановить сервис',
+                to: 'start-pause-service',
+                id: order.id
+            },
+            display: (isOwner || isAdmin) && isOn
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Сервис приостановлен',
+                to: 'pause-service',
+                id: order.id
+            },
+            display: (isNetUser || isAdmin) && isStartPause
         },
         {
             block: 'order',

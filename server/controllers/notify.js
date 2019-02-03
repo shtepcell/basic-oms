@@ -93,6 +93,7 @@ module.exports = {
             case "end-sks-build":
             case "end-install-devices":
             case "start-pre-shutdown":
+            case "start-pause-service":
                 worker = await Account.find({department: net});
                 break;
 
@@ -101,6 +102,7 @@ module.exports = {
             case "end-gzp-pre":
             case "end-sks-pre":
             case "shutdown":
+            case "pause-service":
                 worker = await Account.find({ _id: order.info.initiator });
                 break;
 

@@ -136,6 +136,12 @@ module.exports = {
             case 'shutdown':
                 ret.name = 'Услуга отключена';
                 break;
+            case 'start-pause-service':
+                ret.name = 'Начало приостановки сервиса';
+                break;
+            case 'pause-service':
+                ret.name = 'Выполнена приостановка сервиса';
+                break;
             default:
                 ret.name = 'Неизвестное событие'
                 break;
@@ -450,6 +456,12 @@ module.exports = {
             }
             if (query.shutdown.indexOf('3') >= 0) {
                 status.push({ status: 'shutdown' });
+            }
+            if (query.shutdown.indexOf('4') >= 0) {
+                status.push({ status: 'pre-pause' });
+            }
+            if (query.shutdown.indexOf('5') >= 0) {
+                status.push({ status: 'pause' });
             }
         }
 
@@ -859,6 +871,7 @@ module.exports = {
                 break;
             case 'network':
             case 'pre-shutdown':
+            case 'pre-pause':
                 var dep = await Department.findOne({ type: 'net' });
                 return dep.name;
                 break;

@@ -444,7 +444,8 @@ module.exports = {
                 query = {
                     '$or': [
                         { status: 'network' },
-                        { status: 'pre-shutdown' }
+                        { status: 'pre-shutdown' },
+                        { status: 'pre-pause' }
                     ]
                 }
                 break;
@@ -1377,8 +1378,8 @@ module.exports = {
                 break;
             case 'start-pre-shutdown':
                 order.status = 'pre-shutdown';
-                order.deadline = await helper.calculateDeadline(1);
-                order.date['cs-pre-shutdown'] = await helper.calculateDeadline(1);
+                order.deadline = await helper.calculateDeadline(2);
+                order.date['cs-pre-shutdown'] = await helper.calculateDeadline(2);
                 order.date['start-pre-shutdown'] = new Date();
                 order.history.push(helper.historyGenerator('start-pre-shutdown', res.locals.__user));
                 notify.create(res.locals.__user, order, 'start-pre-shutdown');
@@ -1389,6 +1390,19 @@ module.exports = {
                 order.date['pre-shutdown'] = new Date();
                 order.history.push(helper.historyGenerator('start-build-shutdown', res.locals.__user));
                 notify.create(res.locals.__user, order, 'start-build-shutdown');
+                break;
+            case 'start-pause-service':
+                order.status = 'pre-pause';
+                order.deadline = await helper.calculateDeadline(2);
+                order.history.push(helper.historyGenerator('start-pause-service', res.locals.__user));
+                notify.create(res.locals.__user, order, 'start-pause-service');
+                break;
+             case 'pause-service':
+                order.status = 'pause';
+                order.deadline = null;
+                order.date['pre-pause'] = new Date();
+                order.history.push(helper.historyGenerator('pause-service', res.locals.__user));
+                notify.create(res.locals.__user, order, 'pause-service');
                 break;
             case 'start-stop-shutdown':
                 order.status = 'shutdown';
@@ -1662,7 +1676,8 @@ module.exports = {
             { status: 'client-notify' },
             { status: 'network' },
             { status: 'pre-shutdown' },
-            { status: 'build-shutdown' }
+            { status: 'build-shutdown' },
+            { status: 'pre-pause' }
         ];
 
         var deadlineQuery = {
@@ -1885,7 +1900,8 @@ module.exports = {
                         build: await Order.count({
                             $or: [
                                 { status: 'network' },
-                                { status: 'pre-shutdown' }
+                                { status: 'pre-shutdown' },
+                                { status: 'pre-pause' }
                             ]
                         }),
                         'build-deadline': await Order.count({
@@ -1894,7 +1910,8 @@ module.exports = {
                                 {
                                     $or: [
                                         { status: 'network' },
-                                        { status: 'pre-shutdown' }
+                                        { status: 'pre-shutdown' },
+                                        { status: 'pre-pause' }
                                     ]
                                 },
                             ]
