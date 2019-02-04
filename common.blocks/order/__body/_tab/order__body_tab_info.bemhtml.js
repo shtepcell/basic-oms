@@ -8,6 +8,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
 
     var isOwner = (order.info.initiator.department._id == user.department._id + ''),
         isMatch = (order.status == 'client-match'),
+        isParticalPre = (order.status == 'gzp-pre' && order.stop.capability == true || ( order.gzp.need != undefined || (order.gzp.need && order.gzp.capability) ) ),
         isNotify = (order.status == 'client-notify'),
         isEnd = (order.status == 'succes' || order.status == 'reject' || isNotify),
         isRelation = (order.info.relation && !isNaN(order.info.relation)),
@@ -179,27 +180,27 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elem: 'idoss',
             order: order,
             elemMods: {
-                access: (adminEdit || isOwner && isMatch)
+                access: (adminEdit || isOwner && (isMatch || isParticalPre))
             },
-            display: ( (isMatch && isOwner && mustIDOSS) || !!order.info['idoss'] )
+            display: ( ((isMatch || isParticalPre) && isOwner && mustIDOSS) || !!order.info['idoss'] )
         },
         {
             block: 'field',
             elem: 'income-once',
             order: order,
             elemMods: {
-                access: (adminEdit || isOwner && isMatch)
+                access: (adminEdit || isOwner && (isMatch || isParticalPre))
             },
-            display: ( (isMatch && isOwner) || !!order.info['income-monthly'])
+            display: ( ((isMatch || isParticalPre) && isOwner) || !!order.info['income-monthly'])
         },
         {
             block: 'field',
             elem: 'income-monthly',
             order: order,
             elemMods: {
-                access: (adminEdit || isOwner && isMatch)
+                access: (adminEdit || isOwner && (isMatch || isParticalPre))
             },
-            display: ( (isMatch && isOwner) || !!order.info['income-monthly'])
+            display: ( ((isMatch || isParticalPre) && isOwner) || !!order.info['income-monthly'])
         },
         {
             block: 'field',
