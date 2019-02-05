@@ -71,6 +71,13 @@ function get(order, field) {
                     return order.info.client.type.name
             }
         },
+        'typeOfClient': {
+            text: 'Тип клиента (в заказе)',
+            value: () => {
+                if (order.info.clientType)
+                    return order.info.clientType
+            }
+        },
         'city': {
             text: 'Город',
             value: () => {
@@ -254,7 +261,7 @@ function get(order, field) {
     return fields[field];
 }
 
-var def = ['id', 'date-init', 'initiator', 'date-on', 'cms', 'status', 'cs', 'department',
+var def = ['id', 'date-init', 'initiator', 'date-on', 'cms', 'status', 'cs', 'department', 'typeOfClient',
     'client', 'client-type', 'city', 'street', 'adds',
     'coordinate', 'service', 'volume', 'relation', 'ip',
     'init-add-info', 'income-once', 'income-monthly',
