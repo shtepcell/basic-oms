@@ -1328,7 +1328,10 @@ module.exports = {
                 var now = new Date();
                 var pause = order.pause.date;
                 pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
-                order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
+                if (order.deadline) {
+                    order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
+                }
+                
                 order.pause = {
                     status: false,
                     date: undefined
