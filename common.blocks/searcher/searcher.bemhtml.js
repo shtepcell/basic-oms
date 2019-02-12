@@ -123,6 +123,10 @@ block('searcher')(
                                                 {
                                                     val: '4',
                                                     text: 'Наличие CMS'
+                                                },
+                                                {
+                                                    val: '5',
+                                                    text: 'Архивные'
                                                 }
                                             ]
                                         }
