@@ -156,6 +156,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             data: {
                 text: 'Приостановить сервис',
                 to: 'start-pause-service',
+                contact: order.info.contact,
                 id: order.id
             },
             display: (isOwner || isAdmin) && isOn
@@ -176,6 +177,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             data: {
                 text: 'Направить на отключение',
                 to: 'start-pre-shutdown',
+                contact: order.info.contact,
                 id: order.id
             },
             display: (isOwner || isAdmin) && isOn

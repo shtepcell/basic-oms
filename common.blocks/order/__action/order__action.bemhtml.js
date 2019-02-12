@@ -1,8 +1,6 @@
 block('order').elem('action').replace()(function () {
     const data = this.ctx.data;
-    const id = data.id;
-    const text = data.text;
-    const to = data.to;
+    const { id, text, to, contact } = data;
 
     if (this.ctx.display) {
         return [
@@ -14,7 +12,8 @@ block('order').elem('action').replace()(function () {
                     js: {
                         url: `/order/${id}/action`,
                         text: text,
-                        to: to
+                        to: to,
+                        contact: contact
                     }
                 },
                 mods: {

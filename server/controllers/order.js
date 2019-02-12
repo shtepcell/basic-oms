@@ -1375,6 +1375,7 @@ module.exports = {
                 break;
             case 'start-pre-shutdown':
                 order.status = 'pre-shutdown';
+                order.info.contact = reqData.contact;
                 order.deadline = await helper.calculateDeadline(2);
                 order.date['cs-pre-shutdown'] = await helper.calculateDeadline(2);
                 order.date['start-pre-shutdown'] = new Date();
@@ -1390,6 +1391,7 @@ module.exports = {
                 break;
             case 'start-pause-service':
                 order.status = 'pre-pause';
+                order.info.contact = reqData.contact;
                 order.deadline = await helper.calculateDeadline(2);
                 order.history.push(helper.historyGenerator('start-pause-service', res.locals.__user));
                 notify.create(res.locals.__user, order, 'start-pause-service');

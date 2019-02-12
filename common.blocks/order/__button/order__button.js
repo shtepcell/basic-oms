@@ -30,6 +30,16 @@ modules.define('order__button',
             }
 
             if (confirm(`Вы уверены, что хотите ${data.text}?`)) {
+
+                if (data.contact) {
+                    const contact = prompt('Подтвердите актуальность контактных данных', data.contact);
+                    if (contact == '' || contact == null) {
+                        alert('Контактные данные не могут быть пустыми!');
+                        return;
+                    }
+                    data.contact = contact;
+                }
+                
                 $.ajax({
                     url: this.params.url,
                     type: 'POST',
