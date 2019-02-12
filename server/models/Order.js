@@ -3,6 +3,7 @@ var mongoose = require('../controllers/connect'),
     mongoosePaginate = require('mongoose-paginate');
 
 var schema = new Schema({
+    lastMod: Date,
     id: {
         type: Number,
         required: true,
@@ -200,20 +201,35 @@ schema.plugin(deepPopulate);
 
 var order;
 
-schema.statics.getNextId = async () => { //TODO: Сделать counter
-    var ret = await order.find().sort('id').lean();
+const isSecret = {
+    status: 'secret'
+}
 
-    if (ret.length == 0)
-        return 1;
+schema.statics.get = function (query, archive) { 
+    const old = new Date();
+    old.setDate(-90);
 
-    return ret[ret.length - 1].id + 1;
+    const isArchive = {
+        status: 'client-match',
+        lastMod: {$lt: old}
+    }
+    
+    if (archive) {
+        query['$nor'] = [isSecret];
+    } else {
+        query['$nor'] = [isArchive, isSecret];
+    }
+
+    return order.find(query);
 };
 
-schema.statics.create = async (ordr) => {
-    var id = await order.getNextId();
-    ordr.id = id;
-    return ordr.save();
-}
+// schema.pre('save', async function (next) {
+//     if (!this.isEditing) {
+//         this.lastMod = new Date();
+//     }
+//     next();
+// })
+
 
 schema.plugin(mongoosePaginate);
 order = mongoose.model('Order', schema);

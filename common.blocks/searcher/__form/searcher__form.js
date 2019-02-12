@@ -38,8 +38,6 @@ modules.define('searcher__form', ['i-bem-dom', 'location'], function (provide, b
                     }
                 });
 
-
-
                 var checkboxs = this.findChildBlocks(bemDom.declBlock('checkbox-group', {}));
                 checkboxs.forEach(item => {
                     let val = item.getVal();

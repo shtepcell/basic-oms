@@ -127,8 +127,9 @@ module.exports = {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
         }
-        else
+        else {
             res.redirect(req.path);
+        }
 
         var query = {};
         var subQ = await helper.makeQuery(req, res);
@@ -144,9 +145,8 @@ module.exports = {
             'requestPause.status': true
         };
 
-        var orders = await Order.find({
-            $and: [query, subQ],
-            status: { $ne: 'secret' }
+        var orders = await Order.get({
+            $and: [query, subQ]
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length;
@@ -230,15 +230,13 @@ module.exports = {
             ]
         };
 
-        var orders = await Order.find({
+        var orders = await Order.get({
             $and: [query, subQ],
-            status: { $ne: 'secret' },
             'pause.status': { $ne: true }
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
-        var orders1 = await Order.find({
+        var orders1 = await Order.get({
             $and: [query, subQ],
-            status: { $ne: 'secret' },
             'pause.status': true
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
@@ -329,15 +327,13 @@ module.exports = {
 
         };
 
-        var orders = await Order.find({
+        var orders = await Order.get({
             $and: [query, subQ],
-            status: { $ne: 'secret' },
             'pause.status': { $ne: true }
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
-        var orders1 = await Order.find({
+        var orders1 = await Order.get({
             $and: [query, subQ],
-            status: { $ne: 'secret' },
             'pause.status': true
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
@@ -451,15 +447,13 @@ module.exports = {
                 break;
         }
 
-        var orders = await Order.find({
+        var orders = await Order.get({
             $and: [query, subQ],
-            status: { $ne: 'secret' },
             'pause.status': { $ne: true }
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
-        var orders1 = await Order.find({
+        var orders1 = await Order.get({
             $and: [query, subQ],
-            status: { $ne: 'secret' },
             'pause.status': true
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
@@ -564,15 +558,13 @@ module.exports = {
                 break;
         }
 
-        var orders = await Order.find({
+        var orders = await Order.get({
             $and: [query, subQ],
-            status: { $ne: 'secret' },
             'pause.status': { $ne: true }
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
-        var orders1 = await Order.find({
+        var orders1 = await Order.get({
             $and: [query, subQ],
-            status: { $ne: 'secret' },
             'pause.status': true
         }).populate([populateClient, populateCity, populateStreet]).lean();
 
@@ -2092,7 +2084,7 @@ module.exports = {
 
         var query = await helper.makeQuery(req, res);
 
-        var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         orders.forEach(item => {
             item.status = stages[item.status];
@@ -2113,7 +2105,7 @@ module.exports = {
         var query = await helper.makeQuery(req, res);
         query.special = undefined;
 
-        var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         for (let i = 0; i < orders.length; i++) {
             orders[i].gusName = await helper.getGUSName(orders[i]);
@@ -2170,17 +2162,27 @@ module.exports = {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
         }
-        else
+        else {
             res.redirect(req.path);
+        }
+        
+        let archive = false;
+        
+        if (req.query.func && req.query.func.includes('5')) {
+            archive = true;
+        }
 
-        var orders = await Order.find(query).populate([populateClient, populateCity, populateStreet]).lean();
+        var orders = await Order.get(query, archive).populate([populateClient, populateCity, populateStreet]).lean();
 
         var total = orders.length;
 
-        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) {
+            req.query.sort = 'id'; req.query.value = -1
+        }
 
-        if (req.query.sort)
+        if (req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
+        }
 
         orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
 
