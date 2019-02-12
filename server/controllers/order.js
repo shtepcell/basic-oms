@@ -1498,6 +1498,18 @@ module.exports = {
                 }
                 order.history.push(helper.historyGenerator('comeback', res.locals.__user));
                 break;
+            case 'back':
+                switch (order.status) {
+                    case 'build-shutdown':
+                        order.status = 'pre-shutdown';
+                        break;
+                    case 'pre-shutdown':
+                    case 'pre-pause':
+                        order.status = 'succes';
+                        break;
+                }
+                order.history.push(helper.historyGenerator('back', res.locals.__user));
+                break;
         }
 
         var done = await order.save();

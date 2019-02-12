@@ -12,8 +12,16 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
         'shutdown'
     ];
 
+    const backStages = [
+        'pre-pause',
+        'pre-shutdown',
+        'build-shutdown'
+    ];
+
+    const canBack = backStages.includes(order.status);
     const isStatic = staticsStatuses.includes(order.status);
 
+    const isResp = (order.resp == user.department.name);
     const isOwner = (order.info.initiator.department._id == user.department._id + '');
     const isGUS = (user.department.name == order.zone);
     const isB2O = (!isOwner && user.department.type == 'b2o' && (order.status == 'all-pre' || order.status == 'stop-pre' || order.status == 'stop-build'));
@@ -280,6 +288,16 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             deps: ctx.dataset.deps,
             id: order.id,
             display: isAdmin || isOwner || isGUS
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Вернуть на предыдущий этап',
+                to: 'back',
+                id: order.id
+            },
+            display: canBack && (isOwner || isResp)
         }
     ];
 })
