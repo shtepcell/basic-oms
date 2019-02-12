@@ -2166,7 +2166,11 @@ module.exports = {
             res.redirect(req.path);
         }
         
-        const archive = req.query.func.includes('5');
+        let archive = false;
+        
+        if (req.query.func && req.query.func.includes('5')) {
+            archive = true;
+        }
 
         var orders = await Order.get(query, archive).populate([populateClient, populateCity, populateStreet]).lean();
 
