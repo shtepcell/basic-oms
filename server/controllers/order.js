@@ -988,6 +988,8 @@ module.exports = {
 
         var order = await Order.findOne({ id: req.params.id });
 
+        order.isEditing = true;
+
         Object.keys(data).forEach(item => {
             if (item != 'adds')
                 data[item] = data[item].trim();
@@ -1526,6 +1528,8 @@ module.exports = {
     endClientNotify: async (req, res, io) => {
         var reqData = req.body;
         var order = await Order.findOne({ id: req.params.id }).populate(populateClient);
+        
+        order.isEditing = true;
 
         if (!order) {
             res.status(400).send({ errText: 'Ошибка при сохранении!' });
@@ -1591,6 +1595,8 @@ module.exports = {
         }
 
         if (order.status == 'client-notify') {
+            order.isEditing = false;
+            
             var date = helper.parseDate(reqData['date-sign'])
             if (!date) {
                 res.status(400).send({ errText: 'Неверный формат даты' })
