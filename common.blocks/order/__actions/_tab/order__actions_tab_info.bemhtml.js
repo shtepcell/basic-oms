@@ -4,6 +4,16 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const user = ctx.user;
     const adminEdit = ctx.adminEdit;
 
+    const staticsStatuses = [
+        'succes',
+        'client-match',
+        'reject',
+        'pause',
+        'shutdown'
+    ];
+
+    const isStatic = staticsStatuses.includes(order.status);
+
     const isOwner = (order.info.initiator.department._id == user.department._id + '');
     const isGUS = (user.department.name == order.zone);
     const isB2O = (!isOwner && user.department.type == 'b2o' && (order.status == 'all-pre' || order.status == 'stop-pre' || order.status == 'stop-build'));
@@ -229,7 +239,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'request-pause',
                 id: order.id
             },
-            display: (!isPause && !isRequest && (isB2O || isGUS || (isNetStatus && isNetUser)) && !isOn)
+            display: (!isPause && !isRequest && (isB2O || isGUS || (isNetStatus && isNetUser)) && !isStatic)
         },
         {
             block: 'order',
@@ -239,7 +249,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'reject-pause',
                 id: order.id
             },
-            display: (isRequest && (isOwner || isRequester) && !isOn)
+            display: isRequest && (isOwner || isRequester)
         },
         {
             block: 'order',
@@ -249,7 +259,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'pause',
                 id: order.id
             },
-            display: (!isPause && (isOwner || isAdmin) && !isOn)
+            display: !isStatic && !isPause && (isOwner || isAdmin)
         },
         {
             block: 'order',
@@ -259,7 +269,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'stop-pause',
                 id: order.id
             },
-            display: (isPause && (isOwner || isAdmin) && !isOn)
+            display: isPause && (isOwner || isAdmin)
         },
         {
             block: 'order',
