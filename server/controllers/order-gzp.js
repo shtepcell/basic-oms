@@ -58,7 +58,7 @@ module.exports = {
             }
 
             order.gzp = req.body;
-
+            
             if (order.status == 'gzp-pre') {
                 order.status = 'client-match';
                 order.deadline = null;

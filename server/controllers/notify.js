@@ -62,9 +62,19 @@ module.exports = {
             case "start-gzp-build":
             case "start-install-devices":
             case "start-build-shutdown":
-                var gus = await Department.findOne({ cities: order.info.city });
-                if(order.special) gus = await Department.findOne({_id: order.special});
-                worker = await Account.find({ department: gus });
+                var gus;
+                if (order.special) {
+                    gus = await Department.findOne({_id: order.special});
+                } else {
+                    if (order.info.service == 'rrl') {
+                        gus =  await Department.findOne({ type: 'rrl' });
+                    } else {
+                        gus = await Department.findOne({ cities: order.info.city });
+                    }
+                }
+                if (gus) {
+                    worker = await Account.find({ department: gus });
+                }
                 break;
 
             case "change-params":

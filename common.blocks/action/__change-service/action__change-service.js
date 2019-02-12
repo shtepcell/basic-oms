@@ -23,11 +23,15 @@ provide(bemDom.declElem('action', 'change-service',
                                 }
                             }
                         }
-                        if(g)
-                            if(value == 'sks')
-                                g.setMod('visible', false)
-                            else
-                                g.setMod('visible')
+
+                        if (g) {
+                            if (value == 'sks' || value == 'rrl') {
+                                g.setMod('visible', false);
+                            }
+                            else {
+                                g.setMod('visible');
+                            }
+                        } 
 
                         bemDom.replace(
                             v.domElem,

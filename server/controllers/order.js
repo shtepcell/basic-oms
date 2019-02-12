@@ -426,9 +426,22 @@ module.exports = {
             case 'gus':
                 query = {
                     '$or': [
-                        { status: 'gzp-pre', 'info.city': user.department.cities, special: null },
+                        { status: 'gzp-pre', 'info.city': user.department.cities, special: null, 'info.service': {$ne: 'rrl'} },
                         { status: 'all-pre', 'info.city': user.department.cities, special: null },
                         { status: 'gzp-pre', 'special': user.department._id },
+                        { status: 'all-pre', 'special': user.department._id }
+                    ]
+                }
+                break;
+            case 'rrl':
+                query = {
+                    '$or': [
+                        { status: 'gzp-pre', 'info.service': 'rrl', special: null },
+                        { status: 'gzp-pre', 'special': user.department._id },
+                        { status: 'gzp-build', 'info.service': 'rrl', special: null  },
+                        { status: 'gzp-build', 'special': user.department._id },
+                        { status: 'install-devices', 'info.service': 'rrl', special: null  },
+                        { status: 'install-devices', 'special': user.department._id },
                         { status: 'all-pre', 'special': user.department._id }
                     ]
                 }
@@ -1512,7 +1525,7 @@ module.exports = {
     },
 
     postGzp: async function (req, res) {
-        var order = await Order.findOne({ id: req.params.id }).populate(populateQuery);;
+        var order = await Order.findOne({ id: req.params.id }).populate(populateQuery);
 
         if (order.status == 'gzp-pre' || order.status == 'all-pre') {
             return GZP.endPreGZP(req, res, order);

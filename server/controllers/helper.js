@@ -848,9 +848,16 @@ module.exports = {
             case 'gzp-build':
             case 'install-devices':
             case 'build-shutdown':
-                var dep = await Department.findOne({ cities: order.info.city._id });
-                if (order.special) dep = await Department.findOne({ _id: order.special });
-                // if(!dep) dep = await Department.findOne({type: 'b2o'});
+                var dep;
+                if (order.special) {
+                    dep = await Department.findOne({ _id: order.special });
+                } else {
+                    if (order.info.service == 'rrl') {
+                        dep = await Department.findOne({ type: 'rrl' });
+                    } else {
+                        dep = await Department.findOne({ cities: order.info.city._id });
+                    }
+                }
                 if (!dep) return 'Ответственный отдел не определён!'
                 return dep.name;
                 break;

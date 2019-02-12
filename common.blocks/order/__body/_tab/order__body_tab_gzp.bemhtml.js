@@ -6,7 +6,7 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
         order = ctx.order,
         adminEdit = ctx.adminEdit;
 
-    var isOwner = (user.department.name == order.zone);
+    var isOwner = order.resp.includes(user.department.name);
 
     var mustFill = ((order.status == 'gzp-pre' || order.status == 'all-pre') && isOwner);
     const onGoToNet = ((order.status == 'gzp-build' || order.status == 'install-devices') && isOwner);
