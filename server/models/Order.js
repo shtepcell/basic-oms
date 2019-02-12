@@ -223,12 +223,12 @@ schema.statics.get = function (query, archive) {
     return order.find(query);
 };
 
-// schema.pre('save', async function (next) {
-//     if (!this.isEditing) {
-//         this.lastMod = new Date();
-//     }
-//     next();
-// })
+schema.pre('save', async function (next) {
+    if (!this.isEditing) {
+        this.lastMod = new Date();
+    }
+    next();
+})
 
 
 schema.plugin(mongoosePaginate);
