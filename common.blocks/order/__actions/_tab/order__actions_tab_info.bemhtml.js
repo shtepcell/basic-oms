@@ -22,6 +22,9 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const isStatic = staticsStatuses.includes(order.status);
     const isSTOPBuilded = (order.date['stop-build'] != null);
     const isStopShutdown = (order.status == 'stop-shutdown')
+    const isPreContinue = (order.status == 'pre-continue');
+    const isStopContinue = (order.status == 'stop-continue');
+    const isContinue = (order.status == 'continue');
 
     const isSOHO = order.info.client.type.shortName == 'SOHO';
 
@@ -46,9 +49,8 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const isStartPause = (order.status == 'pre-pause');
 
     const isStopPause = (order.status == 'stop-pause');
+    const pausedOrder = (order.status == 'pause');
 
-
-    console.log(isShut, isStopShutdown)
     const display = {
         'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need != undefined || (order.gzp.need && order.gzp.capability) && !isSKS)
     };
@@ -196,6 +198,46 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 id: order.id
             },
             display: (isResp || isAdmin) && isStopPause
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Возобновить',
+                to: 'start-continue',
+                id: order.id
+            },
+            display: (isOwner || isAdmin) && pausedOrder
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Возобновлено',
+                to: 'end-pre-continue',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isPreContinue
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Продолжить возобновление',
+                to: 'end-stop-continue',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isStopContinue
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Включить заказ',
+                to: 'end-continue',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isContinue
         },
         {
             block: 'order',

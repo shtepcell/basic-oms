@@ -457,7 +457,8 @@ module.exports = {
                     '$or': [
                         { status: 'network' },
                         { status: 'pre-shutdown' },
-                        { status: 'pre-pause' }
+                        { status: 'pre-pause' },
+                        { status: 'pre-continue' }
                     ]
                 }
                 break;
@@ -557,7 +558,8 @@ module.exports = {
                     '$or': [
                         { status: 'stop-build' },
                         { status: 'stop-shutdown' },
-                        { status: 'stop-pause' }
+                        { status: 'stop-pause' },
+                        { status: 'stop-continue' }
                     ]
                 };
                 break;
@@ -1395,6 +1397,9 @@ module.exports = {
                 order.history.push(helper.historyGenerator('network', res.locals.__user));
                 notify.create(res.locals.__user, order, 'network');
                 break;
+            
+// **************     ОТКЛЮЧЕНИЕ СЕРВИСА     ***************
+
             case 'start-pre-shutdown':
                 if (order.date['stop-build'] != null) {
                     order.status = 'stop-shutdown';
@@ -1437,6 +1442,9 @@ module.exports = {
                 order.history.push(helper.historyGenerator('start-pre-shutdown', res.locals.__user));
                 notify.create(res.locals.__user, order, 'start-pre-shutdown');
                 break;
+
+// **************     ПРИОСТАНОВКА СЕРВИСА     ***************
+
             case 'start-pause-service':
                 var isStop = '';
                 if (order.date['stop-build'] != null) {
@@ -1463,6 +1471,41 @@ module.exports = {
                 order.history.push(helper.historyGenerator('pause-service', res.locals.__user));
                 notify.create(res.locals.__user, order, 'pause-service');
                 break;
+
+// **************     ВОЗОБНОВЛЕНИЕ СЕРВИСА СЕРВИСА     ***************
+
+            case 'start-continue':
+                if (order.date['stop-build'] != null) {
+                    order.status = 'stop-continue';
+                    order.history.push(helper.historyGenerator(`start-stop-continue`, res.locals.__user));
+                    notify.create(res.locals.__user, order, `start-stop-continue`);
+                } else {
+                    order.status = 'pre-continue';
+                    order.history.push(helper.historyGenerator(`start-pre-continue`, res.locals.__user));
+                    notify.create(res.locals.__user, order, `start-pre-continue`);
+                }
+                order.deadline = await helper.calculateDeadline(3);
+                break;
+            case 'end-stop-continue':
+                order.status = 'pre-continue';
+                order.deadline = await helper.calculateDeadline(3);
+                order.history.push(helper.historyGenerator(`start-pre-continue`, res.locals.__user));
+                notify.create(res.locals.__user, order, `start-pre-continue`);
+                break;
+            case 'end-pre-continue':
+                order.status = 'continue';
+                order.deadline = null;
+                order.history.push(helper.historyGenerator(`start-continue`, res.locals.__user));
+                notify.create(res.locals.__user, order, `start-continue`);
+                break;
+            case 'end-continue':
+                order.status = 'succes';
+                order.deadline = null;
+                order.history.push(helper.historyGenerator(`end-continue`, res.locals.__user));
+                break;
+
+
+
             case 'end-sks-build':
                 order.status = 'network';
                 order.date['sks-build'] = new Date();

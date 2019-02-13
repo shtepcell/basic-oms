@@ -352,8 +352,7 @@ block('searcher')(
                                             mods: {
                                                 theme: 'islands',
                                                 size: 'l',
-                                                type: 'button',
-                                                disabled: true
+                                                type: 'button'
                                             },
                                             val: query.continue || [],
                                             name: 'continue',

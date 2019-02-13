@@ -151,6 +151,20 @@ module.exports = {
             case 'pause-service':
                 ret.name = 'Выполнена приостановка сервиса';
                 break;
+
+
+            case 'start-pre-continue':
+                ret.name = 'Начало возобновления. ГФСС';
+                break;
+            case 'start-stop-continue':
+                ret.name = 'Начало возобновления. СТОП';
+                break;
+            case 'start-continue':
+                ret.name = 'Возабновлено';
+                break;
+            case 'end-continue':
+                ret.name = 'Заказ включен';
+                break;
             default:
                 ret.name = 'Неизвестное событие'
                 break;
@@ -480,6 +494,18 @@ module.exports = {
             }
             if (query.pauseService.indexOf('3') >= 0) {
                 status.push({ status: 'pause' });
+            }
+        }
+
+        if (query.continue) {
+            if (query.continue.indexOf('1') >= 0) {
+                status.push({ status: 'pre-continue' });
+            }
+            if (query.continue.indexOf('2') >= 0) {
+                status.push({ status: 'stop-continue' });
+            }
+            if (query.continue.indexOf('3') >= 0) {
+                status.push({ status: 'continue' });
             }
         }
 
@@ -883,6 +909,7 @@ module.exports = {
             case 'stop-pause':
             case 'stop-build':
             case 'stop-shutdown':
+            case 'stop-continue':
                 var dep = await Department.findOne({ type: 'b2o' });
                 if (!dep) dep = {
                     name: 'Ответсвенный отдел не определён!'
@@ -899,6 +926,7 @@ module.exports = {
             case 'network':
             case 'pre-shutdown':
             case 'pre-pause':
+            case 'pre-continue':
                 var dep = await Department.findOne({ type: 'net' });
                 return dep.name;
                 break;
@@ -912,6 +940,7 @@ module.exports = {
                 break;
             case 'client-match':
             case 'client-notify':
+            case 'continue':
                 return order.info.initiator.department.name;
                 break;
             default:
