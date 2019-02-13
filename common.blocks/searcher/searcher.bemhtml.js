@@ -337,6 +337,42 @@ block('searcher')(
                                         }
                                     }
                                 ]
+                            },
+                            {
+                                elem: 'row',
+                                content: [
+                                    {
+                                        elem: 'label',
+                                        content: ''
+                                    },
+                                    {
+                                        elem: 'cell',
+                                        content: {
+                                            block: 'checkbox-group',
+                                            mods: {
+                                                theme: 'islands',
+                                                size: 'l',
+                                                type: 'button'
+                                            },
+                                            val: query.continue || [],
+                                            name: 'continue',
+                                            options: [
+                                                {
+                                                    val: '1',
+                                                    text: 'Возобновление. ГФСС'
+                                                },
+                                                {
+                                                    val: '2',
+                                                    text: 'Возобновление. СТОП'
+                                                },
+                                                {
+                                                    val: '3',
+                                                    text: 'Возобнавлено'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
                             }
                         ]
                     },

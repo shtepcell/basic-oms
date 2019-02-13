@@ -1396,12 +1396,17 @@ module.exports = {
                 notify.create(res.locals.__user, order, 'network');
                 break;
             case 'start-pre-shutdown':
-                order.status = 'pre-shutdown';
+                if (order.date['stop-build'] != null) {
+                    order.status = 'stop-shutdown';
+                    order.history.push(helper.historyGenerator('start-stop-shutdown', res.locals.__user));
+                    notify.create(res.locals.__user, order, 'start-stop-shutdown');
+                } else {
+                    order.status = 'pre-shutdown';
+                    order.history.push(helper.historyGenerator('start-pre-shutdown', res.locals.__user));
+                    notify.create(res.locals.__user, order, 'start-pre-shutdown');
+                }
                 order.info.contact = reqData.contact;
                 order.deadline = await helper.calculateDeadline(3);
-                order.date['start-pre-shutdown'] = new Date();
-                order.history.push(helper.historyGenerator('start-pre-shutdown', res.locals.__user));
-                notify.create(res.locals.__user, order, 'start-pre-shutdown');
                 break;
             case 'start-gzp-shutdown':
                 order.status = 'build-shutdown';
@@ -1425,19 +1430,12 @@ module.exports = {
                 order.history.push(helper.historyGenerator('shutdown', res.locals.__user));
                 notify.create(res.locals.__user, order, 'shutdown');
                 break;
-            case 'start-stop-shutdown':
-                order.status = 'stop-shutdown';
-                order.deadline = await helper.calculateDeadline(3);
-                order.date['pre-shutdown'] = new Date();
-                order.history.push(helper.historyGenerator('start-stop-shutdown', res.locals.__user));
-                notify.create(res.locals.__user, order, 'start-stop-shutdown');
-                break;
             case 'end-stop-shutdown':
-                order.status = 'shutdown';
-                order.deadline = null;
-                order.date['shutdown'] = new Date();
-                order.history.push(helper.historyGenerator('shutdown', res.locals.__user));
-                notify.create(res.locals.__user, order, 'shutdown');
+                order.status = 'pre-shutdown';
+                order.deadline = await helper.calculateDeadline(3);
+                order.date['stop-shutdown'] = new Date();
+                order.history.push(helper.historyGenerator('start-pre-shutdown', res.locals.__user));
+                notify.create(res.locals.__user, order, 'start-pre-shutdown');
                 break;
             case 'start-pause-service':
                 var isStop = '';
@@ -2153,6 +2151,7 @@ module.exports = {
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
         if (req.query.pauseService && req.query.pauseService.length == 1) req.query.pauseService = [req.query.pauseService]
+        if (req.query.continue && req.query.continue.length == 1) req.query.continue = [req.query.continue]
         if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
         if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
         if (req.query.manager && req.query.manager.length == 1) req.query.manager = [req.query.manager]
@@ -2174,6 +2173,7 @@ module.exports = {
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
         if (req.query.pauseService && req.query.pauseService.length == 1) req.query.pauseService = [req.query.pauseService]
+        if (req.query.continue && req.query.continue.length == 1) req.query.continue = [req.query.continue]
         if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
         if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
         if (req.query.manager && req.query.manager.length == 1) req.query.manager = [req.query.manager]
@@ -2208,6 +2208,7 @@ module.exports = {
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
         if (req.query.pauseService && req.query.pauseService.length == 1) req.query.pauseService = [req.query.pauseService]
+        if (req.query.continue && req.query.continue.length == 1) req.query.continue = [req.query.continue]
         if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
         if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
         if (req.query.manager && req.query.manager.length == 1) req.query.manager = [req.query.manager]

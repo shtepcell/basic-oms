@@ -47,6 +47,8 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
 
     const isStopPause = (order.status == 'stop-pause');
 
+
+    console.log(isShut, isStopShutdown)
     const display = {
         'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need != undefined || (order.gzp.need && order.gzp.capability) && !isSKS)
     };
@@ -231,10 +233,10 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             elem: 'action',
             data: {
                 text: 'Отключить',
-                to: 'start-stop-shutdown',
+                to: 'end-stop-shutdown',
                 id: order.id
             },
-            display: (isResp || isAdmin) && isShut && isSTOPBuilded
+            display: (isResp || isAdmin) && isStopShutdown && isSTOPBuilded
         },
         {
             block: 'order',
@@ -251,10 +253,10 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             elem: 'action',
             data: {
                 text: 'Отключить',
-                to: 'end-gzp-shutdown',
+                to: 'end-shutdown',
                 id: order.id
             },
-            display: (isResp || isAdmin) && isStopShutdown
+            display: (isResp || isAdmin) && isShut && isSTOPBuilded
         },
         {
             block: 'order',
