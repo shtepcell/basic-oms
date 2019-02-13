@@ -20,6 +20,8 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
 
     const canBack = backStages.includes(order.status);
     const isStatic = staticsStatuses.includes(order.status);
+    const isSTOPBuilded = (order.date['stop-build'] != null);
+    const isStopShutdown = (order.status == 'stop-shutdown')
 
     const isResp = (order.resp == user.department.name);
     const isOwner = (order.info.initiator.department._id == user.department._id + '');
@@ -207,10 +209,10 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             elem: 'action',
             data: {
                 text: 'Отключить без демонтажа СРЕ',
-                to: 'start-stop-shutdown',
+                to: 'end-shutdown',
                 id: order.id
             },
-            display: (isNetUser || isAdmin) && isShut
+            display: (isResp || isAdmin) && isShut && !isSTOPBuilded
         },
         {
             block: 'order',
@@ -220,7 +222,17 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-gzp-shutdown',
                 id: order.id
             },
-            display: (isNetUser || isAdmin) && isShut
+            display: (isNetUser || isAdmin) && isShut && !isSTOPBuilded
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Отключить',
+                to: 'start-stop-shutdown',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isShut && isSTOPBuilded
         },
         {
             block: 'order',
@@ -231,6 +243,16 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 id: order.id
             },
             display: (isGUS || isAdmin) && isDemontage
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Отключить',
+                to: 'end-gzp-shutdown',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isStopShutdown
         },
         {
             block: 'order',

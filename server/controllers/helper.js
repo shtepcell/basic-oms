@@ -136,6 +136,9 @@ module.exports = {
             case 'start-build-shutdown':
                 ret.name = 'Отключение услуги. Запрос демонтажа';
                 break;
+            case 'start-stop-shutdown':
+                ret.name = 'Отключение услуги. Запрос к СТОП';
+                break;
             case 'shutdown':
                 ret.name = 'Услуга отключена';
                 break;
@@ -873,6 +876,7 @@ module.exports = {
             case 'stop-pre':
             case 'stop-pause':
             case 'stop-build':
+            case 'stop-shutdown':
                 var dep = await Department.findOne({ type: 'b2o' });
                 if (!dep) dep = {
                     name: 'Ответсвенный отдел не определён!'
