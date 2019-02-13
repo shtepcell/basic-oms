@@ -373,6 +373,42 @@ block('searcher')(
                                         }
                                     }
                                 ]
+                            },
+                            {
+                                elem: 'row',
+                                content: [
+                                    {
+                                        elem: 'label',
+                                        content: ''
+                                    },
+                                    {
+                                        elem: 'cell',
+                                        content: {
+                                            block: 'checkbox-group',
+                                            mods: {
+                                                theme: 'islands',
+                                                size: 'l',
+                                                type: 'button'
+                                            },
+                                            val: query.change || [],
+                                            name: 'change',
+                                            options: [
+                                                {
+                                                    val: '1',
+                                                    text: 'Изменение. ГФСС'
+                                                },
+                                                {
+                                                    val: '2',
+                                                    text: 'Изменение. СТОП'
+                                                },
+                                                {
+                                                    val: '3',
+                                                    text: 'Изменено'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
                             }
                         ]
                     },

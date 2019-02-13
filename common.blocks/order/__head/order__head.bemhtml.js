@@ -8,6 +8,7 @@ block('order').elem('head').content()(function () {
     const { services } = dataset;
 
     const isInit = (user.department.type == 'b2b' || user.department.type == 'b2o');
+    const isOwner = (order.info.initiator.department._id == user.department._id + '');
     const isAdmin = (user.department.type == 'admin');
 
     const isSOHO = order.info.client.type.shortName == 'SOHO';
@@ -102,7 +103,7 @@ block('order').elem('head').content()(function () {
               block: 'order',
               elem: 'change',
               elemMods: {
-                visible: isOn && isInit && hasVolume && !isSOHO
+                visible: isOn && isOwner && hasVolume && !isSOHO
               }
             },
             mods : { theme : 'islands', size : 'm' },

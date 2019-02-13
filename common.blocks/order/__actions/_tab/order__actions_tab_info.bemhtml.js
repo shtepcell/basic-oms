@@ -26,6 +26,10 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const isStopContinue = (order.status == 'stop-continue');
     const isContinue = (order.status == 'continue');
 
+    const isPreChange = (order.status == 'pre-change');
+    const isStopChange = (order.status == 'stop-change');
+    const isChange = (order.status == 'change');
+
     const isSOHO = order.info.client.type.shortName == 'SOHO';
 
     const isResp = (order.resp == user.department.name);
@@ -380,6 +384,36 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 id: order.id
             },
             display: canBack && (isOwner || isResp)
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Сервис изменён',
+                to: 'end-pre-change',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isPreChange
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Сервис изменён',
+                to: 'end-stop-change',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isStopChange
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Включить заказ',
+                to: 'end-change',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isChange
         }
     ];
 })

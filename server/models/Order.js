@@ -3,6 +3,7 @@ var mongoose = require('../controllers/connect'),
     mongoosePaginate = require('mongoose-paginate');
 
 var schema = new Schema({
+    wasChanged: Boolean,
     lastMod: Date,
     id: {
         type: Number,

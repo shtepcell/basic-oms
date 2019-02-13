@@ -458,6 +458,7 @@ module.exports = {
                         { status: 'network' },
                         { status: 'pre-shutdown' },
                         { status: 'pre-pause' },
+                        { status: 'pre-change' },
                         { status: 'pre-continue' }
                     ]
                 }
@@ -559,6 +560,7 @@ module.exports = {
                         { status: 'stop-build' },
                         { status: 'stop-shutdown' },
                         { status: 'stop-pause' },
+                        { status: 'stop-change' },
                         { status: 'stop-continue' }
                     ]
                 };
@@ -802,19 +804,29 @@ module.exports = {
     },
 
     getChangeV: async (req, res) => {
-        const order = await Order.findOne({ id: req.params.id }),
-            volume = req.body.volume;
-
-        order.status = 'network';
-        order.deadline = await helper.calculateDeadline(3);
+        const order = await Order.findOne({ id: req.params.id });
+        const volume = req.body.volume;
 
         order.history.push(helper.historyGenerator('change-order', res.locals.__user, {
             from: order.info.volume,
             to: volume
         }));
+
+        if (order.date['stop-build'] != null) {
+            order.status = 'stop-change';
+            notify.create(res.locals.__user, order, `start-stop-change`); 
+            order.history.push(helper.historyGenerator('start-stop-change', res.locals.__user));     
+        } else {
+            order.status = 'pre-change';
+            notify.create(res.locals.__user, order, `start-pre-change`);
+            order.history.push(helper.historyGenerator('start-pre-change', res.locals.__user));
+        }
+        order.deadline = await helper.calculateDeadline(3);
+
+        
         order.preVolume = order.info.volume;
         order.info.volume = volume;
-
+        order.wasChanged = true;
         order.save();
 
         res.sendStatus(200);
@@ -1472,7 +1484,7 @@ module.exports = {
                 notify.create(res.locals.__user, order, 'pause-service');
                 break;
 
-// **************     ВОЗОБНОВЛЕНИЕ СЕРВИСА СЕРВИСА     ***************
+// **************     ВОЗОБНОВЛЕНИЕ СЕРВИСА     ***************
 
             case 'start-continue':
                 if (order.date['stop-build'] != null) {
@@ -1502,6 +1514,27 @@ module.exports = {
                 order.status = 'succes';
                 order.deadline = null;
                 order.history.push(helper.historyGenerator(`end-continue`, res.locals.__user));
+                break;
+
+
+// **************     ИЗМЕНЕНИЯ СЕРВИСА     ***************
+
+            case 'end-stop-change':
+                order.status = 'pre-change';
+                order.deadline = await helper.calculateDeadline(3);
+                order.history.push(helper.historyGenerator(`start-pre-change`, res.locals.__user));
+                notify.create(res.locals.__user, order, `start-pre-change`);
+                break;
+            case 'end-pre-change':
+                order.status = 'change';
+                order.deadline = null;
+                order.history.push(helper.historyGenerator(`start-change`, res.locals.__user));
+                notify.create(res.locals.__user, order, `start-change`);
+                break;
+            case 'end-change':
+                order.status = 'succes';
+                order.deadline = null;
+                order.history.push(helper.historyGenerator(`end-change`, res.locals.__user));
                 break;
 
 
@@ -2193,6 +2226,7 @@ module.exports = {
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
+        if (req.query.change && req.query.change.length == 1) req.query.change = [req.query.change]
         if (req.query.pauseService && req.query.pauseService.length == 1) req.query.pauseService = [req.query.pauseService]
         if (req.query.continue && req.query.continue.length == 1) req.query.continue = [req.query.continue]
         if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
@@ -2215,6 +2249,7 @@ module.exports = {
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
+        if (req.query.change && req.query.change.length == 1) req.query.change = [req.query.change]
         if (req.query.pauseService && req.query.pauseService.length == 1) req.query.pauseService = [req.query.pauseService]
         if (req.query.continue && req.query.continue.length == 1) req.query.continue = [req.query.continue]
         if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
@@ -2250,6 +2285,7 @@ module.exports = {
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
+        if (req.query.change && req.query.change.length == 1) req.query.change = [req.query.change]
         if (req.query.pauseService && req.query.pauseService.length == 1) req.query.pauseService = [req.query.pauseService]
         if (req.query.continue && req.query.continue.length == 1) req.query.continue = [req.query.continue]
         if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]

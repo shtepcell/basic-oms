@@ -128,7 +128,7 @@ module.exports = {
                 ret.name = `Отмена запроса паузы`;
                 break;
             case 'change-order':
-                ret.name = `Изменение ёмкости ( ${opt.from} -> ${opt.to} )`;
+                ret.name = `Изменение ёмкости ${opt.from} -> ${opt.to}`;
                 break;
             case 'start-pre-shutdown':
                 ret.name = 'Запрос отключения услуги';
@@ -165,6 +165,22 @@ module.exports = {
             case 'end-continue':
                 ret.name = 'Заказ включен';
                 break;
+
+
+            case 'start-pre-change':
+                ret.name = 'Начало изменения. ГФСС';
+                break;
+            case 'start-stop-change':
+                ret.name = 'Начало изменения. СТОП';
+                break;
+            case 'start-change':
+                ret.name = 'Изменено';
+                break;
+            case 'end-change':
+                ret.name = 'Заказ включен';
+                break;
+
+            
             default:
                 ret.name = 'Неизвестное событие'
                 break;
@@ -506,6 +522,18 @@ module.exports = {
             }
             if (query.continue.indexOf('3') >= 0) {
                 status.push({ status: 'continue' });
+            }
+        }
+
+        if (query.change) {
+            if (query.change.indexOf('1') >= 0) {
+                status.push({ status: 'pre-change' });
+            }
+            if (query.change.indexOf('2') >= 0) {
+                status.push({ status: 'stop-change' });
+            }
+            if (query.change.indexOf('3') >= 0) {
+                status.push({ status: 'change' });
             }
         }
 
@@ -910,6 +938,7 @@ module.exports = {
             case 'stop-build':
             case 'stop-shutdown':
             case 'stop-continue':
+            case 'stop-change':
                 var dep = await Department.findOne({ type: 'b2o' });
                 if (!dep) dep = {
                     name: 'Ответсвенный отдел не определён!'
@@ -927,6 +956,7 @@ module.exports = {
             case 'pre-shutdown':
             case 'pre-pause':
             case 'pre-continue':
+            case 'pre-change':
                 var dep = await Department.findOne({ type: 'net' });
                 return dep.name;
                 break;
@@ -941,6 +971,7 @@ module.exports = {
             case 'client-match':
             case 'client-notify':
             case 'continue':
+            case 'change':
                 return order.info.initiator.department.name;
                 break;
             default:
