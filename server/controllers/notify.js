@@ -89,8 +89,8 @@ module.exports = {
               break;
 
             case "start-stop-pre":
-            case "start-stop-build":
-            case "stop-shutdown":
+            case "start-stop-shutdown":
+            case "start-stop-pause-service":
                 worker = await Account.find({ department: b2o });
                 break;
 

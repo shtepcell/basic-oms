@@ -404,8 +404,9 @@ module.exports = {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
         }
-        else
+        else {
             res.redirect(req.path);
+        }
 
         var query = {};
         var subQ = await helper.makeQuery(req, res);
@@ -420,6 +421,7 @@ module.exports = {
             case 'b2o':
                 query = {
                     $or: [
+                        { status: 'stop-pause' },
                         { status: 'stop-pre' },
                         { status: 'all-pre' }
                     ]
@@ -1393,8 +1395,7 @@ module.exports = {
             case 'start-pre-shutdown':
                 order.status = 'pre-shutdown';
                 order.info.contact = reqData.contact;
-                order.deadline = await helper.calculateDeadline(2);
-                order.date['cs-pre-shutdown'] = await helper.calculateDeadline(2);
+                order.deadline = await helper.calculateDeadline(3);
                 order.date['start-pre-shutdown'] = new Date();
                 order.history.push(helper.historyGenerator('start-pre-shutdown', res.locals.__user));
                 notify.create(res.locals.__user, order, 'start-pre-shutdown');
@@ -1406,34 +1407,60 @@ module.exports = {
                 order.history.push(helper.historyGenerator('start-build-shutdown', res.locals.__user));
                 notify.create(res.locals.__user, order, 'start-build-shutdown');
                 break;
-            case 'start-pause-service':
-                order.status = 'pre-pause';
-                order.info.contact = reqData.contact;
-                order.deadline = await helper.calculateDeadline(2);
-                order.history.push(helper.historyGenerator('start-pause-service', res.locals.__user));
-                notify.create(res.locals.__user, order, 'start-pause-service');
-                break;
-             case 'pause-service':
-                order.status = 'pause';
-                order.deadline = null;
-                order.date['pre-pause'] = new Date();
-                order.history.push(helper.historyGenerator('pause-service', res.locals.__user));
-                notify.create(res.locals.__user, order, 'pause-service');
-                break;
-            case 'start-stop-shutdown':
-                order.status = 'shutdown';
-                order.deadline = null;
-                order.date['shutdown'] = new Date();
-                order.history.push(helper.historyGenerator('shutdown', res.locals.__user));
-                notify.create(res.locals.__user, order, 'stop-shutdown');
-                notify.create(res.locals.__user, order, 'shutdown');
-                break;
             case 'end-gzp-shutdown':
                 order.status = 'shutdown';
                 order.deadline = null;
                 order.date['shutdown'] = new Date();
                 order.history.push(helper.historyGenerator('shutdown', res.locals.__user));
                 notify.create(res.locals.__user, order, 'shutdown');
+                break;
+            case 'end-shutdown':
+                order.status = 'shutdown';
+                order.deadline = null;
+                order.date['pre-shutdown'] = new Date();
+                order.date['shutdown'] = new Date();
+                order.history.push(helper.historyGenerator('shutdown', res.locals.__user));
+                notify.create(res.locals.__user, order, 'shutdown');
+                break;
+            case 'start-stop-shutdown':
+                order.status = 'stop-shutdown';
+                order.deadline = await helper.calculateDeadline(3);
+                order.date['pre-shutdown'] = new Date();
+                order.history.push(helper.historyGenerator('start-stop-shutdown', res.locals.__user));
+                notify.create(res.locals.__user, order, 'start-stop-shutdown');
+                break;
+            case 'end-stop-shutdown':
+                order.status = 'shutdown';
+                order.deadline = null;
+                order.date['shutdown'] = new Date();
+                order.history.push(helper.historyGenerator('shutdown', res.locals.__user));
+                notify.create(res.locals.__user, order, 'shutdown');
+                break;
+            case 'start-pause-service':
+                var isStop = '';
+                if (order.date['stop-build'] != null) {
+                    order.status = 'stop-pause';
+                    isStop = 'stop-';
+                } else {
+                    order.status = 'pre-pause';
+                }
+                order.info.contact = reqData.contact;
+                order.deadline = await helper.calculateDeadline(3);
+                order.history.push(helper.historyGenerator(`start-${isStop}pause-service`, res.locals.__user));
+                notify.create(res.locals.__user, order, `start-${isStop}pause-service`);
+                break;
+            case 'end-stop-pause':
+                order.status = 'pre-pause';
+                order.deadline = await helper.calculateDeadline(3);
+                order.history.push(helper.historyGenerator(`start-pause-service`, res.locals.__user));
+                notify.create(res.locals.__user, order, `start-pause-service`);
+                break;
+            case 'pause-service':
+                order.status = 'pause';
+                order.deadline = null;
+                order.date['pre-pause'] = new Date();
+                order.history.push(helper.historyGenerator('pause-service', res.locals.__user));
+                notify.create(res.locals.__user, order, 'pause-service');
                 break;
             case 'end-sks-build':
                 order.status = 'network';

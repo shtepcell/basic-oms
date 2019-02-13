@@ -136,11 +136,17 @@ module.exports = {
             case 'start-build-shutdown':
                 ret.name = 'Отключение услуги. Запрос демонтажа';
                 break;
+            case 'start-stop-shutdown':
+                ret.name = 'Отключение услуги. Запрос к СТОП';
+                break;
             case 'shutdown':
                 ret.name = 'Услуга отключена';
                 break;
             case 'start-pause-service':
-                ret.name = 'Начало приостановки сервиса';
+                ret.name = 'Начало приостановки сервиса. ГФСС';
+                break;
+            case 'start-stop-pause-service':
+                ret.name = 'Начало приостановки сервиса. СТОП';
                 break;
             case 'pause-service':
                 ret.name = 'Выполнена приостановка сервиса';
@@ -465,6 +471,9 @@ module.exports = {
             }
             if (query.shutdown.indexOf('5') >= 0) {
                 status.push({ status: 'pause' });
+            }
+            if (query.shutdown.indexOf('6') >= 0) {
+                status.push({ status: 'stop-pause' });
             }
         }
 
@@ -865,7 +874,9 @@ module.exports = {
                 return dep.name;
                 break;
             case 'stop-pre':
+            case 'stop-pause':
             case 'stop-build':
+            case 'stop-shutdown':
                 var dep = await Department.findOne({ type: 'b2o' });
                 if (!dep) dep = {
                     name: 'Ответсвенный отдел не определён!'

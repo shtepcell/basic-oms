@@ -20,6 +20,8 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
 
     const canBack = backStages.includes(order.status);
     const isStatic = staticsStatuses.includes(order.status);
+    const isSTOPBuilded = (order.date['stop-build'] != null);
+    const isStopShutdown = (order.status == 'stop-shutdown')
 
     const isSOHO = order.info.client.type.shortName == 'SOHO';
 
@@ -42,6 +44,8 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const isDemontage = (order.status == 'build-shutdown');
     const isSKS = (order.info.service == 'sks');
     const isStartPause = (order.status == 'pre-pause');
+
+    const isStopPause = (order.status == 'stop-pause');
 
     const display = {
         'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need != undefined || (order.gzp.need && order.gzp.capability) && !isSKS)
@@ -185,6 +189,16 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             block: 'order',
             elem: 'action',
             data: {
+                text: 'Приостановить',
+                to: 'end-stop-pause',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isStopPause
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
                 text: 'Направить на отключение',
                 to: 'start-pre-shutdown',
                 contact: order.info.contact,
@@ -197,10 +211,10 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             elem: 'action',
             data: {
                 text: 'Отключить без демонтажа СРЕ',
-                to: 'start-stop-shutdown',
+                to: 'end-shutdown',
                 id: order.id
             },
-            display: (isNetUser || isAdmin) && isShut
+            display: (isResp || isAdmin) && isShut && !isSTOPBuilded
         },
         {
             block: 'order',
@@ -210,7 +224,17 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-gzp-shutdown',
                 id: order.id
             },
-            display: (isNetUser || isAdmin) && isShut
+            display: (isNetUser || isAdmin) && isShut && !isSTOPBuilded
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Отключить',
+                to: 'start-stop-shutdown',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isShut && isSTOPBuilded
         },
         {
             block: 'order',
@@ -221,6 +245,16 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 id: order.id
             },
             display: (isGUS || isAdmin) && isDemontage
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Отключить',
+                to: 'end-gzp-shutdown',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isStopShutdown
         },
         {
             block: 'order',
