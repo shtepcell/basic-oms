@@ -402,8 +402,9 @@ module.exports = {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
         }
-        else
+        else {
             res.redirect(req.path);
+        }
 
         var query = {};
         var subQ = await helper.makeQuery(req, res);
@@ -418,6 +419,7 @@ module.exports = {
             case 'b2o':
                 query = {
                     $or: [
+                        { status: 'stop-pause' },
                         { status: 'stop-pre' },
                         { status: 'all-pre' }
                     ]
@@ -1403,13 +1405,25 @@ module.exports = {
                 notify.create(res.locals.__user, order, 'start-build-shutdown');
                 break;
             case 'start-pause-service':
-                order.status = 'pre-pause';
+                var isStop = '';
+                if (order.date['stop-build'] != null) {
+                    order.status = 'stop-pause';
+                    isStop = 'stop-';
+                } else {
+                    order.status = 'pre-pause';
+                }
                 order.info.contact = reqData.contact;
-                order.deadline = await helper.calculateDeadline(2);
-                order.history.push(helper.historyGenerator('start-pause-service', res.locals.__user));
-                notify.create(res.locals.__user, order, 'start-pause-service');
+                order.deadline = await helper.calculateDeadline(3);
+                order.history.push(helper.historyGenerator(`start-${isStop}pause-service`, res.locals.__user));
+                notify.create(res.locals.__user, order, `start-${isStop}pause-service`);
                 break;
-             case 'pause-service':
+            case 'end-stop-pause':
+                order.status = 'pre-pause';
+                order.deadline = await helper.calculateDeadline(3);
+                order.history.push(helper.historyGenerator(`start-pause-service`, res.locals.__user));
+                notify.create(res.locals.__user, order, `start-pause-service`);
+                break;
+            case 'pause-service':
                 order.status = 'pause';
                 order.deadline = null;
                 order.date['pre-pause'] = new Date();

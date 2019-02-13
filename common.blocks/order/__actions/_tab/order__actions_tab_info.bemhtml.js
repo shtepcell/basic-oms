@@ -41,6 +41,8 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const isSKS = (order.info.service == 'sks');
     const isStartPause = (order.status == 'pre-pause');
 
+    const isStopPause = (order.status == 'stop-pause');
+
     const display = {
         'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need != undefined || (order.gzp.need && order.gzp.capability) && !isSKS)
     };
@@ -178,6 +180,16 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 id: order.id
             },
             display: (isNetUser || isAdmin) && isStartPause
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Приостановить',
+                to: 'end-stop-pause',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isStopPause
         },
         {
             block: 'order',
