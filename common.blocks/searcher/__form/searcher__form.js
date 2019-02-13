@@ -21,6 +21,7 @@ modules.define('searcher__form', ['i-bem-dom', 'location'], function (provide, b
                     pre: [],
                     build: [],
                     shutdown: [],
+                    pauseService: [],
                     final: [],
                     manager: [],
                     client: '',

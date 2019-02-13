@@ -283,29 +283,56 @@ block('searcher')(
                                             options: [
                                                 {
                                                     val: '1',
-                                                    text: 'Отключение'
+                                                    text: 'Отключение. ГФСС'
                                                 },
                                                 {
                                                     val: '2',
-                                                    text: 'Демонтаж'
+                                                    text: 'Отключение. СТОП'
                                                 },
                                                 {
                                                     val: '3',
-                                                    text: 'Отключён'
-                                                },
-                                                {
-                                                    val: '6',
-                                                    text: 'Приостановка. СТОП'
+                                                    text: 'Демонтаж'
                                                 },
                                                 {
                                                     val: '4',
-                                                    text: 'Приостановка'
+                                                    text: 'Отключён'
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                elem: 'row',
+                                content: [
+                                    {
+                                        elem: 'label',
+                                        content: ''
+                                    },
+                                    {
+                                        elem: 'cell',
+                                        content: {
+                                            block: 'checkbox-group',
+                                            mods: {
+                                                theme: 'islands',
+                                                size: 'l',
+                                                type: 'button'
+                                            },
+                                            val: query.pauseService || [],
+                                            name: 'pauseService',
+                                            options: [
+                                                {
+                                                    val: '1',
+                                                    text: 'Приостановка. ГФСС'
                                                 },
                                                 {
-                                                    val: '5',
-                                                    text: 'Сервис приостановлен'
+                                                    val: '2',
+                                                    text: 'Приостановка. СТОП'
                                                 },
-                                                
+                                                {
+                                                    val: '3',
+                                                    text: 'Сервис приостановлен'
+                                                }
                                             ]
                                         }
                                     }

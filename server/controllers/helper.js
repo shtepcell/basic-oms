@@ -461,19 +461,25 @@ module.exports = {
                 status.push({ status: 'pre-shutdown' });
             }
             if (query.shutdown.indexOf('2') >= 0) {
-                status.push({ status: 'build-shutdown' });
+                status.push({ status: 'stop-shutdown' });
             }
             if (query.shutdown.indexOf('3') >= 0) {
-                status.push({ status: 'shutdown' });
+                status.push({ status: 'build-shutdown' });
             }
             if (query.shutdown.indexOf('4') >= 0) {
+                status.push({ status: 'shutdown' });
+            }
+        }
+
+        if (query.pauseService) {
+            if (query.pauseService.indexOf('1') >= 0) {
                 status.push({ status: 'pre-pause' });
             }
-            if (query.shutdown.indexOf('5') >= 0) {
-                status.push({ status: 'pause' });
-            }
-            if (query.shutdown.indexOf('6') >= 0) {
+            if (query.pauseService.indexOf('2') >= 0) {
                 status.push({ status: 'stop-pause' });
+            }
+            if (query.pauseService.indexOf('3') >= 0) {
+                status.push({ status: 'pause' });
             }
         }
 

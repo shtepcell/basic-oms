@@ -421,7 +421,6 @@ module.exports = {
             case 'b2o':
                 query = {
                     $or: [
-                        { status: 'stop-pause' },
                         { status: 'stop-pre' },
                         { status: 'all-pre' }
                     ]
@@ -555,7 +554,11 @@ module.exports = {
         switch (user.department.type) {
             case 'b2o':
                 query = {
-                    status: 'stop-build'
+                    '$or': [
+                        { status: 'stop-build' },
+                        { status: 'stop-shutdown' },
+                        { status: 'stop-pause' }
+                    ]
                 };
                 break;
             case 'gus':
@@ -2148,8 +2151,11 @@ module.exports = {
     excel: async (req, res) => {
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
+        if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
+        if (req.query.pauseService && req.query.pauseService.length == 1) req.query.pauseService = [req.query.pauseService]
         if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
         if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
+        if (req.query.manager && req.query.manager.length == 1) req.query.manager = [req.query.manager]
 
         var query = await helper.makeQuery(req, res);
 
@@ -2167,6 +2173,7 @@ module.exports = {
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
+        if (req.query.pauseService && req.query.pauseService.length == 1) req.query.pauseService = [req.query.pauseService]
         if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
         if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
         if (req.query.manager && req.query.manager.length == 1) req.query.manager = [req.query.manager]
@@ -2199,8 +2206,9 @@ module.exports = {
 
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
-        if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
         if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
+        if (req.query.pauseService && req.query.pauseService.length == 1) req.query.pauseService = [req.query.pauseService]
+        if (req.query.build && req.query.build.length == 1) req.query.build = [req.query.build]
         if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
         if (req.query.manager && req.query.manager.length == 1) req.query.manager = [req.query.manager]
 
