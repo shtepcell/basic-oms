@@ -3,8 +3,8 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
         order = ctx.order,
         user = ctx.user,
         adminEdit = ctx.adminEdit;
-
-    var isOwner = (user.department.type == 'gus' && user.department.cities.indexOf(order.info.city._id) >= 0),
+    
+    var isOwner = order.resp.includes(user.department.name),
         isPre = (order.status == 'gzp-pre' || order.status == 'all-pre'),
         isBuild = (order.status == 'gzp-build'),
         isInstall = (order.status == 'install-devices'),
@@ -36,16 +36,6 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
             },
             display: ((isOwner || special) && isBuild)
         },
-        // {
-        //     block: 'order',
-        //     elem: 'action',
-        //     data: {
-        //         text: 'Организация завершена',
-        //         to: 'end-build',
-        //         id: order.id
-        //     },
-        //     display: ((isOwner || special) && isBuild)
-        // },
         {
             block: 'order',
             elem: 'action',

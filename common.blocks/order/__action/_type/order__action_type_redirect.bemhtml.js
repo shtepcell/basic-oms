@@ -4,7 +4,7 @@ block('order').elem('action').elemMod('type', 'redirect').replace()(function () 
         options = [];
 
     for (var i = 0; i < deps.length; i++) {
-        if(deps[i].type == 'gus')
+        if (deps[i].type == 'gus' || deps[i].type == 'rrl')
             options.push({
                 val: deps[i].name,
                 text: deps[i].name

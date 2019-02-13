@@ -58,8 +58,12 @@ block('department').elem('info').content()(function () {
                                 val: 'gus'
                             },
                             {
-                                text: 'Группа РРЛ, СКС, Wi-Fi',
+                                text: 'Группа СКС, Wi-Fi',
                                 val: 'sks'
+                            },
+                            {
+                                text: 'Группа РРЛ',
+                                val: 'rrl'
                             },
                             {
                                 text: 'Технический отдел (Администрация)',

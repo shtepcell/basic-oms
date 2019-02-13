@@ -2,7 +2,13 @@ block('order').elem('switcher').content()(function () {
     var order = this.ctx.order,
         tab = this.ctx.tab;
 
-    var gzpMustShow = (order.status == 'gzp-pre' || order.status == 'all-pre' || order.gzp.need !== undefined),
+    const gzpStages = [
+        'gzp-pre',
+        'all-pre',
+        'rrl-pre'
+    ];
+
+    var gzpMustShow = (gzpStages.includes(order.status) || order.gzp.need !== undefined),
         stopMustShow = (order.status == 'stop-pre' || order.status == 'all-pre' || order.stop.capability !== undefined);
         sksMustShow = (order.status == 'sks-pre' || order.sks.time != undefined);
 
