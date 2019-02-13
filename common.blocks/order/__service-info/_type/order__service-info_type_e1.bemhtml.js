@@ -29,7 +29,7 @@ block('order').elem('service-info').elemMod('type', 'e1').content()(function () 
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Тип сигнализации'
+                    content: 'Необходимый протокол сигнализации'
                 },
                 {
                     block: 'order',
@@ -132,7 +132,7 @@ block('order').elem('service-info').elemMod('type', 'e1').elemMod('access', true
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Тип сигнализации'
+                    content: 'Необходимый протокол сигнализации'
                 },
                 {
                     block: 'order',
@@ -197,7 +197,10 @@ block('order').elem('service-info').elemMod('type', 'e1').elemMod('access', true
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Поддержка режима CRC-4'
+                    content: 'Поддержка режима CRC-4',
+                    attrs: {
+                        "data-title": "При активном режиме CRC-4 - кадры произвольным образом группируются по 16 (мультикадрам CRC-4). Мультикадр CRC-4 всегда начинается с кадра, содержащего синхросигнал (FAS)"
+                    }
                 },
                 {
                     block: 'order',

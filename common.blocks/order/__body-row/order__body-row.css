@@ -9,6 +9,7 @@
 
 .order__body-row-name
 {
+    position: relative;
     -moz-user-select: none;
     -ms-user-select: none;
     -o-user-select: none;
@@ -20,6 +21,19 @@
     font-weight: lighter;
     font-style: italic;
     text-align: left;
+}
+
+
+.order__body-row-name[data-title]:hover::before { 
+    content: attr(data-title);
+    position: absolute;
+    left: 0%; top: 100%; 
+    z-index: 5;
+    background: #fc3; 
+    font-size: 14px;
+    padding: 5px 10px; 
+    border: 1px solid rgba(0, 0, 0, 0.5); /* Параметры рамки */
+    border-radius: 5px;
 }
 
 .order__body-date

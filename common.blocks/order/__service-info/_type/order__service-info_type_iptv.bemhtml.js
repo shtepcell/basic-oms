@@ -40,7 +40,10 @@ block('order').elem('service-info').elemMod('type', 'iptv').elemMod('access', tr
             content: [
                 {
                     elem: 'body-row-name',
-                    content: 'Метод предоставления'
+                    content: 'Метод предоставления',
+                    attrs: {
+                        "data-title": "OTT - метод предоставления видеоуслуг через Интернет; MCAST - метод предоставления видеоуслуг в формате мультивещания (multicast)"
+                    }
                 },
                 {
                     elem: 'body-row-data',

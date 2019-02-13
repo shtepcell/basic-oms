@@ -14,7 +14,7 @@ block('order').elem('service-info').elemMod('type', 'digital').content()(functio
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Выберите один из вариантов'
+                    content: 'Необходимый тип/стандарт интерфейса'
                 },
                 {
                     block: 'order',
@@ -59,7 +59,7 @@ block('order').elem('service-info').elemMod('type', 'digital').elemMod('access',
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Выберите один из вариантов'
+                    content: 'Необходимый тип/стандарт интерфейса'
                 },
                 {
                     block: 'order',

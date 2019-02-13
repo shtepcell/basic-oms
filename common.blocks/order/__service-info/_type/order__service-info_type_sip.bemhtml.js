@@ -130,7 +130,10 @@ block('order').elem('service-info').elemMod('type', 'sip').elemMod('access', tru
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Тип АТС клиента'
+                    content: 'Тип АТС клиента',
+                    attrs: {
+                        "data-title": "Наименование АТС"
+                    }
                 },
                 {
                     block: 'order',
