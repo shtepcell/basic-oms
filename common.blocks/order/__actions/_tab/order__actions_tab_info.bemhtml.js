@@ -21,6 +21,8 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const canBack = backStages.includes(order.status);
     const isStatic = staticsStatuses.includes(order.status);
 
+    const isSOHO = order.info.client.type.shortName == 'SOHO';
+
     const isResp = (order.resp == user.department.name);
     const isOwner = (order.info.initiator.department._id == user.department._id + '');
     const isGUS = (user.department.name == order.zone);
@@ -167,7 +169,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 contact: order.info.contact,
                 id: order.id
             },
-            display: (isOwner || isAdmin) && isOn
+            display: (isOwner || isAdmin) && isOn && !isSOHO
         },
         {
             block: 'order',
@@ -188,7 +190,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 contact: order.info.contact,
                 id: order.id
             },
-            display: (isOwner || isAdmin) && isOn
+            display: (isOwner || isAdmin) && isOn && !isSOHO
         },
         {
             block: 'order',
