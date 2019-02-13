@@ -9,6 +9,8 @@ const notify = require('./notify');
 const { getExcel, getReportExcel } = require('./export');
 const { saveFile } = require('./file-manager');
 
+const ClientType = require('../models/ClientType');
+
 const { validateService } = require('./order-services');
 
 const helper = require('./helper');
@@ -1294,6 +1296,8 @@ module.exports = {
             // notify.create(res.locals.__user, order, 'pause-stop');
         }
 
+        const clientType = await ClientType.findById(order.info.client.type);
+
         switch (reqData.to) {
             case 'adminEdit':
 
@@ -1470,10 +1474,15 @@ module.exports = {
                 notify.create(res.locals.__user, order, `start-sks-build`);
                 break;
             case 'end-install-devices':
-                order.status = 'network';
+
+                if (clientType.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl") {
+                    order.status = 'client-notify';
+                } else {
+                    order.status = 'network';
+                    order.history.push(helper.historyGenerator('install-devices', res.locals.__user));
+                    notify.create(res.locals.__user, order, `end-install-devices`);
+                }
                 order.date['gzp-build'] = new Date();
-                order.history.push(helper.historyGenerator('install-devices', res.locals.__user));
-                notify.create(res.locals.__user, order, `end-install-devices`);
                 break;
             case 'start-stop-build':
                 order.status = 'stop-build';
@@ -1490,7 +1499,7 @@ module.exports = {
                 notify.create(res.locals.__user, order, `start-stop-build`);
                 break;
             case 'end-build-stop':
-                if (order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl") {
+                if (clientType.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl") {
                     order.status = 'client-notify';
                 } else {
                     order.status = 'network';

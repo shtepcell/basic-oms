@@ -1,4 +1,4 @@
-// const Order = require('../models/Order');
+const ClientType = require('../models/ClientType');
 const helper = require('./helper');
 const notify = require('./notify');
 const logger = require('./logger');
@@ -17,7 +17,9 @@ module.exports = {
         order.history.push(helper.historyGenerator(order.status, res.locals.__user));
         notify.create(res.locals.__user, order, `end-${order.status}`);
 
-        if (order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl") {
+        const clientType = await ClientType.findById(order.info.client.type);
+        
+        if (clientType.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl") {
             order.status = 'client-notify';
         } else {
             order.status = 'network';
