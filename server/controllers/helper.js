@@ -109,6 +109,9 @@ module.exports = {
             case 'comeback':
                 ret.name = 'Возврат в организацию';
                 break;
+            case 'back':
+                ret.name = 'Возврат на предудущий этап';
+                break;
             case 'client-match':
                 ret.name = 'Согласование с клиентом';
                 break;
