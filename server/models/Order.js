@@ -205,6 +205,9 @@ var order;
 const isSecret = {
     status: 'secret'
 }
+const isReject = {
+    status: 'reject'
+}
 
 schema.statics.get = function (query, archive) { 
     const old = new Date();
@@ -218,7 +221,7 @@ schema.statics.get = function (query, archive) {
     if (archive) {
         query['$nor'] = [isSecret];
     } else {
-        query['$nor'] = [isArchive, isSecret];
+        query['$nor'] = [isArchive, isSecret, isReject];
     }
 
     return order.find(query);
