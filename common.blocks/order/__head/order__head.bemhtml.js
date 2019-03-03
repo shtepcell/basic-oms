@@ -8,26 +8,21 @@ block('order').elem('head').content()(function () {
     const { services } = dataset;
 
     const isInit = (user.department.type == 'b2b' || user.department.type == 'b2o');
-    const isOwner = (order.info.initiator.department._id == user.department._id + '');
     const isAdmin = (user.department.type == 'admin');
-
-    const isSOHO = order.info.client.type.shortName == 'SOHO';
 
     const isOn = (order.status == 'succes');
     const hasVolume = ['internet', 'l2vpn', 'l3vpn', 'vpls'].includes(order.info.service);
 
-    var tContact = order.info.contact;
-    var tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.adds}`;
-    var tService = `${services[order.info.service]}`;
-    var tVolume = '';
+    var tContact = order.info.contact,
+        tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.adds}`,
+        tService = `${services[order.info.service]}`,
+        tVolume = '';
 
-    if (order.info.volume) {
-        tVolume = order.info.volume;
-    }
+        if(order.info.volume)
+          tVolume = order.info.volume;
 
-    if (order.info.street) {
-        tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.street.type} ${order.info.street.name}, ${order.info.adds}`
-    }
+        if(order.info.street)
+          var tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.street.type} ${order.info.street.name}, ${order.info.adds}`
 
     var textInfo = `
       ${order.id} | [${order.info.client.type.shortName}] ${order.info.client.name} | ${tContact} | ${tAdress} | ${tService} | ${tVolume}
@@ -36,7 +31,7 @@ block('order').elem('head').content()(function () {
     if(order.pause.status) pause = ' (на паузе)';
     if(order.requestPause.status) pause = ' (запрос на паузу)';
 
-    if(order.resp != null) {
+    if(order.resp) {
         resp = {
             elem: 'head-item',
             content: [
@@ -103,7 +98,7 @@ block('order').elem('head').content()(function () {
               block: 'order',
               elem: 'change',
               elemMods: {
-                visible: isOn && isOwner && hasVolume && !isSOHO
+                visible: isOn && isInit && hasVolume
               }
             },
             mods : { theme : 'islands', size : 'm' },
