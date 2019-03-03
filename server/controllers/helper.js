@@ -128,7 +128,7 @@ module.exports = {
                 ret.name = `Отмена запроса паузы`;
                 break;
             case 'change-order':
-                ret.name = `Изменение ёмкости ${opt.from} -> ${opt.to}`;
+                ret.name = `Изменение ёмкости ( ${opt.from} -> ${opt.to} )`;
                 break;
             case 'start-pre-shutdown':
                 ret.name = 'Запрос отключения услуги';
@@ -136,51 +136,15 @@ module.exports = {
             case 'start-build-shutdown':
                 ret.name = 'Отключение услуги. Запрос демонтажа';
                 break;
-            case 'start-stop-shutdown':
-                ret.name = 'Отключение услуги. Запрос к СТОП';
-                break;
             case 'shutdown':
                 ret.name = 'Услуга отключена';
                 break;
             case 'start-pause-service':
-                ret.name = 'Начало приостановки сервиса. ГФСС';
-                break;
-            case 'start-stop-pause-service':
-                ret.name = 'Начало приостановки сервиса. СТОП';
+                ret.name = 'Начало приостановки сервиса';
                 break;
             case 'pause-service':
                 ret.name = 'Выполнена приостановка сервиса';
                 break;
-
-
-            case 'start-pre-continue':
-                ret.name = 'Начало возобновления. ГФСС';
-                break;
-            case 'start-stop-continue':
-                ret.name = 'Начало возобновления. СТОП';
-                break;
-            case 'start-continue':
-                ret.name = 'Возабновлено';
-                break;
-            case 'end-continue':
-                ret.name = 'Заказ включен';
-                break;
-
-
-            case 'start-pre-change':
-                ret.name = 'Начало изменения. ГФСС';
-                break;
-            case 'start-stop-change':
-                ret.name = 'Начало изменения. СТОП';
-                break;
-            case 'start-change':
-                ret.name = 'Изменено';
-                break;
-            case 'end-change':
-                ret.name = 'Заказ включен';
-                break;
-
-            
             default:
                 ret.name = 'Неизвестное событие'
                 break;
@@ -491,49 +455,16 @@ module.exports = {
                 status.push({ status: 'pre-shutdown' });
             }
             if (query.shutdown.indexOf('2') >= 0) {
-                status.push({ status: 'stop-shutdown' });
-            }
-            if (query.shutdown.indexOf('3') >= 0) {
                 status.push({ status: 'build-shutdown' });
             }
-            if (query.shutdown.indexOf('4') >= 0) {
+            if (query.shutdown.indexOf('3') >= 0) {
                 status.push({ status: 'shutdown' });
             }
-        }
-
-        if (query.pauseService) {
-            if (query.pauseService.indexOf('1') >= 0) {
+            if (query.shutdown.indexOf('4') >= 0) {
                 status.push({ status: 'pre-pause' });
             }
-            if (query.pauseService.indexOf('2') >= 0) {
-                status.push({ status: 'stop-pause' });
-            }
-            if (query.pauseService.indexOf('3') >= 0) {
+            if (query.shutdown.indexOf('5') >= 0) {
                 status.push({ status: 'pause' });
-            }
-        }
-
-        if (query.continue) {
-            if (query.continue.indexOf('1') >= 0) {
-                status.push({ status: 'pre-continue' });
-            }
-            if (query.continue.indexOf('2') >= 0) {
-                status.push({ status: 'stop-continue' });
-            }
-            if (query.continue.indexOf('3') >= 0) {
-                status.push({ status: 'continue' });
-            }
-        }
-
-        if (query.change) {
-            if (query.change.indexOf('1') >= 0) {
-                status.push({ status: 'pre-change' });
-            }
-            if (query.change.indexOf('2') >= 0) {
-                status.push({ status: 'stop-change' });
-            }
-            if (query.change.indexOf('3') >= 0) {
-                status.push({ status: 'change' });
             }
         }
 
@@ -934,11 +865,7 @@ module.exports = {
                 return dep.name;
                 break;
             case 'stop-pre':
-            case 'stop-pause':
             case 'stop-build':
-            case 'stop-shutdown':
-            case 'stop-continue':
-            case 'stop-change':
                 var dep = await Department.findOne({ type: 'b2o' });
                 if (!dep) dep = {
                     name: 'Ответсвенный отдел не определён!'
@@ -955,8 +882,6 @@ module.exports = {
             case 'network':
             case 'pre-shutdown':
             case 'pre-pause':
-            case 'pre-continue':
-            case 'pre-change':
                 var dep = await Department.findOne({ type: 'net' });
                 return dep.name;
                 break;
@@ -970,12 +895,10 @@ module.exports = {
                 break;
             case 'client-match':
             case 'client-notify':
-            case 'continue':
-            case 'change':
                 return order.info.initiator.department.name;
                 break;
             default:
-                return null;
+                return '';
                 break;
         }
     },
