@@ -902,7 +902,7 @@ module.exports = {
                 return await Department.findOne({ _id: order.info.initiator.department }).lean();
                 break;
             default:
-                return null;
+                return '';
                 break;
         }
     },
@@ -975,7 +975,7 @@ module.exports = {
                 return order.info.initiator.department.name;
                 break;
             default:
-                return null;
+                return '';
                 break;
         }
     },
