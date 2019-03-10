@@ -40,15 +40,20 @@ module.exports = {
                 break;
 
             case 'vibe':
-                if (!old.schema && !files.schema) {
-                    return { error: "Загрузите схему!" };
-                }
-                mustUpload.push('schema');
+                // if (!old.schema && !files.schema) {
+                //     return { error: "Загрузите схему!" };
+                // }
 
-                if (!old.objectPhoto && !files.objectPhoto) {
-                    return { error: "Загрузите фото объекта!" };
+                if (files.schema) {
+                    mustUpload.push('schema');
                 }
-                mustUpload.push('objectPhoto');
+
+                // if (!old.objectPhoto && !files.objectPhoto) {
+                //     return { error: "Загрузите фото объекта!" };
+                // }
+                if (files.objectPhoto) {
+                    mustUpload.push('objectPhoto');
+                }
                 break;
             
             case 'e1':
