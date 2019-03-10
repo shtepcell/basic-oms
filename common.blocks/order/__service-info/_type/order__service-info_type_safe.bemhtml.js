@@ -12,6 +12,19 @@ block('order').elem('service-info').elemMod('type', 'safe').content()(function (
             elem: 'body-row',
             content: [
                 {
+                    elem: 'body-row-name',
+                    content: 'Ёмкость'
+                },
+                {
+                    elem: 'body-row-data',
+                    content: order.info.volume || ''
+                }
+            ]
+        },
+        {
+            elem: 'body-row',
+            content: [
+                {
                     block: 'order',
                     elem: 'body-row-name',
                     content: 'Использовать черный список по умолчанию?'
@@ -96,6 +109,25 @@ block('order').elem('service-info').elemMod('type', 'safe').elemMod('access', tr
     }
 
     return [
+        {
+            elem: 'body-row',
+            content: [
+                {
+                    elem: 'body-row-name',
+                    content: 'Ёмкость'
+                },
+                {
+                    elem: 'body-row-data',
+                    content: [
+                        {
+                            block: 'select',
+                            elem: 'volume',
+                            val: order.info.volume || null
+                        }
+                    ]
+                }
+            ]
+        },
         {
             block: 'order',
             elem: 'body-row',
