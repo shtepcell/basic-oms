@@ -1799,271 +1799,291 @@ module.exports = {
         res.status(200).send({ created: true });
         return;
     },
-
+    
     getStat: async (req, res) => {
-        var preQuery = [
-            { status: 'gzp-pre' },
-            { status: 'stop-pre' },
-            { status: 'all-pre' },
-            { status: 'sks-pre' },
-            { status: 'client-match' }
-        ]
-
-        var buildQuery = [
-            { status: 'gzp-build' },
-            { status: 'stop-build' },
-            { status: 'sks-build' },
-            { status: 'install-devices' },
-            { status: 'client-notify' },
-            { status: 'network' },
-            { status: 'pre-shutdown' },
-            { status: 'build-shutdown' },
-            { status: 'pre-pause' }
-        ];
-
-        var deadlineQuery = {
-            $or: [
-                {
-                    $and: [
-                        { deadline: { '$lte': new Date() } },
-                        { "pause.status": { $ne: true } }
-                    ]
-                },
-                { $where: "this.pause && this.deadline < this.pause.date" }
-            ]
+        const retObj = {
+            'b2b_managers': [],
+            'b2o_managers': [],
+            'main': []
         };
 
-        var counter = {
-            all: await Order.count({ status: { $ne: 'secret' } }),
-            succes: await Order.count({ status: 'succes' }),
-            reject: await Order.count({ status: 'reject' }),
-            pre: await Order.count({
-                $or: preQuery
-            }),
-            build: await Order.count({
-                $or: buildQuery
-            }),
-            'pre-deadline': await Order.count({
-                $and: [
-                    deadlineQuery,
-                    { $or: preQuery }
-                ]
-            }),
-            'build-deadline': await Order.count({
-                $and: [
-                    deadlineQuery,
-                    { $or: buildQuery }
-                ]
-            })
-        };
-
-        var deps = await Department.find({
-            $and: [
-                { type: { $ne: 'admin' } },
-                { type: { $ne: 'man' } }
-            ]
-        }).lean();
-
-        for (var i = 0; i < deps.length; i++) {
-            switch (deps[i].type) {
-                case 'gus':
-                    counter[deps[i]._id] = {
-                        pre: await Order.count({
-                            $or: [
-                                { status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null },
-                                { status: 'all-pre', 'info.city': deps[i].cities, 'special': null },
-                                { status: 'gzp-pre', 'special': deps[i]._id },
-                                { status: 'all-pre', 'special': deps[i]._id }
-                            ]
-                        }),
-                        build: await Order.count({
-                            $or: [
-                                { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
-                                { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
-                                { status: 'gzp-build', 'special': deps[i]._id },
-                                { status: 'install-devices', 'special': deps[i]._id },
-                                { status: 'build-shutdown', 'info.city': deps[i].cities, 'special': null },
-                                { status: 'build-shutdown', 'special': deps[i]._id },
-                            ]
-                        }),
-                        'pre-deadline': await Order.count({
-                            $and: [
-                                {
-                                    $or: [
-                                        { status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null },
-                                        { status: 'all-pre', 'info.city': deps[i].cities, 'special': null },
-                                        { status: 'gzp-pre', 'special': deps[i]._id },
-                                        { status: 'all-pre', 'special': deps[i]._id }
-                                    ]
-                                },
-                                deadlineQuery
-                            ]
-                        }),
-                        'build-deadline': await Order.count({
-                            $and: [
-                                {
-                                    $or: [
-                                        { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
-                                        { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
-                                        { status: 'gzp-build', 'special': deps[i]._id },
-                                        { status: 'install-devices', 'special': deps[i]._id },
-                                        { status: 'build-shutdown', 'info.city': deps[i].cities, 'special': null },
-                                        { status: 'build-shutdown', 'special': deps[i]._id },
-                                    ]
-                                },
-                                deadlineQuery
-                            ]
-                        })
+        var managers = await Order.aggregate(
+            { 
+                $group: {
+                    _id: {
+                        init: "$info.initiator",
+                        status: "$status"
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id.init",
+                    status: {
+                        $push: {
+                            k: "$_id.status",
+                            v: "$count"
+                        }
                     }
-                    break;
-                case 'b2b':
-                    counter[deps[i]._id] = {
-                        pre: await Order.count({
-                            $or: [
-                                { status: 'client-match' }
-                            ],
-                            'info.department': deps[i]._id
-                        }),
-                        build: await Order.count({
-                            $or: [
-                                { status: 'client-notify' }
-                            ],
-                            'info.department': deps[i]._id
-                        }),
-                        'pre-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                {
-                                    $or: [
-                                        { status: 'client-match' }
-                                    ]
-                                },
-                                { 'info.department': deps[i]._id }
-                            ]
-                        }),
-                        'build-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                {
-                                    $or: [
-                                        { status: 'client-notify' }
-                                    ]
-                                },
-                                { 'info.department': deps[i]._id }
-                            ]
-                        })
-                    }
-                    break;
-                case 'b2o':
-                    counter[deps[i]._id] = {
-                        pre: await Order.count({
-                            $or: [
-                                {
-                                    $or: [
-                                        { status: 'client-match' }
-                                    ],
-                                    'info.department': deps[i]._id
-                                },
-                                { status: 'all-pre' },
-                                { status: 'stop-pre' }
-                            ]
-                        }),
-                        build: await Order.count({
-                            $or: [
-                                {
-                                    $or: [
-                                        { status: 'client-notify' }
-                                    ],
-                                    'info.department': deps[i]._id
-                                },
-                                { status: 'stop-build' }
-                            ]
-                        }),
-                        'pre-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                {
-                                    $or: [
-                                        {
-                                            $or: [
-                                                { status: 'client-match' }
-                                            ],
-                                            'info.department': deps[i]._id
-                                        },
-                                        { status: 'all-pre' },
-                                        { status: 'stop-pre' }
-                                    ]
-                                }
-                            ]
-                        }),
-                        'build-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                {
-                                    $or: [
-                                        {
-                                            $or: [
-                                                { status: 'client-notify' }
-                                            ],
-                                            'info.department': deps[i]._id
-                                        },
-                                        { status: 'stop-build' }
-                                    ]
-                                }
-                            ]
-                        })
-                    }
-                    break;
-                case 'sks':
-                    counter[deps[i]._id] = {
-                        pre: await Order.count({
-                            status: 'sks-pre'
-                        }),
-                        build: await Order.count({
-                            status: 'sks-build'
-                        }),
-                        'pre-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                { status: 'sks-pre' }
-                            ]
-                        }),
-                        'build-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                { status: 'sks-build' }
-                            ]
-                        })
-                    }
-                    break;
-                case 'net':
-                    counter[deps[i]._id] = {
-                        build: await Order.count({
-                            $or: [
-                                { status: 'network' },
-                                { status: 'pre-shutdown' },
-                                { status: 'pre-pause' }
-                            ]
-                        }),
-                        'build-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                {
-                                    $or: [
-                                        { status: 'network' },
-                                        { status: 'pre-shutdown' },
-                                        { status: 'pre-pause' }
-                                    ]
-                                },
-                            ]
-                        })
-                    }
-                    break;
+                }
+            },
+            {
+                $project: {
+                   status: { $arrayToObject: "$status" }
+                }
             }
+        );
+
+        managers = await Account.populate(managers, { path: '_id', select: 'name department' });
+        managers = await Department.populate(managers, { path: '_id.department', select: 'name type' });
+
+        managers.forEach( man => {
+            const str = `${man._id.department.type}_managers`;
+
+            retObj[str] && retObj[str].push({
+                name: man._id.name,
+                'client-notify': {
+                    all: man.status['client-notify'] || 0,
+                    red: 0
+                },
+                'client-match': {
+                    all: man.status['client-match'] || 0,
+                    red: 0
+                },
+                'succes':{ 
+                    all: man.status['succes'] || 0,
+                    red: 0
+                }
+            })
+        });
+
+
+        // ГОТОВО
+
+
+        const departments = {
+            'net': await Department.findOne({type: 'net'}),
+            'b2o': await Department.findOne({type: 'b2o'}),
+            'sks': await Department.findOne({type: 'sks'})
+        };
+
+        // const b2b_managers = await 
+
+        const guses = await Department.find({type: 'gus'});
+
+        const start = new Date();
+
+        const commonStat = {
+            all: await Order.get({}).count(),
+            on: await Order.count({ status: "succes" }),
+            paused: await Order.count({ status: "pause" }),
+            shutdowned: await Order.count({ status: "shutdown"})
         }
 
-        res.locals.deps = deps;
-        res.locals.statistics = counter;
+        const statused = await Order.aggregate(
+            { 
+                $group: {
+                    _id: "$status",
+                    all: { $sum: 1 },
+                    red: {
+                        $sum: {
+                            $cond: [{$lte: ["$deadline", start] }, 1, 0]
+                        }
+                    }
+                }
+            }
+        );
+    
+        const depsi = {};
+
+        statused.forEach( item => {
+            switch (item._id) {
+                case 'stop-pre':
+                case 'all-pre':
+                    if (!depsi[departments.b2o._id]) {
+                        depsi[departments.b2o._id] = {
+                            name: departments.b2o.name,
+                            pre: {
+                                all: 0,
+                                red: 0
+                            },
+                            build: {
+                                all: 0,
+                                red: 0
+                            }
+                        };
+                    }
+
+                    depsi[departments.b2o._id].pre.all += item.all;
+                    depsi[departments.b2o._id].pre.red += item.red;
+                    break;
+
+                case 'stop-build':
+                case 'stop-shutdown':
+                case 'stop-pause':
+                case 'stop-continue':
+                case 'stop-change':
+                    if (!depsi[departments.b2o._id]) {
+                        depsi[departments.b2o._id] = {
+                            name: departments.b2o.name,
+                            pre: {
+                                all: 0,
+                                red: 0
+                            },
+                            build: {
+                                all: 0,
+                                red: 0
+                            }
+                        };
+                    }
+
+                    depsi[departments.b2o._id].build.all += item.all;
+                    depsi[departments.b2o._id].build.red += item.red;
+                    break;
+
+                case 'sks-build':      
+                    if (!depsi[departments.sks._id]) {
+                        depsi[departments.sks._id] = {
+                            name: departments.sks.name,
+                            pre: {
+                                all: 0,
+                                red: 0
+                            },
+                            build: {
+                                all: 0,
+                                red: 0
+                            }
+                        };
+                    }
+
+                    depsi[departments.sks._id].build.all += item.all;
+                    depsi[departments.sks._id].build.red += item.red;
+                    break;
+
+                case 'sks-pre':
+                    if (!depsi[departments.sks._id]) {
+                        depsi[departments.sks._id] = {
+                            name: departments.sks.name,
+                            pre: {
+                                all: 0,
+                                red: 0
+                            },
+                            build: {
+                                all: 0,
+                                red: 0
+                            }
+                        };
+                    }
+
+                    depsi[departments.sks._id].pre.all += item.all;
+                    depsi[departments.sks._id].pre.red += item.red;
+                    break;
+                
+                case 'network':
+                case 'pre-shutdown':
+                case 'pre-pause':
+                case 'pre-continue':
+                case 'pre-change':
+                    if (!depsi[departments.net._id]) {
+                        depsi[departments.net._id] = {
+                            name: departments.net.name,
+                            pre: {
+                                all: 0,
+                                red: 0
+                            },
+                            build: {
+                                all: 0,
+                                red: 0
+                            }
+                        };
+                    }
+
+                    depsi[departments.net._id].build.all += item.all;
+                    depsi[departments.net._id].build.red += item.red;
+                    break;
+            }
+        });
+
+        Object.keys(depsi).forEach( i => {
+            retObj.main.push({ ...depsi[i] })
+        });
+
+        // 
+
+        const preGUS = await Order.aggregate(
+            {
+                $match: {
+                    $or: [
+                        { status: 'gzp-pre' },
+                        { status: 'all-pre' }
+                    ]
+                }
+            },
+            { 
+                $group: {
+                    _id: "$info.city",
+                    all: { $sum: 1 },
+                    red: {
+                        $sum: {
+                            $cond: [{$lte: ["$deadline", start] }, 1, 0]
+                        }
+                    }
+                }
+            }
+        );
+
+        const buildGUS = await Order.aggregate(
+            {
+                $match: {
+                    $or: [
+                        { status: 'gzp-build' },
+                        { status: 'install-devices' },
+                        { status: 'build-shutdown' }
+                    ]
+                }
+            },
+            { 
+                $group: {
+                    _id: "$info.city",
+                    count: { $sum: 1 },
+                    deadline: {
+                        $sum: {
+                            $cond: [{$lte: [start, "$deadline"] }, 1, 0]
+                        }
+                    }
+                }
+            }
+        );
+    
+        const cities = {};
+
+        guses.forEach( item => {
+            item.cities && item.cities.forEach( city => {
+                cities[city] = { _id: item._id, name: item.name };
+            });
+        });
+
+
+        preGUS.forEach( item => {
+            let g = cities[item._id] && cities[item._id]._id;
+            
+            g = g || 'unknown';
+
+            if (gusi[g]) {
+                gusi[g].count += item.count;
+                gusi[g].deadline += item.deadline;
+            } else {
+                gusi[g] = {
+                    all: item.all,
+                    red: item.red
+                };
+                gusi[g].count = item.count;
+                gusi[g].deadline = item.deadline;
+            }    
+        });
+
+
         render(req, res, {
             viewName: 'status'
         });
