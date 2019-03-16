@@ -121,7 +121,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                 },
                                 val: order.cms,
                                 autocomplete: false,
-                                placeholder: '__-______-__'
+                                placeholder: '__-______-_'
                             }
                         ]
                     }
