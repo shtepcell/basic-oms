@@ -1,9 +1,7 @@
 block('field').elem('cms').content()(function () {
-    var ctx = this.ctx,
-        order = ctx.order,
-        dataset = ctx.dataset;
+    const { display, order } = this.ctx;
 
-    if(ctx.display) {
+    if(display) {
         return [
             {
                 block: 'order',
@@ -23,13 +21,12 @@ block('field').elem('cms').content()(function () {
             }
         ]
     }
-})
+});
 
 block('field').elem('cms').elemMod('access', true).content()(function () {
-    var ctx = this.ctx,
-        order = ctx.order;
+    const { display, order } = this.ctx;
 
-    if(ctx.display) {
+    if(display) {
         return [
             {
                 block: 'order',
@@ -55,7 +52,7 @@ block('field').elem('cms').elemMod('access', true).content()(function () {
                                 },
                                 val: (order)?`${order.info.cms}`:'',
                                 autocomplete: false,
-                                placeholder: '__-______-__'
+                                placeholder: '__-______-_'
                             }
                         ]
                     }
@@ -63,4 +60,4 @@ block('field').elem('cms').elemMod('access', true).content()(function () {
             },
         ]
     }
-})
+});
