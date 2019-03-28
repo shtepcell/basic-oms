@@ -643,7 +643,7 @@ module.exports = {
 
     },
 
-    init: async (req, res, io) => {
+    init: async (req, res) => {
         var data = req.body;
 
         Object.keys(data).forEach(item => {
@@ -746,7 +746,6 @@ module.exports = {
                 kk['cs-sks-pre'] = deadline;
                 break;
         }
-        
 
         var ordr = new Order({
             id: await Static.getOrderId(),
@@ -757,7 +756,7 @@ module.exports = {
             history: [helper.historyGenerator('init', res.locals.__user)]
         });
 
-        if (req.files['file-init']) {
+        if (req.files && req.files['file-init']) {
             ordr.info['file-init'] = saveFile(req.files['file-init']);
         }
 
@@ -780,7 +779,7 @@ module.exports = {
                 done.status = stages[done.status];
                 // sendMail(done, 'new-status');
             }
-            
+
             logger.info(`Init Order #${done.id} | ${done.status} | ${done.info.client.name} | ${done.info.city.type} ${done.info.city.name}`, res.locals.__user);
             res.send({ created: true, id: done.id })
         } else res.send({ errText: 'Что-то пошло не так' });
@@ -814,8 +813,8 @@ module.exports = {
 
         if (order.date['stop-build'] != null) {
             order.status = 'stop-change';
-            notify.create(res.locals.__user, order, `start-stop-change`); 
-            order.history.push(helper.historyGenerator('start-stop-change', res.locals.__user));     
+            notify.create(res.locals.__user, order, `start-stop-change`);
+            order.history.push(helper.historyGenerator('start-stop-change', res.locals.__user));
         } else {
             order.status = 'pre-change';
             notify.create(res.locals.__user, order, `start-pre-change`);
@@ -823,7 +822,7 @@ module.exports = {
         }
         order.deadline = await helper.calculateDeadline(3);
 
-        
+
         order.preVolume = order.info.volume;
         order.info.volume = volume;
         order.wasChanged = true;
@@ -1060,9 +1059,9 @@ module.exports = {
                     if (req.files[item]) {
                         tmp[item] = saveFile(req.files[item]);
                     }
-                })        
+                })
 
-                // Координаты 
+                // Координаты
 
                 var coordinate = data.coordinate;
 
@@ -1361,7 +1360,7 @@ module.exports = {
                 if (order.deadline) {
                     order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
                 }
-                
+
                 order.pause = {
                     status: false,
                     date: undefined
@@ -1409,7 +1408,7 @@ module.exports = {
                 order.history.push(helper.historyGenerator('network', res.locals.__user));
                 notify.create(res.locals.__user, order, 'network');
                 break;
-            
+
 // **************     ОТКЛЮЧЕНИЕ СЕРВИСА     ***************
 
             case 'start-pre-shutdown':
@@ -1668,7 +1667,7 @@ module.exports = {
     endClientNotify: async (req, res, io) => {
         var reqData = req.body;
         var order = await Order.findOne({ id: req.params.id }).populate(populateClient);
-        
+
         order.isEditing = true;
 
         if (!order) {
@@ -1736,7 +1735,7 @@ module.exports = {
 
         if (order.status == 'client-notify') {
             order.isEditing = false;
-            
+
             var date = helper.parseDate(reqData['date-sign'])
             if (!date) {
                 res.status(400).send({ errText: 'Неверный формат даты' })
@@ -2322,9 +2321,9 @@ module.exports = {
         else {
             res.redirect(req.path);
         }
-        
+
         let archive = false;
-        
+
         if (req.query.func && req.query.func.includes('5')) {
             archive = true;
         }
