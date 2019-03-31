@@ -16,5 +16,5 @@
         ],
         "number-leading-zero": "never"
     },
-    ignoreFiles: [ "**/*.js", "**/*.json" ]
+    "ignoreFiles": [ "**/*.js", "**/*.json" ]
 }
