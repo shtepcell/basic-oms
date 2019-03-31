@@ -1,13 +1,14 @@
 {
   "author": "Telichko Vladislav",
   "name": "basic-oms",
-  "version": "0.0.0",
+  "version": "1.3.0",
   "repository": {
     "type": "git",
     "url": "git@github.com:dalv96/basic-oms.git"
   },
   "engines": {
-    "node": ">=0.12"
+    "node": "8.6.0",
+    "npm": "6.2.0"
   },
   "browserslist": [
     "ie >= 10",

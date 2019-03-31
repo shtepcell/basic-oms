@@ -5,7 +5,6 @@ node_modules/
 .svn
 forever.log
 npm-debug.log
-package-lock.json
 static/index.min.*
 static/files
 static/storage
