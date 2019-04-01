@@ -16,6 +16,8 @@ var schema = new Schema( {
         type: Number,
         required: true
     }
+}, {
+    usePushEach: true
 });
 
 var flag = mongoose.model('Flag', schema);

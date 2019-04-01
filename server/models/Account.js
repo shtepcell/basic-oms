@@ -61,6 +61,8 @@ const schema = new Schema({
 			query: String
 		}
 	}
+}, {
+	usePushEach: true
 });
 
 var deepPopulate = require('mongoose-deep-populate')(mongoose);

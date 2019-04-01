@@ -14,6 +14,8 @@ var schema = new mongoose.Schema( {
 		type: Boolean,
         default: false
 	}
+}, {
+	usePushEach: true
 });
 
 schema.plugin(mongoosePaginate);
