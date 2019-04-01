@@ -21,6 +21,8 @@ var schema = new Schema( {
         required: true,
         default: new Date()
     }
+}, {
+    usePushEach: true
 });
 
 var chat = mongoose.model('Chat', schema);

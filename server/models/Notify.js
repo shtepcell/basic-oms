@@ -18,6 +18,8 @@ var schema = new Schema({
             ref: 'Account'
         }
     ]
+}, {
+    usePushEach: true
 });
 
 var notifies = mongoose.model('Notify', schema);

@@ -15,6 +15,8 @@ var schema = new Schema( {
 	usage : {
 		type: Boolean
 	}
+}, {
+	usePushEach: true
 });
 
 schema.plugin(mongoosePaginate);

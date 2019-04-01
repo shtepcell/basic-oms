@@ -22,6 +22,8 @@ var schema = new Schema( {
             ref: 'City'
         }
     ]
+}, {
+    usePushEach: true
 });
 
 var department = mongoose.model('Department', schema);

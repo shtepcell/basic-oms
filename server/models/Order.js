@@ -110,7 +110,7 @@ var schema = new Schema({
         pm: String,
 
         pref: String,
-        
+
         useDefaultBlackList: String,
         blackListFile: String, // File
 
@@ -195,6 +195,8 @@ var schema = new Schema({
         date: Date,
         author: String
     }]
+}, {
+    usePushEach: true
 });
 
 var deepPopulate = require('mongoose-deep-populate')(mongoose);
@@ -209,7 +211,7 @@ const isReject = {
     status: 'reject'
 }
 
-schema.statics.get = function (query, archive) { 
+schema.statics.get = function (query, archive) {
     const old = new Date();
     old.setDate(-90);
 
@@ -217,7 +219,7 @@ schema.statics.get = function (query, archive) {
         status: 'client-match',
         lastMod: {$lt: old}
     }
-    
+
     if (archive) {
         query['$nor'] = [isSecret];
     } else {
