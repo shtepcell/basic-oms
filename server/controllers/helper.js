@@ -409,6 +409,7 @@ module.exports = {
                         break;
                     case 'gus':
                         respQ = {
+                            'info.service': { $ne: 'rrl' },
                             $or: [
                                 { status: 'gzp-pre', 'info.city': resp.cities, 'special': null },
                                 { status: 'all-pre', 'info.city': resp.cities, 'special': null },

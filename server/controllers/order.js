@@ -1868,6 +1868,7 @@ module.exports = {
                 case 'gus':
                     counter[deps[i]._id] = {
                         pre: await Order.count({
+                            'info.service': { $ne: 'rrl' },
                             $or: [
                                 { status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null },
                                 { status: 'all-pre', 'info.city': deps[i].cities, 'special': null },
@@ -1876,6 +1877,7 @@ module.exports = {
                             ]
                         }),
                         build: await Order.count({
+                            'info.service': { $ne: 'rrl' },
                             $or: [
                                 { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
                                 { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
@@ -1888,6 +1890,7 @@ module.exports = {
                         'pre-deadline': await Order.count({
                             $and: [
                                 {
+                                    'info.service': { $ne: 'rrl' },
                                     $or: [
                                         { status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null },
                                         { status: 'all-pre', 'info.city': deps[i].cities, 'special': null },
@@ -1901,6 +1904,7 @@ module.exports = {
                         'build-deadline': await Order.count({
                             $and: [
                                 {
+                                'info.service': { $ne: 'rrl' },
                                     $or: [
                                         { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
                                         { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
