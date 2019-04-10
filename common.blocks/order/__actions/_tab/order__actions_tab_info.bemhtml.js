@@ -56,7 +56,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const pausedOrder = (order.status == 'pause');
 
     const display = {
-        'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need != undefined || (order.gzp.need && order.gzp.capability) && !isSKS)
+        'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need === false || order.gzp.capability) && !isSKS
     };
 
     return [
