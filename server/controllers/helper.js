@@ -371,6 +371,25 @@ module.exports = {
             }
         }
 
+        if (query.func1) {
+            query.func1.forEach(item => {
+                const cpb = (value) => ({ '$or': [
+                    { 'gzp.capability': value },
+                    { 'stop.capability': value }
+                ]});
+
+                switch (item) {
+                    case '1':
+                        qr['$and'] ? qr['$and'].push(cpb(true)) : qr['$and'] = [cpb(true)];
+                        break;
+                
+                    case '2':
+                        qr['$and'] ? qr['$and'].push(cpb(false)) : qr['$and'] = [cpb(false)];
+                        break;
+                }
+            })
+        }
+
         if (query.manager) {
             let manager = await Account.find({ login: query.manager });
 

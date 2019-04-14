@@ -2227,6 +2227,7 @@ module.exports = {
 
     excel: async (req, res) => {
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
+        if (req.query.func1 && req.query.func1.length == 1) req.query.func1 = [req.query.func1]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
         if (req.query.change && req.query.change.length == 1) req.query.change = [req.query.change]
@@ -2250,6 +2251,7 @@ module.exports = {
 
     report: async (req, res) => {
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
+        if (req.query.func1 && req.query.func1.length == 1) req.query.func1 = [req.query.func1]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
         if (req.query.change && req.query.change.length == 1) req.query.change = [req.query.change]
@@ -2286,6 +2288,7 @@ module.exports = {
         res.locals.err = {};
 
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
+        if (req.query.func1 && req.query.func1.length == 1) req.query.func1 = [req.query.func1]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
         if (req.query.shutdown && req.query.shutdown.length == 1) req.query.shutdown = [req.query.shutdown]
         if (req.query.change && req.query.change.length == 1) req.query.change = [req.query.change]
