@@ -12,12 +12,12 @@ modules.define('searcher__form', ['i-bem-dom', 'location'], function (provide, b
             _onSubmit: function (e) {
                 e.preventDefault();
 
-
                 var data = {
                     pagerfirst: 1,
                     id: '',
                     cms: '',
                     func: [],
+                    func1: [],
                     pre: [],
                     build: [],
                     shutdown: [],
@@ -49,7 +49,6 @@ modules.define('searcher__form', ['i-bem-dom', 'location'], function (provide, b
                         data[s.domElem[0].name] = val;
                     }
                 })
-
                 location.change({ params: data });
             }
         })

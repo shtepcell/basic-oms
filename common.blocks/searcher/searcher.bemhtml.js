@@ -98,38 +98,60 @@ block('searcher')(
                                     },
                                     {
                                         elem: 'cell',
-                                        content: {
-                                            block: 'checkbox-group',
-                                            mods: {
-                                                theme: 'islands',
-                                                size: 'l',
-                                                type: 'button'
+                                        content: [
+                                            {
+                                                block: 'checkbox-group',
+                                                mods: {
+                                                    theme: 'islands',
+                                                    size: 'l',
+                                                    type: 'button'
+                                                },
+                                                val: query.func || [],
+                                                name: 'func',
+                                                options: [
+                                                    {
+                                                        val: '1',
+                                                        text: 'Только мои'
+                                                    },
+                                                    {
+                                                        val: '2',
+                                                        text: 'Просроченные'
+                                                    },
+                                                    {
+                                                        val: '3',
+                                                        text: 'На паузе'
+                                                    },
+                                                    {
+                                                        val: '4',
+                                                        text: 'Наличие CMS'
+                                                    },
+                                                    {
+                                                        val: '5',
+                                                        text: 'Архивные'
+                                                    }
+                                                ]
                                             },
-                                            val: query.func || [],
-                                            name: 'func',
-                                            options: [
-                                                {
-                                                    val: '1',
-                                                    text: 'Только мои'
+                                            {
+                                                block: 'checkbox-group',
+                                                mods: {
+                                                    theme: 'islands',
+                                                    size: 'l',
+                                                    type: 'button'
                                                 },
-                                                {
-                                                    val: '2',
-                                                    text: 'Просроченные'
-                                                },
-                                                {
-                                                    val: '3',
-                                                    text: 'На паузе'
-                                                },
-                                                {
-                                                    val: '4',
-                                                    text: 'Наличие CMS'
-                                                },
-                                                {
-                                                    val: '5',
-                                                    text: 'Архивные'
-                                                }
-                                            ]
-                                        }
+                                                val: query.func1 || [],
+                                                name: 'func1',
+                                                options: [
+                                                    {
+                                                        val: '1',
+                                                        text: 'Есть ТВ'
+                                                    },
+                                                    {
+                                                        val: '2',
+                                                        text: 'Нет ТВ'
+                                                    }
+                                                ]
+                                            }
+                                        ]
                                     }
                                 ]
                             }
