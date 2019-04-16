@@ -207,16 +207,16 @@ block('status').content()(function () {
                                                             stages = 'build=5';
                                                             break;
                                                         case 'b2o':
-                                                            stages = 'build=3&build=5';
+                                                            stages = 'build=3&build=5&shutdown=2&pauseService=2&continue=2&change=2';
                                                             break;
                                                         case 'gus':
-                                                            stages = 'build=1&build=2&shutdown=2';
+                                                            stages = 'build=1&build=2&shutdown=3';
                                                             break;
                                                         case 'sks':
                                                             stages = 'build=6';
                                                             break;
                                                         case 'net':
-                                                            stages = 'build=4&shutdown=1';
+                                                            stages = 'build=4&shutdown=1&pauseService=1&continue=1&change=1';
                                                             break;
                                                     }
 

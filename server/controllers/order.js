@@ -1962,7 +1962,11 @@ module.exports = {
                             $or: [
                                 {
                                     $or: [
-                                        { status: 'client-match' }
+                                        { status: 'client-match' },
+                                        { status: 'stop-shutdown' },
+                                        { status: 'stop-pause' },
+                                        { status: 'stop-continue' },
+                                        { status: 'stop-change' }
                                     ],
                                     'info.department': deps[i]._id
                                 },
