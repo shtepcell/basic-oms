@@ -350,6 +350,7 @@ module.exports = {
 
             if (query.func.indexOf('2') >= 0) {
                 var deadline = {
+                    deadline: { '$ne': null },
                     $or: [
                         {
                             $and: [
