@@ -1536,8 +1536,6 @@ module.exports = {
                 order.history.push(helper.historyGenerator(`end-change`, res.locals.__user));
                 break;
 
-
-
             case 'end-sks-build':
                 order.status = 'network';
                 order.date['sks-build'] = new Date();
@@ -1821,6 +1819,7 @@ module.exports = {
         ];
 
         var deadlineQuery = {
+            deadline: { '$ne': null },
             $or: [
                 {
                     $and: [
@@ -1904,7 +1903,7 @@ module.exports = {
                         'build-deadline': await Order.count({
                             $and: [
                                 {
-                                'info.service': { $ne: 'rrl' },
+                                    'info.service': { $ne: 'rrl' },
                                     $or: [
                                         { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
                                         { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
