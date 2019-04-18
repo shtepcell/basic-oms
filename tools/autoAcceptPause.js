@@ -1,4 +1,10 @@
+const moment = require('moment');
 const Order = require('../server/models/Order');
+
+const today = moment().format("MMM D YYYY, HH:mm:ss");
+
+console.log(`################# ${today} #################`);
+console.log();
 
 (async () => {
   const now = new Date();
@@ -39,3 +45,7 @@ const Order = require('../server/models/Order');
 
   process.exit(0);
 })();
+
+console.log();
+console.log();
+console.log();

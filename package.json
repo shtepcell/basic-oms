@@ -34,6 +34,7 @@
     "forever": "^0.15.3",
     "lodash": "^4.17.11",
     "mkdirp-promise": "^5.0.1",
+    "moment": "^2.24.0",
     "mongodb": "^2.2.29",
     "mongoose": "4.13.14",
     "mongoose-deep-populate": "^3.0.0",
