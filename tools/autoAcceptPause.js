@@ -31,6 +31,8 @@ const Order = require('../server/models/Order');
          name: 'Автоматическое подтверждение паузы'
       })
 
+      console.log(`Заказ #${orders[i].id} поставлен на паузу`);
+
       let ok = await orders[i].save();
     }
   }
