@@ -43,9 +43,9 @@ console.log();
     }
   }
 
+  console.log();
+  console.log();
+  console.log();
+
   process.exit(0);
 })();
-
-console.log();
-console.log();
-console.log();
