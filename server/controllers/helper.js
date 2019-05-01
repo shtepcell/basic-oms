@@ -349,12 +349,14 @@ module.exports = {
             }
 
             if (query.func.indexOf('2') >= 0) {
+                const today = new Date();
+                today.setDate( today.getDate() - 1);
                 var deadline = {
                     deadline: { '$ne': null },
                     $or: [
                         {
                             $and: [
-                                { deadline: { '$lte': new Date() } },
+                                { deadline: { '$lte': today } },
                                 { "pause.status": { $ne: true } }
                             ]
                         },

@@ -1818,12 +1818,15 @@ module.exports = {
             { status: 'pre-pause' }
         ];
 
+        const today = new Date();
+        today.setDate( today.getDate() - 1);
+
         var deadlineQuery = {
             deadline: { '$ne': null },
             $or: [
                 {
                     $and: [
-                        { deadline: { '$lte': new Date() } },
+                        { deadline: { '$lte': today } },
                         { "pause.status": { $ne: true } }
                     ]
                 },
