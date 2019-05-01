@@ -25,7 +25,7 @@ provide(bemDom.declElem('action', 'change-service',
                         }
 
                         if (g) {
-                            if (value == 'sks' || value == 'rrl') {
+                            if (value == 'wifi' || value == 'wifiorg' || value == 'sks' || value == 'rrl') {
                                 g.setMod('visible', false);
                             }
                             else {

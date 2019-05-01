@@ -77,6 +77,10 @@ const render = Render.render;
 
 const logger = require('./logger');
 
+const isSKSPath = (order) => { 
+    return ['sks', 'wifi', 'wifiorg'].includes(order.info.service)
+};
+
 module.exports = {
 
     getPageInit: async (req, res) => {
@@ -728,7 +732,7 @@ module.exports = {
             init: new Date()
         };
 
-        if (order.info.service == 'sks') order.status = 'sks-pre';
+        if (isSKSPath(order)) order.status = 'sks-pre';
 
         var deadline = await helper.calculateDeadline(3);
         switch (order.status) {
@@ -1622,6 +1626,10 @@ module.exports = {
                 if (order.date['stop-build']) {
                     order.status = 'stop-build';
                     notify.create(res.locals.__user, order, `start-stop-build`);
+                }
+                if (order.date['sks-build']) {
+                    order.status = 'sks-build';
+                    notify.create(res.locals.__user, order, `start-sks-build`);
                 }
                 order.history.push(helper.historyGenerator('comeback', res.locals.__user));
                 break;

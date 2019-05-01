@@ -49,7 +49,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const isOn = (order.status == 'succes');
     const isShut = (order.status == 'pre-shutdown');
     const isDemontage = (order.status == 'build-shutdown');
-    const isSKS = (order.info.service == 'sks');
+    const isSKS = ['sks', 'wifi', 'wifiorg'].includes(order.info.service);
     const isStartPause = (order.status == 'pre-pause');
 
     const isStopPause = (order.status == 'stop-pause');
