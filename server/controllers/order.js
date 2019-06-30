@@ -721,6 +721,11 @@ module.exports = {
 
         const serviceInfo = validateService(order.info, req.files);
 
+        if (order.info.service === 'wifi' && !order.info.idoss) {
+            res.status(400).send({ errText: 'IDOSS – обязательное!' });
+            return;
+        }
+
         if (serviceInfo.error) {
             res.status(400).send({ errText: serviceInfo.error });
             return;

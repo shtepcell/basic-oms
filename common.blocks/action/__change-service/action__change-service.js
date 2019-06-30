@@ -1,4 +1,4 @@
-modules.define('action__change-service', ['i-bem-dom', 'BEMHTML', 'select', 'order__body', 'order__service-info', 'gavno__vkusnoe'], function(provide, bemDom, BEMHTML, Select, body, order, Gavno) {
+modules.define('action__change-service', ['i-bem-dom', 'BEMHTML', 'select', 'order__body', 'order__service-info', 'gavno__vkusnoe', 'field__idoss'], function(provide, bemDom, BEMHTML, Select, body, order, Gavno, idoss) {
 
 provide(bemDom.declElem('action', 'change-service',
     {
@@ -11,6 +11,8 @@ provide(bemDom.declElem('action', 'change-service',
                         var b = this.findParentElem(body);
                         var v = b.findChildElem(order);
                         var g = b.findChildElem(Gavno);
+                        const neg = b.findChildElem(idoss);
+
                         var ordr,
                             params = this.params;
 
@@ -25,6 +27,9 @@ provide(bemDom.declElem('action', 'change-service',
                         }
 
                         if (g) {
+                            neg.setMod('visible', value == 'wifi');
+                            neg.setVal('');
+
                             if (value == 'wifi' || value == 'wifiorg' || value == 'sks' || value == 'rrl') {
                                 g.setMod('visible', false);
                             }

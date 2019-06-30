@@ -20,7 +20,7 @@ module.exports = {
                 }
 
                 break;
-            
+
             case 'devices':
                 if (!info.countOfUtits || info.countOfUtits == '') {
                     return { error: "Укажите количество Unit-мест!" };
@@ -29,7 +29,7 @@ module.exports = {
                 if (!info.powerConsumption || info.powerConsumption == '') {
                     return { error: "Укажите количество потребляемой мощности!" };
                 }
-                
+
                 if (info.connetionNeed == 'Да' && !old.confirmDocument && !files.confirmDocument) {
                     return { error: "Загрузите документ!" };
                 }
@@ -55,7 +55,7 @@ module.exports = {
                     mustUpload.push('objectPhoto');
                 }
                 break;
-            
+
             case 'e1':
                 if (!info.e1Stream || info.e1Stream == '') {
                     return { error: "Укажите количество поток E1!" };
@@ -99,7 +99,7 @@ module.exports = {
                 if (info.useDefaultBlackList == 'Нет') {
                     mustUpload.push('blackListFile');
                 }
-                
+
                 break;
 
             default:

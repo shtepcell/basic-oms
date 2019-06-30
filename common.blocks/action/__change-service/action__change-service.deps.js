@@ -17,5 +17,11 @@
             block: 'gavno',
             elem: 'vkusnoe'
         }
+    ],
+    mustDeps: [
+        {
+            block: 'field',
+            elem: 'idoss'
+        }
     ]
 })

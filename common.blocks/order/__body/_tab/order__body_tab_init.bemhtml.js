@@ -18,7 +18,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
             val: item
         }
     });
-    
+
     srvs.unshift({text: ''});
 
     return [
@@ -228,6 +228,15 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                     access: true
                 },
                 order: { info: order }
+            },
+            {
+                block: 'field',
+                elem: 'idoss',
+                order: { info: order },
+                elemMods: {
+                    access: true
+                },
+                display: true
             },
             {
                 elem: 'separator'

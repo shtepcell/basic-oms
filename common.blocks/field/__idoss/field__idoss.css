@@ -1,0 +1,9 @@
+.field__idoss
+{
+    display: none;
+}
+
+.field__idoss_visible
+{
+    display: table;
+}
