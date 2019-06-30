@@ -49,14 +49,15 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const isOn = (order.status == 'succes');
     const isShut = (order.status == 'pre-shutdown');
     const isDemontage = (order.status == 'build-shutdown');
-    const isSKS = ['sks', 'wifi', 'wifiorg'].includes(order.info.service);
+    const isSKS = ['sks', 'wifiorg'].includes(order.info.service);
     const isStartPause = (order.status == 'pre-pause');
+    const isWifi = (order.info.service === 'wifi');
 
     const isStopPause = (order.status == 'stop-pause');
     const pausedOrder = (order.status == 'pause');
 
     const display = {
-        'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need === false || order.gzp.capability) && !isSKS
+        'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need === false || order.gzp.capability) && !isSKS && !isWifi
     };
 
     return [
@@ -86,11 +87,21 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             block: 'order',
             elem: 'action',
             data: {
+                text: 'Отправить в организацию ГФСС',
+                to: 'start-network',
+                id: order.id
+            },
+            display: (isOwner && isMatch && isWifi)
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
                 text: 'Отправить на проработку ГЗП',
                 to: 'start-pre-gzp',
                 id: order.id
             },
-            display: (isOwner && isMatch && order.gzp.need == undefined && !isSKS)
+            display: (isOwner && isMatch && order.gzp.need == undefined && !isSKS && !isWifi)
         },
         {
             block: 'order',
@@ -120,7 +131,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-pre-stop',
                 id: order.id
             },
-            display: (isOwner && isMatch && order.stop.capability == undefined && !isSKS)
+            display: (isOwner && isMatch && order.stop.capability == undefined && !isSKS && !isWifi)
         },
         {
             block: 'order',
@@ -140,7 +151,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-stop-build',
                 id: order.id
             },
-            display: (isOwner && (isPre || isMatch) && order.stop.capability && !isSKS)
+            display: (isOwner && (isPre || isMatch) && order.stop.capability && !isSKS && !isWifi)
         },
         {
             block: 'order',
@@ -150,7 +161,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'comeback',
                 id: order.id
             },
-            display: (isNetUser && isNetStatus)
+            display: (isNetUser && isNetStatus && !isWifi)
         },
         {
             block: 'order',
@@ -317,13 +328,42 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
         {
             block: 'order',
             elem: 'action',
-            elemMods: {
-                type: 'add-param'
-            },
             data: {
-                text: 'Административная правка'
+                text: 'Сервис изменён',
+                to: 'end-pre-change',
+                id: order.id
             },
-            display: !adminEdit && isAdmin
+            display: (isResp || isAdmin) && isPreChange
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Сервис изменён',
+                to: 'end-stop-change',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isStopChange
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Включить заказ',
+                to: 'end-change',
+                id: order.id
+            },
+            display: (isResp || isAdmin) && isChange
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            data: {
+                text: 'Вернуть на предыдущий этап',
+                to: 'back',
+                id: order.id
+            },
+            display: (isNetUser && isNetStatus && isWifi)
         },
         {
             block: 'order',
@@ -369,51 +409,22 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             block: 'order',
             elem: 'action',
             elemMods: {
+                type: 'add-param'
+            },
+            data: {
+                text: 'Административная правка'
+            },
+            display: !adminEdit && isAdmin
+        },
+        {
+            block: 'order',
+            elem: 'action',
+            elemMods: {
                 type: 'redirect'
             },
             deps: ctx.dataset.deps,
             id: order.id,
-            display: isAdmin || isOwner || isGUS
-        },
-        {
-            block: 'order',
-            elem: 'action',
-            data: {
-                text: 'Вернуть на предыдущий этап',
-                to: 'back',
-                id: order.id
-            },
-            display: canBack && (isOwner || isResp)
-        },
-        {
-            block: 'order',
-            elem: 'action',
-            data: {
-                text: 'Сервис изменён',
-                to: 'end-pre-change',
-                id: order.id
-            },
-            display: (isResp || isAdmin) && isPreChange
-        },
-        {
-            block: 'order',
-            elem: 'action',
-            data: {
-                text: 'Сервис изменён',
-                to: 'end-stop-change',
-                id: order.id
-            },
-            display: (isResp || isAdmin) && isStopChange
-        },
-        {
-            block: 'order',
-            elem: 'action',
-            data: {
-                text: 'Включить заказ',
-                to: 'end-change',
-                id: order.id
-            },
-            display: (isResp || isAdmin) && isChange
+            display: (isAdmin || isOwner || isGUS) && !isWifi
         }
     ];
 })

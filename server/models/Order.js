@@ -189,6 +189,8 @@ var schema = new Schema({
         'start-pre-shutdown': Date,
         'pre-shutdown': Date,
         'shutdown': Date,
+
+        'cs-network': Date
     },
     history: [{
         name: String,

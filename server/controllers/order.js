@@ -77,8 +77,8 @@ const render = Render.render;
 
 const logger = require('./logger');
 
-const isSKSPath = (order) => { 
-    return ['sks', 'wifi', 'wifiorg'].includes(order.info.service)
+const isSKSPath = (order) => {
+    return ['sks', 'wifiorg'].includes(order.info.service)
 };
 
 module.exports = {
@@ -648,6 +648,7 @@ module.exports = {
     },
 
     init: async (req, res) => {
+        const histories = [];
         var data = req.body;
 
         Object.keys(data).forEach(item => {
@@ -734,6 +735,11 @@ module.exports = {
 
         if (isSKSPath(order)) order.status = 'sks-pre';
 
+        if (order.info.service == 'wifi') {
+            order.status = 'network';
+            histories.push(helper.historyGenerator('start-network', res.locals.__user));
+        }
+
         var deadline = await helper.calculateDeadline(3);
         switch (order.status) {
             case 'all-pre':
@@ -749,6 +755,9 @@ module.exports = {
             case 'sks-pre':
                 kk['cs-sks-pre'] = deadline;
                 break;
+            case 'network':
+                kk['cs-network'] = deadline;
+                break;
         }
 
         var ordr = new Order({
@@ -757,7 +766,7 @@ module.exports = {
             deadline: deadline,
             info: order.info,
             date: kk,
-            history: [helper.historyGenerator('init', res.locals.__user)]
+            history: [helper.historyGenerator('init', res.locals.__user), ...histories]
         });
 
         if (req.files && req.files['file-init']) {
@@ -1642,8 +1651,16 @@ module.exports = {
                     case 'pre-pause':
                         order.status = 'succes';
                         break;
+                    case 'network':
+                        order.info.service === 'wifi' && (order.status = 'client-match');
+                        break;
                 }
                 order.history.push(helper.historyGenerator('back', res.locals.__user));
+                break;
+            case 'start-network':
+                order.status = 'network';
+                order.deadline = order.date['cs-network'] = await helper.calculateDeadline(3);
+                order.history.push(helper.historyGenerator('start-network', res.locals.__user));
                 break;
         }
 

@@ -180,7 +180,10 @@ module.exports = {
                 ret.name = 'Заказ включен';
                 break;
 
-            
+            case 'start-network':
+                ret.name = 'Начато: Настройка сети (Wi-Fi)'
+                break;
+
             default:
                 ret.name = 'Неизвестное событие'
                 break;
@@ -342,7 +345,7 @@ module.exports = {
             var rgx =  new RegExp('' + query.cms + '', 'i');
             return { 'info.cms': {$regex: rgx} }
         }
-        
+
         if (query.func) {
             if (query.func.indexOf('1') >= 0) {
                 qr['info.initiator'] = res.locals.__user._id;
@@ -385,7 +388,7 @@ module.exports = {
                     case '1':
                         qr['$and'] ? qr['$and'].push(cpb(true)) : qr['$and'] = [cpb(true)];
                         break;
-                
+
                     case '2':
                         qr['$and'] ? qr['$and'].push(cpb(false)) : qr['$and'] = [cpb(false)];
                         break;
@@ -447,7 +450,7 @@ module.exports = {
                         }
                         break;
                     case 'net':
-                        respQ = { 
+                        respQ = {
                             $or: [
                                 { status: 'network' },
                                 { status: 'pre-shutdown' }

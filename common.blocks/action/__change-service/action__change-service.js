@@ -31,7 +31,7 @@ provide(bemDom.declElem('action', 'change-service',
                             else {
                                 g.setMod('visible');
                             }
-                        } 
+                        }
 
                         bemDom.replace(
                             v.domElem,

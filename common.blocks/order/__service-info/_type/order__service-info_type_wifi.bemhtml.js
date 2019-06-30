@@ -1,11 +1,6 @@
 block('order').elem('service-info').elemMod('type', 'wifi').content()(function () {
     var ctx = this.ctx,
-        order = ctx.order;
-
-    if(!order)
-        order = {
-            info: {}
-        }
+        order = ctx.order || { info: {} };
 
     return [
         {
@@ -59,12 +54,7 @@ block('order').elem('service-info').elemMod('type', 'wifi').content()(function (
 
 block('order').elem('service-info').elemMod('type', 'wifi').elemMod('access', true).content()(function () {
     var ctx = this.ctx,
-        order = ctx.order;
-
-    if(!order)
-        order = {
-            info: {}
-        }
+        order = ctx.order || { info: {} };
 
     return [
         {
