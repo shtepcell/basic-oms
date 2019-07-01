@@ -180,7 +180,8 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elem: 'idoss',
             order: order,
             elemMods: {
-                access: (adminEdit || isOwner && (isMatch || isParticalPre))
+                access: (adminEdit || isOwner && (isMatch || isParticalPre)),
+                visible: true
             },
             display: ( ((isMatch || isParticalPre) && isOwner && mustIDOSS) || !!order.info['idoss'] )
         },
