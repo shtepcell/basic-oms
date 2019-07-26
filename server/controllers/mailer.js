@@ -1,8 +1,7 @@
 'use strict';
-const nodemailer = require('nodemailer'),
-    logger = require('./logger'),
-    { notifies } = require('../common-data');
-
+const nodemailer = require('nodemailer');
+const { notifies } = require('../common-data');
+const isDev = process.env.NODE_ENV === 'development';
 
 var transporter = nodemailer.createTransport({
     host: 'relay1.miranda-media.ru',
@@ -65,12 +64,14 @@ module.exports.sendMail = (order, recipients, type) => {
     		`Заказ #${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
     		footer
 
-        if (process.env.NODE_ENV != 'development')
-            transporter.sendMail(mailOptions, (error, info) => {
+        if (!isDev) {
+            transporter.sendMail(mailOptions, (error) => {
                 if(error) {
-                    console.log(error);
+                    console.error(error);
                 }
             })
+        }
+
         console.log('Send mail to', rps);
     }
 }
