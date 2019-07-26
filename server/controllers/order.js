@@ -90,7 +90,7 @@ module.exports = {
             if (rel && !isNaN(rel)) {
                 order = await Order.findOne({ id: rel }).populate([populateClient, populateCity, populateStreet]);
                 if (order)
-                    order = {
+                    {order = {
                         client: order.info.client.name,
                         contact: order.info.contact,
                         cms: order.info.cms,
@@ -104,7 +104,7 @@ module.exports = {
                         volume: order.info.volume,
                         add_info: order.info.add_info,
                         relation: order.id
-                    };
+                    };}
             }
 
             render(req, res, {
@@ -157,7 +157,7 @@ module.exports = {
 
         var total = orders.length;
 
-        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 }
 
         if (req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
@@ -217,7 +217,7 @@ module.exports = {
             pagers[0] = pagerId;
         }
         else
-            res.redirect(req.path);
+            {res.redirect(req.path);}
 
         var query = {};
         var subQ = await helper.makeQuery(req, res);
@@ -248,7 +248,7 @@ module.exports = {
 
         var total = orders.length + orders1.length;
 
-        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 }
 
         if (req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
@@ -311,7 +311,7 @@ module.exports = {
             pagers[0] = pagerId;
         }
         else
-            res.redirect(req.path);
+            {res.redirect(req.path);}
 
         var query = {};
         var subQ = await helper.makeQuery(req, res);
@@ -345,7 +345,7 @@ module.exports = {
 
         var total = orders.length + orders1.length;
 
-        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 }
 
         if (req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
@@ -481,7 +481,7 @@ module.exports = {
 
         var total = orders.length + orders1.length;
 
-        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 }
 
         if (req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
@@ -546,7 +546,7 @@ module.exports = {
             pagers[0] = pagerId;
         }
         else
-            res.redirect(req.path);
+            {res.redirect(req.path);}
 
         var query = {};
         var subQ = await helper.makeQuery(req, res);
@@ -598,7 +598,7 @@ module.exports = {
 
         var total = orders.length + orders1.length;
 
-        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 };
+        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 }
 
         if (req.query.sort) {
             orders = helper.orderSort(orders, req.query.sort, req.query.value);
@@ -1043,7 +1043,7 @@ module.exports = {
 
         Object.keys(data).forEach(item => {
             if (item != 'adds')
-                data[item] = data[item].trim();
+                {data[item] = data[item].trim();}
             if (data[item] == '') data[item] = undefined;
         });
 
@@ -1066,7 +1066,7 @@ module.exports = {
                 var service = data.service;
                 tmp.service = service;
 
-                const serviceInfo = validateService(tmp, req.files, order);
+                const serviceInfo = validateService(tmp, req.files, order.info);
 
                 if (serviceInfo.error) {
                     res.status(400).send({ errText: serviceInfo.error });
@@ -1096,7 +1096,7 @@ module.exports = {
                 }
 
                 if (!coordinate)
-                    tmp.street = strt;
+                    {tmp.street = strt;}
 
                 // Город
                 var city = await validator.city(data.city);
@@ -1569,7 +1569,7 @@ module.exports = {
                 order.info['income-once'] = reqData.incomeOnce;
                 order.info['income-monthly'] = reqData.incomeMonth;
                 if (reqData.oss)
-                    order.info['idoss'] = reqData.oss;
+                    {order.info['idoss'] = reqData.oss;}
 
                 order.deadline = await helper.calculateDeadline(order.gzp.time);
                 order.date['cs-gzp-organization'] = await helper.calculateDeadline(order.gzp.time);
@@ -1584,7 +1584,7 @@ module.exports = {
                 order.info['income-once'] = reqData.incomeOnce;
                 order.info['income-monthly'] = reqData.incomeMonth;
                 if (reqData.oss)
-                    order.info['idoss'] = reqData.oss;
+                    {order.info['idoss'] = reqData.oss;}
 
                 order.deadline = await helper.calculateDeadline(order.sks.time);
                 order.date['cs-sks-organization'] = await helper.calculateDeadline(order.sks.time);
@@ -1609,7 +1609,7 @@ module.exports = {
                 order.info['income-once'] = reqData.incomeOnce;
                 order.info['income-monthly'] = reqData.incomeMonth;
                 if (reqData.oss)
-                    order.info['idoss'] = reqData.oss;
+                    {order.info['idoss'] = reqData.oss;}
 
                 order.deadline = await helper.calculateDeadline(order.stop.time);
                 order.date['cs-stop-organization'] = await helper.calculateDeadline(order.stop.time);
