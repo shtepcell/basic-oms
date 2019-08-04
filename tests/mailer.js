@@ -19,18 +19,20 @@ describe('Mailer', function () {
     describe('sendEmail', function () {
         it('Базовая проверка', function () {
             const result = getRecipients(users);
+
             assert.equal(result, 'some@yandex.ru,some@mail.ru');
         });
 
         it('Не должно отправить email', function () {
             const result = getRecipients(users.slice(0, 2));
+
             assert.equal(result, '');
         });
 
         it('Не должно быть дубликатов', function () {
             const result = getRecipients(dublesUsers);
+
             assert.equal(result, 'some@yandex.ru');
         });
-
     });
 });
