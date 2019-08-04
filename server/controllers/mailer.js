@@ -17,53 +17,58 @@ const footer = '<br><br><span style="color:#000;font-size:10pt">'+
     '</span>';
 
 
-module.exports.sendMail = (order, recipients, type) => {
-    const mailOptions = {
-        from: 'ops@miranda-media.ru'
-    }
+module.exports = {
+    getRecipients(recipients) {
+        const to = [];
 
-    const to = [];
+        for (let i = 0; i < recipients.length; i++) {
+            const { settings: { sendEmail }, email} = recipients[i];
+            const canSend = sendEmail && email;
 
-    for (let i = 0; i < recipients.length; i++) {
-        if(recipients[i].settings.sendEmail && recipients[i].email) {
-            to.push(recipients[i].email);
-        }
-    }
-
-    if (to.length > 0) {
-        let rps = '';
-
-        for (let i = 0; i < to.length; i++) {
-            let last = (i+1 == to.length);
-
-            rps += to[i];
-
-            if(!last) rps += ',';
+            canSend && !to.includes(email) && to.push(email);
         }
 
-        mailOptions.to = rps;
+        return to.join(',');
+    },
+
+    sendMail(order, recipients, type) {
+        const mailOptions = {
+            from: 'ops@miranda-media.ru'
+        }
+
+        const to = this.getRecipients(recipients);
+
+        if (!to) {
+            console.log('No recipients found');
+
+            return;
+        }
+
+        mailOptions.to = to;
 
         let header = `<h2>СУЗ | Новое уведомление</h2>`;
 
         switch (type) {
-          case 'new-message':
-            header = `<h2>СУЗ | Вас упомянули в чате заказа ${order.id}</h2>`;
-            break;
-          case 'change-params':
-            header = `<h2>СУЗ | Обновление услуги или параметров услуги в заказе #${order.id}</h2>`;
-            break;
-          default:
-            header = `<h2>СУЗ | Статус заказа #${order.id}</h2>`;
-            break;
+            case 'new-message':
+                header = `<h2>СУЗ | Вас упомянули в чате заказа ${order.id}</h2>`;
+                break;
+
+            case 'change-params':
+                header = `<h2>СУЗ | Обновление услуги или параметров услуги в заказе #${order.id}</h2>`;
+                break;
+
+            default:
+                header = `<h2>СУЗ | Статус заказа #${order.id}</h2>`;
+                break;
         }
 
         mailOptions.subject = subject;
 
         mailOptions.html = header + `<p style="font-size: 12pt;"><a href="http://ops.miranda-media.ru/order/${order.id}">` +
-    		`Заказ #${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
-    		footer
+            `Заказ #${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
+            footer
 
-        console.log('Send mail to', rps);
+        console.log('Send mail to', to);
 
         if (isDev) {
             return;
@@ -74,7 +79,5 @@ module.exports.sendMail = (order, recipients, type) => {
                 console.error('Mailer Error: ', error);
             }
         })
-    } else {
-        console.log('No recipients found');
     }
 }
