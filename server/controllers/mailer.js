@@ -3,14 +3,14 @@ const nodemailer = require('nodemailer');
 const { notifies } = require('../common-data');
 const isDev = process.env.NODE_ENV === 'development';
 
-var transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
     host: 'relay1.miranda-media.ru',
     port: 25,
     secure: false
 });
 
-var subject = 'СУЗ | Новое уведомление';
-var footer = '<br><br><span style="color:#000;font-size:10pt">'+
+const subject = 'СУЗ | Новое уведомление';
+const footer = '<br><br><span style="color:#000;font-size:10pt">'+
     '<p>Это письмо сформировано автоматически службой уведомлений '+
     'Системы управления заказами. Отвечать на него не нужно.</p>'+
     '<p>Если вы получаете эти письма по ошибке, обратитесь к администратору системы</p>'+
@@ -18,24 +18,23 @@ var footer = '<br><br><span style="color:#000;font-size:10pt">'+
 
 
 module.exports.sendMail = (order, recipients, type) => {
-    var mailOptions = {
+    const mailOptions = {
         from: 'ops@miranda-media.ru'
     }
 
-    var to = [];
+    const to = [];
 
-    if(recipients.length > 0) {
-
-        for (var i = 0; i < recipients.length; i++) {
-            if(recipients[i].settings.sendEmail && recipients[i].email) {
-                to.push(recipients[i].email);
-            }
+    for (let i = 0; i < recipients.length; i++) {
+        if(recipients[i].settings.sendEmail && recipients[i].email) {
+            to.push(recipients[i].email);
         }
+    }
 
-        var rps = '';
+    if (to.length > 0) {
+        let rps = '';
 
-        for (var i = 0; i < to.length; i++) {
-            var last = (i+1 == to.length);
+        for (let i = 0; i < to.length; i++) {
+            let last = (i+1 == to.length);
 
             rps += to[i];
 
@@ -44,7 +43,7 @@ module.exports.sendMail = (order, recipients, type) => {
 
         mailOptions.to = rps;
 
-        var header = `<h2>СУЗ | Новое уведомление</h2>`;
+        let header = `<h2>СУЗ | Новое уведомление</h2>`;
 
         switch (type) {
           case 'new-message':
@@ -64,14 +63,18 @@ module.exports.sendMail = (order, recipients, type) => {
     		`Заказ #${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
     		footer
 
-        if (!isDev) {
-            transporter.sendMail(mailOptions, (error) => {
-                if(error) {
-                    console.error(error);
-                }
-            })
+        console.log('Send mail to', rps);
+
+        if (isDev) {
+            return;
         }
 
-        console.log('Send mail to', rps);
+        transporter.sendMail(mailOptions, (error) => {
+            if (error) {
+                console.error('Mailer Error: ', error);
+            }
+        })
+    } else {
+        console.log('No recipients found');
     }
 }

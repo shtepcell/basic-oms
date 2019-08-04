@@ -1,7 +1,4 @@
-block('profile-popup').content()(function () {
-    var user = this.ctx.user,
-        deps = this.ctx.deps;
-
+block('profile-popup').content()((node, { user }) => {
     return [
         {
             elem: 'part',
@@ -29,7 +26,7 @@ block('profile-popup').content()(function () {
                     block: 'link',
                     mods: { theme: 'islands', size: 'l'},
                     mix: { block: 'profile-popup', elem: 'item' },
-                    content: 'Данные пользователя',
+                    content: 'Учетная запись',
                     url: '/profile'
                 },
                 // {
@@ -72,26 +69,26 @@ block('profile-popup').content()(function () {
                         }
                     ]
                 },
-                {
-                    block: 'link',
-                    mods: { theme: 'islands', size: 'l' },
-                    mix: [
-                        { block: 'profile-popup', elem: 'item' },
-                        {
-                            block: 'action',
-                            elem: 'open-modal',
-                            js: true
-                        }
-                    ],
-                    content: [
-                        'Настройка уведомлений',
-                        {
-                            block: 'modal',
-                            mods: { theme: 'islands', autoclosable: true },
-                            content: { block: 'settings', mods: {tab: 'notify'}, user: user }
-                        }
-                    ]
-                },
+                // {
+                //     block: 'link',
+                //     mods: { theme: 'islands', size: 'l' },
+                //     mix: [
+                //         { block: 'profile-popup', elem: 'item' },
+                //         {
+                //             block: 'action',
+                //             elem: 'open-modal',
+                //             js: true
+                //         }
+                //     ],
+                //     content: [
+                //         'Настройка уведомлений',
+                //         {
+                //             block: 'modal',
+                //             mods: { theme: 'islands', autoclosable: true },
+                //             content: { block: 'settings', mods: {tab: 'notify'}, user: user }
+                //         }
+                //     ]
+                // },
                 // {
                 //     block: 'link',
                 //     mods: { theme: 'islands', size: 'l' },
