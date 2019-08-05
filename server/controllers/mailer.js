@@ -16,30 +16,31 @@ const footer = '<br><br><span style="color:#000;font-size:10pt">'+
     '<p>Если вы получаете эти письма по ошибке, обратитесь к администратору системы</p>'+
     '</span>';
 
+function getRecipients(recipients) {
+    const to = [];
+
+    for (let i = 0; i < recipients.length; i++) {
+        const { settings: { sendEmail }, email} = recipients[i];
+        const canSend = sendEmail && email;
+
+        canSend && !to.includes(email) && to.push(email);
+    }
+
+    return to.join(',');
+}
 
 module.exports = {
-    getRecipients(recipients) {
-        const to = [];
-
-        for (let i = 0; i < recipients.length; i++) {
-            const { settings: { sendEmail }, email} = recipients[i];
-            const canSend = sendEmail && email;
-
-            canSend && !to.includes(email) && to.push(email);
-        }
-
-        return to.join(',');
-    },
+    getRecipients,
 
     sendMail(order, recipients, type) {
         const mailOptions = {
             from: 'ops@miranda-media.ru'
         }
 
-        const to = this.getRecipients(recipients);
+        const to = getRecipients(recipients);
 
         if (!to) {
-            console.log('No recipients found');
+            console.log('Mailer: No recipients found');
 
             return;
         }
@@ -68,7 +69,7 @@ module.exports = {
             `Заказ #${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
             footer
 
-        console.log('Send mail to', to);
+        console.log('Mailer: Send mail to: ', to);
 
         if (isDev) {
             return;
