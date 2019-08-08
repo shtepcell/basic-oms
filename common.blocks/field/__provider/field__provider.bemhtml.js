@@ -5,7 +5,7 @@ block('field').elem('provider').content()((node, { order, display }) => {
     if (!display) return;
 
     if (type && name) {
-        providerString = `[${type}] name`;
+        providerString = `[${type}] ${name}`;
     }
 
     return [
