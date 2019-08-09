@@ -1,4 +1,3 @@
-const Order = require('../models/Order');
 const Department = require('../models/Department');
 const Account = require('../models/Account');
 const Client = require('../models/Client');
@@ -6,7 +5,6 @@ const Provider = require('../models/Provider');
 const City = require('../models/City');
 const Street = require('../models/Street');
 const Holiday = require('../models/Holiday');
-const Notify = require('../models/Notify');
 const Flag = require('../models/Flag');
 
 const common = require('../common-data');
@@ -46,8 +44,9 @@ module.exports = {
                     end = history[i + 1].date;
                 }
 
-                if (!end)
+                if (!end) {
                     end = new Date();
+                }
 
                 res += end - start;
             }
@@ -254,12 +253,17 @@ module.exports = {
     strToDate: strToDate,
 
     parseDate: (date) => {
+        if (!date) return false;
+
         date = date.split('.');
+
         if (date.length == 3) {
-            if (date[1] >= 0 && date[1] <= 11 && date[0] > 0 && date[0] <= 31)
+            if (date[1] >= 0 && date[1] <= 11 && date[0] > 0 && date[0] <= 31) {
                 return new Date(date[2], date[1] - 1, date[0]);
-            else return false
-        } else return false;
+            }
+        }
+
+        return false;
     },
 
     orderSort: (array, path, reverse) => {
@@ -295,16 +299,22 @@ module.exports = {
                 b = b[paths[i]];
             }
             if (path == 'deadline') {
-                if (a === null || a === undefined)
+                if (a === null || a === undefined) {
                     a = 9999999999999;
-                if (b === null || b === undefined)
+                }
+                if (b === null || b === undefined) {
                     b = 9999999999991;
+                }
             }
 
-            if (a < b)
+            if (a < b) {
                 return -1 * reverse;
-            if (a > b)
+            }
+
+            if (a > b) {
                 return 1 * reverse;
+            }
+
             return 0;
         });
 
@@ -312,16 +322,17 @@ module.exports = {
     },
 
     getZone: async (order) => {
-        if (order.special) {
-            var dep = await Department.findOne({ _id: order.special });
+        const query = order.special
+            ? { _id: order.special }
+            : { cities: order.info.city._id };
+
+        const dep = await Department.findOne(query);
+
+        if (dep) {
             return dep.name;
         }
-        else {
-            var dep = await Department.findOne({ cities: order.info.city._id });
 
-            if (dep) return dep.name;
-            else return 'Неизвестно'
-        }
+        return 'Неизвестно';
     },
 
     makeQuery: async (req, res) => {
@@ -336,8 +347,11 @@ module.exports = {
                     ors.push({ id: ids[i] });
                 }
             }
-            if (ors.length > 0)
+
+            if (ors.length > 0) {
                 return { $or: ors };
+            }
+
             return { id: -1 };
         }
 
@@ -410,7 +424,7 @@ module.exports = {
                 resp = await Department.findOne({ _id: query.resp + '' });
             } catch (err) { console.log('Cannot find department'); }
             var respQ = {};
-            if (resp != null)
+            if (resp != null) {
                 switch (resp.type) {
                     case 'b2b':
                         respQ = { 'info.department': resp._id };
@@ -466,6 +480,7 @@ module.exports = {
                         };
                         break;
                 }
+            }
 
             if (qr['$and']) {
                 qr['$and'].push(respQ);
@@ -593,8 +608,9 @@ module.exports = {
         if (status.length > 0) {
             if (qr['$or']) {
                 qr['$or'] = qr['$or'].concat(status);
-            } else
+            } else {
                 qr['$or'] = status;
+            }
         }
 
         if (query.client) {
@@ -716,12 +732,11 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else qr['$and'] = [{
-                            'date.init': {
-                                $gte: start,
-                                $lte: end
-                            }
-                        }];
+                        } else {
+                            qr['$and'] = [
+                                { 'date.init': {  $gte: start, $lte: end }}
+                            ];
+                        }
                         break;
                     case 'gzp-pre':
                         if (qr['$and']) {
@@ -731,12 +746,14 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else qr['$and'] = [{
-                            'date.gzp-pre': {
-                                $gte: start,
-                                $lte: end
-                            }
-                        }];
+                        } else {
+                            qr['$and'] = [{
+                                'date.gzp-pre': {
+                                    $gte: start,
+                                    $lte: end
+                                }
+                            }];
+                        }
                         break;
                     case 'sks-pre':
                         if (qr['$and']) {
@@ -746,12 +763,12 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else qr['$and'] = [{
+                        } else {qr['$and'] = [{
                             'date.sks-pre': {
                                 $gte: start,
                                 $lte: end
                             }
-                        }];
+                        }];}
                         break;
                     case 'stop-pre':
                         if (qr['$and']) {
@@ -761,12 +778,12 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else qr['$and'] = [{
+                        } else {qr['$and'] = [{
                             'date.stop-pre': {
                                 $gte: start,
                                 $lte: end
                             }
-                        }];
+                        }];}
                         break;
                     case 'gzp-build':
                         if (qr['$and']) {
@@ -786,7 +803,7 @@ module.exports = {
                                     }
                                 ]
                             })
-                        } else qr['$and'] = [{
+                        } else {qr['$and'] = [{
                             $or: [
                                 {
                                     'date.gzp-build': {
@@ -801,7 +818,7 @@ module.exports = {
                                     }
                                 }
                             ]
-                        }];
+                        }];}
                         break;
                     case 'stop-build':
                         if (qr['$and']) {
@@ -811,12 +828,12 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else qr['$and'] = [{
+                        } else {qr['$and'] = [{
                             'date.stop-build': {
                                 $gte: start,
                                 $lte: end
                             }
-                        }];
+                        }];}
                         break;
                     case 'sks-build':
                         if (qr['$and']) {
@@ -826,12 +843,12 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else qr['$and'] = [{
+                        } else {qr['$and'] = [{
                             'date.sks-build': {
                                 $gte: start,
                                 $lte: end
                             }
-                        }];
+                        }];}
                         break;
                     case 'report':
                         if (qr['$and']) {
@@ -840,11 +857,11 @@ module.exports = {
                                     { 'date.network': { $gte: start, $lte: end } }
                                 ]
                             })
-                        } else qr['$and'] = [{
+                        } else {qr['$and'] = [{
                             $or: [
                                 { 'date.network': { $gte: start, $lte: end } }
                             ]
-                        }];
+                        }];}
                         break;
                     case 'succes':
                         if (qr['$and']) {
@@ -864,7 +881,7 @@ module.exports = {
                                     }
                                 ]
                             })
-                        } else qr['$and'] = [{
+                        } else {qr['$and'] = [{
                             $or: [
                                 {
                                     'date.succes': {
@@ -879,7 +896,7 @@ module.exports = {
                                     }
                                 }
                             ]
-                        }];
+                        }];}
                         break;
                 }
             }
@@ -966,9 +983,9 @@ module.exports = {
             case 'stop-continue':
             case 'stop-change':
                 var dep = await Department.findOne({ type: 'b2o' });
-                if (!dep) dep = {
+                if (!dep) {dep = {
                     name: 'Ответсвенный отдел не определён!'
-                }
+                }}
                 return dep.name;
                 break;
             case 'all-pre':
@@ -989,9 +1006,9 @@ module.exports = {
             case 'sks-pre':
             case 'sks-build':
                 var dep = await Department.findOne({ type: 'sks' });
-                if (!dep) dep = {
+                if (!dep) {dep = {
                     name: 'Ответсвенный отдел не определён!'
-                }
+                }}
                 return dep.name;
                 break;
             case 'client-match':
@@ -1066,15 +1083,6 @@ module.exports = {
             } else res.type += '' + str[i];
         }
         return 'err';
-    },
-
-    parseDate: (date) => {
-        date = date.split('.');
-        if (date.length == 3) {
-            if (date[1] >= 1 && date[1] <= 12 && date[0] > 0 && date[0] <= 31)
-                return new Date(date[2], date[1] - 1, date[0]);
-            else return false
-        } else return false;
     },
 
     getData: async (res) => {
@@ -1155,7 +1163,7 @@ function strToDate(date) {
         date = date.split('.');
         if (date.length == 3) {
             if (date[1] >= 1 && date[1] <= 12 && date[0] > 0 && date[0] <= 31)
-                return new Date(date[2], date[1] - 1, date[0]);
+                {return new Date(date[2], date[1] - 1, date[0]);}
             else return false
         } else return false;
     } else return null;
