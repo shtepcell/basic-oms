@@ -4,7 +4,6 @@ block('page').content()(function() {
             block: 'yandex-metrica',
             params: {
                 id: 55831267,
-                webvisor: true,
                 clickmap: true,
                 trackLinks: true,
                 accurateTrackBounce: true,
