@@ -29,6 +29,7 @@ var techs = {
         { path: 'node_modules/bem-components/design/desktop.blocks', check: false },
         { path: 'node_modules/bem-history/common.blocks', check: false },
         { path: 'node_modules/bem-calendar/common.blocks', check: false },
+        { path: 'node_modules/bem-stat-counters/common.blocks', check: false },
         'common.blocks'
     ];
 

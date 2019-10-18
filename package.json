@@ -18,6 +18,7 @@
   ],
   "dependencies": {
     "bem-calendar": "git+https://github.com/dalv96/bem-calendar.git",
+    "bem-stat-counters": "3.0.0",
     "body-parser": "^1.15.0",
     "compression": "^1.6.2",
     "connect-mongo": "^1.3.2",
