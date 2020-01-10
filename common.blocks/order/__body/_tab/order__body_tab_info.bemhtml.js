@@ -113,6 +113,16 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             display: true
         },
         {
+            block: 'field',
+            elem: 'type-adress',
+            display: adminEdit,
+            dataset: dataset,
+            order: order,
+            elemMods: {
+                access: adminEdit
+            }
+        },
+        {
             elem: 'adress-info',
             elemMods: {
                 type: (order.info.coordinate)?'coordination':'location',

@@ -1,14 +1,13 @@
 block('field').elem('street').content()(function () {
-    var ctx = this.ctx,
-        order = ctx.order,
-        dataset = ctx.dataset;
+    const ctx = this.ctx;
+    const order = ctx.order;
 
-
-    if(ctx.display) {
+    if (ctx.display) {
         var value = '';
 
-        if(order.info.street)
+        if (order.info.street) {
             value = `${order.info.street.type} ${order.info.street.name}`;
+        }
 
         return [
             {
@@ -36,12 +35,12 @@ block('field').elem('street').elemMod('access', true).content()(function () {
         order = ctx.order,
         dataset = ctx.dataset;
 
-
-    if(ctx.display) {
+    if (ctx.display) {
         var value = '';
 
-        if(order && order.info.street)
+        if(order && order.info.street) {
             value = `${order.info.street.type} ${order.info.street.name}`;
+        }
 
         return [
             {

@@ -1079,24 +1079,40 @@ module.exports = {
                     }
                 })
 
+                console.log(data.adressType);
+
                 // Координаты
+                if (data.adressType === 'coordination') {
+                    var coordinate = data.coordinate;
 
-                var coordinate = data.coordinate;
+                    if (!coordinate) {
+                        res.status(400).send({ errText: 'Укажите координаты' });
+                        return;
+                    }
 
-                if (coordinate) {
                     tmp.coordinate = coordinate;
+                    tmp.street = undefined;
+                    tmp.adds = undefined;
+
                 }
 
                 // Улица
-                var strt = await validator.street(data.street);
+                if (data.adressType === 'location') {
+                    if (!tmp.street || !tmp.adds) {
+                        res.status(400).send({ errText: 'Укажите улицу и дом' });
+                        return;
+                    }
 
-                if (!strt._id && !coordinate) {
-                    res.status(400).send({ errText: strt });
-                    return;
+                    var strt = await validator.street(data.street);
+
+                    if (!strt._id) {
+                        res.status(400).send({ errText: 'Такой улицы нет в справочнике' });
+                        return;
+                    }
+
+                    tmp.street = strt;
+                    tmp.coordinate = undefined;
                 }
-
-                if (!coordinate)
-                    {tmp.street = strt;}
 
                 // Город
                 var city = await validator.city(data.city);

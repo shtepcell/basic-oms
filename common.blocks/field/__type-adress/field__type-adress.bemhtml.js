@@ -13,7 +13,6 @@ block('field').elem('type-adress').elemMod('access', true).content()(function ()
 
     if(ctx.display) {
         return [
-
             {
                 block: 'order',
                 elem: 'body-row',
