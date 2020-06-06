@@ -12,8 +12,7 @@ const helper = require('./helper'),
 
 module.exports = {
     get: async (req, res) => {
-        var user = await Account.findOne({_id: res.locals.__user._id})
-                                .populate('notifies');
+        var user = await Account.findOne({_id: res.locals.__user._id}).populate('notifies');
 
         res.locals.notifies = user.notifies.map( i => {
             i.text = events[i.text];
@@ -41,6 +40,7 @@ module.exports = {
     },
 
     create: async (user, order, type, recipients) => {
+        const isNetService = ['wifi', 'wifiorg', 'sputnik'].includes(order.info.service);
 
         var ntf = new Notify({
             order: order.id,
@@ -58,6 +58,9 @@ module.exports = {
         var worker = [];
 
         switch (type) {
+            case "start-pre":
+                isNetService && (worker = net);
+
             case "start-gzp-pre":
             case "start-gzp-build":
             case "start-install-devices":
@@ -114,6 +117,7 @@ module.exports = {
             case "end-sks-pre":
             case "shutdown":
             case "pause-service":
+            case "end-pre":
                 worker = await Account.find({ _id: order.info.initiator });
                 break;
 

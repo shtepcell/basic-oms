@@ -1,14 +1,13 @@
 block('order').elem('actions').elemMod('tab', 'sks').content()(function () {
-    var ctx = this.ctx,
-        order = ctx.order,
-        user = ctx.user,
-        adminEdit = ctx.adminEdit;
+    const { order, user, adminEdit } = this.ctx;
+    const { status, info: { service } } = order;
 
-    var isOwner = (user.department.type == 'sks'),
-        isPre = (order.status == 'sks-pre'),
-        isBuild = (order.status == 'sks-build'),
-        isPause = (order.pause.status),
-        isAdmin = (user.department.type == 'admin');
+    const isNetService = ['wifi', 'wifiorg', 'sputnik'].includes(service);
+
+    const isOwner = status === 'sks-pre' && user.department.type === 'sks' || isNetService && user.department.type === 'net';
+    const isPre = ['sks-pre', 'pre'].includes(status);
+    const isBuild = status === 'sks-build';
+    const isAdmin = user.department.type === 'admin';
 
     return [
         {

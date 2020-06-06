@@ -5,12 +5,12 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
 
     const { services, types } = dataset;
 
-    const srvs = Object.keys(services).map( (item) => {
+    const srvs = Object.keys(services).map(item => {
         return {
             val: item,
             text: services[item]
         };
-    });
+    }).filter(item => item.val != 'rrl');
 
     const typesOption = types.map( item => {
         return {
@@ -341,7 +341,7 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                             size: 'l',
                             type: 'submit'
                         },
-                        text: 'Инициировать заказ'
+                        text: 'Создать заказ'
                     }
                 ]
             }

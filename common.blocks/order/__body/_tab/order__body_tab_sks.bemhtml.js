@@ -1,13 +1,6 @@
 block('order').elem('body').elemMod('tab', 'sks').content()(function () {
-
-    var ctx = this.ctx,
-        tab = ctx.tab,
-        user = ctx.user,
-        order = ctx.order,
-        adminEdit = ctx.adminEdit,
-        dataset = ctx.dataset;
-
-    var mustFill = (order.status == 'sks-pre' && user.department.type == 'sks');
+    const { user, order, adminEdit, dataset } = this.ctx;
+    const mustFill = (order.status == 'sks-pre' && user.department.type == 'sks') || (order.status == 'pre' && user.department.type == 'net') ;
 
     return [
         {

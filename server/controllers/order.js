@@ -78,8 +78,16 @@ const render = Render.render;
 const logger = require('./logger');
 
 const isSKSPath = (order) => {
-    return ['sks', 'wifiorg'].includes(order.info.service)
+    return order.info.service === 'sks';
 };
+
+const isNetPath = (order) => {
+    return ['wifi', 'wifiorg', 'sputnik'].includes(order.info.service);
+};
+
+const has = (value) => {
+    return value !== '' || value !== null || value !== undefined;
+}
 
 module.exports = {
 
@@ -459,6 +467,9 @@ module.exports = {
             case 'net':
                 query = {
                     '$or': [
+                        { status: 'pre', 'info.service': 'wifi' },
+                        { status: 'pre', 'info.service': 'wifiorg' },
+                        { status: 'pre', 'info.service': 'sputnik' },
                         { status: 'network' },
                         { status: 'pre-shutdown' },
                         { status: 'pre-pause' },
@@ -740,10 +751,7 @@ module.exports = {
 
         if (isSKSPath(order)) order.status = 'sks-pre';
 
-        if (order.info.service == 'wifi') {
-            order.status = 'network';
-            histories.push(helper.historyGenerator('start-network', res.locals.__user));
-        }
+        if (isNetPath(order)) order.status = 'pre';
 
         var deadline = await helper.calculateDeadline(3);
         switch (order.status) {
@@ -758,6 +766,7 @@ module.exports = {
                 kk['cs-stop-pre'] = deadline;
                 break;
             case 'sks-pre':
+            case 'pre':
                 kk['cs-sks-pre'] = deadline;
                 break;
             case 'network':
@@ -1034,7 +1043,7 @@ module.exports = {
         } else render(req, res, { view: '404' });
     },
 
-    adminEdit: async (req, res, io) => {
+    adminEdit: async (req, res) => {
         var data = req.body;
 
         var order = await Order.findOne({ id: req.params.id });
@@ -1196,6 +1205,8 @@ module.exports = {
 
     endPreSKS: async (req, res) => {
         var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
+        const currentStatus = order.status;
+
         if (order) {
             Object.keys(req.body).forEach(item => {
                 req.body[item] = req.body[item].trim();
@@ -1232,18 +1243,18 @@ module.exports = {
                 // notify.create(res.locals.__user, order, 'pause-stop');
             }
 
-            order.history.push(helper.historyGenerator('sks-pre', res.locals.__user));
+            order.history.push(helper.historyGenerator(currentStatus, res.locals.__user));
             var done = await order.save();
             if (done) {
-                notify.create(res.locals.__user, done, 'end-sks-pre');
+                notify.create(res.locals.__user, done, `end-${currentStatus}`);
 
-                logger.info(`Выполнена проработка СКС #${done.id}`, res.locals.__user);
+                logger.info(`Выполнена проработка #${done.id}`, res.locals.__user);
                 res.status(200).send({ created: true })
             } else res.status(400).send({ errText: 'Что-то пошло не так!' });
         } else res.status(404);
     },
 
-    endPreSTOP: async (req, res, io) => {
+    endPreSTOP: async (req, res) => {
         var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
         if (order) {
             Object.keys(req.body).forEach(item => {
@@ -1326,8 +1337,10 @@ module.exports = {
         } else res.status(404);
     },
 
-    changeStatus: async (req, res, io) => {
+    changeStatus: async (req, res) => {
         var reqData = req.body;
+        const { incomeOnce, incomeMonth } = reqData;
+
         var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
 
         if (!order) {
@@ -1673,13 +1686,15 @@ module.exports = {
                         order.status = 'succes';
                         break;
                     case 'network':
-                        order.info.service === 'wifi' && (order.status = 'client-match');
+                        isNetPath(order) && (order.status = 'client-match');
                         break;
                 }
                 order.history.push(helper.historyGenerator('back', res.locals.__user));
                 break;
             case 'start-network':
                 order.status = 'network';
+                order.info['income-once'] = incomeOnce || order.info['income-once'];
+                order.info['income-monthly'] = incomeMonth || order.info['income-once'];
                 order.deadline = order.date['cs-network'] = await helper.calculateDeadline(3);
                 order.history.push(helper.historyGenerator('start-network', res.locals.__user));
                 break;
@@ -1708,7 +1723,7 @@ module.exports = {
         }
     },
 
-    endClientNotify: async (req, res, io) => {
+    endClientNotify: async (req, res) => {
         var reqData = req.body;
         var order = await Order.findOne({ id: req.params.id }).populate(populateClient);
 
@@ -1815,6 +1830,7 @@ module.exports = {
                 res.status(400).send({ errText: 'Укажите ID OSS' });
                 return;
             }
+
             if (reqData['income-once'] == '' || reqData['income-once'] == null) {
                 res.status(400).send({ errText: 'Укажите доход!' });
                 return;

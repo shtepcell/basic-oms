@@ -1,25 +1,24 @@
 .cool-head {
-  width: 800px;
-  margin: 20px auto;
-  display: flex;
-  flex-direction: row;
+    width: 800px;
+    margin: 24px auto;
+    display: flex;
+    flex-direction: row;
 }
 
 .cool-head__title {
-  font-size: 24px;
-  font-family: 'Arial';
-  font-weight: bold;
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .cool-head__title > a.link {
-  margin-left: 10px;
-  font-size: 24px;
+    margin-left: 10px;
+    font-size: 24px;
 }
 
 .cool-head__action {
-  margin-left: auto;
+    margin-left: auto;
 }
 
 .cool-head__action .button {
-  margin-left: 20px;
+    margin-left: 20px;
 }

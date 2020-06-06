@@ -11,12 +11,13 @@ modules.define('order__button',
 
         _onClick: function () {
             var data = this.params;
-            if (data.to == 'start-sks-build' || data.to == 'start-gzp-build' || data.to == 'start-stop-build') {
+            if (data.to == 'start-sks-build' || data.to == 'start-gzp-build' || data.to == 'start-stop-build' || data.to == 'start-network') {
               data.incomeOnce = document.getElementsByName('income-once')[0].value;
               data.incomeMonth = document.getElementsByName('income-monthly')[0].value;
               var idExist = !!document.getElementsByName('idoss')[0];
-              if (idExist)
-                data.oss = document.getElementsByName('idoss')[0].value;
+              if (idExist) {
+                  data.oss = document.getElementsByName('idoss')[0].value;
+              }
 
               if (data.incomeOnce == '' || data.incomeMonth == '' || (idExist && data.oss == '') ) {
                 alert('Заполните требуемы поля!')
@@ -39,13 +40,16 @@ modules.define('order__button',
                     }
                     data.contact = contact;
                 }
-                
+
                 $.ajax({
                     url: this.params.url,
                     type: 'POST',
                     dataType: 'json',
                     data: data,
                     timeout: 5000,
+                    error: function () {
+                        alert('Что-то пошло не так');
+                    },
                     success: function (res) {
                         if(res.url) window.location = res.url;
                         else window.location.reload();
