@@ -9,7 +9,7 @@ block('navigator').content()(function () {
         mods: { theme: 'islands', size : 'l' },
         mix: { block: 'navigator', elem: 'link' },
         url: '/init',
-        content: 'Инициация заказа'
+        content: 'Создать заказ'
     };
 
     var clients = {

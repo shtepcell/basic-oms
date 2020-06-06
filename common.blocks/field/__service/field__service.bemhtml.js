@@ -32,13 +32,16 @@ block('field').elem('service').elemMod('access', true).content()(function () {
 
     const services = ctx.dataset.services;
 
-    const srvs = Object.keys(services).map( (item) => {
+    let srvs = Object.keys(services).map(item => {
         return {
             val: item,
             text: services[item]
         };
     });
 
+    if (order.info.service !== 'rrl') {
+        srvs = srvs.filter(item => item.val !== 'rrl')
+    }
 
     if(ctx.display) {
         return [

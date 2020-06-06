@@ -30,7 +30,7 @@ provide(bemDom.declElem('action', 'change-service',
                             neg.setMod('visible', value == 'wifi');
                             neg.setVal('');
 
-                            if (value == 'wifi' || value == 'wifiorg' || value == 'sks' || value == 'rrl') {
+                            if (value == 'wifi' || value == 'wifiorg' || value == 'sks' || value == 'sputnik') {
                                 g.setMod('visible', false);
                             }
                             else {

@@ -49,15 +49,15 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const isOn = (order.status == 'succes');
     const isShut = (order.status == 'pre-shutdown');
     const isDemontage = (order.status == 'build-shutdown');
-    const isSKS = ['sks', 'wifiorg'].includes(order.info.service);
+    const isSKS = ['sks'].includes(order.info.service);
     const isStartPause = (order.status == 'pre-pause');
-    const isWifi = (order.info.service === 'wifi');
+    const isNetService = ['wifi', 'wifiorg', 'sputnik'].includes(order.info.service);
 
     const isStopPause = (order.status == 'stop-pause');
     const pausedOrder = (order.status == 'pause');
 
     const display = {
-        'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need === false || order.gzp.capability) && !isSKS && !isWifi
+        'build-gzp': isOwner && (isPre || isMatch) && (order.gzp.need === false || order.gzp.capability) && !isSKS && !isNetService
     };
 
     return [
@@ -91,7 +91,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-network',
                 id: order.id
             },
-            display: (isOwner && isMatch && isWifi)
+            display: (isOwner && isMatch && isNetService)
         },
         {
             block: 'order',
@@ -101,7 +101,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-pre-gzp',
                 id: order.id
             },
-            display: (isOwner && isMatch && order.gzp.need == undefined && !isSKS && !isWifi)
+            display: (isOwner && isMatch && order.gzp.need == undefined && !isSKS && !isNetService)
         },
         {
             block: 'order',
@@ -131,7 +131,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-pre-stop',
                 id: order.id
             },
-            display: (isOwner && isMatch && order.stop.capability == undefined && !isSKS && !isWifi)
+            display: (isOwner && isMatch && order.stop.capability == undefined && !isSKS && !isNetService)
         },
         {
             block: 'order',
@@ -151,7 +151,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-stop-build',
                 id: order.id
             },
-            display: (isOwner && (isPre || isMatch) && order.stop.capability && !isSKS && !isWifi)
+            display: (isOwner && (isPre || isMatch) && order.stop.capability && !isSKS && !isNetService)
         },
         {
             block: 'order',
@@ -161,7 +161,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'comeback',
                 id: order.id
             },
-            display: (isNetUser && isNetStatus && !isWifi)
+            display: (isNetUser && isNetStatus && !isNetService)
         },
         {
             block: 'order',
@@ -363,7 +363,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'back',
                 id: order.id
             },
-            display: (isNetUser && isNetStatus && isWifi)
+            display: (isNetUser && isNetStatus && isNetService)
         },
         {
             block: 'order',
@@ -424,7 +424,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
             },
             deps: ctx.dataset.deps,
             id: order.id,
-            display: (isAdmin || isOwner || isGUS) && !isWifi
+            display: (isAdmin || isOwner || isGUS) && !isNetService
         }
     ];
 })

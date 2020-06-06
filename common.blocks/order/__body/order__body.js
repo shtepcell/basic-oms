@@ -24,7 +24,7 @@ modules.define('order__body',
                         var url = this.domElem[0].action;
 
                         e.preventDefault();
-                        data = this._validate() || {};
+                        let data = this._validate() || {};
                         var _file = data.file;
                         data = data.data;
                         popup.setModalSectionContent('Сохранение...');
@@ -54,16 +54,18 @@ modules.define('order__body',
                                 dataType: 'json',
                                 contentType: (_file)?false:undefined,
                                 processData: (_file)?false:undefined,
-                                data: data,
+                                data,
                                 timeout: 5000,
                                 error: function(err) {
 
                                     var errText = err.responseJSON && err.responseJSON.errText ? '\n' + err.responseJSON.errText : ''
 
-                                    if(err.responseJSON.length)
+                                    if (err.responseJSON.length) {
                                         err.responseJSON.forEach( item => {
                                             errText += item.errText + ' ';
                                         });
+                                    }
+
                                     else errText = err.responseJSON.errText;
                                     popup.setModalSectionContent('Ошибка!', undefined, 'Не удается сохранить. ' + errText);
                                     popup.show();
@@ -92,11 +94,8 @@ modules.define('order__body',
                                     popup.show();
                                     _this._reinitPopupEvents();
                                     _this._events(popup)
-                                        .once('close', function() {
-                                            if(res.url) window.location = res.url;
-                                            else window.location.reload();
-                                        })
-                                        .once('OK', function() {
+                                        .once('close', () => {})
+                                        .once('OK', () => {
                                             if(res.url) window.location = res.url;
                                             else window.location.reload();
                                         });

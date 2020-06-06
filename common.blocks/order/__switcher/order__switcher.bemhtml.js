@@ -8,9 +8,9 @@ block('order').elem('switcher').content()(function () {
         'rrl-pre'
     ];
 
-    var gzpMustShow = (gzpStages.includes(order.status) || order.gzp.need !== undefined),
-        stopMustShow = (order.status == 'stop-pre' || order.status == 'all-pre' || order.stop.capability !== undefined);
-        sksMustShow = (order.status == 'sks-pre' || order.sks.time != undefined);
+    const gzpMustShow = gzpStages.includes(order.status) || order.gzp.need !== undefined;
+    const stopMustShow = order.status == 'stop-pre' || order.status == 'all-pre' || order.stop.capability !== undefined;
+    const preMustShow = order.status == 'pre' || order.status == 'sks-pre' || order.sks.time != undefined;
 
     return [
         {
@@ -34,10 +34,10 @@ block('order').elem('switcher').content()(function () {
         {
             elem: 'tab',
             elemMods: {
-                display: sksMustShow,
-                active: (tab=='sks')
+                display: preMustShow,
+                active: (tab === 'sks')
             },
-            content: 'СКС',
+            content: 'Проработка',
             url: `/order/${order.id}/sks`
         },
         {

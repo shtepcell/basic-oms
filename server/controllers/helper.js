@@ -67,6 +67,9 @@ module.exports = {
             case 'admin':
                 ret.name = 'Административная правка';
                 break;
+            case 'pre':
+                ret.name = 'Проработка';
+                break;
             case 'gzp-pre':
                 ret.name = 'Проработка ГЗП';
                 break;
@@ -983,6 +986,7 @@ module.exports = {
             case 'pre-pause':
             case 'pre-continue':
             case 'pre-change':
+            case 'pre':
                 var dep = await Department.findOne({ type: 'net' });
                 return dep.name;
                 break;
