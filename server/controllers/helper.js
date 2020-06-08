@@ -492,6 +492,9 @@ module.exports = {
             if (query.pre.indexOf('4') >= 0) {
                 status.push({ status: 'sks-pre' });
             }
+            if (query.pre.indexOf('5') >= 0) {
+                status.push({ status: 'pre' });
+            }
         }
 
         if (query.build) {
