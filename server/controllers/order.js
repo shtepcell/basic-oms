@@ -2209,6 +2209,14 @@ module.exports = {
                 hist.name = 'Изменен этап -> Проработка ГЗП и СТОП'
                 break;
 
+            case 'pre':
+                order.status = 'pre';
+                var deadline = await helper.calculateDeadline(3);
+                order.deadline = deadline;
+                order.date['cs-gzp-pre'] = deadline;
+                hist.name = 'Изменен этап -> Проработка'
+                break;
+
             case 'sks-pre':
                 order.status = 'sks-pre';
                 var deadline = await helper.calculateDeadline(3);

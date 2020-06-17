@@ -9,6 +9,19 @@ block('stages').content()(function () {
           block: 'action',
           elem: 'direct',
           js: {
+            stage: 'pre',
+            order: order
+          }
+        },
+        content: 'Проработка (ГФСС)'
+    },
+    {
+        block: 'stages',
+        elem: 'item',
+        mix: {
+          block: 'action',
+          elem: 'direct',
+          js: {
             stage: 'gzp-pre',
             order: order
           }
