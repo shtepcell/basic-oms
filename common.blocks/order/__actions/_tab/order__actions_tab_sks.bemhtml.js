@@ -3,10 +3,10 @@ block('order').elem('actions').elemMod('tab', 'sks').content()(function () {
     const { status, info: { service } } = order;
 
     const isNetService = ['wifi', 'wifiorg', 'sputnik'].includes(service);
-
-    const isOwner = status === 'sks-pre' && user.department.type === 'sks' || isNetService && user.department.type === 'net';
-    const isPre = ['sks-pre', 'pre'].includes(status);
     const isBuild = status === 'sks-build';
+
+    const isOwner = (status === 'sks-pre' || isBuild) && user.department.type === 'sks' || isNetService && user.department.type === 'net';
+    const isPre = ['sks-pre', 'pre'].includes(status);
     const isAdmin = user.department.type === 'admin';
 
     return [
