@@ -2411,11 +2411,7 @@ module.exports = {
             archive = true;
         }
 
-        const firstDate = Date.now();
         var orders = await Order.get(query, archive).populate([populateClient, populateCity, populateStreet]).lean();
-        const secondDate = Date.now();
-
-        console.log(secondDate - firstDate);
 
         var total = orders.length;
 
