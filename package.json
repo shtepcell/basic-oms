@@ -17,6 +17,8 @@
     "last 2 versions"
   ],
   "dependencies": {
+    "@sentry/node": "5.23.0",
+    "@sentry/tracing": "5.23.0",
     "bem-calendar": "git+https://github.com/dalv96/bem-calendar.git",
     "bem-stat-counters": "3.0.0",
     "body-parser": "^1.15.0",

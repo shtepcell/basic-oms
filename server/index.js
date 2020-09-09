@@ -1,4 +1,7 @@
 Object.assign || (Object.assign = require('object-assign'));
+const Sentry = require('@sentry/node');
+
+Sentry.init({ dsn: 'http://5797b578fc674144b315629998665222@84.201.163.198:9000/2' });
 
 var fs = require('fs'),
     path = require('path'),
@@ -40,9 +43,11 @@ morgan.token('date', function() {
 });
 
 morgan.token('user', function(req, res) {
-    if(res.locals.__user)
+    if(res.locals.__user) {
         return res.locals.__user.login;
-    else return 'guest'
+    } else {
+        return 'guest'
+    }
 });
 
 morgan.token('smart-url', function(req, res) {
@@ -51,6 +56,7 @@ morgan.token('smart-url', function(req, res) {
 });
 
 app
+    .use(Sentry.Handlers.requestHandler())
     .disable('x-powered-by')
     .enable('trust proxy')
     .use(compression())
@@ -100,6 +106,8 @@ var io = require('socket.io')(server);
 router(app, io);
 
 isDev && require('./rebuild')(app);
+
+app.use(Sentry.Handlers.errorHandler());
 
 app.get('*', function(req, res) {
     res.status(404);
