@@ -70,7 +70,7 @@ module.exports = function (app, io) {
 
     app.post('/settings/:tab', Account.settings);
 
-    app.get('/status', Order.getStat);
+    app.get('/status', Order.getStatPage);
 
     app.get('/search', Order.search);
     app.get('/search/reset', Order.searchReset);
@@ -95,15 +95,12 @@ module.exports = function (app, io) {
     //     return Order.init(req, res, io);
     // });
 
-    app.get('/order/:id', function (req, res) {
-        res.redirect(`/order/${req.params.id}/info`)
-    });
-
     // app.post('/order/:id', Order.submit);
     app.post('/order/:id/action', (req, res) => {
         return Order.changeStatus(req, res, io);
     });
 
+    app.get('/order/:id', Order.getOrderInfo);
     app.get('/order/:id/info', Order.getOrderInfo);
     app.get('/order/:id/gzp', Order.getOrderGZP);
     app.get('/order/:id/sks', Order.getOrderSKS);

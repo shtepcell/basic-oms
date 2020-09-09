@@ -8,12 +8,6 @@ modules.define('pager__item',
                     this._button = this.findMixedBlock(Button);
                     this._button && this._events(this._button).on('click', this._onClick);
                     this._page = location.getUri().getParam('pager' + this._pagerId ) || 1;
-                    location.on('change', function (e, state) {
-                        if (!state.params.page) {
-                            this._page = 1;
-                        }
-                        window.location.reload();
-                    }, this);
                 }
             },
 
@@ -27,6 +21,7 @@ modules.define('pager__item',
 
             params['pager' + this._pagerId] =  this.params.page;
             location.change({ params: params });
+            window.location.reload();
         }
     }));
 });

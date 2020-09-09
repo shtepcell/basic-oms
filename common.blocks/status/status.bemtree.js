@@ -1,6 +1,6 @@
 block('status').content()(function () {
-    var stat = this.ctx.statistics,
-        deps = this.ctx.deps;
+    const { statistics, deps, ts, duration } = this.ctx;
+
     return [
         {
             elem: 'common',
@@ -21,7 +21,7 @@ block('status').content()(function () {
                         },
                         {
                             elem: 'data',
-                            content: stat.all
+                            content: statistics.all
                         }
                     ]
                 },
@@ -41,7 +41,7 @@ block('status').content()(function () {
                         },
                         {
                             elem: 'data',
-                            content: stat.succes
+                            content: statistics.succes
                         }
                     ]
                 },
@@ -61,7 +61,7 @@ block('status').content()(function () {
                         },
                         {
                             elem: 'data',
-                            content: stat.reject
+                            content: statistics.reject
                         }
                     ]
                 }
@@ -89,7 +89,7 @@ block('status').content()(function () {
                                 },
                                 {
                                     elem: 'data',
-                                    content: stat.pre + stat.build
+                                    content: statistics.pre + statistics.build
                                 }
                             ]
                         },
@@ -116,7 +116,7 @@ block('status').content()(function () {
                                                 },
                                                 {
                                                     elem: 'data',
-                                                    content: stat.pre
+                                                    content: statistics.pre
                                                 }
                                             ]
                                         },
@@ -142,9 +142,9 @@ block('status').content()(function () {
                                                             break;
                                                     }
 
-                                                    if(stat[item._id]) {
-                                                        if(stat[item._id].pre > 0)
-                                                            ret.push({
+                                                    if(statistics[item._id]) {
+                                                        if(statistics[item._id].pre > 0)
+                                                            {ret.push({
                                                                 elem: 'row',
                                                                 content: [
                                                                     {
@@ -161,10 +161,10 @@ block('status').content()(function () {
                                                                     },
                                                                     {
                                                                         elem: 'data',
-                                                                        content: stat[item._id].pre
+                                                                        content: statistics[item._id].pre
                                                                     }
                                                                 ]
-                                                            })
+                                                            })}
                                                     }
                                                 })
                                                 return ret;
@@ -191,7 +191,7 @@ block('status').content()(function () {
                                                 },
                                                 {
                                                     elem: 'data',
-                                                    content: stat.build
+                                                    content: statistics.build
                                                 }
                                             ]
                                         },
@@ -220,9 +220,9 @@ block('status').content()(function () {
                                                             break;
                                                     }
 
-                                                    if(stat[item._id]) {
-                                                        if(stat[item._id].build > 0)
-                                                            ret.push({
+                                                    if(statistics[item._id]) {
+                                                        if(statistics[item._id].build > 0)
+                                                            {ret.push({
                                                                 elem: 'row',
                                                                 content: [
                                                                     {
@@ -239,10 +239,10 @@ block('status').content()(function () {
                                                                     },
                                                                     {
                                                                         elem: 'data',
-                                                                        content: stat[item._id].build
+                                                                        content: statistics[item._id].build
                                                                     }
                                                                 ]
-                                                            })
+                                                            })}
                                                     }
                                                 })
                                                 return ret;
@@ -274,7 +274,7 @@ block('status').content()(function () {
                                 },
                                 {
                                     elem: 'data',
-                                    content: stat['pre-deadline']+stat['build-deadline']
+                                    content: statistics['pre-deadline']+statistics['build-deadline']
                                 }
                             ]
                         },
@@ -304,7 +304,7 @@ block('status').content()(function () {
                                                 },
                                                 {
                                                     elem: 'data',
-                                                    content: stat['pre-deadline']
+                                                    content: statistics['pre-deadline']
                                                 }
                                             ]
                                         },
@@ -330,9 +330,9 @@ block('status').content()(function () {
                                                             break;
                                                     }
 
-                                                    if(stat[item._id]) {
-                                                        if(stat[item._id]['pre-deadline'] > 0)
-                                                            ret.push({
+                                                    if(statistics[item._id]) {
+                                                        if(statistics[item._id]['pre-deadline'] > 0)
+                                                            {ret.push({
                                                                 elem: 'row',
                                                                 content: [
                                                                     {
@@ -349,10 +349,10 @@ block('status').content()(function () {
                                                                     },
                                                                     {
                                                                         elem: 'data',
-                                                                        content: stat[item._id]['pre-deadline']
+                                                                        content: statistics[item._id]['pre-deadline']
                                                                     }
                                                                 ]
-                                                            })
+                                                            })}
                                                     }
                                                 })
                                                 return ret;
@@ -379,7 +379,7 @@ block('status').content()(function () {
                                                 },
                                                 {
                                                     elem: 'data',
-                                                    content: stat['build-deadline']
+                                                    content: statistics['build-deadline']
                                                 }
                                             ]
                                         },
@@ -408,9 +408,9 @@ block('status').content()(function () {
                                                             break;
                                                     }
 
-                                                    if(stat[item._id]) {
-                                                        if(stat[item._id]['build-deadline'] > 0)
-                                                            ret.push({
+                                                    if(statistics[item._id]) {
+                                                        if(statistics[item._id]['build-deadline'] > 0)
+                                                            {ret.push({
                                                                 elem: 'row',
                                                                 content: [
                                                                     {
@@ -427,10 +427,10 @@ block('status').content()(function () {
                                                                     },
                                                                     {
                                                                         elem: 'data',
-                                                                        content: stat[item._id]['build-deadline']
+                                                                        content: statistics[item._id]['build-deadline']
                                                                     }
                                                                 ]
-                                                            })
+                                                            })}
                                                     }
                                                 })
                                                 return ret;

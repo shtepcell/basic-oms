@@ -207,6 +207,9 @@
         },
         {
             block: 'user'
+        },
+        {
+            block: 'status-description'
         }
     ]
 })

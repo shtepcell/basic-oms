@@ -9,7 +9,7 @@ static/index.min.*
 static/files
 static/storage
 backups/*
-
+cache/*
 errors.log
 
 # bem

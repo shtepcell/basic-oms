@@ -1,0 +1,16 @@
+.status-description {
+    color: #333;
+
+    text-align: center;
+}
+
+.status-description__hint {
+    max-width: 400px;
+
+    font-size: 14px;
+    line-height: 18px;
+
+    font-style: italic;
+    color: #999;
+    margin: 20px auto;
+}

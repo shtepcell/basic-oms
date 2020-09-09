@@ -8,6 +8,8 @@ const Flag = require('../models/Flag');
 const notify = require('./notify');
 const { getExcel, getReportExcel } = require('./export');
 const { saveFile } = require('./file-manager');
+const fs = require('fs');
+const path = require('path');
 
 const ClientType = require('../models/ClientType');
 
@@ -87,6 +89,285 @@ const isNetPath = (order) => {
 
 const has = (value) => {
     return value !== '' || value !== null || value !== undefined;
+}
+
+const getStat = async () => {
+    const startTime = Date.now();
+
+    var preQuery = [
+        { status: 'gzp-pre' },
+        { status: 'stop-pre' },
+        { status: 'all-pre' },
+        { status: 'sks-pre' },
+        { status: 'client-match' }
+    ]
+
+    var buildQuery = [
+        { status: 'gzp-build' },
+        { status: 'stop-build' },
+        { status: 'sks-build' },
+        { status: 'install-devices' },
+        { status: 'client-notify' },
+        { status: 'network' },
+        { status: 'pre-shutdown' },
+        { status: 'build-shutdown' },
+        { status: 'pre-pause' }
+    ];
+
+    const today = new Date();
+    today.setDate( today.getDate() - 1);
+
+    var deadlineQuery = {
+        deadline: { '$ne': null },
+        $or: [
+            {
+                $and: [
+                    { deadline: { '$lte': today } },
+                    { "pause.status": { $ne: true } }
+                ]
+            },
+            { $where: "this.pause && this.deadline < this.pause.date" }
+        ]
+    };
+
+    var counter = {
+        all: await Order.count({ status: { $ne: 'secret' } }),
+        succes: await Order.count({ status: 'succes' }),
+        reject: await Order.count({ status: 'reject' }),
+        pre: await Order.count({
+            $or: preQuery
+        }),
+        build: await Order.count({
+            $or: buildQuery
+        }),
+        'pre-deadline': await Order.count({
+            $and: [
+                deadlineQuery,
+                { $or: preQuery }
+            ]
+        }),
+        'build-deadline': await Order.count({
+            $and: [
+                deadlineQuery,
+                { $or: buildQuery }
+            ]
+        })
+    };
+
+    var deps = await Department.find({
+        $and: [
+            { type: { $ne: 'admin' } },
+            { type: { $ne: 'man' } }
+        ]
+    }).lean();
+
+    for (var i = 0; i < deps.length; i++) {
+        switch (deps[i].type) {
+            case 'gus':
+                counter[deps[i]._id] = {
+                    pre: await Order.count({
+                        'info.service': { $ne: 'rrl' },
+                        $or: [
+                            { status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null },
+                            { status: 'all-pre', 'info.city': deps[i].cities, 'special': null },
+                            { status: 'gzp-pre', 'special': deps[i]._id },
+                            { status: 'all-pre', 'special': deps[i]._id }
+                        ]
+                    }),
+                    build: await Order.count({
+                        'info.service': { $ne: 'rrl' },
+                        $or: [
+                            { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
+                            { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
+                            { status: 'gzp-build', 'special': deps[i]._id },
+                            { status: 'install-devices', 'special': deps[i]._id },
+                            { status: 'build-shutdown', 'info.city': deps[i].cities, 'special': null },
+                            { status: 'build-shutdown', 'special': deps[i]._id },
+                        ]
+                    }),
+                    'pre-deadline': await Order.count({
+                        $and: [
+                            {
+                                'info.service': { $ne: 'rrl' },
+                                $or: [
+                                    { status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null },
+                                    { status: 'all-pre', 'info.city': deps[i].cities, 'special': null },
+                                    { status: 'gzp-pre', 'special': deps[i]._id },
+                                    { status: 'all-pre', 'special': deps[i]._id }
+                                ]
+                            },
+                            deadlineQuery
+                        ]
+                    }),
+                    'build-deadline': await Order.count({
+                        $and: [
+                            {
+                                'info.service': { $ne: 'rrl' },
+                                $or: [
+                                    { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
+                                    { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
+                                    { status: 'gzp-build', 'special': deps[i]._id },
+                                    { status: 'install-devices', 'special': deps[i]._id },
+                                    { status: 'build-shutdown', 'info.city': deps[i].cities, 'special': null },
+                                    { status: 'build-shutdown', 'special': deps[i]._id },
+                                ]
+                            },
+                            deadlineQuery
+                        ]
+                    })
+                }
+                break;
+            case 'b2b':
+                counter[deps[i]._id] = {
+                    pre: await Order.count({
+                        $or: [
+                            { status: 'client-match' }
+                        ],
+                        'info.department': deps[i]._id
+                    }),
+                    build: await Order.count({
+                        $or: [
+                            { status: 'client-notify' }
+                        ],
+                        'info.department': deps[i]._id
+                    }),
+                    'pre-deadline': await Order.count({
+                        $and: [
+                            deadlineQuery,
+                            {
+                                $or: [
+                                    { status: 'client-match' }
+                                ]
+                            },
+                            { 'info.department': deps[i]._id }
+                        ]
+                    }),
+                    'build-deadline': await Order.count({
+                        $and: [
+                            deadlineQuery,
+                            {
+                                $or: [
+                                    { status: 'client-notify' }
+                                ]
+                            },
+                            { 'info.department': deps[i]._id }
+                        ]
+                    })
+                }
+                break;
+            case 'b2o':
+                counter[deps[i]._id] = {
+                    pre: await Order.count({
+                        $or: [
+                            {
+                                $or: [
+                                    { status: 'client-match' },
+                                    { status: 'stop-shutdown' },
+                                    { status: 'stop-pause' },
+                                    { status: 'stop-continue' },
+                                    { status: 'stop-change' }
+                                ],
+                                'info.department': deps[i]._id
+                            },
+                            { status: 'all-pre' },
+                            { status: 'stop-pre' }
+                        ]
+                    }),
+                    build: await Order.count({
+                        $or: [
+                            {
+                                $or: [
+                                    { status: 'client-notify' }
+                                ],
+                                'info.department': deps[i]._id
+                            },
+                            { status: 'stop-build' }
+                        ]
+                    }),
+                    'pre-deadline': await Order.count({
+                        $and: [
+                            deadlineQuery,
+                            {
+                                $or: [
+                                    {
+                                        $or: [
+                                            { status: 'client-match' }
+                                        ],
+                                        'info.department': deps[i]._id
+                                    },
+                                    { status: 'all-pre' },
+                                    { status: 'stop-pre' }
+                                ]
+                            }
+                        ]
+                    }),
+                    'build-deadline': await Order.count({
+                        $and: [
+                            deadlineQuery,
+                            {
+                                $or: [
+                                    {
+                                        $or: [
+                                            { status: 'client-notify' }
+                                        ],
+                                        'info.department': deps[i]._id
+                                    },
+                                    { status: 'stop-build' }
+                                ]
+                            }
+                        ]
+                    })
+                }
+                break;
+            case 'sks':
+                counter[deps[i]._id] = {
+                    pre: await Order.count({
+                        status: 'sks-pre'
+                    }),
+                    build: await Order.count({
+                        status: 'sks-build'
+                    }),
+                    'pre-deadline': await Order.count({
+                        $and: [
+                            deadlineQuery,
+                            { status: 'sks-pre' }
+                        ]
+                    }),
+                    'build-deadline': await Order.count({
+                        $and: [
+                            deadlineQuery,
+                            { status: 'sks-build' }
+                        ]
+                    })
+                }
+                break;
+            case 'net':
+                counter[deps[i]._id] = {
+                    build: await Order.count({
+                        $or: [
+                            { status: 'network' },
+                            { status: 'pre-shutdown' },
+                            { status: 'pre-pause' }
+                        ]
+                    }),
+                    'build-deadline': await Order.count({
+                        $and: [
+                            deadlineQuery,
+                            {
+                                $or: [
+                                    { status: 'network' },
+                                    { status: 'pre-shutdown' },
+                                    { status: 'pre-pause' }
+                                ]
+                            },
+                        ]
+                    })
+                }
+                break;
+        }
+    }
+
+    return { deps, statistics: counter, ts: startTime, duration: Date.now() - startTime };
 }
 
 module.exports = {
@@ -1859,286 +2140,33 @@ module.exports = {
         return;
     },
 
-    getStat: async (req, res) => {
-        var preQuery = [
-            { status: 'gzp-pre' },
-            { status: 'stop-pre' },
-            { status: 'all-pre' },
-            { status: 'sks-pre' },
-            { status: 'client-match' }
-        ]
-
-        var buildQuery = [
-            { status: 'gzp-build' },
-            { status: 'stop-build' },
-            { status: 'sks-build' },
-            { status: 'install-devices' },
-            { status: 'client-notify' },
-            { status: 'network' },
-            { status: 'pre-shutdown' },
-            { status: 'build-shutdown' },
-            { status: 'pre-pause' }
-        ];
-
-        const today = new Date();
-        today.setDate( today.getDate() - 1);
-
-        var deadlineQuery = {
-            deadline: { '$ne': null },
-            $or: [
-                {
-                    $and: [
-                        { deadline: { '$lte': today } },
-                        { "pause.status": { $ne: true } }
-                    ]
-                },
-                { $where: "this.pause && this.deadline < this.pause.date" }
-            ]
-        };
-
-        var counter = {
-            all: await Order.count({ status: { $ne: 'secret' } }),
-            succes: await Order.count({ status: 'succes' }),
-            reject: await Order.count({ status: 'reject' }),
-            pre: await Order.count({
-                $or: preQuery
-            }),
-            build: await Order.count({
-                $or: buildQuery
-            }),
-            'pre-deadline': await Order.count({
-                $and: [
-                    deadlineQuery,
-                    { $or: preQuery }
-                ]
-            }),
-            'build-deadline': await Order.count({
-                $and: [
-                    deadlineQuery,
-                    { $or: buildQuery }
-                ]
-            })
-        };
-
-        var deps = await Department.find({
-            $and: [
-                { type: { $ne: 'admin' } },
-                { type: { $ne: 'man' } }
-            ]
-        }).lean();
-
-        for (var i = 0; i < deps.length; i++) {
-            switch (deps[i].type) {
-                case 'gus':
-                    counter[deps[i]._id] = {
-                        pre: await Order.count({
-                            'info.service': { $ne: 'rrl' },
-                            $or: [
-                                { status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null },
-                                { status: 'all-pre', 'info.city': deps[i].cities, 'special': null },
-                                { status: 'gzp-pre', 'special': deps[i]._id },
-                                { status: 'all-pre', 'special': deps[i]._id }
-                            ]
-                        }),
-                        build: await Order.count({
-                            'info.service': { $ne: 'rrl' },
-                            $or: [
-                                { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
-                                { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
-                                { status: 'gzp-build', 'special': deps[i]._id },
-                                { status: 'install-devices', 'special': deps[i]._id },
-                                { status: 'build-shutdown', 'info.city': deps[i].cities, 'special': null },
-                                { status: 'build-shutdown', 'special': deps[i]._id },
-                            ]
-                        }),
-                        'pre-deadline': await Order.count({
-                            $and: [
-                                {
-                                    'info.service': { $ne: 'rrl' },
-                                    $or: [
-                                        { status: 'gzp-pre', 'info.city': deps[i].cities, 'special': null },
-                                        { status: 'all-pre', 'info.city': deps[i].cities, 'special': null },
-                                        { status: 'gzp-pre', 'special': deps[i]._id },
-                                        { status: 'all-pre', 'special': deps[i]._id }
-                                    ]
-                                },
-                                deadlineQuery
-                            ]
-                        }),
-                        'build-deadline': await Order.count({
-                            $and: [
-                                {
-                                    'info.service': { $ne: 'rrl' },
-                                    $or: [
-                                        { status: 'gzp-build', 'info.city': deps[i].cities, 'special': null },
-                                        { status: 'install-devices', 'info.city': deps[i].cities, 'special': null },
-                                        { status: 'gzp-build', 'special': deps[i]._id },
-                                        { status: 'install-devices', 'special': deps[i]._id },
-                                        { status: 'build-shutdown', 'info.city': deps[i].cities, 'special': null },
-                                        { status: 'build-shutdown', 'special': deps[i]._id },
-                                    ]
-                                },
-                                deadlineQuery
-                            ]
-                        })
-                    }
-                    break;
-                case 'b2b':
-                    counter[deps[i]._id] = {
-                        pre: await Order.count({
-                            $or: [
-                                { status: 'client-match' }
-                            ],
-                            'info.department': deps[i]._id
-                        }),
-                        build: await Order.count({
-                            $or: [
-                                { status: 'client-notify' }
-                            ],
-                            'info.department': deps[i]._id
-                        }),
-                        'pre-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                {
-                                    $or: [
-                                        { status: 'client-match' }
-                                    ]
-                                },
-                                { 'info.department': deps[i]._id }
-                            ]
-                        }),
-                        'build-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                {
-                                    $or: [
-                                        { status: 'client-notify' }
-                                    ]
-                                },
-                                { 'info.department': deps[i]._id }
-                            ]
-                        })
-                    }
-                    break;
-                case 'b2o':
-                    counter[deps[i]._id] = {
-                        pre: await Order.count({
-                            $or: [
-                                {
-                                    $or: [
-                                        { status: 'client-match' },
-                                        { status: 'stop-shutdown' },
-                                        { status: 'stop-pause' },
-                                        { status: 'stop-continue' },
-                                        { status: 'stop-change' }
-                                    ],
-                                    'info.department': deps[i]._id
-                                },
-                                { status: 'all-pre' },
-                                { status: 'stop-pre' }
-                            ]
-                        }),
-                        build: await Order.count({
-                            $or: [
-                                {
-                                    $or: [
-                                        { status: 'client-notify' }
-                                    ],
-                                    'info.department': deps[i]._id
-                                },
-                                { status: 'stop-build' }
-                            ]
-                        }),
-                        'pre-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                {
-                                    $or: [
-                                        {
-                                            $or: [
-                                                { status: 'client-match' }
-                                            ],
-                                            'info.department': deps[i]._id
-                                        },
-                                        { status: 'all-pre' },
-                                        { status: 'stop-pre' }
-                                    ]
-                                }
-                            ]
-                        }),
-                        'build-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                {
-                                    $or: [
-                                        {
-                                            $or: [
-                                                { status: 'client-notify' }
-                                            ],
-                                            'info.department': deps[i]._id
-                                        },
-                                        { status: 'stop-build' }
-                                    ]
-                                }
-                            ]
-                        })
-                    }
-                    break;
-                case 'sks':
-                    counter[deps[i]._id] = {
-                        pre: await Order.count({
-                            status: 'sks-pre'
-                        }),
-                        build: await Order.count({
-                            status: 'sks-build'
-                        }),
-                        'pre-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                { status: 'sks-pre' }
-                            ]
-                        }),
-                        'build-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                { status: 'sks-build' }
-                            ]
-                        })
-                    }
-                    break;
-                case 'net':
-                    counter[deps[i]._id] = {
-                        build: await Order.count({
-                            $or: [
-                                { status: 'network' },
-                                { status: 'pre-shutdown' },
-                                { status: 'pre-pause' }
-                            ]
-                        }),
-                        'build-deadline': await Order.count({
-                            $and: [
-                                deadlineQuery,
-                                {
-                                    $or: [
-                                        { status: 'network' },
-                                        { status: 'pre-shutdown' },
-                                        { status: 'pre-pause' }
-                                    ]
-                                },
-                            ]
-                        })
-                    }
-                    break;
+    getStatPage: async (req, res) => {
+        fs.readFile(path.resolve('cache/status.json'), (err, data) => {
+            if(err) {
+                return res.sendStatus(500);
             }
-        }
 
-        res.locals.deps = deps;
-        res.locals.statistics = counter;
-        render(req, res, {
-            viewName: 'status'
+            try {
+                const { deps, statistics, duration, ts } = JSON.parse(data);
+
+                res.locals.deps = deps;
+                res.locals.statistics = statistics;
+                res.locals.duration = duration;
+                res.locals.ts = ts;
+
+                return render(req, res, {
+                    viewName: 'status'
+                });
+            } catch (error) {
+                console.error(error);
+                return res.sendStatus(500);
+            }
+
         });
+
     },
+
+    getStat,
 
     setFlag: async (req, res) => {
         var flag = await Flag.findOne({ user: res.locals.__user._id, order: req.params.id });

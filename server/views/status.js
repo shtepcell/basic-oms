@@ -13,7 +13,12 @@ module.exports = function (opt, data) {
             {
                 block: 'status',
                 statistics: data.statistics,
-                deps: data.deps
+                deps: data.deps,
+            },
+            {
+                block: 'status-description',
+                ts: data.ts,
+                duration: data.duration
             }
         ]
     }
