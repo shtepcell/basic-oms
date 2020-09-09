@@ -11,6 +11,7 @@ static/storage
 backups/*
 cache/*
 errors.log
+.env
 
 # bem
 .enb/tmp/
