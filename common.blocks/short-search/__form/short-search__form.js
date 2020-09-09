@@ -24,6 +24,7 @@ provide(bemDom.declElem('short-search', 'form',
             });
 
             location.change({params: data});
+            window.location.reload();
         }
     })
 );

@@ -50,6 +50,7 @@ modules.define('searcher__form', ['i-bem-dom', 'location'], function (provide, b
                     }
                 })
                 location.change({ params: data });
+                window.location.reload();
             }
         })
     );

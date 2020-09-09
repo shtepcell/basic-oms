@@ -15,7 +15,7 @@ provide(bemDom.declElem('settings', 'body',
 
                         arr.forEach( item => {
                             if(!data[item.name])
-                                data[item.name] = [];
+                                {data[item.name] = [];}
 
                             data[item.name].push(item.value)
                         })
@@ -31,8 +31,7 @@ provide(bemDom.declElem('settings', 'body',
                             },
                             success: function(res) {
                                 modal.setMod('visible', false);
-
-                                location.change(location);
+                                window.location.reload();
                             }
                         });
                     });
