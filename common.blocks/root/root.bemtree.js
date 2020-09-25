@@ -21,9 +21,9 @@ block('root').replace()(function() {
         scripts: [
             {
                 elem: 'js',
-                url: 'https://browser.sentry-cdn.com/5.20.1/bundle.min.js',
+                url: 'https://browser.sentry-cdn.com/5.24.2/bundle.tracing.min.js',
                 attrs: {
-                    integrity: "sha384-O8HdAJg1h8RARFowXd2J/r5fIWuinSBtjhwQoPesfVILeXzGpJxvyY/77OaPPXUo",
+                    integrity: "sha384-Epltozh7S1cJM2hcIRDJBbqiiVpZsNlFCciHxKIAfKN8mSTa+gMivtz7glp/30Mz",
                     crossorigin: 'anonymous'
                 }
             },

@@ -1,7 +1,12 @@
 Object.assign || (Object.assign = require('object-assign'));
 const Sentry = require('@sentry/node');
+// eslint-disable-next-line no-unused-vars
+const Tracing = require("@sentry/tracing");
 
-Sentry.init({ dsn: 'http://5797b578fc674144b315629998665222@84.201.163.198:9000/2' });
+Sentry.init({
+    dsn: "https://876c9ff67b8f4d71ab86cf2877bc32b8@o453025.ingest.sentry.io/5441311",
+    tracesSampleRate: 1.0,
+});
 
 var fs = require('fs'),
     path = require('path'),
