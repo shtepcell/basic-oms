@@ -440,19 +440,12 @@ module.exports = {
             'requestPause.status': true
         };
 
-        var orders = await Order.get({
-            $and: [query, subQ]
-        }).populate([populateClient, populateCity, populateStreet]).lean();
-
-        var total = orders.length;
-
-        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 }
-
-        if (req.query.sort) {
-            orders = helper.orderSort(orders, req.query.sort, req.query.value);
-        }
-
-        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
+        var orders = await Order.get({ $and: [query, subQ] })
+            .populate([populateClient, populateCity, populateStreet])
+            .skip((pageNumber - 1) * perPage)
+            .limit(perPage)
+            .sort({ [req.query.sort || 'id']: req.query.value || -1, pause: -1 })
+            .lean();
 
         orders.forEach(item => {
             item.cs = helper.calculateCS(item);
@@ -525,28 +518,12 @@ module.exports = {
             ]
         };
 
-        var orders = await Order.get({
-            $and: [query, subQ],
-            'pause.status': { $ne: true }
-        }).populate([populateClient, populateCity, populateStreet]).lean();
-
-        var orders1 = await Order.get({
-            $and: [query, subQ],
-            'pause.status': true
-        }).populate([populateClient, populateCity, populateStreet]).lean();
-
-        var total = orders.length + orders1.length;
-
-        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 }
-
-        if (req.query.sort) {
-            orders = helper.orderSort(orders, req.query.sort, req.query.value);
-            orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
-        }
-
-        orders = orders.concat(orders1)
-
-        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
+        var orders = await Order.get({ $and: [query, subQ] })
+            .populate([populateClient, populateCity, populateStreet])
+            .skip((pageNumber - 1) * perPage)
+            .limit(perPage)
+            .sort({ [req.query.sort || 'id']: req.query.value || -1, pause: -1 })
+            .lean();
 
         orders.forEach(item => {
             item.cs = helper.calculateCS(item);
@@ -622,28 +599,14 @@ module.exports = {
 
         };
 
-        var orders = await Order.get({
-            $and: [query, subQ],
-            'pause.status': { $ne: true }
-        }).populate([populateClient, populateCity, populateStreet]).lean();
+        const total = await Order.get({ $and: [query, subQ] }).count();
 
-        var orders1 = await Order.get({
-            $and: [query, subQ],
-            'pause.status': true
-        }).populate([populateClient, populateCity, populateStreet]).lean();
-
-        var total = orders.length + orders1.length;
-
-        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 }
-
-        if (req.query.sort) {
-            orders = helper.orderSort(orders, req.query.sort, req.query.value);
-            orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
-        }
-
-        orders = orders.concat(orders1)
-
-        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
+        var orders = await Order.get({ $and: [query, subQ] })
+            .populate([populateClient, populateCity, populateStreet])
+            .skip((pageNumber - 1) * perPage)
+            .limit(perPage)
+            .sort({ [req.query.sort || 'id']: req.query.value || -1, pause: -1 })
+            .lean();
 
         orders.forEach(item => {
             item.cs = helper.calculateCS(item);
@@ -682,7 +645,6 @@ module.exports = {
     },
 
     getMainPagePre: async (req, res) => {
-
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
@@ -761,28 +723,14 @@ module.exports = {
                 break;
         }
 
-        var orders = await Order.get({
-            $and: [query, subQ],
-            'pause.status': { $ne: true }
-        }).populate([populateClient, populateCity, populateStreet]).lean();
+        const total = await Order.get({ $and: [query, subQ] }).count();
 
-        var orders1 = await Order.get({
-            $and: [query, subQ],
-            'pause.status': true
-        }).populate([populateClient, populateCity, populateStreet]).lean();
-
-        var total = orders.length + orders1.length;
-
-        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 }
-
-        if (req.query.sort) {
-            orders = helper.orderSort(orders, req.query.sort, req.query.value);
-            orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
-        }
-
-        orders = orders.concat(orders1)
-
-        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
+        var orders = await Order.get({ $and: [query, subQ] })
+            .populate([populateClient, populateCity, populateStreet])
+            .skip((pageNumber - 1) * perPage)
+            .limit(perPage)
+            .sort({ [req.query.sort || 'id']: req.query.value || -1, pause: -1 })
+            .lean();
 
         orders.forEach(item => {
             item.cs = helper.calculateCS(item);
@@ -878,30 +826,13 @@ module.exports = {
                 break;
         }
 
-        var orders = await Order.get({
-            $and: [query, subQ],
-            'pause.status': { $ne: true }
-        }).populate([populateClient, populateCity, populateStreet]).lean();
+        var orders = await Order.get({ $and: [query, subQ] })
+            .populate([populateClient, populateCity, populateStreet])
+            .skip((pageNumber - 1) * perPage)
+            .limit(perPage)
+            .sort({ [req.query.sort || 'id']: req.query.value || -1, pause: -1 })
+            .lean();
 
-        var orders1 = await Order.get({
-            $and: [query, subQ],
-            'pause.status': true
-        }).populate([populateClient, populateCity, populateStreet]).lean();
-
-        var total = orders.length + orders1.length;
-
-        if (!req.query.sort) { req.query.sort = 'id'; req.query.value = -1 }
-
-        if (req.query.sort) {
-            orders = helper.orderSort(orders, req.query.sort, req.query.value);
-            orders1 = helper.orderSort(orders1, req.query.sort, req.query.value);
-        }
-
-        orders = orders.concat(orders1)
-
-        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
-
-        var now = new Date();
         orders.forEach(item => {
             item.cs = helper.calculateCS(item);
             item.status = stages[item.status];
@@ -2439,19 +2370,14 @@ module.exports = {
             archive = true;
         }
 
-        var orders = await Order.get(query, archive).populate([populateClient, populateCity, populateStreet]).lean();
+        const total = await Order.get(query, archive).count();
 
-        var total = orders.length;
-
-        if (!req.query.sort) {
-            req.query.sort = 'id'; req.query.value = -1
-        }
-
-        if (req.query.sort) {
-            orders = helper.orderSort(orders, req.query.sort, req.query.value);
-        }
-
-        orders = orders.slice((pageNumber - 1) * perPage, (pageNumber - 1) * perPage + perPage);
+        var orders = await Order.get(query, archive)
+            .populate([populateClient, populateCity, populateStreet])
+            .skip((pageNumber - 1) * perPage)
+            .limit(perPage)
+            .sort({ [req.query.sort || 'id']: req.query.value || -1})
+            .lean();
 
         orders.forEach(item => {
             item.cs = helper.calculateCS(item);
@@ -2467,6 +2393,8 @@ module.exports = {
         };
 
         res.locals.orders = orders;
+
+        const end = Date.now();
 
         render(req, res, {
             viewName: 'search',

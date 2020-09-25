@@ -32,8 +32,8 @@ block('orders-table').elem('head')(
                         elem: 'add-params',
                         js: {
                             params: {
-                                sort: 'client',
-                                value: ('client' == params.sort)?-1*params.value:1
+                                sort: 'info.client',
+                                value: ('info.client' == params.sort)?-1*params.value:1
                             }
                         }
                     },
@@ -50,8 +50,8 @@ block('orders-table').elem('head')(
                         elem: 'add-params',
                         js: {
                             params: {
-                                sort: 'init',
-                                value: ('init' == params.sort)?-1*params.value:1
+                                sort: 'date.init',
+                                value: ('date.init' == params.sort)?-1*params.value:1
                             }
                         }
                     },
@@ -86,8 +86,8 @@ block('orders-table').elem('head')(
                         elem: 'add-params',
                         js: {
                             params: {
-                                sort: 'service',
-                                value: ('service' == params.sort)?-1*params.value:1
+                                sort: 'info.service',
+                                value: ('info.service' == params.sort)?-1*params.value:1
                             }
                         }
                     },
@@ -104,8 +104,8 @@ block('orders-table').elem('head')(
                         elem: 'add-params',
                         js: {
                             params: {
-                                sort: 'cms',
-                                value: ('cms' == params.sort)?-1*params.value:1
+                                sort: 'info.cms',
+                                value: ('info.cms' == params.sort)?-1*params.value:1
                             }
                         }
                     },
@@ -122,8 +122,8 @@ block('orders-table').elem('head')(
                         elem: 'add-params',
                         js: {
                             params: {
-                                sort: 'adress',
-                                value: ('adress' == params.sort)?-1*params.value:1
+                                sort: 'info.city',
+                                value: ('info.city' == params.sort)?-1*params.value:1
                             }
                         }
                     },

@@ -265,55 +265,6 @@ module.exports = {
         } else return false;
     },
 
-    orderSort: (array, path, reverse) => {
-        switch (path) {
-            case 'id':
-                path = 'id';
-                break;
-            case 'client':
-                path = 'info.client.name';
-                break;
-            case 'adress':
-                path = 'info.city.name';
-                break;
-            case 'service':
-                path = 'info.service.name';
-                break;
-            case 'deadline':
-                path = 'deadline';
-                break;
-            case 'status':
-                path = 'status';
-                break;
-            case 'init':
-                path = 'date.init';
-                break;
-        }
-
-        var paths = path.split('.');
-
-        array.sort((a, b) => {
-            for (var i = 0; i < paths.length; i++) {
-                a = a[paths[i]];
-                b = b[paths[i]];
-            }
-            if (path == 'deadline') {
-                if (a === null || a === undefined)
-                    {a = 9999999999999;}
-                if (b === null || b === undefined)
-                    {b = 9999999999991;}
-            }
-
-            if (a < b)
-                {return -1 * reverse;}
-            if (a > b)
-                {return 1 * reverse;}
-            return 0;
-        });
-
-        return array;
-    },
-
     getZone: async (order) => {
         if (order.special) {
             var dep = await Department.findOne({ _id: order.special });
