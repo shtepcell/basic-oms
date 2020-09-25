@@ -440,6 +440,8 @@ module.exports = {
             'requestPause.status': true
         };
 
+        const total = await Order.get({ $and: [query, subQ] }).count();
+
         var orders = await Order.get({ $and: [query, subQ] })
             .populate([populateClient, populateCity, populateStreet])
             .skip((pageNumber - 1) * perPage)
@@ -517,6 +519,8 @@ module.exports = {
                 { status: 'client-notify' }
             ]
         };
+
+        const total = await Order.get({ $and: [query, subQ] }).count();
 
         var orders = await Order.get({ $and: [query, subQ] })
             .populate([populateClient, populateCity, populateStreet])
@@ -825,6 +829,8 @@ module.exports = {
                 query = { status: 'sks-build' };
                 break;
         }
+
+        const total = await Order.get({ $and: [query, subQ] }).count();
 
         var orders = await Order.get({ $and: [query, subQ] })
             .populate([populateClient, populateCity, populateStreet])
