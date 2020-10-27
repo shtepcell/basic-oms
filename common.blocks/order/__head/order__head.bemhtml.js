@@ -4,7 +4,7 @@ block('order').elem('head').content()(function () {
 
     var pause = '',
         resp = null;
-        
+
     const { services } = dataset;
 
     const isInit = (user.department.type == 'b2b' || user.department.type == 'b2o');
@@ -13,20 +13,18 @@ block('order').elem('head').content()(function () {
     const isOn = (order.status == 'succes');
     const hasVolume = ['internet', 'l2vpn', 'l3vpn', 'vpls'].includes(order.info.service);
 
-    var tContact = order.info.contact,
-        tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.adds}`,
-        tService = `${services[order.info.service]}`,
-        tVolume = '';
+    const clientText = `${order.info.client.type.shortName}] ${order.info.client.name}`;
 
-        if(order.info.volume)
-          tVolume = order.info.volume;
+    const adressText = [
+        `${order.info.city.type} ${order.info.city.name}`,
+        order.info.street && `${order.info.street.type} ${order.info.street.name}`,
+        order.info.adds,
+        order.info.coordinate,
+    ].filter(Boolean).join(', ');
 
-        if(order.info.street)
-          var tAdress = `${order.info.city.type} ${order.info.city.name}, ${order.info.street.type} ${order.info.street.name}, ${order.info.adds}`
-
-    var textInfo = `
-      ${order.id} | [${order.info.client.type.shortName}] ${order.info.client.name} | ${tContact} | ${tAdress} | ${tService} | ${tVolume}
-    `;
+    const clipboardText = [
+        order.id, clientText, order.info.contact, adressText, services[order.info.service], order.info.volume, order.info.add_info,
+    ].filter(Boolean).join(' | ');
 
     if(order.pause.status) pause = ' (на паузе)';
     if(order.requestPause.status) pause = ' (запрос на паузу)';
@@ -68,7 +66,7 @@ block('order').elem('head').content()(function () {
               block: 'order',
               elem: 'clipboard',
               js: {
-                str: textInfo
+                str: clipboardText
               }
             },
             icon: {
