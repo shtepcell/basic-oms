@@ -38,16 +38,19 @@ module.exports = {
             res = 0;
 
         for (var i = 0; i < history.length; i++) {
-            if ('Пауза' == history[i].name) {
-                let start = history[i].date,
-                    end;
+            console.log(history[i].name);
+
+            if (['Пауза', 'Автоматическое подтверждение паузы'].includes(history[i].name)) {
+                let start = history[i].date;
+                let end;
 
                 if (i + 1 < history.length) {
                     end = history[i + 1].date;
                 }
 
-                if (!end)
-                    {end = new Date();}
+                if (!end) {
+                    end = new Date();
+                }
 
                 res += end - start;
             }
