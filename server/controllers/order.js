@@ -1446,19 +1446,14 @@ module.exports = {
             order.status = 'client-match';
             order.deadline = null;
             order.date['sks-pre'] = new Date();
-            // order.date['cs-client-match'] = await helper.calculateDeadline(10);
 
             if (order.pause.status) {
-                var now = new Date();
-                var pause = order.pause.date;
-                pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
-                order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
                 order.pause = {
                     status: false,
                     date: undefined
                 };
+
                 order.history.push(helper.historyGenerator('pause-stop', res.locals.__user));
-                // notify.create(res.locals.__user, order, 'pause-stop');
             }
 
             order.history.push(helper.historyGenerator(currentStatus, res.locals.__user));
@@ -1883,7 +1878,13 @@ module.exports = {
                         order.status = 'install-devices';
                         notify.create(res.locals.__user, order, `start-install-devices`);
                     }
+                } else {
+                    if (order.date['install-devices']) {
+                        order.status = 'install-devices';
+                        notify.create(res.locals.__user, order, `start-install-devices`);
+                    }
                 }
+
                 if (order.date['stop-build']) {
                     order.status = 'stop-build';
                     notify.create(res.locals.__user, order, `start-stop-build`);

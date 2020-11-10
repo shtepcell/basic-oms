@@ -3,12 +3,11 @@ block('order').elem('actions').elemMod('tab', 'gzp').content()(function () {
         order = ctx.order,
         user = ctx.user,
         adminEdit = ctx.adminEdit;
-    
+
     var isOwner = order.resp.includes(user.department.name),
         isPre = (order.status == 'gzp-pre' || order.status == 'all-pre'),
         isBuild = (order.status == 'gzp-build'),
         isInstall = (order.status == 'install-devices'),
-        isPause = (order.pause.status),
         isAdmin = (user.department.type == 'admin'),
         isDemontage = (order.status == 'build-shutdown'),
         special = (user.department._id == '' + order.special);
