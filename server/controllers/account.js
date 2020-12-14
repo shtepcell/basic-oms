@@ -21,7 +21,7 @@ module.exports = {
 			pagers[0] = pagerId;
 		}
 		else
-			res.redirect(req.path);
+			{res.redirect(req.path);}
 
 		var accs = await Account.paginate({ status: true }, { page: pageNumber, limit: perPage, populate: 'department' });
 
@@ -98,8 +98,8 @@ module.exports = {
 
 		reqData.login = reqData.login.toLowerCase();
 
-		if (!!await Account.findOne({ login: reqData.login }))
-			errors.push({ errText: 'Пользователь с таким логином уже существует!' })
+		if (await Account.findOne({ login: reqData.login }))
+			{errors.push({ errText: 'Пользователь с таким логином уже существует!' })}
 
 		if (!reqData.name) errors.push({ errText: 'Ф.И.О. - обязательное поле!' })
 		errors = validate(reqData, errors);
@@ -160,7 +160,7 @@ module.exports = {
 			var result = await acc.save();
 		} else res.status(400).send(errors);
 
-		if (!!result) {
+		if (result) {
 			logger.info(`Created user ${acc.login}`, res.locals.__user);
 			res.send({ ok: 'ok' });
 		}
@@ -198,7 +198,7 @@ module.exports = {
 		}
 
 		var result = await acc.save();
-		if (!!result) {
+		if (result) {
 			logger.info(`Edit account ${req.params.login}`, res.locals.__user);
 			res.send({ ok: 'ok' });
 		}
@@ -249,7 +249,7 @@ module.exports = {
 
 		var result = await acc.save();
 
-		if (!!result) {
+		if (result) {
 			logger.info(`Edit profile ${res.locals.__user.login}`, res.locals.__user);
 			res.send({ ok: 'ok' });
 		}
@@ -266,7 +266,7 @@ module.exports = {
 			res.status(400).send([{ errText: 'Пароли не совпадают!' }]);
 		}
 
-		if (!!result) {
+		if (result) {
 			logger.info(`Edit password ${req.params.login}`, res.locals.__user);
 			res.send({ ok: 'ok' });
 		}
@@ -287,7 +287,7 @@ module.exports = {
 			} else res.status(400).send([{ errText: 'Пароли не совпадают!' }]);
 
 		} else res.status(400).send([{ errText: 'Неверный пароль!' }]);
-		if (!!result) {
+		if (result) {
 			logger.info(`Edit profile password`, res.locals.__user);
 			res.send({ ok: 'ok' });
 		}
@@ -337,7 +337,7 @@ module.exports = {
 
 function validate(user, errs) {
 
-	if (!/^[a-zA-Z][a-zA-Z0-9]+$/.test(user.login)) errs.push({ errText: 'Неверный формат логина' });
+	if (!/^[a-zA-Z][a-zA-Z0-9_]+$/.test(user.login)) errs.push({ errText: 'Неверный формат логина' });
 
 	if (user.password != user.passwordRep) errs.push({ errText: 'Пароли не совпадают' });
 
