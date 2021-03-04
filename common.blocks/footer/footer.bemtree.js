@@ -18,14 +18,22 @@ block('footer').content()(function() {
             content: [
                 {
                     block: 'label',
-                    content: 'Сообщить об ошибке :'
+                    content: 'Ошибка? Нужна помощь? :'
                 },
                 {
                     tag: 'a',
                     attrs: {
-                        href: 'mailto:vladislav.telichko@miranda-media.ru'
+                        target: '__blank',
+                        href: 'https://t.me/joinchat/ZgFTaQAUnRwzZDE6'
                     },
-                    content: 'vladislav.telichko@miranda-media.ru'
+                    content: [
+                        {
+                            block: 'icon',
+                            mix: { block: 'footer', elem: 'telegram' },
+                            url: '/telegram.svg'
+                        },
+                        'СУЗ - support'
+                    ]
                 }
             ]
         }

@@ -9,6 +9,8 @@
 }
 
 .footer__support {
+    line-height: 20px;
+
     margin: 23px 1em 0 auto;
 }
 
@@ -26,4 +28,17 @@
     background-size: contain;
     height: 80px;
     width: 100px;
+}
+
+.footer__support {
+    font-weight: 500;
+}
+
+.footer__telegram.icon {
+    background-size: cover;
+
+    width: 20px;
+    height: 20px;
+
+    margin-right: 4px;
 }
