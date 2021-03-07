@@ -410,7 +410,9 @@ module.exports = {
                         respQ = {
                             $or: [
                                 { status: 'network' },
-                                { status: 'pre-shutdown' }
+                                { status: 'pre-shutdown' },
+                                { status: 'sks-pre' },
+                                { status: 'sks-build' }
                             ]
                         };
                         break;
@@ -665,7 +667,6 @@ module.exports = {
             if (query['date-end'] == '') end = new Date(2200, 1, 1);
             else end = strToDate(query['date-end']);
 
-            var _status;
             if (query['date-status']) {
                 switch (query['date-status']) {
                     case 'init':
@@ -857,42 +858,6 @@ module.exports = {
         } else return '-';
     },
 
-    getRespDep: async (order) => {
-        switch (order.status) {
-            case 'gzp-pre':
-            case 'gzp-build':
-            case 'install-devices':
-                var dep = await Department.findOne({ cities: order.info.city }).lean();
-                if (order.special) dep = await Department.findOne({ _id: order.special }).lean();
-                return dep;
-                break;
-            case 'stop-pre':
-            case 'stop-build':
-                var dep = await Department.findOne({ type: 'b2o' }).lean();
-                return dep;
-                break;
-            case 'all-pre':
-                var deps = [
-                    await Department.findOne({ type: 'b2o' }).lean(),
-                    await Department.findOne({ cities: order.info.city }).lean()
-                ];
-                if (order.special) deps[1] = await Department.findOne({ _id: order.special }).lean();
-                return deps;
-                break;
-            case 'network':
-                var dep = await Department.findOne({ type: 'net' }).lean();
-                return dep;
-                break;
-            case 'client-match':
-            case 'client-notify':
-                return await Department.findOne({ _id: order.info.initiator.department }).lean();
-                break;
-            default:
-                return '';
-                break;
-        }
-    },
-
     getGUSName: async (order) => {
         var dep = await Department.findOne({ cities: order.info.city._id });
         if (order.special) dep = await Department.findOne({ _id: order.special });
@@ -944,15 +909,9 @@ module.exports = {
             case 'pre-continue':
             case 'pre-change':
             case 'pre':
-                var dep = await Department.findOne({ type: 'net' });
-                return dep.name;
-                break;
             case 'sks-pre':
             case 'sks-build':
-                var dep = await Department.findOne({ type: 'sks' });
-                if (!dep) {dep = {
-                    name: 'Ответсвенный отдел не определён!'
-                }}
+                var dep = await Department.findOne({ type: 'net' });
                 return dep.name;
                 break;
             case 'client-match':

@@ -721,7 +721,9 @@ module.exports = {
                         { status: 'pre-shutdown' },
                         { status: 'pre-pause' },
                         { status: 'pre-change' },
-                        { status: 'pre-continue' }
+                        { status: 'pre-continue' },
+                        { status: 'sks-pre' },
+                        { status: 'sks-build' },
                     ]
                 }
                 break;
