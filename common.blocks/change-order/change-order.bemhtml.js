@@ -68,6 +68,23 @@ block('change-order').content()(function () {
       ]
     },
     {
+      elem: 'row',
+      content: [
+        {
+          elem: 'row-name',
+          content: 'СMS :'
+        },
+        {
+          elem: 'row-data',
+          content: {
+            block: 'input',
+            mods: { theme: 'islands', size: 'm' },
+            val: order.info.cms || ''
+          }
+        }
+      ]
+    },
+    {
       elem: 'action',
       content: {
         block: 'button',

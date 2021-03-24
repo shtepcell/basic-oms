@@ -1051,7 +1051,7 @@ module.exports = {
 
     getChangeV: async (req, res) => {
         const order = await Order.findOne({ id: req.params.id });
-        const volume = req.body.volume;
+        const { volume, cms } = req.body;
 
         order.history.push(helper.historyGenerator('change-order', res.locals.__user, {
             from: order.info.volume,
@@ -1069,7 +1069,7 @@ module.exports = {
         }
         order.deadline = await helper.calculateDeadline(3);
 
-
+        order.info.cms = cms || order.info.cms;
         order.preVolume = order.info.volume;
         order.info.volume = volume;
         order.wasChanged = true;

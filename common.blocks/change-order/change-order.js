@@ -1,5 +1,5 @@
-modules.define('change-order', ['i-bem-dom', 'jquery', 'button', 'select'],
-    function(provide, bemDom, $, Button, Select) {
+modules.define('change-order', ['i-bem-dom', 'jquery', 'button', 'select', 'input'],
+    function(provide, bemDom, $, Button, Select, Input) {
 
 provide(bemDom.declBlock('change-order',
     {
@@ -12,23 +12,22 @@ provide(bemDom.declBlock('change-order',
 
                   send.onclick = () => {
                     const volume = this.findChildBlock(Select).getVal();
-                    
+                    const cms = this.findChildBlock(Input).getVal();
+
                     if (volume == pre) {
                       alert('Текущая ёмкость совпадает с выбранной. Нужно выбрать ёмкость отличную от текущей!')
                       return;
                     }
 
-                    if (confirm(`Вы уверены, что хотите изменить ёмкость на ${volume}?`)) 
-                      $.ajax({
+                    if (confirm(`Вы уверены, что хотите изменить ёмкость на ${volume}?`))
+                      {$.ajax({
                         type: 'POST',
                         url: '/change-order/'+id,
-                        data: {
-                          volume: volume
-                        },
+                        data: { volume, cms },
                         success: function (res) {
                           window.location = `/order/${id}/info`
                         }
-                      });
+                      });}
                   }
                 }
             }
