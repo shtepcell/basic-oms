@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 const Order = require('../models/Order');
 const Department = require('../models/Department');
 const Account = require('../models/Account');
@@ -134,7 +135,11 @@ module.exports = {
                 ret.name = `Отмена запроса паузы`;
                 break;
             case 'change-order':
-                ret.name = `Изменение ёмкости ${opt.from} -> ${opt.to}`;
+                const changes = [
+                    `Изменение ёмкости: ${opt.from || '–'} -> ${opt.to}`,
+                    opt.oldCms !== opt.newCms && `Изменение CMS: ${opt.oldCms || '–'} -> ${opt.newCms || '–'}`,
+                ].filter(Boolean);
+                ret.name = changes.join('\n');
                 break;
             case 'start-pre-shutdown':
                 ret.name = 'Запрос отключения услуги';

@@ -1,0 +1,36 @@
+.order__history-table {
+    display: flex;
+    align-items: center;
+
+    padding: 8px 16px;
+
+    font-size: 14px;
+    line-height: 20px;
+
+    border-bottom: 1px solid #ccc;
+}
+
+.order__history-table:first-child {
+    margin-top: 6px;
+}
+
+.order__history-table-name {
+    flex: 0 0 300px;
+
+    white-space: pre-line;
+}
+
+.order__history-table-date {
+    flex: 1 0 auto;
+
+    padding-left: 8px;
+
+    font-size: 12px;
+    text-align: right;
+}
+
+.order__history-table-author {
+    padding-left: 8px;
+
+    flex: 1 1 auto;
+}

@@ -43,23 +43,20 @@ block('order').elem('body').elemMod('tab', 'history').content()(function () {
 
     ret = order.history.map( item => {
         return {
-            elem: 'body-row',
+            elem: 'history-table',
             content: [
                 {
-                    elem: 'body-row-name',
+                    elem: 'history-table-name',
                     content: `${item.name}`
                 },
                 {
-                    elem: 'body-row-name',
-                    mix: {
-                        elem: 'body-date'
-                    },
-                    content: `${dateToExtStr(item.date)}`
+                    elem: 'history-table-author',
+                    content: `${item.author}`
                 },
                 {
-                    elem: 'body-row-name',
-                    content: `${item.author}`
-                }
+                    elem: 'history-table-date',
+                    content: `${dateToExtStr(item.date)}`
+                },
             ]
         }
     })

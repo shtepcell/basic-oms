@@ -1055,7 +1055,9 @@ module.exports = {
 
         order.history.push(helper.historyGenerator('change-order', res.locals.__user, {
             from: order.info.volume,
-            to: volume
+            to: volume,
+            oldCms: order.info.cms || '',
+            newCms: cms,
         }));
 
         if (order.date['stop-build'] != null) {
@@ -1069,7 +1071,7 @@ module.exports = {
         }
         order.deadline = await helper.calculateDeadline(3);
 
-        order.info.cms = cms || order.info.cms;
+        order.info.cms = cms;
         order.preVolume = order.info.volume;
         order.info.volume = volume;
         order.wasChanged = true;
