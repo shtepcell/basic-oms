@@ -33,18 +33,20 @@
 
 .chat__author
 {
-    font-size: 8pt;
-    margin: 5px 15px 0px 15px;
+    margin: 8px 16px -6px;
+    line-height: 20px;
+    font-size: 14px;
     font-weight: bold;
     color: #2b83c9;
 }
 
-.chat__text
-{
+.chat__text {
     display: inline-block;
+
+    margin: 8px 16px;
+
     max-width: 400px;
     word-break: break-all;
-    margin: 5px 15px 5px 15px;
-    font-weight: lighter;
-    font-size: 12pt;
+    font-size: 14px;
+    line-height: 20px;
 }
