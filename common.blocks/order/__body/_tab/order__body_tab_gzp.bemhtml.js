@@ -15,6 +15,8 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
         return 'Информации по ГЗП нет!'
     }
 
+    const isShortPath = order.info.client.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl";
+
     return [
         {
             block: 'field',
@@ -35,7 +37,7 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
             elem: 'date-gzp-build',
             order: order,
             dataset: dataset,
-            display: order.date['gzp-build']
+            display: order.date['gzp-build'] || order.date['install-devices']
         },
         {
             block: 'field',
@@ -49,7 +51,7 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
             elem: 'date-gzp-active',
             order: order,
             dataset: dataset,
-            display: order.date['network'] && order.gzp['gzp-build']
+            display: isShortPath ? order.date['install-devices'] : order.date['network'] && order.gzp['gzp-build']
         },
         { elem: 'separator' },
         {

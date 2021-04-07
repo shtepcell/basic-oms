@@ -1,6 +1,6 @@
 'use strict';
 
-const lodash = require('lodash');
+const _ = require('lodash');
 const services = require('../common-data/services');
 const xl = require('excel4node');
 
@@ -8,71 +8,82 @@ function get(order, field) {
     var fields = {
         'id': {
             text: 'ID',
-            value: () => lodash.get(order, 'id')
+            value: () => _.get(order, 'id')
         },
         'date-init': {
             text: 'Дата инициации',
-            value: () => lodash.get(order, 'date.init')
+            value: () => _.get(order, 'date.init')
         },
         'initiator': {
             text: 'Инициатор',
-            value: () => lodash.get(order, 'info.initiator.name')
+            value: () => _.get(order, 'info.initiator.name')
         },
         'date-on': {
             text: 'Дата включения',
-            value: () => lodash.get(order, 'date.client-notify')
+            value: () => _.get(order, 'date.client-notify')
         },
         'date-start': {
             text: 'Дата начала организации',
-            value: () => lodash.get(order, 'date.client-match')
+            value: () => _.get(order, 'date.client-match')
         },
         'date-plan': {
             text: 'Плановая дата организации',
-            value: () => lodash.get(order, 'date.cs-gzp-organization')
+            value: () => _.get(order, 'date.cs-gzp-organization')
         },
         'date-end': {
             text: 'Дата активации',
-            value: () => lodash.get(order, 'date.network')
+            value: () => {
+                const isShortPath = _.get(order, 'info.client.shortName') == 'SOHO' ||
+                    _.get(order, 'info.service') === "sks" ||
+                    _.get(order, 'info.service') === "devices" ||
+                    _.get(order, 'info.service') === "rrl";
+
+                if (isShortPath) {
+                    return _.get(order, 'date.install-devices');
+                }
+
+                return _.get(order, 'date.network')
+            }
         },
         'cms': {
             text: 'Номер СMS',
-            value: () => lodash.get(order, 'info.cms')
+            value: () => _.get(order, 'info.cms')
         },
         'status': {
             text: 'Статус',
-            value: () => lodash.get(order, 'status')
+            value: () => _.get(order, 'status')
         },
         'pause-time': {
             text: 'Длительность пауз',
-            value: () => lodash.get(order, 'pauseTime')
+            value: () => _.get(order, 'pauseTime')
         },
         'cs': {
             text: 'КС',
-            value: () => lodash.get(order, 'cs')
+            value: () => _.get(order, 'cs')
         },
         'department': {
             text: 'Ответсвенный ГУС',
-            value: () => lodash.get(order, 'gusName')
+            value: () => _.get(order, 'gusName')
         },
         'gzpDeadline': {
             text: 'Просрочка организации',
-            value: () => lodash.get(order, 'prosrochka')
+            value: () => _.get(order, 'prosrochka')
         },
         'client': {
             text: 'Клиент',
-            value: () => lodash.get(order, 'info.client.name')
+            value: () => _.get(order, 'info.client.name')
         },
         'client-type': {
             text: 'Тип клиента',
-            value: () => lodash.get(order, 'info.client.type.name')
+            value: () => _.get(order, 'info.client.type.name')
         },
         'typeOfClient': {
             text: 'Тип клиента (в заказе)',
-            value: () => lodash.get(order, 'info.clientType')
+            value: () => _.get(order, 'info.clientType')
         },
         'city': {
             text: 'Город',
-            value: () => `${lodash.get(order, 'info.city.type')} ${lodash.get(order, 'info.city.name')}`
+            value: () => `${_.get(order, 'info.city.type')} ${_.get(order, 'info.city.name')}`
         },
         'street': {
             text: 'Улица',
@@ -84,111 +95,111 @@ function get(order, field) {
         },
         'adds': {
             text: 'д./кв. и т.д',
-            value: () => lodash.get(order, 'info.adds')
+            value: () => _.get(order, 'info.adds')
         },
         'coordinate': {
             text: 'Координаты',
-            value: () => lodash.get(order, 'info.coordinate')
+            value: () => _.get(order, 'info.coordinate')
         },
         'service': {
             text: 'Услуга',
-            value: () => services[lodash.get(order, 'info.service')] || ''
+            value: () => services[_.get(order, 'info.service')] || ''
         },
         'volume': {
             text: 'Ёмкость',
-            value: () => lodash.get(order, 'info.volume')
+            value: () => _.get(order, 'info.volume')
         },
         'relation': {
             text: 'Связанные заказы',
-            value: () => lodash.get(order, 'info.relation')
+            value: () => _.get(order, 'info.relation')
         },
         'ip': {
             text: 'Количество IP адресов',
-            value: () => lodash.get(order, 'info.ip')
+            value: () => _.get(order, 'info.ip')
         },
         'init-add-info': {
             text: 'Дополнительная информация',
-            value: () => lodash.get(order, 'info.add_info')
+            value: () => _.get(order, 'info.add_info')
         },
         'income-once': {
             text: 'Ожидаемый единовр. доход (руб)',
-            value: () => lodash.get(order, 'info.income-once')
+            value: () => _.get(order, 'info.income-once')
         },
         'income-monthly': {
             text: 'Ожидаемый ежемес. доход (руб)',
-            value: () => lodash.get(order, 'info.income-monthly')
+            value: () => _.get(order, 'info.income-monthly')
         },
         'gzp-need': {
             text: 'Необходимость ГЗП',
-            value: () => lodash.get(order, 'gzp.need')
+            value: () => _.get(order, 'gzp.need')
         },
         'gzp-capability': {
             text: 'Техническая возможность ГЗП',
-            value: () => lodash.get(order, 'gzp.capability')
+            value: () => _.get(order, 'gzp.capability')
         },
         'gzp-time': {
             text: 'Срок организации',
-            value: () => lodash.get(order, 'gzp.time')
+            value: () => _.get(order, 'gzp.time')
         },
         'gzp-cost-once': {
             text: 'Одноразовая стоимость организации',
-            value: () => lodash.get(order, 'gzp.cost-once')
+            value: () => _.get(order, 'gzp.cost-once')
         },
         'gzp-cost-monthly': {
             text: 'Операционные затраты ежемесячные',
-            value: () => lodash.get(order, 'gzp.cost-monthly')
+            value: () => _.get(order, 'gzp.cost-monthly')
         },
         'gzp-add-info': {
             text: 'Дополнительная информация',
-            value: () => lodash.get(order, 'gzp.add_info')
+            value: () => _.get(order, 'gzp.add_info')
         },
         'gzp-reason': {
             text: 'Причина технической невозможности',
-            value: () => lodash.get(order, 'gzp.reason')
+            value: () => _.get(order, 'gzp.reason')
         },
         'stop-capability': {
             text: 'Техническая возможность СТОП',
-            value: () => lodash.get(order, 'stop.capability')
+            value: () => _.get(order, 'stop.capability')
         },
         'stop-provider': {
             text: 'Провайдер',
-            value: () => lodash.get(order, 'stop.provider.name')
+            value: () => _.get(order, 'stop.provider.name')
         },
         'stop-contact': {
             text: 'Контакт с провайдером',
-            value: () => lodash.get(order, 'stop.contact')
+            value: () => _.get(order, 'stop.contact')
         },
         'stop-devices': {
             text: 'Оборудование',
-            value: () => lodash.get(order, 'stop.devices')
+            value: () => _.get(order, 'stop.devices')
         },
         'stop-add-devices': {
             text: 'Дополнительное оборудование',
-            value: () => lodash.get(order, 'stop.add_devices')
+            value: () => _.get(order, 'stop.add_devices')
         },
         'stop-interfaces': {
             text: 'Интерфейсы',
-            value: () => lodash.get(order, 'stop.interfaces')
+            value: () => _.get(order, 'stop.interfaces')
         },
         'stop-time': {
             text: 'Срок организации СТОП',
-            value: () => lodash.get(order, 'stop.time')
+            value: () => _.get(order, 'stop.time')
         },
         'stop-add-info': {
             text: 'Дополнительная информация',
-            value: () => lodash.get(order, 'stop.add_info')
+            value: () => _.get(order, 'stop.add_info')
         },
         'stop-org-info': {
             text: 'Информация об организации',
-            value: () => lodash.get(order, 'stop.organization_info')
+            value: () => _.get(order, 'stop.organization_info')
         },
         'stop-cost-once': {
             text: 'Одноразовая стоимость организации СТОП',
-            value: () => lodash.get(order, 'stop.cost-once')
+            value: () => _.get(order, 'stop.cost-once')
         },
         'stop-cost-monthly': {
             text: 'Операционные затраты ежемесячные СТОП',
-            value: () => lodash.get(order, 'stop.cost-monthly')
+            value: () => _.get(order, 'stop.cost-monthly')
         }
     };
 

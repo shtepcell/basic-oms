@@ -4,6 +4,11 @@ block('field').elem('date-gzp-active').content()(function () {
 
     if(ctx.display) {
         var value = order.date['network'];
+
+        if (order.info.client.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl") {
+            value = order.date['install-devices'];
+        }
+
         var year = value.getFullYear();
         var month = value.getMonth() + 1;
         if(month < 10) {
