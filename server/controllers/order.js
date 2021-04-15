@@ -1310,8 +1310,6 @@ module.exports = {
                     }
                 })
 
-                console.log(data.adressType);
-
                 // Координаты
                 if (data.adressType === 'coordination') {
                     var coordinate = data.coordinate;
@@ -2321,12 +2319,15 @@ module.exports = {
             } else orders[i].pauseTime = '-';
         }
 
-        orders.forEach(item => {
-            item.status = stages[item.status];
-            item.cs = helper.calculateCS(item);
+        orders = orders.map(item => {
+            return {
+                ...item,
+                status: stages[item.status],
+                cs: helper.calculateCS(item),
+            }
         });
 
-        getReportExcel(orders, res);
+        await getReportExcel(orders, res);
     },
 
     search: async (req, res) => {

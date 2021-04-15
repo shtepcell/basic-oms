@@ -39,8 +39,6 @@ module.exports = {
             res = 0;
 
         for (var i = 0; i < history.length; i++) {
-            console.log(history[i].name);
-
             if (['Пауза', 'Автоматическое подтверждение паузы'].includes(history[i].name)) {
                 let start = history[i].date;
                 let end;

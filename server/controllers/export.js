@@ -291,6 +291,6 @@ module.exports = {
             })
         });
 
-        wb.write('Report.xlsx', res);
+        return wb.write('Report.xlsx', res);
     }
 };

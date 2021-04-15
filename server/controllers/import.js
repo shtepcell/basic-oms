@@ -20,8 +20,7 @@ module.exports = {
         // ws.cell(1, 1).string('Город');
 
         // wb.write('Handbook.xlsx', res);
-        console.log('asdasd');
-        
+
         res.send(200);
     },
 

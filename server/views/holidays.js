@@ -47,7 +47,6 @@ module.exports = function (opt, data) {
                     {
                         name: 'Дата',
                         getContent: (item) => {
-                            console.log(item);
                             var year = item.date.getFullYear();
                             var month = item.date.getMonth() + 1;
                             if(month < 10) {
