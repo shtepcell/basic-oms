@@ -12,7 +12,7 @@ block('field').elem('sks-cost-once').content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-name',
-                        content: 'Одноразовая стоимость организации'
+                        content: 'Единоразовая стоимость организации'
                     },
                     {
                         block: 'order',
@@ -40,7 +40,7 @@ block('field').elem('sks-cost-once').elemMod('access', true).content()(function 
                     {
                         block: 'order',
                         elem: 'body-row-name',
-                        content: 'Одноразовая стоимость организации *'
+                        content: 'Единоразовая стоимость организации *'
                     },
                     {
                         block: 'order',

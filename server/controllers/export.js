@@ -142,7 +142,7 @@ function get(order, field) {
             value: () => _.get(order, 'gzp.time')
         },
         'gzp-cost-once': {
-            text: 'Одноразовая стоимость организации',
+            text: 'Единоразовая стоимость организации',
             value: () => _.get(order, 'gzp.cost-once')
         },
         'gzp-cost-monthly': {
@@ -194,7 +194,7 @@ function get(order, field) {
             value: () => _.get(order, 'stop.organization_info')
         },
         'stop-cost-once': {
-            text: 'Одноразовая стоимость организации СТОП',
+            text: 'Единоразовая стоимость организации СТОП',
             value: () => _.get(order, 'stop.cost-once')
         },
         'stop-cost-monthly': {

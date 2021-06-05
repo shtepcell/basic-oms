@@ -36,7 +36,7 @@ block('order').elem('capability').elemMod('type', 'yes').content()(function () {
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Одноразовая стоимость организации'
+                    content: 'Единоразовая стоимость организации'
                 },
                 {
                     block: 'order',
@@ -110,7 +110,7 @@ block('order').elem('capability').elemMod('type', 'yes').elemMod('access', true)
                 {
                     block: 'order',
                     elem: 'body-row-name',
-                    content: 'Одноразовая стоимость организации'
+                    content: 'Единоразовая стоимость организации'
                 },
                 {
                     block: 'order',
