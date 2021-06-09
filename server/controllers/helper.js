@@ -43,6 +43,10 @@ module.exports = {
                 let start = history[i].date;
                 let end;
 
+                if (history[i].name === 'Автоматическое подтверждение паузы') {
+                    start = history[history.slice(0, i).reduce((acc, val, index) => val.name === 'Запрос паузы' ? index : acc )].date;
+                }
+
                 if (i + 1 < history.length) {
                     end = history[i + 1].date;
                 }
@@ -855,7 +859,7 @@ module.exports = {
         const isGZP = order.date['gzp-build'] || order.date['install-devices'];
         if (isGZP && order.date['client-match']) {
             var plan = await calculate(order.gzp.time, order.date['client-match']);
-            var cs = Math.round((isGZP - plan) / 1000 / 60 / 60 / 24);
+            var cs = Math.floor((isGZP - plan) / 1000 / 60 / 60 / 24);
             if (cs <= 0) return '-';
             else return '' + cs;
         } else return '-';
