@@ -1,7 +1,7 @@
-const Account = require('../server/models/Account');
-const Department = require('../server/models/Department');
+const Account = require('../../server/models/Account');
+const Department = require('../../server/models/Department');
 const initList = require('./initList');
-const password = require('../server/controllers/password');
+const password = require('../../server/controllers/password');
 
 var init = async () => {
     var accs = await Account.find();
