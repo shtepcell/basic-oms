@@ -427,7 +427,7 @@ module.exports = {
         }
 
         var query = {};
-        var subQ = await helper.makeQuery(req, res);
+        var { query: subQ } = await helper.makeQuery(req, res);
 
         var user = res.locals.__user;
 
@@ -504,7 +504,7 @@ module.exports = {
             {res.redirect(req.path);}
 
         var query = {};
-        var subQ = await helper.makeQuery(req, res);
+        var { query: subQ } = await helper.makeQuery(req, res);
 
         var user = res.locals.__user;
 
@@ -584,7 +584,7 @@ module.exports = {
             {res.redirect(req.path);}
 
         var query = {};
-        var subQ = await helper.makeQuery(req, res);
+        var { query: subQ } = await helper.makeQuery(req, res);
 
         var user = res.locals.__user;
 
@@ -668,7 +668,7 @@ module.exports = {
         }
 
         var query = {};
-        var subQ = await helper.makeQuery(req, res);
+        var { query: subQ } = await helper.makeQuery(req, res);
 
         var user = res.locals.__user;
 
@@ -795,7 +795,7 @@ module.exports = {
             {res.redirect(req.path);}
 
         var query = {};
-        var subQ = await helper.makeQuery(req, res);
+        var { query: subQ } = await helper.makeQuery(req, res);
 
         var user = res.locals.__user;
 
@@ -2281,9 +2281,9 @@ module.exports = {
         if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
         if (req.query.manager && req.query.manager.length == 1) req.query.manager = [req.query.manager]
 
-        var query = await helper.makeQuery(req, res);
+        var { query, archive } = await helper.makeQuery(req, res);
 
-        var orders = await Order.get(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query, archive).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         orders.forEach(item => {
             item.status = stages[item.status];
@@ -2305,10 +2305,11 @@ module.exports = {
         if (req.query.final && req.query.final.length == 1) req.query.final = [req.query.final]
         if (req.query.manager && req.query.manager.length == 1) req.query.manager = [req.query.manager]
 
-        var query = await helper.makeQuery(req, res);
+        var { query, archive } = await helper.makeQuery(req, res);
+
         query.special = undefined;
 
-        var orders = await Order.get(query).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query, archive).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         for (let i = 0; i < orders.length; i++) {
             orders[i].gusName = await helper.getGUSName(orders[i]);
@@ -2361,7 +2362,7 @@ module.exports = {
         if (req.query.id && isNaN(req.query.id)) {
             res.locals.err.id = 'ID должен быть числом';
         }
-        var query = await helper.makeQuery(req, res);
+        var { query, archive } = await helper.makeQuery(req, res);
 
         var pagerId = 'first',
             pagers = [],
@@ -2374,12 +2375,6 @@ module.exports = {
         }
         else {
             res.redirect(req.path);
-        }
-
-        let archive = false;
-
-        if (req.query.func && req.query.func.includes('5')) {
-            archive = true;
         }
 
         const total = await Order.get(query, archive).count();
@@ -2405,8 +2400,6 @@ module.exports = {
         };
 
         res.locals.orders = orders;
-
-        const end = Date.now();
 
         render(req, res, {
             viewName: 'search',

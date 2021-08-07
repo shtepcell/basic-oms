@@ -292,6 +292,8 @@ module.exports = {
         var qr = {};
         var query = req.query;
         var status = [];
+        let archive = false;
+        
         if (query.id) {
             let ids = query.id.split(' ');
             let ors = [];
@@ -338,6 +340,10 @@ module.exports = {
 
             if (query.func.indexOf('4') >= 0) {
                 qr['info.cms'] = { $ne: null };
+            }
+
+            if (query.func.indexOf('5') >= 0) {
+                archive = true;
             }
         }
 
@@ -852,7 +858,7 @@ module.exports = {
                 }
             }
         }
-        return qr;
+        return { query: qr, archive };
     },
 
     getEndGzpDeadline: async (order) => {
@@ -890,7 +896,6 @@ module.exports = {
                 }
                 if (!dep) return 'Ответственный отдел не определён!'
                 return dep.name;
-                break;
             case 'stop-pre':
             case 'stop-pause':
             case 'stop-build':
@@ -902,14 +907,12 @@ module.exports = {
                     name: 'Ответсвенный отдел не определён!'
                 }}
                 return dep.name;
-                break;
             case 'all-pre':
                 var dep1 = await Department.findOne({ type: 'b2o' });
                 var dep2 = await Department.findOne({ cities: order.info.city._id });
                 if (order.special) dep2 = await Department.findOne({ _id: order.special });
                 if (!dep2) return `${dep1.name}`;
                 else return `${dep1.name} и ${dep2.name}`;
-                break;
             case 'network':
             case 'pre-shutdown':
             case 'pre-pause':
@@ -920,16 +923,13 @@ module.exports = {
             case 'sks-build':
                 var dep = await Department.findOne({ type: 'net' });
                 return dep.name;
-                break;
             case 'client-match':
             case 'client-notify':
             case 'continue':
             case 'change':
                 return order.info.initiator.department.name;
-                break;
             default:
                 return '';
-                break;
         }
     },
 
