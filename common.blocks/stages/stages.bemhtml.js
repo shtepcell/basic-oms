@@ -144,6 +144,19 @@ block('stages').content()(function () {
           }
         },
         content: 'Уведомление клиента'
+    },
+    {
+        block: 'stages',
+        elem: 'item',
+        mix: {
+          block: 'action',
+          elem: 'direct',
+          js: {
+            stage: 'start-pre-shutdown',
+            order: order
+          }
+        },
+        content: 'Запрос отключения услуги'
     }
   ]
 })

@@ -2251,6 +2251,16 @@ module.exports = {
                 order.date['cs-client-notify'] = deadline;
                 hist.name = 'Изменен этап -> Уведомление клиента'
                 break;
+
+            case 'start-pre-shutdown':
+                if (order.date['stop-build'] != null) {
+                    order.status = 'stop-shutdown';
+                } else {
+                    order.status = 'pre-shutdown';
+                }
+                order.deadline = await helper.calculateDeadline(3);
+                hist.name = 'Изменен этап -> Запрос отключения услуги'
+                break;
         }
         order.history.push(hist);
         await order.save();
