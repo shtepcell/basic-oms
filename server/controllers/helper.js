@@ -302,14 +302,18 @@ module.exports = {
                     ors.push({ id: ids[i] });
                 }
             }
-            if (ors.length > 0)
-                {return { $or: ors };}
-            return { id: -1 };
+
+            if (ors.length > 0) {
+                return { query: { $or: ors }, archive};
+            }
+
+            return { query: { id: -1 }, archive };
         }
 
         if (query.cms) {
             var rgx =  new RegExp('' + query.cms + '', 'i');
-            return { 'info.cms': {$regex: rgx} }
+            
+            return { query: { 'info.cms': {$regex: rgx} }, archive };
         }
 
         if (query.func) {
