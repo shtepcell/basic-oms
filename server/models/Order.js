@@ -213,7 +213,7 @@ const isReject = {
     status: 'reject'
 }
 
-schema.statics.get = function (query, archive) {
+schema.statics.get = function (query = {}, archive) {
     const old = new Date();
     old.setDate(-90);
 
