@@ -295,7 +295,7 @@ module.exports = {
         let archive = false;
         
         if (query.id) {
-            let ids = query.id.split(' ');
+            let ids = query.id.trim().split(' ');
             let ors = [];
             for (let i = 0; i < ids.length; i++) {
                 if (!isNaN(ids[i])) {
@@ -304,7 +304,7 @@ module.exports = {
             }
 
             if (ors.length > 0) {
-                return { query: { $or: ors }, archive};
+                return { query: { $or: ors }, archive: true};
             }
 
             return { query: { id: -1 }, archive };
