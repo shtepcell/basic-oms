@@ -11,7 +11,7 @@ block('order').elem('head').content()(function () {
     const isAdmin = (user.department.type == 'admin');
 
     const isOn = (order.status == 'succes');
-    const hasVolume = ['internet', 'l2vpn', 'l3vpn', 'vpls'].includes(order.info.service);
+    const hasVolume = ['internet', 'l2vpn', 'l3vpn', 'vpls', 'safe'].includes(order.info.service);
 
     const clientText = `${order.info.client.type.shortName}] ${order.info.client.name}`;
 
