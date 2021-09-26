@@ -1916,8 +1916,16 @@ module.exports = {
                 order.status = 'network';
                 order.info['income-once'] = incomeOnce || order.info['income-once'];
                 order.info['income-monthly'] = incomeMonth || order.info['income-once'];
-                order.deadline = order.date['cs-network'] = await helper.calculateDeadline(3);
+
+                let organizationTime = 3;
+
+                if (isNetPath(order) && order.sks && order.sks.time) {
+                    organizationTime = order.sks.time;
+                }
+
+                order.deadline = order.date['cs-network'] = await helper.calculateDeadline(organizationTime);
                 order.history.push(helper.historyGenerator('start-network', res.locals.__user));
+                
                 break;
         }
 
