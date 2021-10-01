@@ -1,12 +1,4 @@
 Object.assign || (Object.assign = require('object-assign'));
-const Sentry = require('@sentry/node');
-// eslint-disable-next-line no-unused-vars
-const Tracing = require("@sentry/tracing");
-
-Sentry.init({
-    dsn: "https://876c9ff67b8f4d71ab86cf2877bc32b8@o453025.ingest.sentry.io/5441311",
-    tracesSampleRate: 1.0,
-});
 
 var fs = require('fs'),
     path = require('path'),
@@ -61,7 +53,6 @@ morgan.token('smart-url', function(req, res) {
 });
 
 app
-    .use(Sentry.Handlers.requestHandler())
     .disable('x-powered-by')
     .enable('trust proxy')
     .use(compression())
@@ -111,8 +102,6 @@ var io = require('socket.io')(server);
 router(app, io);
 
 isDev && require('./rebuild')(app);
-
-app.use(Sentry.Handlers.errorHandler());
 
 app.get('*', function(req, res) {
     res.status(404);

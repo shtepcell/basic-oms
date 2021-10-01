@@ -1034,19 +1034,24 @@ module.exports = {
 
     getPageChange: async (req, res) => {
         if (isNaN(req.params.id)) {
-            render(req, res, { view: '404' });
-            return;
+            return render(req, res, { view: '404' });
         }
+
         var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
 
         if (order) {
-            if (order.status != 'succes') render(req, res, { view: '404' });
+            if (order.status != 'succes') {
+                return render(req, res, { view: '404' });
+            }
+            
             res.locals.order = order;
-            render(req, res, {
+            return render(req, res, {
                 viewName: 'orders/change-order'
             });
 
-        } else render(req, res, { view: '404' });
+        } else {
+            return render(req, res, { view: '404' });
+        }
     },
 
     getChangeV: async (req, res) => {

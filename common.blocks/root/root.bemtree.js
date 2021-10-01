@@ -6,7 +6,7 @@ block('root').replace()(function() {
 
     if (ctx.context) return ctx.context;
 
-    const bundle = data.view.slice(5, data.view.length);
+    const bundle = data.view.slice(5, data.view.length) || 'index';
 
     return {
         block: 'page',
@@ -19,14 +19,6 @@ block('root').replace()(function() {
             }
         ],
         scripts: [
-            {
-                elem: 'js',
-                url: 'https://browser.sentry-cdn.com/5.24.2/bundle.tracing.min.js',
-                attrs: {
-                    integrity: "sha384-Epltozh7S1cJM2hcIRDJBbqiiVpZsNlFCciHxKIAfKN8mSTa+gMivtz7glp/30Mz",
-                    crossorigin: 'anonymous'
-                }
-            },
             {
                 elem: 'js',
                 url: '/socket.io.js'
