@@ -78,9 +78,9 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elem: 'cms',
             order: order,
             elemMods: {
-                access: adminEdit
+                access: adminEdit || isOwner
             },
-            display: order.info.cms
+            display: order.info.cms || isOwner || adminEdit
         },
         {
             block: 'field',
