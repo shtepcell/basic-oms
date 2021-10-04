@@ -92,7 +92,6 @@ module.exports = {
 	},
 
 	create: async (req, res) => {
-
 		var reqData = req.body,
 			errors = [];
 
@@ -155,7 +154,8 @@ module.exports = {
 				phone: reqData.phone,
 				department: reqData.department,
 				status: true,
-				settings: settings
+				settings: settings,
+				created: new Date(),
 			});
 			var result = await acc.save();
 		} else res.status(400).send(errors);
