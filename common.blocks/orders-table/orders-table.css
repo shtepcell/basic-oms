@@ -1,10 +1,9 @@
-.orders-table
-{
+.orders-table {
     display: table;
-    width: 1200px;
+    width: 100%;
     margin: 0 auto;
     table-layout: fixed;
-    font-size: 11pt;
+    font-size: 14px;
 }
 
 /* @media screen and (max-width: 1200px) and (orientation: landscape) {

@@ -1,18 +1,9 @@
-.navigator
-{
-    position: fixed;
-    top: 0;
-    left: 0;
+.navigator {
     width: 100%;
     min-width: 850px;
-    background-color: #1a7abe;
-    z-index: 999;
 }
 
-.navigator__right-block
-{
+.navigator__right-block {
     display: inline-block;
     float: right;
-
-    margin-right: 1em;
 }

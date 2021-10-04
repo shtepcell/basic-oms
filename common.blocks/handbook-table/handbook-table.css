@@ -1,9 +1,7 @@
-.handbook-table
-{
+.handbook-table {
 	border-spacing: 0;
 	border: 1px solid #e5e5e5;
 	border-bottom: none;
-	margin: 10px;
 }
 
 .handbook-table__head-row

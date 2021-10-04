@@ -1,26 +1,26 @@
-.title
-{
+.title {
     font-family: sans-serif;
-    margin-bottom: 1em;
-    margin-top: 1em;
+    line-height: 120%;
+    margin: 0 0 12px;
+    color: #333;
 }
-.title_lvl_1
-{
-    font-size: 18pt;
+
+.title_lvl_1 {
+    font-size: 40px;
     font-weight: bold;
 }
-.title_lvl_2
-{
-    font-size: 16pt;
+
+.title_lvl_2 {
+    font-size: 36px;
     font-weight: bold;
 }
-.title_lvl_3
-{
-    font-size: 14pt;
+
+.title_lvl_3 {
+    font-size: 24px;
     font-weight: bold;
 }
-.title_lvl_4
-{
-    font-size: 12pt;
+
+.title_lvl_4 {
+    font-size: 16px;
     font-weight: normal;
 }

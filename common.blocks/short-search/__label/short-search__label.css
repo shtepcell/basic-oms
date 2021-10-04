@@ -1,6 +1,6 @@
 .short-search__label {
     display: inline-block;
-    margin-left: 1em;
     font-family: sans-serif;
-    margin-right: 1em;
+    margin-right: 8px;
+    font-size: 14px;
 }

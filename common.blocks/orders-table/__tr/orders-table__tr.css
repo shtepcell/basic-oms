@@ -1,31 +1,25 @@
-.orders-table__tr
-{
-    display: table-row;
+.orders-table__tr {
+    width: 100%;
+    display: inline-block;
 
     transition: 0.1s all;
-    min-height: 30px;
 }
 
-.orders-table__id
-{
+.orders-table__id {
     display: inline-block;
     margin-left: 5px;
     line-height: inherit;
-
 }
-.orders-table__body .orders-table__tr:hover
-{
+
+.orders-table__body .orders-table__tr:hover {
     background-color: #f0f0f0;
 }
 
-
-.orders-table__tr a
-{
+.orders-table__tr a {
     text-decoration: none;
     color: black;
 }
 
-.orders-table__tr_pause .orders-table__td:last-child
-{
+.orders-table__tr_pause .orders-table__td:last-child {
     background-image: linear-gradient(-90deg, lightblue 5%, white);
 }

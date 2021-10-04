@@ -1,5 +1,4 @@
-.navigator__link.link
-{
+.navigator__link.link {
     display: inline-block;
     padding: 0 10px 0 10px;
     outline: none;
@@ -11,30 +10,21 @@
     transition: 0.2s all ease-in-out;
 }
 
-.navigator__link.link:first-child
-{
-    margin-left: 1em;
+.bell > .navigator__link.link {
+    padding: 0 16px;
 }
 
-.bell > .navigator__link.link
-{
-    padding: 0 15px 0 15px;
-}
-
-.navigator__link.link:hover
-{
+.navigator__link.link:hover {
     color: #fff;
     background: #0a5a9e;
 }
 
-.navigator__link .icon
-{
+.navigator__link .icon {
     width: 22px;
     line-height: 50px;
 }
 
-.navigator__alarm
-{
+.navigator__alarm {
     animation: bell 2s cubic-bezier(.36,.07,.19,.97) infinite;
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;

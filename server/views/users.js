@@ -18,7 +18,7 @@ module.exports = function(opt, data) {
                 mods: {
                     lvl: '3'
                 },
-                content: 'Учетные записи СУЗ'
+                content: 'Учетные записи'
             },
             {
                 block: 'short-search',
