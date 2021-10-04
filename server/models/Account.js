@@ -60,7 +60,10 @@ const schema = new Schema({
 		search: {
 			query: String
 		}
-	}
+	},
+	created: Date,
+	firstVisit: Date,
+	lastVisit: Date,
 }, {
 	usePushEach: true
 });

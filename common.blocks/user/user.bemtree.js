@@ -6,17 +6,25 @@ block('user').content()(function () {
         guss = [],
         initiators = [];
 
-    deps = deps.map( item => {
-        if(item.type == 'gus') guss.push({
-            val: ''+item._id,
-            text: item.name
-        })
-        if(item.type == 'b2o' || item.type == 'b2b') initiators.push({
-            val: ''+item._id,
-            text: item.name
-        })
+    deps = deps.map(item => {
+        const id = String(item._id);
+
+        if (item.type == 'gus') {
+            guss.push({
+                val: id,
+                text: item.name
+            })
+        }
+
+        if(item.type == 'b2o' || item.type == 'b2b') {
+            initiators.push({
+                val: id,
+                text: item.name
+            })
+        }
+
         return {
-            val: ''+item._id,
+            val: id,
             text: item.name
         }
     });
@@ -105,6 +113,39 @@ block('user').content()(function () {
                 data: deps
             }
         },
+        user.created && {
+            text: 'Создан',
+            val: moment(user.created).locale('ru').calendar(),
+            access: false,
+            show: user.created,
+            input: {
+                type: 'text',
+                name: 'login',
+                placeholder: 'example'
+            }
+        },
+        user.firstVisit && {
+            text: 'Первый вход',
+            val: moment(user.firstVisit).locale('ru').calendar(),
+            access: false,
+            show: user.created,
+            input: {
+                type: 'text',
+                name: 'login',
+                placeholder: 'example'
+            }
+        },
+        user.lastVisit && {
+            text: 'Последний вход',
+            val: moment(user.lastVisit).locale('ru').calendar(),
+            access: false,
+            show: user.created,
+            input: {
+                type: 'text',
+                name: 'login',
+                placeholder: 'example'
+            }
+        },
         'space',
         {
             block: 'title',
@@ -157,28 +198,28 @@ block('user').content()(function () {
             }
         },
         'space'
-    ];
+    ].filter(Boolean);
 
     var ret = [];
 
     fields.forEach( item => {
         if(item == 'space')
-            ret.push({
+            {ret.push({
                 elem: 'row',
                 mix: {
                     block: 'user',
                     elem: 'row-without-underline'
                 }
-            });
+            });}
         if(item.block == 'title' && item.showT)
-            ret.push({
+            {ret.push({
                 elem: 'row',
                 mix: {
                     block: 'user',
                     elem: 'row-without-underline'
                 },
                 content: item
-            });
+            });}
         if(item.show) {
             if(item.access) {
                 ret.push({
@@ -243,7 +284,7 @@ block('user').content()(function () {
                 text: 'Удалить'
             }
         };
-    };
+    }
 
     ret.push({
         elem: 'row',

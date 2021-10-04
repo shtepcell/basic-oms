@@ -20,6 +20,13 @@ module.exports = {
     isLoggedIn: async (req, res, next) => {
         if (req.session.__user) {
             var acc = await Account.findOne({login: req.session.__user}).populate('department notifies');
+            
+            acc.firstVisit = acc.firstVisit || new Date();
+            acc.lastVisit = new Date();
+            acc.save().catch((err) => {
+                console.error(`Visit information for ${acc.login} can't save, cause: ${err}`)
+            });
+
             var deps = await Department.find({status: true, type: 'gus'}).lean();
             var requestPause;
 
