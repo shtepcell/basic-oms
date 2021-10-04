@@ -7,49 +7,56 @@ const Render = require('../render'),
 	render = Render.render;
 
 const logger = require('./logger');
+const moment = require('moment');
+
+const getRegexp = (string) => {
+	let str = string.replace(/\[/g, '');
+
+	str = str.replace(/\]/g, '');
+	str = str.replace(/\\/g, '');
+	str = str.replace(/\(/g, '');
+	str = str.replace(/\)/g, '');
+
+	return new RegExp('' + str + '', 'i');
+}
 
 module.exports = {
 
 	getPage: async (req, res) => {
-		var pagerId = 'first',
-			pagers = [],
-			pageNumber = req.query['pager' + pagerId] || 1,
-			perPage = req.query['limit'] || 30;
+		const search = req.query.name || '';
+		const query = { status: true };
 
-		if (!!(+pageNumber) && (+pageNumber) > 0) {
-			pageNumber = +pageNumber;
-			pagers[0] = pagerId;
-		}
-		else
-			{res.redirect(req.path);}
-
-		var accs = await Account.paginate({ status: true }, { page: pageNumber, limit: +perPage, populate: 'department' });
-
-		if (req.query.name) {
-			var val = req.query.name;
-			val = val.replace(/\[/g, '');
-			val = val.replace(/\]/g, '');
-			val = val.replace(/\\/g, '');
-			val = val.replace(/\(/g, '');
-			val = val.replace(/\)/g, '');
-			var rgx = new RegExp('' + val + '', 'i');
-			accs = await Account.paginate({ name: { $regex: rgx }, status: true }, { page: pageNumber, limit: perPage, populate: 'department' });
+		if (search) {
+			query['$or'] = [
+				{ name: { $regex: getRegexp(search) }},
+				{ login: { $regex: getRegexp(search) }}
+			];
 		}
 
-		if (accs.total == 0) accs.total = 1;
+		const accounts = await Account
+			.find(query)
+			.populate('department')
+			.sort({ lastVisit: -1 })
+			.lean();
+
+
 		res.locals.query = req.query;
-		res.locals.users = accs.docs;
-		res.locals.pagers = {};
-		res.locals.pagers[pagerId] = {
-			pageNumber: +pageNumber,
-			records: accs.total,
-			perPage: accs.limit
-		};
+		res.locals.users = accounts.map((user) => {
+			const lastVisit = user.lastVisit && moment(user.lastVisit);
+
+			if (lastVisit) {
+				const isOnline = moment().diff(lastVisit, 'minutes') <= 5;
+				const isExpired = moment().diff(lastVisit, 'days') >= 90;
+
+				return { ...user, isOnline, isExpired }
+			}
+
+			return user
+ 		});
 
 		render(req, res, {
 			viewName: 'users',
 			options: {
-				pagers: pagers,
 				reqUrl: '/admin/users'
 			}
 		});

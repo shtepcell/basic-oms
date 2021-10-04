@@ -1,6 +1,5 @@
 const mongoose = require('../controllers/connect');
 const Schema = mongoose.Schema;
-const mongoosePaginate = require('mongoose-paginate');
 
 const { ObjectId } = Schema.Types;
 
@@ -71,14 +70,15 @@ const schema = new Schema({
 var deepPopulate = require('mongoose-deep-populate')(mongoose);
 
 schema.plugin(deepPopulate);
-schema.plugin(mongoosePaginate);
 
 schema.methods.remove = function () {
 	if (this.status) {
 		this.login = Date.now() + this.login;
 		this.status = false;
 		return this.save();
-	} else throw `Account ${this.login} cant be deleted!`
+	} else {
+		throw `Account ${this.login} cant be deleted!`
+	}
 }
 
 var account = mongoose.model('Account', schema);

@@ -20,9 +20,8 @@
 }
 .ultra-table_theme_common .tbody  tr {
     cursor: pointer;
-    transition: all 0.1s;
+    transition: background-color 0.15s;
 }
 .ultra-table_theme_common .tbody tr:hover {
-    transform: scale(1.015);
-    background: #fafafa;
+    background: #f0f0f0;
 }

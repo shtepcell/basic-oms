@@ -17,5 +17,6 @@ globals:
 
 rules:
   curly: [error, multi-line]
+  no-unused-expressions: off
 
 extends: pedant
