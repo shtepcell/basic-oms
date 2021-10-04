@@ -1,12 +1,7 @@
 module.exports = function(opt, data) {
-    var opt = opt || {},
-        pagerId;
-
     var query = data.query || {};
     var users = data.users;
-    if (opt.pagers && opt.pagers.length)
-        pagerId = opt.pagers[0];
-
+    
     return {
         view: 'page-index',
         title: 'Пользователи СУЗ',
@@ -44,7 +39,17 @@ module.exports = function(opt, data) {
                 fields: [
                     {
                         name: 'Логин',
-                        getContent: (item) => `${item.login}`
+                        getContent: (item) => {
+                            let type = null;
+
+                            item.isOnline && (type = 'green');
+
+                            return {
+                                block: 'colored-text',
+                                mods: { type },
+                                content: `${item.login}`
+                            }
+                        },
                     },
                     {
                         name: 'Ф.И.О.',
@@ -66,12 +71,6 @@ module.exports = function(opt, data) {
                 url: '/admin/users/',
                 template: 'login',
                 data: users
-            },
-            {
-                block: 'pager',
-                attrs: {
-                    id: pagerId
-                }
             }
         ]
     };

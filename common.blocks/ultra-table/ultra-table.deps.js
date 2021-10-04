@@ -11,6 +11,12 @@
             }
         },
         'thead',
-        'tbody'
+        'tbody',
+        {
+            block: 'colored-text',
+            mods: {
+                type: ['green', 'red']
+            }
+        }
     ]
 })
