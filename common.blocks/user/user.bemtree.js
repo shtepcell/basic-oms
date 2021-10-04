@@ -117,7 +117,7 @@ block('user').content()(function () {
             text: 'Создан',
             val: moment(user.created).locale('ru').calendar(),
             access: false,
-            show: user.created,
+            show: true,
             input: {
                 type: 'text',
                 name: 'login',
@@ -128,7 +128,7 @@ block('user').content()(function () {
             text: 'Первый вход',
             val: moment(user.firstVisit).locale('ru').calendar(),
             access: false,
-            show: user.created,
+            show: true,
             input: {
                 type: 'text',
                 name: 'login',
@@ -139,7 +139,7 @@ block('user').content()(function () {
             text: 'Последний вход',
             val: moment(user.lastVisit).locale('ru').calendar(),
             access: false,
-            show: user.created,
+            show: true,
             input: {
                 type: 'text',
                 name: 'login',
