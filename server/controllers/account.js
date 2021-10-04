@@ -14,7 +14,7 @@ module.exports = {
 		var pagerId = 'first',
 			pagers = [],
 			pageNumber = req.query['pager' + pagerId] || 1,
-			perPage = 30; // TODO брать из конфига?
+			perPage = req.query['limit'] || 30;
 
 		if (!!(+pageNumber) && (+pageNumber) > 0) {
 			pageNumber = +pageNumber;
@@ -23,7 +23,7 @@ module.exports = {
 		else
 			{res.redirect(req.path);}
 
-		var accs = await Account.paginate({ status: true }, { page: pageNumber, limit: perPage, populate: 'department' });
+		var accs = await Account.paginate({ status: true }, { page: pageNumber, limit: +perPage, populate: 'department' });
 
 		if (req.query.name) {
 			var val = req.query.name;
