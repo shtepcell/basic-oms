@@ -1,6 +1,6 @@
 block('user').content()(function () {
     var ctx = this.ctx,
-        user = ctx.user,
+        user = ctx.user || {},
         page = ctx.page,
         deps = ctx.deps,
         guss = [],
@@ -40,8 +40,8 @@ block('user').content()(function () {
         },
         {
             text: 'Логин',
-            val: (page!='create')?user.login:'',
-            access: page == 'create',
+            val: (page !== 'create') ? user.login : '',
+            access: page === 'create',
             show: true,
             input: {
                 type: 'text',
@@ -53,7 +53,7 @@ block('user').content()(function () {
             text: 'Пароль',
             val: '',
             access: true,
-            show: page == 'create',
+            show: page === 'create',
             input: {
                 type: 'password',
                 name: 'password'
@@ -63,7 +63,7 @@ block('user').content()(function () {
             text: 'Повторите пароль',
             val: '',
             access: true,
-            show: page == 'create',
+            show: page === 'create',
             input: {
                 type: 'password',
                 name: 'passwordRep'
@@ -71,7 +71,7 @@ block('user').content()(function () {
         },
         {
             text: 'Ф.И.О.',
-            val: (page!='create')?user.name:'',
+            val: (page !== 'create') ? user.name : '',
             access: true,
             show: true,
             input: {
@@ -82,7 +82,7 @@ block('user').content()(function () {
         },
         {
             text: 'E-mail',
-            val: (page!='create')?user.email:'',
+            val: (page !== 'create') ? user.email : '',
             access: true,
             show: true,
             input: {
@@ -93,7 +93,7 @@ block('user').content()(function () {
         },
         {
             text: 'Телефон',
-            val: (page!='create')?user.phone:'',
+            val: (page !== 'create') ? user.phone : '',
             access: true,
             show: true,
             input: {
@@ -104,8 +104,8 @@ block('user').content()(function () {
         },
         {
             text: 'Отдел',
-            val: (page=='profile')?user.department.name:(page!='create')?`${user.department}`:'',
-            access: page != 'profile',
+            val: (page === 'profile') ? user.department.name : (page !== 'create') ? `${user.department}` : '',
+            access: page !== 'profile',
             show: true,
             input: {
                 type: 'select',
