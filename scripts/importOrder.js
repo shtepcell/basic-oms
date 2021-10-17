@@ -20,9 +20,10 @@ const trim = (item, field) => {
 
 const getCityType = (type) => {
     return {
-        'Село': 'с.',
-        'Поселок городского типа': 'пгт.'
-    }[type];
+        'село': 'с.',
+        'поселок городского типа': 'пгт.',
+        'город': 'г.',
+    }[type.toLowerCase()];
 }
 
 (async () => {
