@@ -28,7 +28,7 @@ function render(req, res, data, context) {
     if (data.viewName) {
         opt = data.options;
         locals = res.locals;
-        data = View[data.viewName](opt, locals);
+        data = View[data.viewName](opt, locals, context);
     }
 
     if(!data.view) data = View[data]();
@@ -37,7 +37,7 @@ function render(req, res, data, context) {
 
     var bemtreeCtx = {
         block: 'root',
-        context: context,
+        // context: context,
         // extend with data needed for all routes
         data: Object.assign({}, {
             url: req._parsedUrl,

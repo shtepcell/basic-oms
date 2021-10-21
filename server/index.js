@@ -12,8 +12,6 @@ var fs = require('fs'),
     expressSession = require('express-session'),
     slashes = require('connect-slashes'),
     passport = require('passport'),
-    // LocalStrategy = require('passport-local').Strategy,
-    csrf = require('csurf'),
     compression = require('compression'),
     logger = require('./controllers/logger'),
     config = require('./config'),
@@ -31,6 +29,8 @@ var fs = require('fs'),
 
     helper = require('./controllers/helper'),
     router = require('./router');
+
+const { getAppConfiguration } = require('./middlewares/configuration');
 
 require('debug-http')();
 
@@ -80,9 +80,7 @@ app
         })
     }))
     .use(passport.initialize())
-    .use(passport.session())
-    // .use(csrf());
-
+    .use(passport.session());
 
 // NOTE: conflicts with livereload
 isDev || app.use(slashes());

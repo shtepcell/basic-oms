@@ -1,18 +1,18 @@
-const Auth = require('./controllers/auth'),
-    Account = require('./controllers/account'),
-    User = require('./models/Account'),
-    City = require('./controllers/city'),
-    ClientType = require('./controllers/clientType'),
-    Provider = require('./controllers/provider'),
-    Client = require('./controllers/client'),
-    Department = require('./controllers/departments'),
-    Order = require('./controllers/order'),
-    Holiday = require('./controllers/holiday'),
-    Notify = require('./controllers/notify'),
-    Street = require('./controllers/street'),
-    Chat = require('./controllers/chat'),
-    Import = require('./controllers/import'),
-    helper = require('./controllers/helper');
+const Account = require('./controllers/account');
+const Auth = require('./controllers/auth');
+const Chat = require('./controllers/chat');
+const City = require('./controllers/city');
+const Client = require('./controllers/client');
+const ClientType = require('./controllers/clientType');
+const Configiration = require('./controllers/configuration');
+const Department = require('./controllers/departments');
+const helper = require('./controllers/helper');
+const Holiday = require('./controllers/holiday');
+const Import = require('./controllers/import');
+const Notify = require('./controllers/notify');
+const Order = require('./controllers/order');
+const Provider = require('./controllers/provider');
+const Street = require('./controllers/street');
 
 const fileUpload = require('express-fileupload');
 
@@ -182,7 +182,6 @@ module.exports = function (app, io) {
     app.post('/admin/departments/:id/delete', Department.delete);
     app.post('/admin/departments/:id/delete/:city', Department.deleteCity);
 
-
     app.route('/admin/street')
         .get(Street.getPage)
         .delete(Street.delete);
@@ -210,6 +209,9 @@ module.exports = function (app, io) {
 
     app.post('/admin/providers/change', Provider.edit);
     app.post('/admin/providers/add', Provider.create);
+
+    app.get('/admin/configuration', Configiration.getConfigurationPage);
+    app.post('/api/admin/configuration', Auth.isAdmin, Configiration.updateConfiguration);
 
     app.get('/test/', (req, res) => {
 

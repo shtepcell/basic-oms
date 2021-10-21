@@ -1,0 +1,6 @@
+({
+    shouldDeps: [
+        'admin-settings',
+        'location'
+    ]
+})

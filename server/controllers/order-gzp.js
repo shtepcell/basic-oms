@@ -2,6 +2,7 @@ const ClientType = require('../models/ClientType');
 const helper = require('./helper');
 const notify = require('./notify');
 const logger = require('./logger');
+const Settings = require('../models/Settings');
 
 module.exports = {
     endBuild: async (req, res, order) => {
@@ -31,13 +32,15 @@ module.exports = {
     },
 
     endPreGZP: async (req, res, order) => {
+        const { data: autoDeadline } = await Settings.findOne({ type: 'auto-deadline' }) || {};
+
         if (order) {
             Object.keys(req.body).forEach(item => {
                 req.body[item] = req.body[item].trim();
                 if (req.body[item] == '') req.body[item] = undefined;
             });
 
-            if (((req.body.need == '1' && req.body.capability == '1')
+            if (!autoDeadline && ((req.body.need == '1' && req.body.capability == '1')
                 || (req.body.need == '0')) && isNaN(req.body.time)) {
                 res.status(400).send({ errText: 'Срок организации должен быть числом' });
                 return;
@@ -59,7 +62,10 @@ module.exports = {
                 }
             }
 
-            order.gzp = req.body;
+            order.gzp = {
+                ...req.body,
+                time: autoDeadline || req.body.time,
+            };
             
             if (order.status == 'gzp-pre') {
                 order.status = 'client-match';

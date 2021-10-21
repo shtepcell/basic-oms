@@ -6,6 +6,7 @@ node_modules/
 forever.log
 npm-debug.log
 static/index.min.*
+static/admin.min.*
 static/files
 static/storage
 backups/*
