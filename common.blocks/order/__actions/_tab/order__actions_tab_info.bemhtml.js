@@ -51,7 +51,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
     const isDemontage = (order.status == 'build-shutdown');
     const isSKS = ['sks'].includes(order.info.service);
     const isStartPause = (order.status == 'pre-pause');
-    const isNetService = ['wifi', 'wifiorg', 'sputnik', 'vpls'].includes(order.info.service);
+    const isNetService = ['wifi', 'wifiorg', 'sputnik'].includes(order.info.service);
 
     const isStopPause = (order.status == 'stop-pause');
     const pausedOrder = (order.status == 'pause');

@@ -40,7 +40,7 @@ module.exports = {
     },
 
     create: async (user, order, type, recipients) => {
-        const isNetService = ['wifi', 'wifiorg', 'sputnik', 'vpls'].includes(order.info.service);
+        const isNetService = ['wifi', 'wifiorg', 'sputnik'].includes(order.info.service);
 
         var ntf = new Notify({
             order: order.id,
