@@ -2,7 +2,7 @@ block('order').elem('actions').elemMod('tab', 'sks').content()(function () {
     const { order, user, adminEdit } = this.ctx;
     const { status, info: { service } } = order;
 
-    const isNetService = ['wifi', 'wifiorg', 'sputnik', 'vpls'].includes(service);
+    const isNetService = ['wifi', 'wifiorg', 'sputnik'].includes(service);
     const isBuild = status === 'sks-build';
 
     const isOwner = (status === 'sks-pre' || isBuild) && user.department.type === 'net' || isNetService && user.department.type === 'net';
