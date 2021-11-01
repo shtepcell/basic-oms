@@ -25,7 +25,7 @@ block('order').elem('capability').elemMod('type', 'yes').content()(function () {
                 {
                     block: 'order',
                     elem: 'body-row-data',
-                    content: order.gzp.time
+                    content: order.gzp.time || order.autoDeadline
                 }
             ]
         },
@@ -94,11 +94,12 @@ block('order').elem('capability').elemMod('type', 'yes').elemMod('access', true)
                         mods: {
                             theme: 'islands',
                             size: 'l',
-                            width: 'available'
+                            width: 'available',
+                            disabled: Boolean(order.autoDeadline)
                         },
                         name: 'time',
                         placeholder: '30',
-                        val: order.gzp.time
+                        val: order.gzp.time || order.autoDeadline
                     }
                 }
             ]

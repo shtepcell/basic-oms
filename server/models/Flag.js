@@ -1,6 +1,5 @@
 var mongoose = require('../controllers/connect'),
-    Schema = mongoose.Schema,
-    mongoosePaginate = require('mongoose-paginate');
+    Schema = mongoose.Schema;
 
 var schema = new Schema( {
     user: {

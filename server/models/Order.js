@@ -196,7 +196,8 @@ var schema = new Schema({
         name: String,
         date: Date,
         author: String
-    }]
+    }],
+    autoDeadline: Number,
 }, {
     usePushEach: true
 });

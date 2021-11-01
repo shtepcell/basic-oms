@@ -78,6 +78,7 @@ const Render = require('../render');
 const render = Render.render;
 
 const logger = require('./logger');
+const Settings = require('../models/Settings');
 
 const isSKSPath = (order) => {
     return order.info.service === 'sks';
@@ -1129,7 +1130,11 @@ module.exports = {
         }
         var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
 
+        const { data: autoDeadline } = await Settings.findOne({ type: 'auto-deadline' }).lean() || {};
+        
         if (order) {
+            autoDeadline && (order.autoDeadline = autoDeadline);
+
             res.locals.users = await Account
                 .find({ status: true })
                 .populate({
@@ -1165,8 +1170,11 @@ module.exports = {
             return;
         }
         var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
+        const { data: autoDeadline } = await Settings.findOne({ type: 'auto-deadline' }).lean() || {};
 
         if (order) {
+            autoDeadline && (order.autoDeadline = autoDeadline);
+
             res.locals.users = await Account
                 .find({ status: true })
                 .populate({
@@ -1203,8 +1211,11 @@ module.exports = {
             return;
         }
         var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
+        const { data: autoDeadline } = await Settings.findOne({ type: 'auto-deadline' }).lean() || {};
 
         if (order) {
+            autoDeadline && (order.autoDeadline = autoDeadline);
+
             res.locals.users = await Account
                 .find({ status: true })
                 .populate({
@@ -1381,7 +1392,7 @@ module.exports = {
 
             case 'gzp':
 
-                if (isNaN(data.time)) {
+                if (data.time && isNaN(data.time)) {
                     res.status(400).send({ errText: 'Срок организации должен быть числом' });
                     return;
                 }
@@ -1391,7 +1402,7 @@ module.exports = {
 
             case 'stop':
 
-                if (isNaN(data.time)) {
+                if (data.time && isNaN(data.time)) {
                     res.status(400).send({ errText: 'Срок организации должен быть числом' });
                     return;
                 }
@@ -1431,6 +1442,7 @@ module.exports = {
     endPreSKS: async (req, res) => {
         var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
         const currentStatus = order.status;
+        const { data: autoDeadline } = await Settings.findOne({ type: 'auto-deadline' }).lean() || {};
 
         if (order) {
             Object.keys(req.body).forEach(item => {
@@ -1438,7 +1450,7 @@ module.exports = {
                 if (req.body[item] == '') req.body[item] = undefined;
             });
 
-            if (isNaN(req.body.time)) {
+            if (!autoDeadline && isNaN(req.body.time)) {
                 res.status(400).send({ errText: 'Срок организации должен быть числом' });
                 return;
             }
@@ -1448,7 +1460,10 @@ module.exports = {
                 return;
             }
 
-            order.sks = req.body;
+            order.sks = {
+                ...req.body,
+                time: autoDeadline || req.body.time,
+            };
 
             order.status = 'client-match';
             order.deadline = null;
@@ -1476,13 +1491,18 @@ module.exports = {
 
     endPreSTOP: async (req, res) => {
         var order = await Order.findOne({ id: req.params.id }).deepPopulate(populateQuery);
+        const { data: autoDeadline } = await Settings.findOne({ type: 'auto-deadline' }).lean() || {};
+
         if (order) {
             Object.keys(req.body).forEach(item => {
                 req.body[item] = req.body[item].trim();
                 if (req.body[item] == '') req.body[item] = undefined;
             });
 
-            order.stop = req.body;
+            order.stop = {
+                ...req.body,
+                time: autoDeadline || req.body.time,
+            };
             if (req.body.capability == '1') {
 
                 if (!req.body.provider) {

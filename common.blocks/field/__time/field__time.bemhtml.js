@@ -17,7 +17,7 @@ block('field').elem('time').content()(function () {
                     {
                         block: 'order',
                         elem: 'body-row-data',
-                        content: order.stop.time
+                        content: order.stop.time || order.autoDeadline,
                     }
                 ]
             }
@@ -51,9 +51,10 @@ block('field').elem('time').elemMod('access', true).content()(function () {
                                 mods: {
                                     width: 'available',
                                     theme: 'islands',
-                                    size: 'l'
+                                    size: 'l',
+                                    disabled: Boolean(order.autoDeadline),   
                                 },
-                                val: order.stop.time,
+                                val: order.stop.time || order.autoDeadline,
                                 autocomplete: false,
                                 placeholder: '30'
                             }

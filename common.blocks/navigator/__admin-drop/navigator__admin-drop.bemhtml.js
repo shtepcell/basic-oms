@@ -55,6 +55,13 @@ block('navigator').elem('admin-drop').content()(function () {
             mix: { block: 'navigator', elem: 'admin-link' },
             url: '/admin/holiday',
             content: 'Выходные'
+        },
+        {
+            block: 'link',
+            mods: { theme: 'islands', size : 'l' },
+            mix: { block: 'navigator', elem: 'admin-link' },
+            url: '/admin/configuration',
+            content: 'Настройки'
         }
     ]
 })
