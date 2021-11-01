@@ -1,5 +1,7 @@
 Object.assign || (Object.assign = require('object-assign'));
 
+const moment = require('moment');
+
 var fs = require('fs'),
     path = require('path'),
     express = require('express'),
@@ -29,8 +31,6 @@ var fs = require('fs'),
 
     helper = require('./controllers/helper'),
     router = require('./router');
-
-const { getAppConfiguration } = require('./middlewares/configuration');
 
 require('debug-http')();
 
@@ -96,6 +96,12 @@ passport.deserializeUser(function(user, done) {
 var server = require('http').createServer(app);
 
 var io = require('socket.io')(server);
+
+process.on('unhandledRejection', error => {
+    const time = moment().format('DD.MM.YYYY HH:mm:ss');
+
+    console.log(`${time} – unhandledRejection`, error);
+});
 
 router(app, io);
 
