@@ -11,7 +11,7 @@ static/files
 static/storage
 backups/*
 cache/*
-errors.log
+*.log
 .env
 
 # bem
