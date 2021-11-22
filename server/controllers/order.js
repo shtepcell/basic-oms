@@ -834,7 +834,12 @@ module.exports = {
                 }
                 break;
             case 'sks':
-                query = { status: 'sks-build' };
+                query = {
+                    '$or': [
+                        { status: 'sks-build' },
+                        { special: user.department._id }
+                    ]
+                };
                 break;
         }
 
