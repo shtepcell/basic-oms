@@ -710,7 +710,12 @@ module.exports = {
                 }
                 break;
             case 'sks':
-                query = { status: 'sks-pre' };
+                query = {
+                    '$or': [
+                        { status: 'sks-pre' },
+                        { special: user.department._id }
+                    ]
+                };
                 break;
             case 'net':
                 query = {
