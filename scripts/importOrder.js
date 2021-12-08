@@ -61,10 +61,12 @@ const getService = (service) => ({
         //     continue;
         // }
 
+        const deadline = await helper.calculateDeadline(Number(item[' Контрольный срок ']));
+
         const order = new Order({
             id: await Static.getOrderId(),
             status: 'gzp-build',
-            deadline: await helper.calculateDeadline(Number(item[' Контрольный срок '])),
+            deadline: deadline,
             info: {
                 initiator: initiator,
                 department,
@@ -95,7 +97,7 @@ const getService = (service) => ({
                 "cs-gzp-pre" : nowDate,
                 "gzp-pre" : nowDate,
                 "client-match" : nowDate,
-                "cs-gzp-organization" : nowDate
+                "cs-gzp-organization" : deadline
             },
             history: [
                 {
