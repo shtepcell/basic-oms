@@ -1,0 +1,29 @@
+.page {
+    padding: 20px;
+}
+
+.title {
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    opacity: 0.6;
+}
+
+.content {
+    padding: 20px 0;
+}
+
+.input {
+    width: 400px;
+}
+
+.select {
+    min-width: 200px;
+    width: 200px;
+}
+
+.warning {
+    color: rgb(199, 140, 100);
+    font-weight: 500;
+}

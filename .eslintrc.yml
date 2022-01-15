@@ -11,12 +11,11 @@ env:
   bem-xjst/bemhtml: true
   bem-xjst/bemtree: true
 
-globals:
-  # YModules
-  modules: false
-
 rules:
   curly: [error, multi-line]
   no-unused-expressions: off
 
 extends: pedant
+
+presets:
+  - es2015

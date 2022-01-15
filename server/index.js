@@ -1,6 +1,9 @@
 Object.assign || (Object.assign = require('object-assign'));
 
 const moment = require('moment');
+const next = require('next')
+const Auth = require('./controllers/auth');
+const Mass = require('./controllers/mass');
 
 var fs = require('fs'),
     path = require('path'),
@@ -12,7 +15,6 @@ var fs = require('fs'),
     serveStatic = require('serve-static'),
     cookieParser = require('cookie-parser'),
     expressSession = require('express-session'),
-    slashes = require('connect-slashes'),
     passport = require('passport'),
     compression = require('compression'),
     logger = require('./controllers/logger'),
@@ -24,7 +26,7 @@ var fs = require('fs'),
 
     port = process.env.PORT || config.defaultPort,
     isSocket = isNaN(port),
-    isDev = process.env.NODE_ENV === 'development',
+    isDev = process.env.NODE_ENV !== 'production',
 
     mongoose = require('./controllers/connect'),
     MongoStore = require('connect-mongo')(expressSession),
@@ -34,6 +36,15 @@ var fs = require('fs'),
 
 require('debug-http')();
 
+const nextApp = next({ dev: isDev });
+const handle = nextApp.getRequestHandler();
+
+nextApp.prepare()
+    .catch((ex) => {
+        console.error(ex.stack)
+        process.exit(1)
+    });
+    
 morgan.token('date', function() {
     var p = helper.dateToExtStr(new Date());
     return p;
@@ -60,6 +71,7 @@ app
     .use(serveStatic(staticFolder))
     .use(morgan('[HTTP] :date[web] <:user> :method :smart-url :status :res[header] - :response-time ms'))
     .use(cookieParser())
+    .use(bodyParser.json())
     .use(bodyParser.urlencoded({ extended: true }))
     .use(expressSession({
         name: 'basic-oms',
@@ -83,7 +95,7 @@ app
     .use(passport.session());
 
 // NOTE: conflicts with livereload
-isDev || app.use(slashes());
+// isDev || app.use(slashes());
 
 passport.serializeUser(function(user, done) {
     done(null, JSON.stringify(user));
@@ -104,6 +116,9 @@ process.on('unhandledRejection', error => {
 });
 
 router(app, io);
+
+app.get('/mass', Auth.isAdmin, Mass.getOwnRequestsMiddleware, handle);
+app.get('*', handle)
 
 isDev && require('./rebuild')(app);
 
