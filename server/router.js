@@ -13,7 +13,7 @@ const Notify = require('./controllers/notify');
 const Order = require('./controllers/order');
 const Provider = require('./controllers/provider');
 const Street = require('./controllers/street');
-
+const Mass = require('./controllers/mass');
 const fileUpload = require('express-fileupload');
 
 var Render = require('./render'),
@@ -87,7 +87,7 @@ module.exports = function (app, io) {
     // *************************************************************
     app.get('/init', Order.getPageInit);
     app.post('/init', (req, res) => {
-        return Order.init(req, res, io);
+        return Order.init(req, res);
     });
 
     app.get('/multi-init', Import.getPage);
@@ -97,7 +97,7 @@ module.exports = function (app, io) {
 
     // app.post('/order/:id', Order.submit);
     app.post('/order/:id/action', (req, res) => {
-        return Order.changeStatus(req, res, io);
+        return Order.changeStatus(req, res);
     });
 
     app.get('/order/:id', Order.getOrderInfo);
@@ -108,7 +108,7 @@ module.exports = function (app, io) {
     app.get('/order/:id/history', Order.getOrderHistory);
 
     app.post('/order/:id/info', (req, res) => {
-        return Order.endClientNotify(req, res, io);
+        return Order.endClientNotify(req, res);
     });
 
     app.post('/order/:id/gzp', Order.postGzp);
@@ -124,7 +124,7 @@ module.exports = function (app, io) {
     // });
 
     app.post('/order/:id/stop', (req, res) => {
-        return Order.endPreSTOP(req, res, io);
+        return Order.endPreSTOP(req, res);
     });
 
     app.post('/order/:id/sks', (req, res) => {
@@ -132,13 +132,13 @@ module.exports = function (app, io) {
     });
 
     app.post('/order/:id/:tab/admin', (req, res) => {
-        return Order.adminEdit(req, res, io);
+        return Order.adminEdit(req, res);
     });
     app.post('/flag/:id/', Order.setFlag);
 
     app.get('/chat/:anchor', Chat.get);
     app.post('/chat/:anchor', (req, res) => {
-        return Chat.send(req, res, io);
+        return Chat.send(req, res);
     });
 
     app.get('/profile', Account.getProfile);
@@ -223,5 +223,9 @@ module.exports = function (app, io) {
                 access: access
             }
         })
-    })
+    });
+
+    app.get('/api/requests', Mass.getOwnRequestsApi);
+    app.post('/api/mass', Mass.makeRequestToChange);
+    app.patch('/api/mass/:id', Auth.isAdmin, Mass.updateRequest);
 }

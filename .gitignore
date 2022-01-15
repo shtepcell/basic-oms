@@ -20,3 +20,5 @@ cache/*
 !*bundles*/*/*.bemdecl.js
 *bundles*/*/*.tmpl.bemdecl.js
 !*bundles*/.bem/*
+
+.next
