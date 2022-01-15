@@ -227,5 +227,5 @@ module.exports = function (app, io) {
 
     app.get('/api/requests', Mass.getOwnRequestsApi);
     app.post('/api/mass', Mass.makeRequestToChange);
-    app.patch('/api/mass/:id', Auth.isAdmin, Mass.updateRequest);
+    app.patch('/api/mass/:id', Mass.updateRequest);
 }

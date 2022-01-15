@@ -117,7 +117,7 @@ process.on('unhandledRejection', error => {
 
 router(app, io);
 
-app.get('/mass', Auth.isAdmin, Mass.getOwnRequestsMiddleware, handle);
+app.get('/mass', Mass.getOwnRequestsMiddleware, handle);
 app.get('*', handle)
 
 isDev && require('./rebuild')(app);

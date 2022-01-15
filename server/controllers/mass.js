@@ -90,6 +90,10 @@ const updateRequest = async (req, res) => {
     }
 
     if (status === 'aproved') {
+        if (res.locals._user.department !== 'admin') {
+            return res.sendStatus(401);
+        }
+
         const request = await Request.findById(id).populate(populateAuthor);
 
         if (request.action === 'succes') {
@@ -106,13 +110,19 @@ const updateRequest = async (req, res) => {
 }
 
 const getOwnRequests = async (user) => {
-    const requests = await Request.find({ author: user, status: 'new' }).populate(populateAuthor).lean();
+    const query = { status: 'new' };
+
+    if (user.department.type !== 'admin') {
+        query.author = user._id;
+    }
+    
+    const requests = await Request.find(query).populate(populateAuthor).lean();
 
     return requests
 }
 
 const getOwnRequestsMiddleware = async(req, res, next) => {
-    const requests = await getOwnRequests(res.locals.__user._id);
+    const requests = await getOwnRequests(res.locals.__user);
 
     res.locals.requests = JSON.parse(JSON.stringify(requests));
 
@@ -120,7 +130,7 @@ const getOwnRequestsMiddleware = async(req, res, next) => {
 }
 
 const getOwnRequestsApi = async(req, res) => {
-    const requests = await getOwnRequests(res.locals.__user._id);
+    const requests = await getOwnRequests(res.locals.__user);
 
     return res.status(200).json(requests);
 }

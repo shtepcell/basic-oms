@@ -8,7 +8,7 @@ const texts = {
 import { useRequest } from '../../hooks/useRequest';
 import styles from './index.module.css'
 
-export const RequestsList = React.memo(({ requests, refresh }) => {
+export const RequestsList = React.memo(({ requests, refresh, isAdmin }) => {
     const request = useRequest();
     const [loading, setLoading] = useState('');
 
@@ -53,11 +53,10 @@ export const RequestsList = React.memo(({ requests, refresh }) => {
                                 {loading === item._id ?
                                     <LinearProgress /> :
                                     <CardActions>
-                                        <Button variant="text" onClick={onApprove(item._id)}>Подтвердить</Button>
+                                        {isAdmin && <Button variant="text" onClick={onApprove(item._id)}>Подтвердить</Button>}
                                         <Button variant="text" color="error" onClick={onReject(item._id)}>Отклонить</Button>
                                     </CardActions>
                                 }
-                                
                             </Card>
                         </Grid>
                     );

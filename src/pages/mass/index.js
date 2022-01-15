@@ -7,7 +7,7 @@ import { useRequest } from '../../hooks/useRequest';
 import { RequestsList } from '../../components/RequestsList';
 import useSWR from 'swr'
 
-export default function Mass(props) {
+export default function Mass({ isAdmin }) {
   const [ids, setIds] = useState('');
   const [action, setAction] = useState('succes');
   const [loading, setLoading] = useState(false);
@@ -115,7 +115,7 @@ export default function Mass(props) {
           {unknonwError && <Typography color="error" variant="body1"><b>Что-то пошло не так</b></Typography>}
           {Boolean(warningState) && <Typography variant="body2" color="primary">Нажмите еще раз "Отправить" и проблемные заказы будут исключены из заявки</Typography>}
         </div>
-        <RequestsList requests={data} refresh={mutate} />
+        <RequestsList requests={data} refresh={mutate} isAdmin={isAdmin} />
         <Snackbar open={showSuccess} autoHideDuration={6000} onClose={handleCloseAlert}>
           <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
             Заявка успешно отправлена
@@ -127,7 +127,12 @@ export default function Mass(props) {
 }
 
 export const getServerSideProps = async ({ res }) => {
-  return { props: { fallback: {
-    '/api/requests': res.locals.requests
-  } } };
+  return {
+    props: {
+      fallback: {
+        '/api/requests': res.locals.requests
+      },
+      isAdmin: res.locals.__user.department.type === 'admin'
+    }
+  };
 }
