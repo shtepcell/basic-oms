@@ -112,6 +112,7 @@
     "watch": "chokidar '*.blocks/**' --initial -c 'enb make && notify -t bem-express -m Built'",
     "test": "mocha tests/*",
     "lint": "eslint . && bemhint . && stylelint *.blocks/**/*.css",
+    "prod": "NODE_ENV=production npm start > stdout.log 2> stderr.log",
     "pro": "NODE_ENV=production ./node_modules/.bin/forever -a --minUptime 1000 --spinSleepTime 3000 -l forever.log -o forever.log -e errors.log start server/index.js",
     "prostop": "./node_modules/.bin/forever stop server/index.js"
   },
