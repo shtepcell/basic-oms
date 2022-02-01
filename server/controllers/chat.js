@@ -63,7 +63,7 @@ module.exports = {
             isFirst: isFirst
         }
         notify.create(res.locals.__user, order, 'new-message', data.recipients);
-        io.emit('new message', _msg);
+        io && io.emit('new message', _msg);
         res.status(200).send(_msg);
     }
 }

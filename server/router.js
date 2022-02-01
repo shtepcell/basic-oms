@@ -138,7 +138,7 @@ module.exports = function (app, io) {
 
     app.get('/chat/:anchor', Chat.get);
     app.post('/chat/:anchor', (req, res) => {
-        return Chat.send(req, res);
+        return Chat.send(req, res, io);
     });
 
     app.get('/profile', Account.getProfile);
