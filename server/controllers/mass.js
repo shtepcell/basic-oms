@@ -1,6 +1,7 @@
 const Order = require('../models/Order');
 const Request = require('../models/Request');
 const { closeOrder } = require('./mass-update/closeOrder');
+const { validateOrders, importOrders } = require('./mass-update/import');
 
 const populateAuthor = {
     path: 'author',
@@ -141,4 +142,6 @@ module.exports = {
     updateRequest,
     getOwnRequestsMiddleware,
     getOwnRequestsApi,
+    validateOrders,
+    importOrders,
 }

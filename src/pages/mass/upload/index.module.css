@@ -1,0 +1,25 @@
+.page {
+    padding: 20px;
+}
+
+.title {
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    opacity: 0.6;
+}
+
+.content {
+    padding: 20px 0;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    margin: 12px 0;
+}
+
+.row .subtitle {
+    margin-right: 12px;
+}

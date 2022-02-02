@@ -1,7 +1,6 @@
 const Order = require('../server/models/Order');
 const Account = require('../server/models/Account');
 const City = require('../server/models/City');
-const Provider = require('../server/models/Provider');
 const Client = require('../server/models/Client');
 const Department = require('../server/models/Department');
 const Static = require('../server/models/Static');

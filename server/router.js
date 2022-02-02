@@ -214,7 +214,6 @@ module.exports = function (app, io) {
     app.post('/api/admin/configuration', Auth.isAdmin, Configiration.updateConfiguration);
 
     app.get('/test/', (req, res) => {
-
         const access = (req.query.access == 'yes');
 
         render(req, res, {
@@ -227,5 +226,7 @@ module.exports = function (app, io) {
 
     app.get('/api/requests', Mass.getOwnRequestsApi);
     app.post('/api/mass', Mass.makeRequestToChange);
+    app.post('/api/mass/upload', Mass.validateOrders)
+    app.post('/api/mass/import', Mass.importOrders)
     app.patch('/api/mass/:id', Mass.updateRequest);
 }
