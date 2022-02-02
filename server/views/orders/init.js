@@ -17,22 +17,23 @@ module.exports = function(opt, data) {
                 {
                   elem: 'title',
                   content: 'Создание заказа'
+                },
+                {
+                  elem: 'action',
+                  content: [
+                    {
+                      block: 'button',
+                      mods: {
+                          theme: 'islands',
+                          size: 'l',
+                          type: 'link'
+                      },
+                      target: '_blank',
+                      url: '/mass/upload',
+                      text: 'Загрузить Excel (beta)'
+                    }
+                  ]
                 }
-                // {
-                //   elem: 'action',
-                //   content: [
-                //     {
-                //       block: 'button',
-                //       mods: {
-                //           theme: 'islands',
-                //           size: 'l',
-                //           type: 'link'
-                //       },
-                //       url: '/multi-init',
-                //       text: 'Инициировтаь из Excel'
-                //     }
-                //   ]
-                // }
               ]
             },
             {

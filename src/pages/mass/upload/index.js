@@ -62,14 +62,15 @@ export default function Upload() {
             draftFile.name 
         ); 
         
-        request.post("/api/mass/import", formData)
+        request.post("/api/mass/import", formData, { timeout: 20000 })
             .then(({ data }) => {
                 setNeedApproove(false);
                 setOrders(data.orders);
-                console.log(data)
             })
             .catch((error) => {
-                console.log('error')
+                setErrorCode('UNKNOWN_ERROR');
+                console.error(error);
+                console.error(error.response.data);
             })
             .finally(() => {
                 setLoading(false);
@@ -85,7 +86,7 @@ export default function Upload() {
             </Head>
             <main className={styles.content}>
                 <Typography className={styles.title} variant="h3">Массовая загрузка заявок</Typography>
-                <Typography className={styles.subtitle} variant="body1">1. Скачайте шаблон.</Typography>
+                <Typography className={styles.subtitle} variant="body1">1. <Link underline="hover" target="_blank" href={'/template.xlsx'}>Скачайте шаблон</Link>.</Typography>
                 <Typography className={styles.subtitle} variant="body1">2. Заполните табличку нужными данными.</Typography>
                 <div className={styles.row}>
                     <Typography className={styles.subtitle} variant="body1">3. Загрузите файл:</Typography>
@@ -97,6 +98,9 @@ export default function Upload() {
                     </label>
                 </div>
                 <Typography className={styles.subtitle} variant="body1">4. Исправьте ошибки (если есть) и подтвердите загрузку.</Typography>
+                <Typography className={styles.subtitle} variant="body2">
+                    Если что-то не работает, или чего-то не хватает для решения ваших задач – можно писать в <Link underline="hover" href="https://t.me/+ZgFTaQAUnRwzZDE6" target="_blank">телеграмм-чат</Link>.
+                </Typography>
                 <div className={styles.content}>
                     <Backdrop
                         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -119,6 +123,6 @@ export default function Upload() {
                 </div>
             </main>
         </div>
-    )
+    );
 }
 

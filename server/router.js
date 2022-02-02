@@ -8,7 +8,6 @@ const Configiration = require('./controllers/configuration');
 const Department = require('./controllers/departments');
 const helper = require('./controllers/helper');
 const Holiday = require('./controllers/holiday');
-const Import = require('./controllers/import');
 const Notify = require('./controllers/notify');
 const Order = require('./controllers/order');
 const Provider = require('./controllers/provider');
@@ -89,11 +88,6 @@ module.exports = function (app, io) {
     app.post('/init', (req, res) => {
         return Order.init(req, res);
     });
-
-    app.get('/multi-init', Import.getPage);
-    // app.post('/multi-init', (req, res) => {
-    //     return Order.init(req, res, io);
-    // });
 
     // app.post('/order/:id', Order.submit);
     app.post('/order/:id/action', (req, res) => {
