@@ -198,6 +198,9 @@ var schema = new Schema({
         author: String
     }],
     autoDeadline: Number,
+    tech: {
+        mass_upload: Boolean,
+    }
 }, {
     usePushEach: true
 });

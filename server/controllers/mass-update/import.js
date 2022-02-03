@@ -93,7 +93,10 @@ const importOrder = async(data, user) => {
             'cs-gzp-pre': (status === 'gzp-pre' || status === 'all-pre') ? deadline : undefined,
             'cs-stop-pre': (status === 'stop-pre' || status === 'all-pre') ? deadline : undefined,
         },
-        history: [helper.historyGenerator('init', user)]
+        history: [helper.historyGenerator('init', user)],
+        tech: {
+            mass_upload: true,
+        }
     });
 
     return order.save();
