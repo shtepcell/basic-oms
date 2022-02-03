@@ -1,4 +1,10 @@
 block('select').elem('ip').replace()(function () {
+    const ips = ['4 (факт. 1) = /30', '8 (факт. 5) = /29', '16 (факт. 13) = /28', '32 (факт. 29) = /27'];
+
+    if (this.ctx.val && !ips.includes(this.ctx.val)) {
+        ips.unshift(this.ctx.val)
+    }
+
     return {
         block: 'select',
         mods: {
@@ -8,23 +14,6 @@ block('select').elem('ip').replace()(function () {
         },
         val: this.ctx.val,
         name: 'ip',
-        options: [
-            {
-                text: '4 (факт. 1) = /30',
-                val: '4 (факт. 1) = /30'
-            },
-            {
-                text: '8 (факт. 5) = /29',
-                val: '8 (факт. 5) = /29'
-            },
-            {
-                text: '16 (факт. 13) = /28',
-                val: '16 (факт. 13) = /28'
-            },
-            {
-                text: '32 (факт. 29) = /27',
-                val: '32 (факт. 29) = /27'
-            }
-        ]
+        options: ips.map((item) => ({ text: item, val: item }))
     }
 })

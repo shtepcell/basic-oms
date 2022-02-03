@@ -3,9 +3,9 @@ block('order').elem('service-info').elemMod('type', 'internet').content()(functi
         order = ctx.order;
 
     if(!order)
-        order = {
+        {order = {
             info: {}
-        }
+        }}
 
     return [
         {
@@ -41,11 +41,12 @@ block('order').elem('service-info').elemMod('type', 'internet').content()(functi
 block('order').elem('service-info').elemMod('type', 'internet').elemMod('access', true).content()(function () {
     var ctx = this.ctx,
         order = ctx.order;
-
-    if(!order)
+    
+    if (!order) {
         order = {
             info: {}
         }
+    }
 
     return [
         {
