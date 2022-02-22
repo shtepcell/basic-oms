@@ -19,13 +19,13 @@ module.exports = {
         notify.create(res.locals.__user, order, `end-${order.status}`);
 
         const clientType = await ClientType.findById(order.info.client.type);
-        
+
         if (clientType.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl") {
             order.status = 'client-notify';
         } else {
             order.status = 'network';
         }
-        
+
         order.save();
         res.status(200).send({ created: true });
         return;
@@ -66,7 +66,7 @@ module.exports = {
                 ...req.body,
                 time: autoDeadline || req.body.time,
             };
-            
+
             if (order.status == 'gzp-pre') {
                 order.status = 'client-match';
                 order.deadline = null;
@@ -85,7 +85,11 @@ module.exports = {
                 var now = new Date();
                 var pause = order.pause.date;
                 pause = Math.round((now - pause) / 1000 / 60 / 60 / 24);
-                order.deadline = new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0)
+
+                order.deadline = order.deadline ?
+                    new Date(order.deadline.getFullYear(), order.deadline.getMonth(), order.deadline.getDate() + pause, 0, 0, 0, 0) :
+                    new Date(now.getFullYear(), now.getMonth(), now.getDate() + pause, 0, 0, 0, 0);
+
                 order.pause = {
                     status: false,
                     date: undefined
