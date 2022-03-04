@@ -103,7 +103,7 @@ const updateRequest = async (req, res) => {
     }
 
     if (status === "aproved") {
-        if (res.locals.__user.department !== "admin") {
+        if (res.locals.__user.department.type !== "admin") {
             return res.sendStatus(401);
         }
 
