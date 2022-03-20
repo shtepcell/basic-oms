@@ -22,3 +22,5 @@ cache/*
 !*bundles*/.bem/*
 
 .next
+
+scripts/orders.json
