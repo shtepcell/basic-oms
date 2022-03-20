@@ -1,8 +1,17 @@
-const { ALL_FIELDS, SUPPORTED_SERVICES, SUPPORTED_CITY_TYPES, SUPPORTED_STATUSES  } = require('./constants');
-const { types } = require('../../common-data');
+const {
+    ALL_FIELDS,
+    SUPPORTED_SERVICES,
+    SUPPORTED_CITY_TYPES,
+    SUPPORTED_STATUSES,
+    FIELDS_HASH,
+    SUPPORTED_END_STATUSES,
+} = require("./constants");
+const { types } = require("../../common-data");
 
-const Client = require("../../models/Client")
-const City = require("../../models/City")
+const Client = require("../../models/Client");
+const City = require("../../models/City");
+const Provider = require("../../models/Provider");
+const { getProvider, getCity } = require("./helpers");
 
 const clientValidator = async (value) => {
     if (!value) {
@@ -14,17 +23,17 @@ const clientValidator = async (value) => {
     if (!client) {
         return `Клиент ${value} не найден`;
     }
-}
+};
 
 const clientTypeValidator = (value) => {
     if (!value) {
         return `Тип клиента - обязательное поле`;
     }
-    
+
     if (!types.types.includes(value)) {
-        return `Неизвестный тип клиента ${value}`
+        return `Неизвестный тип клиента ${value}`;
     }
-}
+};
 
 const serviceValidator = (value) => {
     if (!value) {
@@ -32,27 +41,53 @@ const serviceValidator = (value) => {
     }
 
     if (!SUPPORTED_SERVICES.includes(value)) {
-        return `Услуга ${value} не доступна для массовой загрузки`
+        return `Услуга ${value} не доступна для массовой загрузки`;
     }
-}
+};
 
-const cityValidator = async(value, order) => {
-    const type = order['Тип населённого пункта'];
+const cityValidator = async (value = "", order) => {
+    const { type, name } = getCity(order);
 
     if (!type) {
         return `Тип населённого пункта - обязательное поле`;
     }
 
-    if(!SUPPORTED_CITY_TYPES.includes(type)) {
-        return `Неизвестный тип населённого пункта "${type}"`
+    if (!SUPPORTED_CITY_TYPES.includes(type)) {
+        return `Неизвестный тип населённого пункта "${type}"`;
     }
 
-    const city = await City.findOne({ type, name: value }).lean();
+    const city = await City.findOne({ type, name }).lean();
 
     if (!city) {
-        return `Населенный пункт ${type} ${value} не найден`
+        return `Населенный пункт ${type} ${value} не найден`;
     }
-}
+};
+
+const providerValidator = async (value, order) => {
+    const isStop =
+        order[FIELDS_HASH.status] &&
+        order[FIELDS_HASH.status].match(/Включено СТОП\/VSAT/);
+
+    if (!isStop) {
+        return;
+    }
+
+    if (isStop && (!value || !value.trim())) {
+        return `${FIELDS_HASH.provider} – обязательное поле для заявок включенных через СТОП`;
+    }
+
+    let { type, name } = getProvider(order);
+
+    if ((!type || !name) && isStop) {
+        return `${FIELDS_HASH.provider} – некоректные данные (${value})`;
+    }
+
+    const provider = await Provider.findOne({ name, type });
+
+    if (!provider) {
+        return `Провайдер [${type}] ${name} не найден`;
+    }
+};
 
 const statusValidator = (value) => {
     if (!value) {
@@ -60,36 +95,50 @@ const statusValidator = (value) => {
     }
 
     if (!SUPPORTED_STATUSES.includes(value)) {
-        return `Неизвестный параметр "${value}". Доступны: ${SUPPORTED_STATUSES.join(', ')}`
+        return `Неизвестный параметр "${value}". Доступны: ${SUPPORTED_STATUSES.join(
+            ", "
+        )}`;
     }
-}
+};
+
+const endStatusValidator = (value) => {
+    if (value && !SUPPORTED_END_STATUSES.includes(value)) {
+        return `Неизвестный параметр "${value}". Доступны: ${SUPPORTED_END_STATUSES.join(
+            ", "
+        )}`;
+    }
+};
 
 const requiredValidator = (field) => (value) => {
     if (!value) {
-        return `${field} - обязательное поле`
+        return `${field} - обязательное поле`;
     }
-}
+};
 
 const VALIDATE_FUNCTIONS = {
-    'Клиент': clientValidator,
-    'Тип клиента': clientTypeValidator,
-    'Услуга': serviceValidator,
-    'Контактные данные клиента': requiredValidator('Контактные данные клиента'),
-    'Наименование н.п': cityValidator,
-    'Полный адрес по координатам': requiredValidator('Полный адрес по координатам'),
-    'Емкость Мб/с': requiredValidator('Емкость Мб/с'),
-    'Количество IP адресов': requiredValidator('Количество IP адресов'),
-    'Отправить на проработку': statusValidator,
+    [FIELDS_HASH.client]: clientValidator,
+    [FIELDS_HASH.clientType]: clientTypeValidator,
+    [FIELDS_HASH.service]: serviceValidator,
+    [FIELDS_HASH.clientContact]: requiredValidator(FIELDS_HASH.clientContact),
+    [FIELDS_HASH.cityName]: cityValidator,
+    [FIELDS_HASH.coordinates]: requiredValidator(FIELDS_HASH.coordinates),
+    [FIELDS_HASH.capacity]: requiredValidator(FIELDS_HASH.capacity),
+    [FIELDS_HASH.ips]: requiredValidator(FIELDS_HASH.ips),
+    [FIELDS_HASH.preStatus]: statusValidator,
+    [FIELDS_HASH.status]: endStatusValidator,
+    [FIELDS_HASH.provider]: providerValidator,
 };
 
 const empty = () => {};
 
 const validateField = (field) => {
     return VALIDATE_FUNCTIONS[field] || empty;
-}
+};
 
 const validateOrder = (order, id) => {
-    const promises = ALL_FIELDS.map((field) => validateField(field)(order[field], order));
+    const promises = ALL_FIELDS.map((field) =>
+        validateField(field)(order[field], order)
+    );
 
     return Promise.all(promises).then((data) => {
         const errors = data.filter(Boolean);
@@ -98,8 +147,8 @@ const validateOrder = (order, id) => {
             return null;
         }
 
-        return { id: id + 2, errors } ;
-    })
-}
+        return { id: id + 2, errors };
+    });
+};
 
 module.exports = { validateOrder };

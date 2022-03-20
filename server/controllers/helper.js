@@ -197,6 +197,10 @@ module.exports = {
                 ret.name = 'Начато: Настройка сети (Wi-Fi)'
                 break;
 
+            case 'mass-upload-enable':
+                ret.name = 'Включено через массовое заведение';
+                break;
+
             default:
                 ret.name = 'Неизвестное событие'
                 break;
@@ -293,7 +297,7 @@ module.exports = {
         var query = req.query;
         var status = [];
         let archive = false;
-        
+
         if (query.id) {
             let ids = query.id.trim().split(' ');
             let ors = [];
@@ -312,7 +316,7 @@ module.exports = {
 
         if (query.cms) {
             var rgx =  new RegExp('' + query.cms + '', 'i');
-            
+
             return { query: { 'info.cms': {$regex: rgx} }, archive };
         }
 
