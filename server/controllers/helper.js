@@ -12,6 +12,8 @@ const Flag = require('../models/Flag');
 
 const common = require('../common-data');
 
+const START_PAUSE_HISTORY = ['Пауза', 'Автоматическое подтверждение паузы'];
+
 module.exports = {
 
     trimObject: function (obj) {
@@ -34,12 +36,11 @@ module.exports = {
         return res;
     },
 
-    calculatePauseTime: function (order) {
-        var history = order.history,
-            res = 0;
+    calculatePauseTime: function ({ history, pause }) {
+        let res = 0;
 
-        for (var i = 0; i < history.length; i++) {
-            if (['Пауза', 'Автоматическое подтверждение паузы'].includes(history[i].name)) {
+        for (let i = 0; i < history.length; i++) {
+            if (START_PAUSE_HISTORY.includes(history[i].name)) {
                 let start = history[i].date;
                 let end;
 
@@ -47,12 +48,16 @@ module.exports = {
                     start = history[history.slice(0, i).reduce((acc, val, index) => val.name === 'Запрос паузы' ? index : acc )].date;
                 }
 
-                if (i + 1 < history.length) {
-                    end = history[i + 1].date;
-                }
+                const endStep = history.slice(i).find(({ name }) => name === 'Снятие с паузы')
 
-                if (!end) {
+                if (!endStep && !pause.status) {
+                    if (i + 1 < history.length) {
+                        end = history[i + 1].date;
+                    }
+                } else if (!endStep && pause.status) {
                     end = new Date();
+                } else {
+                    end = endStep.date;
                 }
 
                 res += end - start;
