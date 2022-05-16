@@ -8,6 +8,8 @@ const City = require('../models/City'),
 
 const logger = require('./logger');
 
+const alllowedUsageValues = ['true', 'false'];
+
 module.exports = {
 
     getPage: async (req, res) => {
@@ -23,9 +25,12 @@ module.exports = {
         }
         else { res.redirect(req.path); }
 
-        const usage = { true: true, false: false }[req.query.usage];
-        var cities = await City.paginate({ usage }, { page: pageNumber, limit: perPage })
+        const baseQuery = {};
 
+        const usage = { true: true, false: false }[req.query.usage];
+        alllowedUsageValues.includes(req.query.usage) && (baseQuery.usage = usage);
+
+        var cities = await City.paginate(baseQuery, { page: pageNumber, limit: perPage })
 
         if (req.query.name) {
             var val = req.query.name;
@@ -35,7 +40,7 @@ module.exports = {
             val = val.replace(/\(/g, '');
             val = val.replace(/\)/g, '');
             var rgx = new RegExp('' + val + '', 'i');
-            cities = await City.paginate({ name: { $regex: rgx }, usage }, { page: pageNumber, limit: perPage });
+            cities = await City.paginate({ ...baseQuery, name: { $regex: rgx } }, { page: pageNumber, limit: perPage });
         }
 
         if (cities.total == 0) cities.total = 1;
@@ -47,6 +52,9 @@ module.exports = {
             records: cities.total,
             perPage: cities.limit
         };
+
+        res.locals.usage = usage;
+
         render(req, res, {
             viewName: 'handbook',
             options: {
