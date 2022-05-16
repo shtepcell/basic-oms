@@ -24,7 +24,6 @@ module.exports = {
         else { res.redirect(req.path); }
 
         const usage = { true: true, false: false }[req.query.usage];
-        console.log(usage);
         var cities = await City.paginate({ usage }, { page: pageNumber, limit: perPage })
 
 

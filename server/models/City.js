@@ -1,28 +1,29 @@
 var mongoose = require('../controllers/connect'),
-	Schema = mongoose.Schema,
-	mongoosePaginate = require('mongoose-paginate');
+    Schema = mongoose.Schema,
+    mongoosePaginate = require('mongoose-paginate');
 
-var schema = new Schema( {
-	name : {
-		type : String,
-		required : true
-	},
-	type : {
-		type: String,
-		enum: ['г.', 'пгт.', 'с.', 'пос.', 'мыс.'],
-		required : true
-	},
-	usage : {
-		type: Boolean
-	}
+var schema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    type: {
+        type: String,
+        enum: ['г.', 'пгт.', 'с.', 'пос.', 'мыс.'],
+        required: true
+    },
+    usage: {
+        type: Boolean,
+        default: false,
+    }
 }, {
-	usePushEach: true
+    usePushEach: true
 });
 
 schema.plugin(mongoosePaginate);
 
-schema.methods.isUsed = function() {
-	return !!this.usage;
+schema.methods.isUsed = function () {
+    return !!this.usage;
 }
 
 schema.methods.using = function (flag) {
