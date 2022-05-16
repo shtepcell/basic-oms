@@ -21,23 +21,25 @@ module.exports = {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
         }
-        else
-            res.redirect(req.path);
+        else { res.redirect(req.path); }
 
-        var cities = await City.paginate({}, { page: pageNumber, limit: perPage})
+        const usage = { true: true, false: false }[req.query.usage];
+        console.log(usage);
+        var cities = await City.paginate({ usage }, { page: pageNumber, limit: perPage })
 
-        if(req.query.name) {
+
+        if (req.query.name) {
             var val = req.query.name;
             val = val.replace(/\[/g, '');
             val = val.replace(/\]/g, '');
             val = val.replace(/\\/g, '');
             val = val.replace(/\(/g, '');
             val = val.replace(/\)/g, '');
-            var rgx =  new RegExp('' + val + '', 'i');
-            cities = await City.paginate({name: {$regex: rgx}}, { page: pageNumber, limit: perPage});
+            var rgx = new RegExp('' + val + '', 'i');
+            cities = await City.paginate({ name: { $regex: rgx }, usage }, { page: pageNumber, limit: perPage });
         }
 
-        if(cities.total == 0) cities.total = 1;
+        if (cities.total == 0) cities.total = 1;
         res.locals.query = req.query;
         res.locals.cities = cities.docs;
         res.locals.pagers = {};
@@ -77,26 +79,29 @@ module.exports = {
         });
 
         var done = await saver(newCity);
-        if(!!done) {
-            logger.info(`Created City ${ done.type } ${ done.name } `, res.locals.__user);
+        if (done) {
+            logger.info(`Created City ${done.type} ${done.name} `, res.locals.__user);
             res.send({ created: true });
-        } else res.status(400).send({ errText: `Произошла ошибка при сохранении.
+        } else {
+            res.status(400).send({
+                errText: `Произошла ошибка при сохранении.
             Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
+        }
     },
 
     edit: async (req, res) => {
         var reqData = req.body;
 
-        var city = await City.findOne({ name: reqData.obj.name.trim(), type: reqData.obj.type})
+        var city = await City.findOne({ name: reqData.obj.name.trim(), type: reqData.obj.type })
 
-        if (city != null && city._id != reqData.obj._id ) {
+        if (city != null && city._id != reqData.obj._id) {
             res.status(400).send({ errText: 'Город с таким названием уже есть в базе.' });
             return;
         }
 
-        city = await City.findOne({ _id: reqData.obj._id});
+        city = await City.findOne({ _id: reqData.obj._id });
 
-        if(!city) {
+        if (!city) {
             res.status(400).send({ errText: 'Попытка редактирования несуществующего города.' });
             return;
         }
@@ -108,19 +113,22 @@ module.exports = {
 
         var done = await saver(city);
 
-        if(!!done) {
-            logger.info(`Edit City ${ oldCity.type } ${ oldCity.name } --> ${ done.type } ${ done.name } `, res.locals.__user);
+        if (done) {
+            logger.info(`Edit City ${oldCity.type} ${oldCity.name} --> ${done.type} ${done.name} `, res.locals.__user);
             res.send({ created: true });
-        } else res.status(400).send({ errText: `Произошла ошибка при сохранении.
+        } else {
+            res.status(400).send({
+                errText: `Произошла ошибка при сохранении.
             Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
+        }
 
     },
 
     delete: async (req, res) => {
 
         var city = await City.findById(req.body.obj._id);
-        var orders = await Order.find({'info.city': city}).lean();
-        var deps = await Department.find({'cities': city}).lean();
+        var orders = await Order.find({ 'info.city': city }).lean();
+        var deps = await Department.find({ 'cities': city }).lean();
         var used = (orders.length > 0 || deps.length > 0);
 
         if (city == null) {
@@ -141,11 +149,12 @@ module.exports = {
             logger.error(err.message);
         }
 
-        if (!!done) {
-            logger.info(`Delete City ${ done.type } ${ done.name }`, res.locals.__user);
+        if (done) {
+            logger.info(`Delete City ${done.type} ${done.name}`, res.locals.__user);
             res.send({ ok: 'ok' });
         } else {
-            res.status(400).send({ errText: `Произошла ошибка при сохранении.
+            res.status(400).send({
+                errText: `Произошла ошибка при сохранении.
                 Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
         }
 
