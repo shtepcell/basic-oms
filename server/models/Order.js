@@ -204,6 +204,10 @@ var schema = new Schema({
             type: Boolean,
             default: false,
         },
+        priority: {
+            type: Boolean,
+            default: false,
+        },
     }
 }, {
     usePushEach: true

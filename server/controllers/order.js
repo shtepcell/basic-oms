@@ -498,8 +498,7 @@ module.exports = {
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
-        }
-        else {
+        } else {
             return res.redirect(req.path);
         }
 
@@ -581,8 +580,7 @@ module.exports = {
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
-        }
-        else {
+        } else {
             return res.redirect(req.path);
         }
 
@@ -802,8 +800,7 @@ module.exports = {
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
-        }
-        else {
+        } else {
             return res.redirect(req.path);
         }
 
@@ -917,6 +914,10 @@ module.exports = {
         if (isPrivate) {
             order.special = data.department;
             order.tech = { private: isPrivate };
+        }
+
+        if (data.priority) {
+            order.tech = { priority: true };
         }
 
         var clnt = await validator.client(order.info.client);

@@ -158,6 +158,26 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
             ]
         },
         {
+            elem: 'body-row',
+            content: [
+                {
+                    elem: 'body-row-name',
+                    content: 'Приоритетная заявка'
+                },
+                {
+                    elem: 'body-row-data',
+                    content: {
+                        block: 'checkbox',
+                        name: 'priority',
+                        mods: {
+                            theme: 'islands',
+                            size: 'l',
+                        },
+                    }
+                }
+            ]
+        },
+        {
             elem: 'separator'
         },
         {
