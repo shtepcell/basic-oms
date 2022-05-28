@@ -222,5 +222,4 @@ module.exports = function (app, io) {
     app.patch("/api/mass/:id", Mass.updateRequest);
 
     app.get("/api/admin/department/:id", Department.api.getOne);
-    app.patch("/api/admin/department/:id", Department.api.getOne);
 };

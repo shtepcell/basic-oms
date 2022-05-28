@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { fetcher } from '../../../../lib/request';
 
 import styles from './[id].module.css';
+import { updateDepartment } from '../../../../api/department';
 
 const TYPE_MAPPER = {
     b2b: 'B2B',
@@ -29,7 +30,7 @@ const City = ({ name, type, _id }) => {
     )
 }
 
-const DepartmentContent = ({ department, cities }) => {
+const DepartmentContent = ({ department, cities, update }) => {
     const [suggest, setSuggest] = useState('');
     const [addedCities, setAddedCity] = useState([]);
 
@@ -53,13 +54,26 @@ const DepartmentContent = ({ department, cities }) => {
         setSuggest('');
     }, [addedCities]);
 
+    const onSubmit = useCallback((e, t) => {
+        e.preventDefault();
+
+        const { name, priorityCapacity } = e.target;
+
+        const data = {};
+
+        name && (data.name = name.value);
+        priorityCapacity && (data.priorityCapacity = priorityCapacity.value);
+
+        updateDepartment(department._id, data).then(() => update());
+    }, [])
+
     return (
         <>
             <Typography variant="h6">Редактирование отдела <i>{department.name} [{TYPE_MAPPER[department.type]}]</i></Typography>
-            <form>
-                <TextField label="Название отдела" className={styles.input} defaultValue={department.name} fullWidth required />
-                {isGus && <TextField label="Макс. кол-во приоритетных заявок" className={styles.input} defaultValue={department.priorityCapacity || 0} fullWidth type="number" required />}
-                <Button variant="contained">Сохранить</Button>
+            <form onSubmit={onSubmit}>
+                <TextField name="name" label="Название отдела" className={styles.input} defaultValue={department.name} fullWidth required />
+                {isGus && <TextField name="priorityCapacity" label="Макс. кол-во приоритетных заявок" className={styles.input} defaultValue={department.priorityCapacity || 0} fullWidth type="number" required />}
+                <Button type="submit" variant="contained">Сохранить</Button>
                 <Button className={styles.delete} variant="text" color="error">Удалить отдел</Button>
             </form>
             <div className={styles.cities}>
@@ -71,9 +85,10 @@ const DepartmentContent = ({ department, cities }) => {
                     blurOnSelect
                     clearOnBlur
                     value={suggest}
+                    fullWidth
                     className={styles.suggest}
                     options={filteredCities}
-                    sx={{ width: 300 }}
+                    componentsProps={{ paper: { style: { maxHeight: 250 } } }}
                     renderInput={(params) => <TextField {...params} label="Добавить город" />}
                 />
                 <List className={styles.citiesList}>
@@ -85,7 +100,7 @@ const DepartmentContent = ({ department, cities }) => {
 }
 
 const DepartmentPage = ({ departmentID, cities }) => {
-    const { data, error } = useSWR('/api/admin/department/' + departmentID, fetcher);
+    const { data, error, mutate } = useSWR('/api/admin/department/' + departmentID, fetcher);
 
     if (error || !cities) {
         return 'Error';
@@ -95,13 +110,12 @@ const DepartmentPage = ({ departmentID, cities }) => {
         return 'Loading...';
     }
 
-
     return (
         <div className={styles.root}>
             <Head>
                 <title>Редактирование отдела</title>
             </Head>
-            <DepartmentContent department={data} cities={cities} />
+            <DepartmentContent department={data} cities={cities} update={mutate} />
         </div>
     );
 }
