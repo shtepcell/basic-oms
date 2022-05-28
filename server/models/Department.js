@@ -1,8 +1,7 @@
-var mongoose = require('../controllers/connect'),
-	Schema = mongoose.Schema,
-	mongoosePaginate = require('mongoose-paginate');
+const mongoose = require('../controllers/connect');
+const Schema = mongoose.Schema;
 
-var schema = new Schema( {
+var schema = new Schema({
     name: {
         type: String,
         required: true
@@ -16,7 +15,8 @@ var schema = new Schema( {
         type: String,
         required: true
     },
-    cities : [
+    priorityCapacity: Number,
+    cities: [
         {
             type: Schema.Types.ObjectId,
             ref: 'City'

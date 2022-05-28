@@ -1,0 +1,31 @@
+.root {
+    max-width: 500px;
+    padding: 0 18px;
+}
+
+.title {
+    margin-bottom: 20px;
+}
+
+.input {
+    display: block;
+    width: 400px;
+    margin: 32px 0;
+}
+
+.cities {
+    margin: 40px 0;
+}
+
+.delete {
+    margin-left: 18px;
+}
+
+.citiesList {
+    width: 350px;
+}
+
+.suggest {
+    width: 350px;
+    margin: 20px 0;
+}

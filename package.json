@@ -17,9 +17,12 @@
     "last 2 versions"
   ],
   "dependencies": {
-    "@emotion/react": "^11.7.1",
-    "@emotion/styled": "^11.6.0",
-    "@mui/material": "^5.2.8",
+    "@emotion/cache": "11.7.1",
+    "@emotion/react": "11.9.0",
+    "@emotion/server": "11.4.0",
+    "@emotion/styled": "11.8.1",
+    "@mui/icons-material": "5.8.0",
+    "@mui/material": "5.8.1",
     "axios": "^0.24.0",
     "bem-calendar": "git+https://github.com/dalv96/bem-calendar.git",
     "bem-stat-counters": "3.0.0",
@@ -48,6 +51,7 @@
     "mongoose-paginate": "^5.0.3",
     "morgan": "^1.7.0",
     "next": "^12.0.8",
+    "next-transpile-modules": "9.0.0",
     "node-eval": "^1.1.0",
     "node-telegram-bot-api": "0.50.0",
     "nodemailer": "^4.4.1",
