@@ -222,4 +222,8 @@ module.exports = function (app, io) {
     app.patch("/api/mass/:id", Mass.updateRequest);
 
     app.get("/api/admin/department/:id", Department.api.getOne);
+    app.post("/api/admin/department/:id/city", Department.api.addCity);
+    app.delete("/api/admin/department/:id/city/:cityId", Department.api.removeCity);
+
+    app.get("/api/admin/unused-cities", City.api.getUnused);
 };

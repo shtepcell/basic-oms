@@ -7,6 +7,7 @@ const Render = require('../render'),
     render = Render.render;
 
 const logger = require('./logger');
+const { citiesMapper } = require('./helpers/cities');
 
 module.exports = {
 
@@ -31,7 +32,7 @@ module.exports = {
         const cities = await City.find({ usage: { $ne: true } }).lean();
 
         res.locals.department = await Department.findOne({ status: true, _id: req.params.id }).populate('cities').lean();
-        res.locals.cities = cities.map(({ type, name, _id }) => ({ label: `${type} ${name}`, id: _id })).filter(({ label }) => label !== 'г. Другое');
+        res.locals.cities = citiesMapper(cities);
 
         next();
     },
@@ -201,6 +202,55 @@ module.exports = {
             }
 
             return res.json(department);
+        },
+
+        addCity: async (req, res) => {
+            const department = await Department.findById(req.params.id);
+
+            if (!department) {
+                return res.status(404).send({ status: 'error', error: 'Отдел не найден' });
+            }
+
+            const city = await City.findOne({ _id: req.body.cityId, usage: false });
+
+            if (!city) {
+                return res.status(400).send({ status: 'error', error: 'Этот город не найден, или уже занят другим отделом' });
+            }
+
+            department.cities = [city, ...(department.cities || [])]
+
+            await department.save();
+
+            city.usage = true;
+            await city.save();
+
+            return res.status(200).send({ status: 'success' });
+        },
+
+        removeCity: async (req, res) => {
+            const { id, cityId } = req.params;
+
+            const department = await Department.findById(id);
+
+            if (!department) {
+                return res.status(404).send({ status: 'error', error: 'Отдел не найден' });
+            }
+
+            const city = await City.findById(cityId);
+
+            if (!city) {
+                return res.status(400).send({ status: 'error', error: 'Этот город не найден' });
+            }
+
+            department.cities = department.cities.filter((_id) => String(_id) !== cityId);
+
+            await department.save();
+
+            city.usage = false;
+            await city.save();
+
+            return res.status(200).send({ status: 'success' });
+
         }
     }
 };
