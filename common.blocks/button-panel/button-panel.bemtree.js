@@ -2,13 +2,12 @@ block('button-panel').content()(function () {
     var user = this.ctx.user;
     var type = this.ctx.type;
 
-
     var content = [];
 
     switch (user.department.type) {
         case 'b2o':
         case 'b2b':
-            content = [
+            return [
                 {
                     elem: 'text',
                     content: 'Доступные действия:'
@@ -24,11 +23,10 @@ block('button-panel').content()(function () {
                     text: 'Инициация заказа'
                 }
             ];
-            break;
     }
 
-    if(type == 'admin')
-        content = [
+    if (type == 'admin') {
+        return [
             {
                 elem: 'text',
                 content: 'Доступные действия:'
@@ -49,5 +47,7 @@ block('button-panel').content()(function () {
                 text: 'Создать пользователя'
             }
         ]
+    }
+
     return content;
 })
