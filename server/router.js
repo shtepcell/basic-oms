@@ -14,6 +14,7 @@ const Provider = require("./controllers/provider");
 const Street = require("./controllers/street");
 const Mass = require("./controllers/mass");
 const fileUpload = require("express-fileupload");
+const { onlyInitiatorFilter, initiatorAndAdminFilter, privateOrder } = require("./middlewares/access");
 
 var Render = require("./render"),
     render = Render.render;
@@ -82,22 +83,20 @@ module.exports = function (app, io) {
         });
     });
     // *************************************************************
-    app.get("/init", Order.getPageInit);
-    app.post("/init", (req, res) => {
+    app.get("/init", onlyInitiatorFilter, Order.getPageInit);
+    app.post("/init", onlyInitiatorFilter, (req, res) => {
         return Order.init(req, res);
     });
 
     // app.post('/order/:id', Order.submit);
-    app.post("/order/:id/action", (req, res) => {
-        return Order.changeStatus(req, res);
-    });
+    app.post("/order/:id/action", privateOrder, Order.changeStatus);
 
-    app.get("/order/:id", Order.getOrderInfo);
-    app.get("/order/:id/info", Order.getOrderInfo);
-    app.get("/order/:id/gzp", Order.getOrderGZP);
-    app.get("/order/:id/sks", Order.getOrderSKS);
-    app.get("/order/:id/stop", Order.getOrderSTOP);
-    app.get("/order/:id/history", Order.getOrderHistory);
+    app.get("/order/:id", privateOrder, Order.getOrderInfo);
+    app.get("/order/:id/info", privateOrder, Order.getOrderInfo);
+    app.get("/order/:id/gzp", privateOrder, Order.getOrderGZP);
+    app.get("/order/:id/sks", privateOrder, Order.getOrderSKS);
+    app.get("/order/:id/stop", privateOrder, Order.getOrderSTOP);
+    app.get("/order/:id/history", privateOrder, Order.getOrderHistory);
 
     app.post("/order/:id/info", (req, res) => {
         return Order.endClientNotify(req, res);
@@ -141,10 +140,10 @@ module.exports = function (app, io) {
 
     app.post("/notifies/:id", Notify.read);
 
-    app.route("/admin/clients").get(Client.getPage).delete(Client.delete);
-
-    app.post("/admin/clients/change", Client.edit);
-    app.post("/admin/clients/add", Client.create);
+    app.get("/admin/clients", initiatorAndAdminFilter, Client.getPage)
+    app.delete("/admin/clients", initiatorAndAdminFilter, Client.delete);
+    app.post("/admin/clients/change", initiatorAndAdminFilter, Client.edit);
+    app.post("/admin/clients/add", initiatorAndAdminFilter, Client.create);
 
     app.get("/admin/cities", City.getPage);
     app.get("/admin/providers", Provider.getPage);

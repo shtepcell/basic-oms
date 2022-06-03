@@ -171,7 +171,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'end-network',
                 id: order.id
             },
-            display: (isNetUser && isNetStatus)
+            display: ((isNetUser || order.tech.private && isResp) && isNetStatus)
         },
         {
             block: 'order',
@@ -202,7 +202,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'pause-service',
                 id: order.id
             },
-            display: (isNetUser || isAdmin) && isStartPause
+            display: (isNetUser || isAdmin || order.tech.private && isResp) && isStartPause
         },
         {
             block: 'order',
@@ -283,7 +283,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'start-gzp-shutdown',
                 id: order.id
             },
-            display: (isNetUser || isAdmin) && isShut && !isSTOPBuilded
+            display: (isNetUser || order.tech.private && isResp || isAdmin) && isShut && !isSTOPBuilded
         },
         {
             block: 'order',
@@ -303,7 +303,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'end-gzp-shutdown',
                 id: order.id
             },
-            display: (isGUS || isAdmin) && isDemontage
+            display: (isGUS || order.tech.private && isResp || isAdmin) && isDemontage
         },
         {
             block: 'order',
@@ -363,7 +363,7 @@ block('order').elem('actions').elemMod('tab', 'info').content()(function () {
                 to: 'back',
                 id: order.id
             },
-            display: (isNetUser && isNetStatus && isNetService)
+            display: ((isNetUser || order.tech.private && isResp) && isNetStatus && isNetService)
         },
         {
             block: 'order',

@@ -200,6 +200,10 @@ var schema = new Schema({
     autoDeadline: Number,
     tech: {
         mass_upload: Boolean,
+        private: {
+            type: Boolean,
+            default: false,
+        },
     }
 }, {
     usePushEach: true
@@ -217,19 +221,29 @@ const isReject = {
     status: 'reject'
 }
 
-schema.statics.get = function (query = {}, archive) {
+schema.statics.get = function (query = {}, flags) {
+    const { archive = false, private = false } = flags || {};
+
     const old = new Date();
     old.setDate(-90);
 
     const isArchive = {
         status: 'client-match',
-        lastMod: {$lt: old}
+        lastMod: { $lt: old }
     }
 
     if (archive) {
         query['$nor'] = [isSecret];
     } else {
         query['$nor'] = [isArchive, isSecret, isReject];
+    }
+
+    if (!private) {
+        if (query.tech) {
+            query.tech.private = private;
+        } else {
+            query.tech = { private };
+        }
     }
 
     return order.find(query);

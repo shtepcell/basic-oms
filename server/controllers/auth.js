@@ -21,22 +21,22 @@ module.exports = {
 
     isLoggedIn: async (req, res, next) => {
         if (req.session.__user) {
-            var acc = await Account.findOne({login: req.session.__user}).populate('department notifies');
-            
+            var acc = await Account.findOne({ login: req.session.__user }).populate('department notifies');
+
             acc.firstVisit = acc.firstVisit || new Date();
             acc.lastVisit = new Date();
             acc.save().catch((err) => {
                 console.error(`Visit information for ${acc.login} can't save, cause: ${err}`)
             });
 
-            var deps = await Department.find({status: true, type: 'gus'}).lean();
+            var deps = await Department.find({ status: true, type: 'gus' }).lean();
             var requestPause;
 
             if (acc.department.type == 'b2o' || acc.department.type == 'b2b') {
-              requestPause = await Order.count({
-                'requestPause.status': true,
-                'info.initiator': acc._id + ''
-              });
+                requestPause = await Order.count({
+                    'requestPause.status': true,
+                    'info.initiator': acc._id + ''
+                });
             }
 
             if (acc.department.type === 'admin' && req.query.fakeAuth || req.cookies[FAKE_AUTH_KEY]) {
@@ -55,7 +55,7 @@ module.exports = {
             var count = 0;
 
             for (var i = 0; i < acc.notifies.length; i++) {
-                if(acc.notifies[i].read.indexOf(acc._id) < 0) count++;
+                if (acc.notifies[i].read.indexOf(acc._id) < 0) count++;
             }
 
             res.locals.__deps = deps;
@@ -69,9 +69,11 @@ module.exports = {
                 settings: acc.settings,
                 request: requestPause
             };
+            res.locals.hasPrivateAccess = ['special', 'admin'].includes(acc.department.type);
+
             next();
         } else {
-            if(req.path != '/login') {
+            if (req.path != '/login') {
                 res.locals.trg = '/login?trg=' + encodeURIComponent(req.originalUrl);
             }
             render(req, res, {
@@ -81,11 +83,11 @@ module.exports = {
     },
 
     isAdmin: function (req, res, next) {
-        if(res.locals.__user.department.type == 'admin') next();
+        if (res.locals.__user.department.type == 'admin') next();
         else res.status(403).send('Доступ только для администраторов')
     },
 
-    logout: function(req, res) {
+    logout: function (req, res) {
         req.session.destroy();
         res.redirect('/')
     },

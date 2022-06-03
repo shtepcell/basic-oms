@@ -1,21 +1,19 @@
 block('order').content()(function () {
-    var ctx = this.ctx,
-        tab = ctx.tab,
-        order = ctx.order,
-        dataset = ctx.dataset;
+    const { tab, order, dataset, user, action, adminEdit, department } = this.ctx;
 
-    if(tab == 'init') {
+    if (tab == 'init') {
         return [
             {
                 elem: 'body',
                 elemMods: {
                     tab: 'init'
                 },
-                order: order,
                 action: '/init',
                 tab: 'init',
                 init: true,
-                dataset: dataset,
+                order,
+                dataset,
+                user,
                 js: true
             }
         ]
@@ -26,22 +24,22 @@ block('order').content()(function () {
         {
             elem: 'head',
             order: order,
-            user: ctx.user,
+            user: user,
             tab: tab,
             dataset: dataset
         },
         {
             elem: 'body',
             elemMods: {
-                tab: ctx.tab
+                tab: tab
             },
-            action: ctx.action,
-            order: order,
-            tab: ctx.tab,
-            user: ctx.user,
-            adminEdit: ctx.adminEdit,
-            dataset: dataset,
-            department: ctx.department,
+            action,
+            order,
+            tab,
+            user,
+            adminEdit,
+            dataset,
+            department,
             js: true
         }
     ]
