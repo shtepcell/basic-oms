@@ -5,8 +5,8 @@
         'stages',
         {
             elems: ['head', 'cell-name', 'cell-data', 'tab', 'control',
-             'body-row', 'body-row-name', 'body-row-data', 'separator', 'actions',
-            'switcher', 'id', 'cs', 'flag', 'clipboard', 'dublicate', 'direct', 'history-table']
+                'body-row', 'body-row-name', 'body-row-data', 'separator', 'actions',
+                'switcher', 'id', 'cs', 'flag', 'clipboard', 'dublicate', 'direct', 'history-table']
         },
         {
             block: 'order',
@@ -44,7 +44,7 @@
             block: 'order',
             elem: 'service-info',
             mods: {
-                type:[
+                type: [
                     'internet',
                     'vpls',
                     'l3vpn',
@@ -65,7 +65,8 @@
                     'sip',
                     'wifiorg',
                     'rentip',
-                    'safe'
+                    'safe',
+                    'sopka'
                 ]
             }
         },

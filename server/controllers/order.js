@@ -85,7 +85,7 @@ const isSKSPath = (order) => {
 };
 
 const isNetPath = (order) => {
-    return ['wifi', 'wifiorg', 'sputnik'].includes(order.info.service);
+    return ['wifi', 'wifiorg', 'sputnik', 'sopka'].includes(order.info.service);
 };
 
 const has = (value) => {
