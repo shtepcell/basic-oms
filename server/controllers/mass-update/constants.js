@@ -17,6 +17,7 @@ const FIELDS_HASH = {
     expectedMonthlyIncome: "Ожидаемый ежемес. доход (руб)",
     status: "Статус заявки",
     preStatus: "Отправить на проработку",
+    relation: "Связанный заказ (СУЗ ID)",
 };
 
 const G = "г.";
@@ -34,7 +35,7 @@ const CITY_TYPES_HASH = {
 };
 const ALL_FIELDS = Object.values(FIELDS_HASH);
 
-const SUPPORTED_SERVICES = ["Интернет", "L3VPN"];
+const SUPPORTED_SERVICES = ["Интернет", "L3VPN", "L2VPN", "VPLS", "Телефония (IP-телефония)", "Аналоговые каналы", "СОПКА"];
 
 const SUPPORTED_CITY_TYPES = [
     G,
@@ -58,9 +59,18 @@ const STATUSES_HASH = {
 const SERVICES_HASH = {
     Интернет: "internet",
     L3VPN: "l3vpn",
+    L2VPN: "l2vpn",
+    VPLS: "vpls",
+    "Телефония (IP-телефония)": "phone",
+    "Аналоговые каналы": "analog",
+    СОПКА: "sopka"
 };
 
 const SUPPORTED_END_STATUSES = ["Включено ГЗП", "Включено СТОП/VSAT"];
+
+const RELATION_NEEDED_SERVICES = ['l2vpn', 'vpls'];
+const IP_NEEDED_SERVICES = ['internet', 'l3vpn'];
+const VOLUME_NEEDED_SERVICES = ['internet', 'l3vpn', 'l2vpn', 'sopka'];
 
 module.exports = {
     ALL_FIELDS,
@@ -72,4 +82,7 @@ module.exports = {
     SUPPORTED_END_STATUSES,
     FIELDS_HASH,
     CITY_TYPES_HASH,
+    RELATION_NEEDED_SERVICES,
+    IP_NEEDED_SERVICES,
+    VOLUME_NEEDED_SERVICES,
 };

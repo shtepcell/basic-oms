@@ -15,7 +15,7 @@ const {
 
 const XLSX = require("xlsx");
 const Provider = require("../../models/Provider");
-const { getProvider, getCity } = require("./helpers");
+const { getProvider, getCity, isRelationNeeded, isIPNeeded, isCapacityNeeded } = require("./helpers");
 
 const errorHandler = (error, req, res) => {
     if (error.code) {
@@ -29,9 +29,9 @@ const errorHandler = (error, req, res) => {
 
 const errorWrapper =
     (fn) =>
-    (...args) => {
-        fn(...args).catch((err) => errorHandler(err, ...args));
-    };
+        (...args) => {
+            fn(...args).catch((err) => errorHandler(err, ...args));
+        };
 
 const parseFile = (file) => {
     try {
@@ -92,6 +92,8 @@ const importOrder = async (data, user) => {
     const ipCount = data[FIELDS_HASH.ips];
     const additionalInfo = data[FIELDS_HASH.additional];
     const cms = data[FIELDS_HASH.cms];
+    const relation = data[FIELDS_HASH.relation];
+
     let deadline = await helper.calculateDeadline(3);
 
     const order = new Order({
@@ -109,8 +111,9 @@ const importOrder = async (data, user) => {
             service,
             city,
             coordinate,
-            volume,
-            ip: ipCount,
+            volume: isCapacityNeeded(data) ? volume : undefined,
+            ip: isIPNeeded(data) ? ipCount : undefined,
+            relation: isRelationNeeded(data) ? relation : undefined,
         },
         date: {
             init: new Date(),
