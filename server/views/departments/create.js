@@ -1,4 +1,4 @@
-module.exports = function(opt, data) {
+module.exports = function (opt, data) {
 
     return {
         view: 'page-index',
@@ -70,6 +70,10 @@ module.exports = function(opt, data) {
                             {
                                 text: 'Руководство',
                                 val: 'man'
+                            },
+                            {
+                                text: 'Спецотдел',
+                                val: 'special'
                             }
                         ]
                     }
