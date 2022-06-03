@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
-const { sendErrorTelegramMessage } = require('../lib/telegram');
+// const { sendErrorTelegramMessage } = require('../lib/telegram');
 const { getStat } = require('../server/controllers/order');
 
 const errorHandler = async (error) => {
-    await sendErrorTelegramMessage('Ошибка при расчете статистики СУЗ', error);
+    console.log('Ошибка при расчете статистики СУЗ', error)
+    // await sendErrorTelegramMessage('Ошибка при расчете статистики СУЗ', error);
 
     process.exit(1)
 }

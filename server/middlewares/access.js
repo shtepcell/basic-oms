@@ -1,3 +1,4 @@
+const Order = require("../models/Order");
 const { render } = require("../render");
 
 const departmentTypeFilter = (types) => (req, res, next) => {
@@ -17,7 +18,23 @@ const departmentTypeFilter = (types) => (req, res, next) => {
 const onlyInitiatorFilter = departmentTypeFilter(['b2o', 'b2b', 'special']);
 const initiatorAndAdminFilter = departmentTypeFilter(['b2o', 'b2b', 'special', 'admin']);
 
+const privateOrder = async (req, res, next) => {
+    const order = await Order.findOne({ id: req.params.id }).select('tech.private');
+    const userDepartmentType = res.locals.__user.department.type;
+
+    if (order.tech.private && userDepartmentType !== 'special') {
+        if (req.xhr) {
+            return res.status(403).send({ error: 'Нет доступа' });
+        }
+
+        return render(req, res, { view: '403' });
+    }
+
+    return next();
+}
+
 module.exports = {
     onlyInitiatorFilter,
     initiatorAndAdminFilter,
+    privateOrder,
 }

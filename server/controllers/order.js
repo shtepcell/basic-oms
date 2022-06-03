@@ -2334,6 +2334,8 @@ module.exports = {
     },
 
     excel: async (req, res) => {
+        const { hasPrivateAccess } = res.locals;
+
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.func1 && req.query.func1.length == 1) req.query.func1 = [req.query.func1]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
@@ -2347,7 +2349,7 @@ module.exports = {
 
         var { query, archive } = await helper.makeQuery(req, res);
 
-        var orders = await Order.get(query, { archive }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query, { archive, private: hasPrivateAccess }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         orders.forEach(item => {
             item.status = stages[item.status];
@@ -2358,6 +2360,8 @@ module.exports = {
     },
 
     report: async (req, res) => {
+        const { hasPrivateAccess } = res.locals;
+
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.func1 && req.query.func1.length == 1) req.query.func1 = [req.query.func1]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
@@ -2373,7 +2377,7 @@ module.exports = {
 
         query.special = undefined;
 
-        var orders = await Order.get(query, { archive }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query, { archive, private: hasPrivateAccess }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         for (let i = 0; i < orders.length; i++) {
             orders[i].gusName = await helper.getGUSName(orders[i]);
@@ -2396,6 +2400,8 @@ module.exports = {
     },
 
     search: async (req, res) => {
+        const { hasPrivateAccess } = res.locals;
+
         res.locals.data = await helper.getData(res);
         res.locals.err = {};
 
@@ -2441,9 +2447,9 @@ module.exports = {
             res.redirect(req.path);
         }
 
-        const total = await Order.get(query, { archive }).count();
+        const total = await Order.get(query, { archive, private: hasPrivateAccess }).count();
 
-        var orders = await Order.get(query, { archive })
+        var orders = await Order.get(query, { archive, private: hasPrivateAccess })
             .populate([populateClient, populateCity, populateStreet])
             .skip((pageNumber - 1) * perPage)
             .limit(perPage)

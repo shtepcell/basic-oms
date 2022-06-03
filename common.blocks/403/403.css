@@ -1,0 +1,6 @@
+.page_view_403 h2 {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -238,10 +238,12 @@ schema.statics.get = function (query = {}, flags) {
         query['$nor'] = [isArchive, isSecret, isReject];
     }
 
-    if (query.tech) {
-        query.tech.private = private;
-    } else {
-        query.tech = { private };
+    if (!private) {
+        if (query.tech) {
+            query.tech.private = private;
+        } else {
+            query.tech = { private };
+        }
     }
 
     return order.find(query);
