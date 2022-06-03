@@ -14,6 +14,7 @@ const Provider = require("./controllers/provider");
 const Street = require("./controllers/street");
 const Mass = require("./controllers/mass");
 const fileUpload = require("express-fileupload");
+const { onlyInitiatorFilter, initiatorAndAdminFilter } = require("./middlewares/access");
 
 var Render = require("./render"),
     render = Render.render;
@@ -82,8 +83,8 @@ module.exports = function (app, io) {
         });
     });
     // *************************************************************
-    app.get("/init", Order.getPageInit);
-    app.post("/init", (req, res) => {
+    app.get("/init", onlyInitiatorFilter, Order.getPageInit);
+    app.post("/init", onlyInitiatorFilter, (req, res) => {
         return Order.init(req, res);
     });
 
@@ -141,10 +142,10 @@ module.exports = function (app, io) {
 
     app.post("/notifies/:id", Notify.read);
 
-    app.route("/admin/clients").get(Client.getPage).delete(Client.delete);
-
-    app.post("/admin/clients/change", Client.edit);
-    app.post("/admin/clients/add", Client.create);
+    app.get("/admin/clients", initiatorAndAdminFilter, Client.getPage)
+    app.delete("/admin/clients", initiatorAndAdminFilter, Client.delete);
+    app.post("/admin/clients/change", initiatorAndAdminFilter, Client.edit);
+    app.post("/admin/clients/add", initiatorAndAdminFilter, Client.create);
 
     app.get("/admin/cities", City.getPage);
     app.get("/admin/providers", Provider.getPage);

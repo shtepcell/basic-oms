@@ -45,7 +45,7 @@ module.exports = {
                 let end;
 
                 if (history[i].name === 'Автоматическое подтверждение паузы') {
-                    start = history[history.slice(0, i).reduce((acc, val, index) => val.name === 'Запрос паузы' ? index : acc )].date;
+                    start = history[history.slice(0, i).reduce((acc, val, index) => val.name === 'Запрос паузы' ? index : acc)].date;
                 }
 
                 const endStep = history.slice(i).find(({ name }) => name === 'Снятие с паузы')
@@ -278,8 +278,7 @@ module.exports = {
     parseDate: (date) => {
         date = date.split('.');
         if (date.length == 3) {
-            if (date[1] >= 0 && date[1] <= 11 && date[0] > 0 && date[0] <= 31)
-                {return new Date(date[2], date[1] - 1, date[0]);}
+            if (date[1] >= 0 && date[1] <= 11 && date[0] > 0 && date[0] <= 31) { return new Date(date[2], date[1] - 1, date[0]); }
             else return false
         } else return false;
     },
@@ -313,16 +312,16 @@ module.exports = {
             }
 
             if (ors.length > 0) {
-                return { query: { $or: ors }, archive: true};
+                return { query: { $or: ors }, archive: true };
             }
 
             return { query: { id: -1 }, archive };
         }
 
         if (query.cms) {
-            var rgx =  new RegExp('' + query.cms + '', 'i');
+            var rgx = new RegExp('' + query.cms + '', 'i');
 
-            return { query: { 'info.cms': {$regex: rgx} }, archive };
+            return { query: { 'info.cms': { $regex: rgx } }, archive };
         }
 
         if (query.func) {
@@ -332,7 +331,7 @@ module.exports = {
 
             if (query.func.indexOf('2') >= 0) {
                 const today = new Date();
-                today.setDate( today.getDate() - 1);
+                today.setDate(today.getDate() - 1);
                 var deadline = {
                     deadline: { '$ne': null },
                     $or: [
@@ -362,10 +361,12 @@ module.exports = {
 
         if (query.func1) {
             query.func1.forEach(item => {
-                const cpb = (value) => ({ '$or': [
-                    { 'gzp.capability': value },
-                    { 'stop.capability': value }
-                ]});
+                const cpb = (value) => ({
+                    '$or': [
+                        { 'gzp.capability': value },
+                        { 'stop.capability': value }
+                    ]
+                });
 
                 switch (item) {
                     case '1':
@@ -393,8 +394,8 @@ module.exports = {
                 resp = await Department.findOne({ _id: query.resp + '' });
             } catch (err) { console.log('Cannot find department'); }
             var respQ = {};
-            if (resp != null)
-                {switch (resp.type) {
+            if (resp != null) {
+                switch (resp.type) {
                     case 'b2b':
                         respQ = { 'info.department': resp._id };
                         break;
@@ -450,7 +451,8 @@ module.exports = {
                             ]
                         };
                         break;
-                }}
+                }
+            }
 
             if (qr['$and']) {
                 qr['$and'].push(respQ);
@@ -581,8 +583,7 @@ module.exports = {
         if (status.length > 0) {
             if (qr['$or']) {
                 qr['$or'] = qr['$or'].concat(status);
-            } else
-                {qr['$or'] = status;}
+            } else { qr['$or'] = status; }
         }
 
         if (query.client) {
@@ -703,12 +704,14 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else {qr['$and'] = [{
-                            'date.init': {
-                                $gte: start,
-                                $lte: end
-                            }
-                        }];}
+                        } else {
+                            qr['$and'] = [{
+                                'date.init': {
+                                    $gte: start,
+                                    $lte: end
+                                }
+                            }];
+                        }
                         break;
                     case 'gzp-pre':
                         if (qr['$and']) {
@@ -718,12 +721,14 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else {qr['$and'] = [{
-                            'date.gzp-pre': {
-                                $gte: start,
-                                $lte: end
-                            }
-                        }];}
+                        } else {
+                            qr['$and'] = [{
+                                'date.gzp-pre': {
+                                    $gte: start,
+                                    $lte: end
+                                }
+                            }];
+                        }
                         break;
                     case 'sks-pre':
                         if (qr['$and']) {
@@ -733,12 +738,14 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else {qr['$and'] = [{
-                            'date.sks-pre': {
-                                $gte: start,
-                                $lte: end
-                            }
-                        }];}
+                        } else {
+                            qr['$and'] = [{
+                                'date.sks-pre': {
+                                    $gte: start,
+                                    $lte: end
+                                }
+                            }];
+                        }
                         break;
                     case 'stop-pre':
                         if (qr['$and']) {
@@ -748,12 +755,14 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else {qr['$and'] = [{
-                            'date.stop-pre': {
-                                $gte: start,
-                                $lte: end
-                            }
-                        }];}
+                        } else {
+                            qr['$and'] = [{
+                                'date.stop-pre': {
+                                    $gte: start,
+                                    $lte: end
+                                }
+                            }];
+                        }
                         break;
                     case 'gzp-build':
                         if (qr['$and']) {
@@ -773,22 +782,24 @@ module.exports = {
                                     }
                                 ]
                             })
-                        } else {qr['$and'] = [{
-                            $or: [
-                                {
-                                    'date.gzp-build': {
-                                        $gte: start,
-                                        $lte: end
+                        } else {
+                            qr['$and'] = [{
+                                $or: [
+                                    {
+                                        'date.gzp-build': {
+                                            $gte: start,
+                                            $lte: end
+                                        }
+                                    },
+                                    {
+                                        'date.install-devices': {
+                                            $gte: start,
+                                            $lte: end
+                                        }
                                     }
-                                },
-                                {
-                                    'date.install-devices': {
-                                        $gte: start,
-                                        $lte: end
-                                    }
-                                }
-                            ]
-                        }];}
+                                ]
+                            }];
+                        }
                         break;
                     case 'stop-build':
                         if (qr['$and']) {
@@ -798,12 +809,14 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else {qr['$and'] = [{
-                            'date.stop-build': {
-                                $gte: start,
-                                $lte: end
-                            }
-                        }];}
+                        } else {
+                            qr['$and'] = [{
+                                'date.stop-build': {
+                                    $gte: start,
+                                    $lte: end
+                                }
+                            }];
+                        }
                         break;
                     case 'sks-build':
                         if (qr['$and']) {
@@ -813,12 +826,14 @@ module.exports = {
                                     $lte: end
                                 }
                             })
-                        } else {qr['$and'] = [{
-                            'date.sks-build': {
-                                $gte: start,
-                                $lte: end
-                            }
-                        }];}
+                        } else {
+                            qr['$and'] = [{
+                                'date.sks-build': {
+                                    $gte: start,
+                                    $lte: end
+                                }
+                            }];
+                        }
                         break;
                     case 'report':
                         if (qr['$and']) {
@@ -827,11 +842,13 @@ module.exports = {
                                     { 'date.network': { $gte: start, $lte: end } }
                                 ]
                             })
-                        } else {qr['$and'] = [{
-                            $or: [
-                                { 'date.network': { $gte: start, $lte: end } }
-                            ]
-                        }];}
+                        } else {
+                            qr['$and'] = [{
+                                $or: [
+                                    { 'date.network': { $gte: start, $lte: end } }
+                                ]
+                            }];
+                        }
                         break;
                     case 'succes':
                         if (qr['$and']) {
@@ -851,22 +868,24 @@ module.exports = {
                                     }
                                 ]
                             })
-                        } else {qr['$and'] = [{
-                            $or: [
-                                {
-                                    'date.succes': {
-                                        $gte: start,
-                                        $lte: end
+                        } else {
+                            qr['$and'] = [{
+                                $or: [
+                                    {
+                                        'date.succes': {
+                                            $gte: start,
+                                            $lte: end
+                                        }
+                                    },
+                                    {
+                                        'date.client-notify': {
+                                            $gte: start,
+                                            $lte: end
+                                        }
                                     }
-                                },
-                                {
-                                    'date.client-notify': {
-                                        $gte: start,
-                                        $lte: end
-                                    }
-                                }
-                            ]
-                        }];}
+                                ]
+                            }];
+                        }
                         break;
                 }
             }
@@ -916,9 +935,11 @@ module.exports = {
             case 'stop-continue':
             case 'stop-change':
                 var dep = await Department.findOne({ type: 'b2o' });
-                if (!dep) {dep = {
-                    name: 'Ответсвенный отдел не определён!'
-                }}
+                if (!dep) {
+                    dep = {
+                        name: 'Ответсвенный отдел не определён!'
+                    }
+                }
                 return dep.name;
             case 'all-pre':
                 var dep1 = await Department.findOne({ type: 'b2o' });
@@ -935,6 +956,11 @@ module.exports = {
             case 'sks-pre':
             case 'sks-build':
                 var dep = await Department.findOne({ type: 'net' });
+
+                if (order.tech.private) {
+                    dep = await Department.findOne({ _id: order.special });
+                }
+
                 return dep.name;
             case 'client-match':
             case 'client-notify':
@@ -1015,8 +1041,7 @@ module.exports = {
     parseDate: (date) => {
         date = date.split('.');
         if (date.length == 3) {
-            if (date[1] >= 1 && date[1] <= 12 && date[0] > 0 && date[0] <= 31)
-                {return new Date(date[2], date[1] - 1, date[0]);}
+            if (date[1] >= 1 && date[1] <= 12 && date[0] > 0 && date[0] <= 31) { return new Date(date[2], date[1] - 1, date[0]); }
             else return false
         } else return false;
     },
@@ -1098,8 +1123,7 @@ function strToDate(date) {
     if (date) {
         date = date.split('.');
         if (date.length == 3) {
-            if (date[1] >= 1 && date[1] <= 12 && date[0] > 0 && date[0] <= 31)
-                {return new Date(date[2], date[1] - 1, date[0]);}
+            if (date[1] >= 1 && date[1] <= 12 && date[0] > 0 && date[0] <= 31) { return new Date(date[2], date[1] - 1, date[0]); }
             else return false
         } else return false;
     } else return null;

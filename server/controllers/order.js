@@ -116,7 +116,7 @@ const getStat = async () => {
     ];
 
     const today = new Date();
-    today.setDate( today.getDate() - 1);
+    today.setDate(today.getDate() - 1);
 
     var deadlineQuery = {
         deadline: { '$ne': null },
@@ -374,38 +374,36 @@ const getStat = async () => {
 module.exports = {
 
     getPageInit: async (req, res) => {
-        if (res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o') {
-            var rel = req.query.rel;
-            var order = {};
-            if (rel && !isNaN(rel)) {
-                order = await Order.findOne({ id: rel }).populate([populateClient, populateCity, populateStreet]);
-                if (order)
-                    {order = {
-                        client: order.info.client.name,
-                        contact: order.info.contact,
-                        cms: order.info.cms,
-                        'date-request': order.info['date-request'],
-                        city: `${order.info.city.type} ${order.info.city.name}`,
-                        street: order.info.street,
-                        adds: order.info.adds,
-                        coordinate: order.info.coordinate,
-                        service: order.info.service,
-                        ip: order.info.ip,
-                        volume: order.info.volume,
-                        add_info: order.info.add_info,
-                        relation: order.id
-                    };}
-            }
+        var rel = req.query.rel;
+        var order = {};
 
-            render(req, res, {
-                viewName: 'orders/init',
-                options: {
-                    order: order
-                }
-            });
-        } else {
-            render(req, res, { view: '404' });
+        if (rel && !isNaN(rel)) {
+            order = await Order.findOne({ id: rel }).populate([populateClient, populateCity, populateStreet]);
+            if (order) {
+                order = {
+                    client: order.info.client.name,
+                    contact: order.info.contact,
+                    cms: order.info.cms,
+                    'date-request': order.info['date-request'],
+                    city: `${order.info.city.type} ${order.info.city.name}`,
+                    street: order.info.street,
+                    adds: order.info.adds,
+                    coordinate: order.info.coordinate,
+                    service: order.info.service,
+                    ip: order.info.ip,
+                    volume: order.info.volume,
+                    add_info: order.info.add_info,
+                    relation: order.id
+                };
+            }
         }
+
+        render(req, res, {
+            viewName: 'orders/init',
+            options: {
+                order: order
+            }
+        });
     },
 
     getMainPagePause: async (req, res) => {
@@ -501,8 +499,9 @@ module.exports = {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
         }
-        else
-            {res.redirect(req.path);}
+        else {
+            return res.redirect(req.path);
+        }
 
         var query = {};
         var { query: subQ } = await helper.makeQuery(req, res);
@@ -581,8 +580,9 @@ module.exports = {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
         }
-        else
-            {res.redirect(req.path);}
+        else {
+            return res.redirect(req.path);
+        }
 
         var query = {};
         var { query: subQ } = await helper.makeQuery(req, res);
@@ -689,7 +689,7 @@ module.exports = {
             case 'gus':
                 query = {
                     '$or': [
-                        { status: 'gzp-pre', 'info.city': user.department.cities, special: null, 'info.service': {$ne: 'rrl'} },
+                        { status: 'gzp-pre', 'info.city': user.department.cities, special: null, 'info.service': { $ne: 'rrl' } },
                         { status: 'all-pre', 'info.city': user.department.cities, special: null },
                         { status: 'gzp-pre', 'special': user.department._id },
                         { status: 'all-pre', 'special': user.department._id }
@@ -701,9 +701,9 @@ module.exports = {
                     '$or': [
                         { status: 'gzp-pre', 'info.service': 'rrl', special: null },
                         { status: 'gzp-pre', 'special': user.department._id },
-                        { status: 'gzp-build', 'info.service': 'rrl', special: null  },
+                        { status: 'gzp-build', 'info.service': 'rrl', special: null },
                         { status: 'gzp-build', 'special': user.department._id },
-                        { status: 'install-devices', 'info.service': 'rrl', special: null  },
+                        { status: 'install-devices', 'info.service': 'rrl', special: null },
                         { status: 'install-devices', 'special': user.department._id },
                         { status: 'all-pre', 'special': user.department._id }
                     ]
@@ -797,8 +797,9 @@ module.exports = {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
         }
-        else
-            {res.redirect(req.path);}
+        else {
+            return res.redirect(req.path);
+        }
 
         var query = {};
         var { query: subQ } = await helper.makeQuery(req, res);
@@ -892,19 +893,25 @@ module.exports = {
     init: async (req, res) => {
         const histories = [];
         var data = req.body;
+        const isPrivate = res.locals.__user.department.type === 'special';
 
         Object.keys(data).forEach(item => {
             data[item] = data[item].trim();
             if (data[item] == '') data[item] = undefined;
         });
 
-        data.initiator = await Account.findOne({ login: res.locals.__user.login });
-        data.department = await Department.findOne({ _id: res.locals.__user.department._id + '' });
+        data.initiator = res.locals.__user._id;
+        data.department = res.locals.__user.department._id;
 
         var order = {
             status: data.pre,
             info: data
         };
+
+        if (isPrivate) {
+            order.special = data.department;
+            order.tech = { private: isPrivate };
+        }
 
         var clnt = await validator.client(order.info.client);
         if (!clnt._id) {
@@ -1011,7 +1018,9 @@ module.exports = {
             deadline: deadline,
             info: order.info,
             date: kk,
-            history: [helper.historyGenerator('init', res.locals.__user), ...histories]
+            history: [helper.historyGenerator('init', res.locals.__user), ...histories],
+            tech: order.tech,
+            special: order.special,
         });
 
         if (req.files && req.files['file-init']) {
@@ -1019,7 +1028,7 @@ module.exports = {
         }
 
         if (serviceInfo.mustUpload) {
-            serviceInfo.mustUpload.forEach( item => {
+            serviceInfo.mustUpload.forEach(item => {
                 ordr.info[item] = saveFile(req.files[item]);
             })
         }
@@ -1054,7 +1063,7 @@ module.exports = {
             if (order.status != 'succes') {
                 return render(req, res, { view: '404' });
             }
-            
+
             res.locals.order = order;
             return render(req, res, {
                 viewName: 'orders/change-order'
@@ -1141,7 +1150,7 @@ module.exports = {
         var order = await Order.findOne({ id: req.params.id, status: { '$ne': 'secret' } }).deepPopulate(populateQuery);
 
         const { data: autoDeadline } = await Settings.findOne({ type: 'auto-deadline' }).lean() || {};
-        
+
         if (order) {
             autoDeadline && (order.autoDeadline = autoDeadline);
 
@@ -1299,9 +1308,13 @@ module.exports = {
         order.isEditing = true;
 
         Object.keys(data).forEach(item => {
-            if (item != 'adds')
-                {data[item] = data[item].trim();}
-            if (data[item] == '') data[item] = undefined;
+            if (item != 'adds') {
+                data[item] = data[item].trim();
+            }
+
+            if (data[item] == '') {
+                data[item] = undefined;
+            }
         });
 
         switch (req.params.tab) {
@@ -1330,7 +1343,7 @@ module.exports = {
                     return;
                 }
 
-                serviceInfo.mustUpload.forEach( item => {
+                serviceInfo.mustUpload.forEach(item => {
                     if (req.files[item]) {
                         tmp[item] = saveFile(req.files[item]);
                     }
@@ -1706,7 +1719,7 @@ module.exports = {
                 notify.create(res.locals.__user, order, 'network');
                 break;
 
-// **************     ОТКЛЮЧЕНИЕ СЕРВИСА     ***************
+            // **************     ОТКЛЮЧЕНИЕ СЕРВИСА     ***************
 
             case 'start-pre-shutdown':
                 if (order.date['stop-build'] != null) {
@@ -1751,7 +1764,7 @@ module.exports = {
                 notify.create(res.locals.__user, order, 'start-pre-shutdown');
                 break;
 
-// **************     ПРИОСТАНОВКА СЕРВИСА     ***************
+            // **************     ПРИОСТАНОВКА СЕРВИСА     ***************
 
             case 'start-pause-service':
                 var isStop = '';
@@ -1780,7 +1793,7 @@ module.exports = {
                 notify.create(res.locals.__user, order, 'pause-service');
                 break;
 
-// **************     ВОЗОБНОВЛЕНИЕ СЕРВИСА     ***************
+            // **************     ВОЗОБНОВЛЕНИЕ СЕРВИСА     ***************
 
             case 'start-continue':
                 if (order.date['stop-build'] != null) {
@@ -1813,7 +1826,7 @@ module.exports = {
                 break;
 
 
-// **************     ИЗМЕНЕНИЯ СЕРВИСА     ***************
+            // **************     ИЗМЕНЕНИЯ СЕРВИСА     ***************
 
             case 'end-stop-change':
                 order.status = 'pre-change';
@@ -1847,8 +1860,7 @@ module.exports = {
                 }
                 order.info['income-once'] = reqData.incomeOnce;
                 order.info['income-monthly'] = reqData.incomeMonth;
-                if (reqData.oss)
-                    {order.info['idoss'] = reqData.oss;}
+                if (reqData.oss) { order.info['idoss'] = reqData.oss; }
 
                 order.deadline = await helper.calculateDeadline(order.gzp.time);
                 order.date['cs-gzp-organization'] = await helper.calculateDeadline(order.gzp.time);
@@ -1862,8 +1874,7 @@ module.exports = {
 
                 order.info['income-once'] = reqData.incomeOnce;
                 order.info['income-monthly'] = reqData.incomeMonth;
-                if (reqData.oss)
-                    {order.info['idoss'] = reqData.oss;}
+                if (reqData.oss) { order.info['idoss'] = reqData.oss; }
 
                 order.deadline = await helper.calculateDeadline(order.sks.time);
                 order.date['cs-sks-organization'] = await helper.calculateDeadline(order.sks.time);
@@ -1873,7 +1884,7 @@ module.exports = {
                 break;
             case 'end-install-devices':
 
-                if (clientType.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl") {
+                if (clientType.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" || order.info.service == "rrl") {
                     order.status = 'client-notify';
                 } else {
                     order.status = 'network';
@@ -1887,8 +1898,7 @@ module.exports = {
 
                 order.info['income-once'] = reqData.incomeOnce;
                 order.info['income-monthly'] = reqData.incomeMonth;
-                if (reqData.oss)
-                    {order.info['idoss'] = reqData.oss;}
+                if (reqData.oss) { order.info['idoss'] = reqData.oss; }
 
                 order.deadline = await helper.calculateDeadline(order.stop.time);
                 order.date['cs-stop-organization'] = await helper.calculateDeadline(order.stop.time);
@@ -1897,7 +1907,7 @@ module.exports = {
                 notify.create(res.locals.__user, order, `start-stop-build`);
                 break;
             case 'end-build-stop':
-                if (clientType.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl") {
+                if (clientType.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" || order.info.service == "rrl") {
                     order.status = 'client-notify';
                 } else {
                     order.status = 'network';
@@ -1960,7 +1970,7 @@ module.exports = {
 
                 order.deadline = order.date['cs-network'] = await helper.calculateDeadline(organizationTime);
                 order.history.push(helper.historyGenerator('start-network', res.locals.__user));
-                
+
                 break;
         }
 
@@ -2027,7 +2037,7 @@ module.exports = {
 
             Object.assign(order.info, req.body);
 
-            serviceInfo.mustUpload.forEach( item => {
+            serviceInfo.mustUpload.forEach(item => {
                 if (req.files[item]) {
                     order.info[item] = saveFile(req.files[item]);
                 }
@@ -2126,7 +2136,7 @@ module.exports = {
 
     getStatPage: async (req, res) => {
         fs.readFile(path.resolve('cache/status.json'), (err, data) => {
-            if(err) {
+            if (err) {
                 return res.sendStatus(500);
             }
 
@@ -2337,7 +2347,7 @@ module.exports = {
 
         var { query, archive } = await helper.makeQuery(req, res);
 
-        var orders = await Order.get(query, archive).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query, { archive }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         orders.forEach(item => {
             item.status = stages[item.status];
@@ -2363,7 +2373,7 @@ module.exports = {
 
         query.special = undefined;
 
-        var orders = await Order.get(query, archive).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query, { archive }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         for (let i = 0; i < orders.length; i++) {
             orders[i].gusName = await helper.getGUSName(orders[i]);
@@ -2431,13 +2441,13 @@ module.exports = {
             res.redirect(req.path);
         }
 
-        const total = await Order.get(query, archive).count();
+        const total = await Order.get(query, { archive }).count();
 
-        var orders = await Order.get(query, archive)
+        var orders = await Order.get(query, { archive })
             .populate([populateClient, populateCity, populateStreet])
             .skip((pageNumber - 1) * perPage)
             .limit(perPage)
-            .sort({ [req.query.sort || 'id']: req.query.value || -1})
+            .sort({ [req.query.sort || 'id']: req.query.value || -1 })
             .lean();
 
         orders.forEach(item => {

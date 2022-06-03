@@ -25,29 +25,22 @@ module.exports = {
             return;
         }
 
-        var isInit = res.locals.__user.department.type == 'b2b' || res.locals.__user.department.type == 'b2o',
-            isAdmin = res.locals.__user.department.type == 'admin'
-
-        if(!isInit && !isAdmin) {
-          render(req, res, { view: '404' });
-          return;
-        }
         res.locals.clientTypeArr = await ClientType.find({}).select({ shortName: 1, _id: 1 })
 
-        var clients = await Client.paginate({}, { page: pageNumber, limit: perPage, populate: 'type'});
+        var clients = await Client.paginate({}, { page: pageNumber, limit: perPage, populate: 'type' });
 
-        if(req.query.name) {
+        if (req.query.name) {
             var val = req.query.name;
             val = val.replace(/\[/g, '');
             val = val.replace(/\]/g, '');
             val = val.replace(/\\/g, '');
             val = val.replace(/\(/g, '');
             val = val.replace(/\)/g, '');
-            var rgx =  new RegExp('' + val + '', 'i');
-            clients = await Client.paginate({name: {$regex: rgx}}, { page: pageNumber, limit: perPage, populate: 'type'});
+            var rgx = new RegExp('' + val + '', 'i');
+            clients = await Client.paginate({ name: { $regex: rgx } }, { page: pageNumber, limit: perPage, populate: 'type' });
         }
 
-        if(clients.total == 0) clients.total = 1;
+        if (clients.total == 0) clients.total = 1;
         res.locals.query = req.query;
         res.locals.clients = clients.docs;
         res.locals.pagers = {};
@@ -73,8 +66,6 @@ module.exports = {
             typeId: req.body.typeId
         };
 
-        var errors = [];
-
         var client = await Client.findOne({ name: obj.name, type: obj.typeId })
 
         if (client != null) {
@@ -86,7 +77,7 @@ module.exports = {
         cT.using(true);
 
         if (!cT) {
-            res.status(400).send({ errText: 'Не существует такого типа клиента в системе' });;
+            res.status(400).send({ errText: 'Не существует такого типа клиента в системе' });
             return;
         }
 
@@ -97,21 +88,22 @@ module.exports = {
 
         var done = await saver(newClient);
 
-        if(!!done) {
-            logger.info(`Created Client [${ done.type }] ${ done.name } `, res.locals.__user);
-            res.send({ created: true});
-        } else res.status(400).send({ errText: `Произошла ошибка при сохранении.
+        if (done) {
+            logger.info(`Created Client [${done.type}] ${done.name} `, res.locals.__user);
+            res.send({ created: true });
+        } else {
+            res.status(400).send({
+                errText: `Произошла ошибка при сохранении.
             Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
+        }
 
     },
 
     edit: async (req, res) => {
         var reqData = req.body,
-            clientType = reqData.obj.type,
-            prevClientType;
+            clientType = reqData.obj.type;
 
-
-        var client = await Client.findOne({ name: reqData.obj.name.trim(), type: clientType});
+        var client = await Client.findOne({ name: reqData.obj.name.trim(), type: clientType });
 
         if (client != null && client._id != reqData.obj._id) {
             res.status(400).send({ errText: 'Такой клиент уже существует в системе' });
@@ -127,7 +119,7 @@ module.exports = {
 
         client = await Client.findOne({ _id: reqData.obj._id }).populate('type');
 
-        if(client == null) {
+        if (client == null) {
             res.status(400).send({ errText: 'Попытка редактирования несуществующего клиента' });
             return;
         }
@@ -143,32 +135,28 @@ module.exports = {
 
         var done = await saver(client);
 
-        if (!!done) {
+        if (done) {
             cT.using(true);
             oldCT.using(false);
-            logger.info(`Edit Client [${ oldClient.type.shortName }] ${ oldClient.name } --> [${ done.type.shortName }] ${ done.name } `, res.locals.__user);
+            logger.info(`Edit Client [${oldClient.type.shortName}] ${oldClient.name} --> [${done.type.shortName}] ${done.name} `, res.locals.__user);
             res.send({ ok: 'ok' });
         } else {
-            res.status(400).send({ errText: `Произошла ошибка при сохранении.
+            res.status(400).send({
+                errText: `Произошла ошибка при сохранении.
                 Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
         }
 
     },
 
     delete: async (req, res) => {
-
-        var client = await Client.findById(req.body.obj._id).populate('type'),
-            _client = {
-                name: client.name,
-                type: client.type
-            };
+        var client = await Client.findById(req.body.obj._id).populate('type');
 
         if (client == null) {
             res.status(400).send({ errText: 'Попытка удаления несуществующего клиента' });
             return;
         }
 
-        var orders = await Order.find({'info.client': client}).lean(),
+        var orders = await Order.find({ 'info.client': client }).lean(),
             used = (orders.length > 0);
 
         var clientType = client.type;
@@ -187,12 +175,13 @@ module.exports = {
             logger.error(err.message);
         }
 
-        if (!!done) {
+        if (done) {
             clientType.using(false);
-            logger.info(`Delete Client [${ done.type.shortName }] ${ done.name } `, res.locals.__user);
+            logger.info(`Delete Client [${done.type.shortName}] ${done.name} `, res.locals.__user);
             res.send({ ok: 'ok' });
         } else {
-            res.status(400).send({ errText: `Произошла ошибка при сохранении.
+            res.status(400).send({
+                errText: `Произошла ошибка при сохранении.
                 Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
         }
 
