@@ -11,7 +11,8 @@ const { types } = require("../../common-data");
 const Client = require("../../models/Client");
 const City = require("../../models/City");
 const Provider = require("../../models/Provider");
-const { getProvider, getCity } = require("./helpers");
+const Order = require("../../models/Order");
+const { getProvider, getCity, isRelationNeeded, isIPNeeded, isCapacityNeeded } = require("./helpers");
 
 const clientValidator = async (value) => {
     if (!value) {
@@ -115,6 +116,36 @@ const requiredValidator = (field) => (value) => {
     }
 };
 
+const relationValidator = async (value, order) => {
+    if (isRelationNeeded(order)) {
+        if (!value) {
+            return `${FIELDS_HASH.relation} – обязательное поле для услуги "${order[FIELDS_HASH.service]}"`;
+        }
+
+        const relation = await Order.findOne({ id: value }).lean();
+
+        if (!relation) {
+            return `Заказ с ID ${value} не найден`;
+        }
+    }
+}
+
+const ipValidator = async (value, order) => {
+    if (isIPNeeded(order)) {
+        if (!value) {
+            return `${FIELDS_HASH.ips} – обязательное поле`;
+        }
+    }
+}
+
+const capacityValidator = async (value, order) => {
+    if (isCapacityNeeded(order)) {
+        if (!value) {
+            return `${FIELDS_HASH.capacity} – обязательное поле`;
+        }
+    }
+}
+
 const VALIDATE_FUNCTIONS = {
     [FIELDS_HASH.client]: clientValidator,
     [FIELDS_HASH.clientType]: clientTypeValidator,
@@ -122,14 +153,15 @@ const VALIDATE_FUNCTIONS = {
     [FIELDS_HASH.clientContact]: requiredValidator(FIELDS_HASH.clientContact),
     [FIELDS_HASH.cityName]: cityValidator,
     [FIELDS_HASH.coordinates]: requiredValidator(FIELDS_HASH.coordinates),
-    [FIELDS_HASH.capacity]: requiredValidator(FIELDS_HASH.capacity),
-    [FIELDS_HASH.ips]: requiredValidator(FIELDS_HASH.ips),
+    [FIELDS_HASH.capacity]: capacityValidator,
+    [FIELDS_HASH.ips]: ipValidator,
     [FIELDS_HASH.preStatus]: statusValidator,
     [FIELDS_HASH.status]: endStatusValidator,
     [FIELDS_HASH.provider]: providerValidator,
+    [FIELDS_HASH.relation]: relationValidator,
 };
 
-const empty = () => {};
+const empty = () => { };
 
 const validateField = (field) => {
     return VALIDATE_FUNCTIONS[field] || empty;

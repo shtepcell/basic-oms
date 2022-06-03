@@ -1,4 +1,4 @@
-const { FIELDS_HASH, CITY_TYPES_HASH } = require("./constants");
+const { FIELDS_HASH, CITY_TYPES_HASH, SERVICES_HASH, RELATION_NEEDED_SERVICES, IP_NEEDED_SERVICES, VOLUME_NEEDED_SERVICES } = require("./constants");
 
 module.exports.getProvider = (data) => {
     const value = data[FIELDS_HASH.provider];
@@ -22,3 +22,22 @@ module.exports.getCity = (data) => {
 
     return { type, name };
 };
+
+
+module.exports.getService = (data) => {
+    const service = data[FIELDS_HASH.service];
+
+    return SERVICES_HASH[service];
+};
+
+module.exports.isRelationNeeded = (data) => {
+    return RELATION_NEEDED_SERVICES.includes(this.getService(data));
+}
+
+module.exports.isIPNeeded = (data) => {
+    return IP_NEEDED_SERVICES.includes(this.getService(data));
+}
+
+module.exports.isCapacityNeeded = (data) => {
+    return VOLUME_NEEDED_SERVICES.includes(this.getService(data));
+}
