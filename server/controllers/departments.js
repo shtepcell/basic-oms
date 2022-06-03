@@ -8,6 +8,7 @@ const Render = require('../render'),
 
 const logger = require('./logger');
 const { citiesMapper } = require('./helpers/cities');
+const { getPriorityForDepartment } = require('./priority');
 
 module.exports = {
 
@@ -197,8 +198,10 @@ module.exports = {
         getOne: async (req, res) => {
             const department = await Department.findOne({ status: true, _id: req.params.id }).populate('cities');
 
+            console.log(await getPriorityForDepartment(req.params.id));
+
             if (!department) {
-                res.sendStatus(404);
+                return res.sendStatus(404);
             }
 
             return res.json(department);
