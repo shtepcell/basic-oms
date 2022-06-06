@@ -1,8 +1,12 @@
 block('order').elem('body').elemMod('tab', 'sks').content()(function () {
     const { user, order, adminEdit, dataset } = this.ctx;
-    const mustFill = (order.status == 'sks-pre' && user.department.type == 'net') || (order.status == 'pre' && user.department.type == 'net') ;
+    const mustFill = (order.status == 'sks-pre' && user.department.type == 'net') || (order.status == 'pre' && user.department.type == 'net');
 
     return [
+        order.tech.private && {
+            elem: 'banner',
+            content: 'ОГРАНИЧЕННЫЙ ДОСТУП',
+        },
         {
             block: 'field',
             elem: 'date-sks-pre',
@@ -64,7 +68,7 @@ block('order').elem('body').elemMod('tab', 'sks').content()(function () {
                 access: (adminEdit || mustFill),
             },
             order: order,
-            display: (mustFill ||  order.sks.time != undefined)
+            display: (mustFill || order.sks.time != undefined)
         },
         {
             block: 'field',

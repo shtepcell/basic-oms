@@ -1,14 +1,9 @@
 block('order').elem('body').elemMod('tab', 'info').content()(function () {
-
-    var ctx = this.ctx,
-        dataset = ctx.dataset,
-        user = ctx.user,
-        order = ctx.order,
-        adminEdit = ctx.adminEdit;
+    const { dataset, user, order, adminEdit } = this.ctx;
 
     var isOwner = (order.info.initiator.department._id == user.department._id + ''),
         isMatch = (order.status == 'client-match'),
-        isParticalPre = (order.status == 'gzp-pre' && order.stop.capability == true || ( order.gzp.need != undefined || (order.gzp.need && order.gzp.capability) ) ),
+        isParticalPre = (order.status == 'gzp-pre' && order.stop.capability == true || (order.gzp.need != undefined || (order.gzp.need && order.gzp.capability))),
         isNotify = (order.status == 'client-notify'),
         isEnd = (order.status == 'succes' || order.status == 'reject' || isNotify),
         isRelation = (order.info.relation && !isNaN(order.info.relation)),
@@ -16,6 +11,10 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
         mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0);
 
     return [
+        order.tech.private && {
+            elem: 'banner',
+            content: 'ОГРАНИЧЕННЫЙ ДОСТУП',
+        },
         {
             block: 'field',
             elem: 'initiator',
@@ -125,7 +124,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
         {
             elem: 'adress-info',
             elemMods: {
-                type: (order.info.coordinate)?'coordination':'location',
+                type: (order.info.coordinate) ? 'coordination' : 'location',
                 access: adminEdit
             },
             dataset: dataset,
@@ -193,7 +192,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
                 access: (adminEdit || isOwner && (isMatch || isParticalPre)),
                 visible: true
             },
-            display: ( ((isMatch || isParticalPre) && isOwner && mustIDOSS) || !!order.info['idoss'] )
+            display: (((isMatch || isParticalPre) && isOwner && mustIDOSS) || !!order.info['idoss'])
         },
         {
             block: 'field',
@@ -202,7 +201,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elemMods: {
                 access: (adminEdit || isOwner && (isMatch || isParticalPre))
             },
-            display: ( ((isMatch || isParticalPre) && isOwner) || !!order.info['income-monthly'])
+            display: (((isMatch || isParticalPre) && isOwner) || !!order.info['income-monthly'])
         },
         {
             block: 'field',
@@ -211,7 +210,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elemMods: {
                 access: (adminEdit || isOwner && (isMatch || isParticalPre))
             },
-            display: ( ((isMatch || isParticalPre) && isOwner) || !!order.info['income-monthly'])
+            display: (((isMatch || isParticalPre) && isOwner) || !!order.info['income-monthly'])
         },
         {
             block: 'field',
@@ -220,7 +219,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elemMods: {
                 access: (adminEdit || isOwner && isNotify)
             },
-            display: ( (isNotify && isOwner) || order.info.order)
+            display: ((isNotify && isOwner) || order.info.order)
         },
         {
             block: 'field',
@@ -229,7 +228,7 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
             elemMods: {
                 access: (adminEdit || isOwner && isNotify)
             },
-            display: ( (isNotify && isOwner) || order.info['date-sign'])
+            display: ((isNotify && isOwner) || order.info['date-sign'])
         },
         {
             elem: 'actions',

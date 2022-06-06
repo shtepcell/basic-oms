@@ -566,6 +566,8 @@ module.exports = {
     },
 
     getMainPageMy: async (req, res) => {
+        const { hasPrivateAccess } = res.locals;
+
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
@@ -604,9 +606,9 @@ module.exports = {
 
         };
 
-        const total = await Order.get({ $and: [query, subQ] }).count();
+        const total = await Order.get({ $and: [query, subQ] }, { private: hasPrivateAccess }).count();
 
-        var orders = await Order.get({ $and: [query, subQ] })
+        var orders = await Order.get({ $and: [query, subQ] }, { private: hasPrivateAccess })
             .populate([populateClient, populateCity, populateStreet])
             .skip((pageNumber - 1) * perPage)
             .limit(perPage)
@@ -733,6 +735,10 @@ module.exports = {
                     ]
                 }
                 break;
+            case 'special':
+                query = {
+                    private: true,
+                }
         }
 
         const total = await Order.get({ $and: [query, subQ] }).count();

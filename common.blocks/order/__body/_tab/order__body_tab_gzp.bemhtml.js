@@ -15,9 +15,13 @@ block('order').elem('body').elemMod('tab', 'gzp').content()(function () {
         return 'Информации по ГЗП нет!'
     }
 
-    const isShortPath = order.info.client.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" ||  order.info.service == "rrl";
+    const isShortPath = order.info.client.shortName == 'SOHO' || order.info.service == "sks" || order.info.service == "devices" || order.info.service == "rrl";
 
     return [
+        order.tech.private && {
+            elem: 'banner',
+            content: 'ОГРАНИЧЕННЫЙ ДОСТУП',
+        },
         {
             block: 'field',
             elem: 'date-gzp-pre',
