@@ -11,9 +11,13 @@ block('order').elem('body').elemMod('tab', 'stop').content()(function () {
     var isOwner = (user.department.type == 'b2o'),
         isPre = (order.status == 'all-pre' || order.status == 'stop-pre');
 
-    if(!order.date['cs-stop-pre'])
-        return 'Информации по ГЗП нет!'
+    if (!order.date['cs-stop-pre']) { return 'Информации по СТОП нет!' }
+
     return [
+        order.tech.private && {
+            elem: 'banner',
+            content: 'ОГРАНИЧЕННЫЙ ДОСТУП',
+        },
         {
             block: 'field',
             elem: 'cs-stop-pre',
@@ -63,7 +67,7 @@ block('order').elem('body').elemMod('tab', 'stop').content()(function () {
         {
             elem: 'stop-info',
             elemMods: {
-                capability: (order.stop.capability)?'yes':'no',
+                capability: (order.stop.capability) ? 'yes' : 'no',
                 access: (isOwner && isPre)
             },
             order: order,
