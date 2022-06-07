@@ -2409,6 +2409,8 @@ module.exports = {
         const { hasPrivateAccess } = res.locals;
 
         res.locals.data = await helper.getData(res);
+        res.locals.data.hasPrivateAccess = res.locals.hasPrivateAccess;
+
         res.locals.err = {};
 
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]

@@ -4,6 +4,7 @@ block('searcher')(
         const data = ctx.data;
         const query = ctx.query;
         const { services } = ctx.dataset;
+        const { hasPrivateAccess } = data;
 
         data.deps = data.deps.map(item => {
             return {
@@ -12,24 +13,24 @@ block('searcher')(
             }
         });
 
-        const srvs = Object.keys(services).map( (item) => {
+        const srvs = Object.keys(services).map((item) => {
             return {
                 val: item,
                 text: services[item]
             };
         });
 
-        srvs.unshift({text: 'Не выбрано'});
+        srvs.unshift({ text: 'Не выбрано' });
 
 
-        const types = ctx.dataset.types.map( item => {
+        const types = ctx.dataset.types.map(item => {
             return {
                 text: item,
                 val: item
             }
         });
 
-        types.unshift({text: 'Не выбрано'});
+        types.unshift({ text: 'Не выбрано' });
 
         return [
             {
@@ -128,6 +129,10 @@ block('searcher')(
                                                     {
                                                         val: '5',
                                                         text: 'Архивные'
+                                                    },
+                                                    hasPrivateAccess && {
+                                                        val: '6',
+                                                        text: 'Только специальные'
                                                     }
                                                 ]
                                             },

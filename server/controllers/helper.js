@@ -1,5 +1,4 @@
 /* eslint-disable no-case-declarations */
-const Order = require('../models/Order');
 const Department = require('../models/Department');
 const Account = require('../models/Account');
 const Client = require('../models/Client');
@@ -7,7 +6,6 @@ const Provider = require('../models/Provider');
 const City = require('../models/City');
 const Street = require('../models/Street');
 const Holiday = require('../models/Holiday');
-const Notify = require('../models/Notify');
 const Flag = require('../models/Flag');
 
 const common = require('../common-data');
@@ -356,6 +354,10 @@ module.exports = {
 
             if (query.func.indexOf('5') >= 0) {
                 archive = true;
+            }
+
+            if (query.func.indexOf('6') >= 0) {
+                qr['tech.private'] = true;
             }
         }
 
