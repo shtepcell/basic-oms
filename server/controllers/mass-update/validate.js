@@ -168,19 +168,21 @@ const validateField = (field) => {
 };
 
 const validateOrder = (order, id) => {
-    const promises = ALL_FIELDS.map((field) =>
-        validateField(field)(order[field], order)
-    );
+    const promises = ALL_FIELDS.map((field) => validateField(field)(order[field], order));
 
-    return Promise.all(promises).then((data) => {
-        const errors = data.filter(Boolean);
+    return Promise.all(promises)
+        .then((data) => {
+            const errors = data.filter(Boolean);
 
-        if (errors.length === 0) {
-            return null;
-        }
+            if (errors.length === 0) {
+                return null;
+            }
 
-        return { id: id + 2, errors };
-    });
+            return { id: id + 2, errors };
+        })
+        .catch(() => {
+            return { id: id + 2, errors: [`Что-то не так :(`] }
+        });
 };
 
 module.exports = { validateOrder };
