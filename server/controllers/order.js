@@ -2486,5 +2486,15 @@ module.exports = {
                 pagers: pagers
             }
         });
+    },
+
+    api: {
+        setPriority: async (req, res) => {
+            const { priority } = req.body;
+
+            await Order.update({ id: req.params.id }, { $set: { 'tech.priority': priority } });
+
+            return res.status(200).send({ status: 'ok' });
+        }
     }
 }

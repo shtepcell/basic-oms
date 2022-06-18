@@ -7,18 +7,17 @@ block('orders-table').elem('body')(
 
 
         var dom = [];
-        if(orders.length > 0) {
+        if (orders.length > 0) {
             for (var i = 0; i < orders.length; i++) {
                 var adress,
                     pause = false;
                 if (orders[i].pause) {
                     pause = orders[i].pause.status;
                 }
-                if(orders[i].isOld && !orders[i].info.street)
-                    adress = `${orders[i].info.adds}`;
+                if (orders[i].isOld && !orders[i].info.street) { adress = `${orders[i].info.adds}`; }
                 else {
                     adress = `${orders[i].info.city.type} ${orders[i].info.city.name}, `;
-                    adress += (orders[i].info.coordinate)?`${orders[i].info.coordinate}`:`${orders[i].info.street.type}${orders[i].info.street.name}, ${orders[i].info.adds}`;
+                    adress += (orders[i].info.coordinate) ? `${orders[i].info.coordinate}` : `${orders[i].info.street.type}${orders[i].info.street.name}, ${orders[i].info.adds}`;
                 }
                 orders[i].info.service = services[orders[i].info.service];
                 dom.push({
@@ -27,7 +26,8 @@ block('orders-table').elem('body')(
                     url: orders[i].id,
                     flag: flags[orders[i].id],
                     elemMods: {
-                        pause: pause
+                        pause: pause,
+                        priority: orders[i].tech.priority,
                     },
                     content: [
                         {

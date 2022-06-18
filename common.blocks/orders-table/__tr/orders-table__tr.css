@@ -21,5 +21,9 @@
 }
 
 .orders-table__tr_pause .orders-table__td:last-child {
-    background-image: linear-gradient(-90deg, lightblue 5%, white);
+    background-image: linear-gradient(-90deg, lightblue 5%, #ffffff00);
+}
+
+.orders-table__tr_priority {
+    background-color: #ff110040;
 }

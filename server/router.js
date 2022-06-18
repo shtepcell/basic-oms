@@ -226,4 +226,6 @@ module.exports = function (app, io) {
     app.delete("/api/admin/department/:id/city/:cityId", Department.api.removeCity);
 
     app.get("/api/admin/unused-cities", City.api.getUnused);
+
+    app.post("/api/order/:id/priority", Order.api.setPriority)
 };

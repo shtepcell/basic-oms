@@ -98,7 +98,6 @@ const DepartmentContent = ({ department, cities, update }) => {
                 <TextField name="name" label="Название отдела" className={styles.input} defaultValue={department.name} fullWidth required />
                 {isGus && <TextField name="priorityCapacity" label="Макс. кол-во приоритетных заявок" className={styles.input} defaultValue={department.priorityCapacity || 0} fullWidth type="number" required />}
                 <Button type="submit" variant="contained">Сохранить</Button>
-                {/* <Button className={styles.delete} variant="text" color="error">Удалить отдел</Button> */}
             </form>
             {isGus && (
                 <div className={styles.cities}>

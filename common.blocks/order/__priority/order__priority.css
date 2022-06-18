@@ -1,0 +1,23 @@
+.order__priority {
+    transition: all .15s ease-in-out;
+    position: absolute;
+    cursor: pointer;
+    color: #1c1c1c;
+
+    top: 70px;
+    left: 40px;
+    opacity: 0;
+}
+
+.order__head:hover .order__priority {
+    opacity: 1;
+}
+
+.order__head .order__priority_active {
+    opacity: 1;
+    color: #f10;
+}
+
+.order__head .order__priority:hover {
+    opacity: .7;
+}
