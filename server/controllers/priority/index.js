@@ -28,5 +28,4 @@ const isAviableToCreatePriorityOrder = async (cityId) => {
     return { status: 'ok', gus, countPO };
 }
 
-
-module.exports = { countPriorityOrders, isAviableToCreatePriorityOrder };
+module.exports = { countPriorityOrders, isAviableToCreatePriorityOrder, ACTIVE_STATUSES };

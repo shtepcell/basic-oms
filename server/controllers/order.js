@@ -2501,9 +2501,9 @@ module.exports = {
 
     api: {
         setPriority: async (req, res) => {
-            const { priority } = req.body;
+            const priority = req.body.priority === 'true' ? true : false;
 
-            if (priority === 'true') {
+            if (priority) {
                 const order = await Order.findOne({ id: req.params.id }).lean();
 
                 const { status, gus } = await isAviableToCreatePriorityOrder(order.info.city);
@@ -2513,7 +2513,9 @@ module.exports = {
                 }
             }
 
-            await Order.update({ id: req.params.id }, { $set: { 'tech.priority': priority } });
+            const historyEvent = helper.historyGenerator('priority', res.locals.__user, { priority });
+
+            await Order.update({ id: req.params.id }, { $set: { 'tech.priority': priority }, $push: { 'history': historyEvent } });
 
             return res.status(200).send({ status: 'ok' });
         }

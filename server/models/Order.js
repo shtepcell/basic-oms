@@ -256,7 +256,6 @@ schema.pre('save', async function (next) {
     next();
 })
 
-
 schema.plugin(mongoosePaginate);
 order = mongoose.model('Order', schema);
 

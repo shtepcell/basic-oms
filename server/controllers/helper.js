@@ -204,6 +204,10 @@ module.exports = {
                 ret.name = 'Включено через массовое заведение';
                 break;
 
+            case 'priority':
+                ret.name = opt.priority ? 'Повышение приоритета' : 'Понижение приоритета';
+                break;
+
             default:
                 ret.name = 'Неизвестное событие'
                 break;
