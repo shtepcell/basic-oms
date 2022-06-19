@@ -243,14 +243,10 @@ schema.statics.get = function (query = {}, flags) {
     }
 
     if (!private) {
-        if (query.tech) {
-            query.tech.private = private;
-        } else {
-            query.tech = { private };
-        }
+        query['tech.private'] = private;
     }
 
-    return order.find(query);
+    return order.find(query).sort('-tech.priority');
 };
 
 schema.pre('save', async function (next) {

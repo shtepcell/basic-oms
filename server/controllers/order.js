@@ -601,7 +601,6 @@ module.exports = {
                 { status: { $ne: 'client-match' } },
                 { status: { $ne: 'client-notify' } }
             ]
-
         };
 
         const total = await Order.get({ $and: [query, subQ] }, { private: hasPrivateAccess }).count();
