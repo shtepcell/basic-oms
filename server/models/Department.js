@@ -15,7 +15,10 @@ var schema = new Schema({
         type: String,
         required: true
     },
-    priorityCapacity: Number,
+    priorityCapacity: {
+        type: Number,
+        default: 0,
+    },
     cities: [
         {
             type: Schema.Types.ObjectId,

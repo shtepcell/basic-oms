@@ -912,6 +912,10 @@ module.exports = {
         return dep.name;
     },
 
+    getGUSByCity: async (cityId) => {
+        return await Department.findOne({ cities: cityId });
+    },
+
     getRespDepName: async (order) => {
         switch (order.status) {
             case 'gzp-pre':

@@ -79,6 +79,7 @@ const render = Render.render;
 
 const logger = require('./logger');
 const Settings = require('../models/Settings');
+const { isAviableToCreatePriorityOrder } = require('./priority');
 
 const isSKSPath = (order) => {
     return order.info.service === 'sks';
@@ -907,16 +908,13 @@ module.exports = {
 
         var order = {
             status: data.pre,
-            info: data
+            info: data,
+            tech: {},
         };
 
         if (isPrivate) {
             order.special = data.department;
-            order.tech = { private: isPrivate };
-        }
-
-        if (data.priority) {
-            order.tech = { priority: true };
+            order.tech.private = isPrivate;
         }
 
         var clnt = await validator.client(order.info.client);
@@ -1016,6 +1014,20 @@ module.exports = {
             case 'network':
                 kk['cs-network'] = deadline;
                 break;
+        }
+
+        if (order.status !== 'gzp-pre' && data.priority) {
+            return res.status(400).send({ errText: 'Заявка может быть приоритетной только для ГЗП' });
+        }
+
+        if (data.priority) {
+            const { status, gus } = await isAviableToCreatePriorityOrder(city._id);
+
+            if (status === 'error') {
+                return res.status(400).send({ errText: `Достигнуто максимальное кол-во активных приоритетных заказов (${gus.priorityCapacity}) для ${gus.name}` });
+            }
+
+            order.tech.priority = true;
         }
 
         var ordr = new Order({
@@ -2490,6 +2502,16 @@ module.exports = {
     api: {
         setPriority: async (req, res) => {
             const { priority } = req.body;
+
+            if (priority === 'true') {
+                const order = await Order.findOne({ id: req.params.id }).lean();
+
+                const { status, gus } = await isAviableToCreatePriorityOrder(order.info.city);
+
+                if (status === 'error') {
+                    return res.status(400).send({ errText: `Достигнуто максимальное кол-во активных приоритетных заказов (${gus.priorityCapacity}) для ${gus.name}` });
+                }
+            }
 
             await Order.update({ id: req.params.id }, { $set: { 'tech.priority': priority } });
 

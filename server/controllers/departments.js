@@ -91,6 +91,7 @@ module.exports = {
 
         dep.name = reqData.name || dep.name;
         dep.type = reqData.type || dep.type;
+        dep.priorityCapacity = reqData.priorityCapacity || dep.priorityCapacity;
 
         var done = await saver(dep);
         if (done) {

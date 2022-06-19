@@ -33,9 +33,16 @@ modules.define('order__priority', ['i-bem-dom', 'jquery'], function (provide, be
                 timeout: 5000,
                 context: this,
                 error: (err) => {
-                    console.error(err);
+                    try {
+                        const { errText } = err.responseJSON;
 
-                    alert('Что-то пошло не так');
+                        alert(errText);
+                    } catch (e) {
+                        console.error(err);
+                        console.error(e);
+
+                        alert('Что-то пошло не так');
+                    }
                 },
                 success: () => {
                     this.setMod('active', !state);
