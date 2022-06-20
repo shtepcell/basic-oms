@@ -45,6 +45,10 @@ function get(order, field) {
                 return _.get(order, 'date.network')
             }
         },
+        'date-shutdown': {
+            text: 'Дата отключения',
+            value: () => _.get(order, 'date.shutdown')
+        },
         'cms': {
             text: 'Номер СMS',
             value: () => _.get(order, 'info.cms')
@@ -210,7 +214,7 @@ function get(order, field) {
     return fields[field];
 }
 
-var def = ['id', 'date-init', 'initiator', 'date-on', 'date-end', 'cms', 'status', 'cs', 'department', 'typeOfClient',
+var def = ['id', 'date-init', 'initiator', 'date-on', 'date-end', 'date-shutdown', 'cms', 'status', 'cs', 'department', 'typeOfClient',
     'client', 'client-type', 'city', 'street', 'adds',
     'coordinate', 'service', 'volume', 'relation', 'ip',
     'init-add-info', 'income-once', 'income-monthly',
@@ -248,6 +252,7 @@ module.exports = {
                         case 'date-init':
                         case 'date-on':
                         case 'date-end':
+                        case 'date-shutdown':
                             ws.cell(i + 2, j + 1).date(val);
                             break;
                         default:
