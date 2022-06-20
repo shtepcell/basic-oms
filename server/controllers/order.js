@@ -79,7 +79,7 @@ const render = Render.render;
 
 const logger = require('./logger');
 const Settings = require('../models/Settings');
-const { isAviableToCreatePriorityOrder } = require('./priority');
+const { isAviableToCreatePriorityOrder, setPriority } = require('./priority');
 
 const isSKSPath = (order) => {
     return order.info.service === 'sks';
@@ -2503,21 +2503,16 @@ module.exports = {
         setPriority: async (req, res) => {
             const priority = req.body.priority === 'true' ? true : false;
 
-            if (priority) {
-                const order = await Order.findOne({ id: req.params.id }).lean();
+            try {
+                const { statusCode, status, errText } = await setPriority(req.params.id, priority, res.locals.__user);
 
-                const { status, gus } = await isAviableToCreatePriorityOrder(order.info.city);
+                return res.status(statusCode).send({ status, errText });
+            } catch (error) {
+                console.error(error);
 
-                if (status === 'error') {
-                    return res.status(400).send({ errText: `Достигнуто максимальное кол-во активных приоритетных заказов (${gus.priorityCapacity}) для ${gus.name}` });
-                }
+                return res.status(500).send({ status: 'error' });
             }
 
-            const historyEvent = helper.historyGenerator('priority', res.locals.__user, { priority });
-
-            await Order.update({ id: req.params.id }, { $set: { 'tech.priority': priority }, $push: { 'history': historyEvent } });
-
-            return res.status(200).send({ status: 'ok' });
         }
     }
 }

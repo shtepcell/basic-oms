@@ -28,4 +28,22 @@ const isAviableToCreatePriorityOrder = async (cityId) => {
     return { status: 'ok', gus, countPO };
 }
 
-module.exports = { countPriorityOrders, isAviableToCreatePriorityOrder, ACTIVE_STATUSES };
+const setPriority = async (orderId, priority, user) => {
+    if (priority) {
+        const order = await Order.findOne({ id: orderId }).lean();
+
+        const { status, gus } = await isAviableToCreatePriorityOrder(order.info.city);
+
+        if (status === 'error') {
+            return { statusCode: 400, status: 'error', errText: `Достигнуто максимальное кол-во активных приоритетных заказов (${gus.priorityCapacity}) для ${gus.name}` };
+        }
+    }
+
+    const historyEvent = helper.historyGenerator('priority', user, { priority });
+
+    await Order.update({ id: orderId }, { $set: { 'tech.priority': priority }, $push: { 'history': historyEvent } });
+
+    return { statusCode: 200, status: 'ok' };
+}
+
+module.exports = { countPriorityOrders, isAviableToCreatePriorityOrder, ACTIVE_STATUSES, setPriority };

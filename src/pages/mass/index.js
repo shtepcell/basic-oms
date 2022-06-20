@@ -95,6 +95,8 @@ export default function Mass({ isAdmin }) {
                             autoWidth
                         >
                             <MenuItem value="succes">Перевести в статус "Включен"</MenuItem>
+                            <MenuItem value="increase-priority">Повысить приоритет</MenuItem>
+                            <MenuItem value="decrease-priority">Понизить приоритет</MenuItem>
                         </Select>
                         <Button variant="outlined" disabled={loading || !ids} onClick={onClick} color={warningState ? "error" : "primary"}>
                             Отправить
