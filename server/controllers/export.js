@@ -89,7 +89,7 @@ function get(order, field) {
             text: 'Улица',
             value: () => {
                 return order.info.street ?
-                    `${order.info.street.type} ${order.info.street.name}`:
+                    `${order.info.street.type} ${order.info.street.name}` :
                     'улица не указана';
             }
         },
@@ -200,6 +200,10 @@ function get(order, field) {
         'stop-cost-monthly': {
             text: 'Операционные затраты ежемесячные СТОП',
             value: () => _.get(order, 'stop.cost-monthly')
+        },
+        'priority': {
+            text: 'Приоритетность',
+            value: () => _.get(order, 'tech.priority', false)
         }
     };
 
@@ -215,10 +219,10 @@ var def = ['id', 'date-init', 'initiator', 'date-on', 'date-end', 'cms', 'status
     'stop-capability', 'stop-provider', 'stop-contact',
     'stop-devices', 'stop-add-devices', 'stop-interfaces',
     'stop-time', 'stop-add-info', 'stop-org-info',
-    'stop-cost-once', 'stop-cost-monthly'];
+    'stop-cost-once', 'stop-cost-monthly', 'priority'];
 
 var reportDefs = ['id', 'date-start', 'date-plan', 'date-end', 'gzpDeadline', 'pause-time', 'status', 'department',
-    'client', 'city', 'street', 'adds'];
+    'client', 'city', 'street', 'adds', 'priority'];
 
 module.exports = {
 
