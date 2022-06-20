@@ -363,6 +363,10 @@ module.exports = {
             if (query.func.indexOf('6') >= 0) {
                 qr['tech.private'] = true;
             }
+
+            if (query.func.indexOf('7') >= 0) {
+                qr['tech.priority'] = true;
+            }
         }
 
         if (query.func1) {
