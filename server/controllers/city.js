@@ -6,6 +6,7 @@ const City = require('../models/City'),
     Render = require('../render'),
     render = Render.render;
 
+const { citiesMapper } = require('./helpers/cities');
 const logger = require('./logger');
 
 const alllowedUsageValues = ['true', 'false'];
@@ -164,7 +165,13 @@ module.exports = {
                 errText: `Произошла ошибка при сохранении.
                 Попробуйте еще раз. При повторении этой ошибки - сообщите разработчику.`});
         }
+    },
+    api: {
+        getUnused: async (req, res) => {
+            const cities = await City.find({ usage: false }).lean();
 
+            return res.json(citiesMapper(cities));
+        }
     }
 };
 

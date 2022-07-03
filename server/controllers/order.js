@@ -79,6 +79,7 @@ const render = Render.render;
 
 const logger = require('./logger');
 const Settings = require('../models/Settings');
+const { isAviableToCreatePriorityOrder, setPriority } = require('./priority');
 
 const isSKSPath = (order) => {
     return order.info.service === 'sks';
@@ -498,8 +499,7 @@ module.exports = {
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
-        }
-        else {
+        } else {
             return res.redirect(req.path);
         }
 
@@ -581,8 +581,7 @@ module.exports = {
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
-        }
-        else {
+        } else {
             return res.redirect(req.path);
         }
 
@@ -603,7 +602,6 @@ module.exports = {
                 { status: { $ne: 'client-match' } },
                 { status: { $ne: 'client-notify' } }
             ]
-
         };
 
         const total = await Order.get({ $and: [query, subQ] }, { private: hasPrivateAccess }).count();
@@ -802,8 +800,7 @@ module.exports = {
         if (!!(+pageNumber) && (+pageNumber) > 0) {
             pageNumber = +pageNumber;
             pagers[0] = pagerId;
-        }
-        else {
+        } else {
             return res.redirect(req.path);
         }
 
@@ -911,12 +908,13 @@ module.exports = {
 
         var order = {
             status: data.pre,
-            info: data
+            info: data,
+            tech: {},
         };
 
         if (isPrivate) {
             order.special = data.department;
-            order.tech = { private: isPrivate };
+            order.tech.private = isPrivate;
         }
 
         var clnt = await validator.client(order.info.client);
@@ -1016,6 +1014,20 @@ module.exports = {
             case 'network':
                 kk['cs-network'] = deadline;
                 break;
+        }
+
+        if (order.status !== 'gzp-pre' && data.priority) {
+            return res.status(400).send({ errText: 'Заявка может быть приоритетной только для ГЗП' });
+        }
+
+        if (data.priority) {
+            const { status, gus } = await isAviableToCreatePriorityOrder(city._id);
+
+            if (status === 'error') {
+                return res.status(400).send({ errText: `Достигнуто максимальное кол-во активных приоритетных заказов (${gus.priorityCapacity}) для ${gus.name}` });
+            }
+
+            order.tech.priority = true;
         }
 
         var ordr = new Order({
@@ -2485,5 +2497,22 @@ module.exports = {
                 pagers: pagers
             }
         });
+    },
+
+    api: {
+        setPriority: async (req, res) => {
+            const priority = req.body.priority === 'true' ? true : false;
+
+            try {
+                const { statusCode, status, errText } = await setPriority(req.params.id, priority, res.locals.__user);
+
+                return res.status(statusCode).send({ status, errText });
+            } catch (error) {
+                console.error(error);
+
+                return res.status(500).send({ status: 'error' });
+            }
+
+        }
     }
 }

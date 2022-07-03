@@ -2,7 +2,9 @@ import React, { useCallback, useState } from 'react';
 import { Typography,  Grid, Card, CardActions, CardContent, Button, Link, LinearProgress } from '@mui/material';
 import moment from 'moment'
 const texts = {
-    'succes': 'Перевести в стасус "Включен"'
+    'succes': 'Перевести в стасус "Включен"',
+    'increase-priority': 'Повысить приоритет',
+    'decrease-priority': 'Понизить приоритет',
 }
 
 import { useRequest } from '../../hooks/useRequest';
@@ -39,7 +41,7 @@ export const RequestsList = React.memo(({ requests, refresh, isAdmin }) => {
                                         {item.author.login}
                                     </Typography>
                                     <Typography variant="h6" component="div">
-                                        {texts[item.action]}
+                                        {texts[item.action] || item.action}
                                     </Typography>
                                     <Typography sx={{ mb: 1.5, fontSize: 14  }} color="text.secondary">
                                         {moment(item.created).format('DD.MM.YYYY HH:mm')}

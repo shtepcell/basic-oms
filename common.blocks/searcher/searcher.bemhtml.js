@@ -133,6 +133,10 @@ block('searcher')(
                                                     hasPrivateAccess && {
                                                         val: '6',
                                                         text: 'Только специальные'
+                                                    },
+                                                    {
+                                                        val: '7',
+                                                        text: 'Приоритетные'
                                                     }
                                                 ]
                                             },

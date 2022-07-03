@@ -1,0 +1,27 @@
+.root {
+    max-width: 700px;
+    padding: 0 18px;
+}
+
+.title {
+    margin-bottom: 20px;
+}
+
+.input {
+    display: block;
+    width: 400px;
+    margin: 32px 0;
+}
+
+.cities {
+    width: 400px;
+    margin: 40px 0;
+}
+
+.delete {
+    margin-left: 18px;
+}
+
+.suggest {
+    margin: 20px 0;
+}

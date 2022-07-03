@@ -204,6 +204,10 @@ module.exports = {
                 ret.name = 'Включено через массовое заведение';
                 break;
 
+            case 'priority':
+                ret.name = opt.priority ? 'Повышение приоритета' : 'Понижение приоритета';
+                break;
+
             default:
                 ret.name = 'Неизвестное событие'
                 break;
@@ -358,6 +362,10 @@ module.exports = {
 
             if (query.func.indexOf('6') >= 0) {
                 qr['tech.private'] = true;
+            }
+
+            if (query.func.indexOf('7') >= 0) {
+                qr['tech.priority'] = true;
             }
         }
 
@@ -910,6 +918,10 @@ module.exports = {
         if (order.special) dep = await Department.findOne({ _id: order.special });
         if (!dep) return 'Ответственный отдел не определён!';
         return dep.name;
+    },
+
+    getGUSByCity: async (cityId) => {
+        return await Department.findOne({ cities: cityId });
     },
 
     getRespDepName: async (order) => {

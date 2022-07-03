@@ -149,6 +149,7 @@ module.exports = function (app, io) {
     app.get("/admin/providers", Provider.getPage);
 
     app.all("/admin/*", Auth.isAdmin);
+    app.all("/v2/admin/*", Auth.isAdmin);
 
     app.get("/admin/users", Account.getPage);
 
@@ -169,6 +170,7 @@ module.exports = function (app, io) {
     app.post("/admin/departments/create", Department.create);
 
     app.get("/admin/departments/:id", Department.getOne);
+    app.get("/v2/admin/departments/:id", Department.getOneMiddleware);
     app.post("/admin/departments/:id", Department.edit);
     app.post("/admin/departments/:id/city", Department.addCity);
     app.post("/admin/departments/:id/delete", Department.delete);
@@ -218,4 +220,12 @@ module.exports = function (app, io) {
     app.post("/api/mass/upload", Mass.validateOrders);
     app.post("/api/mass/import", Mass.importOrders);
     app.patch("/api/mass/:id", Mass.updateRequest);
+
+    app.get("/api/admin/department/:id", Department.api.getOne);
+    app.post("/api/admin/department/:id/city", Department.api.addCity);
+    app.delete("/api/admin/department/:id/city/:cityId", Department.api.removeCity);
+
+    app.get("/api/admin/unused-cities", City.api.getUnused);
+
+    app.post("/api/order/:id/priority", Order.api.setPriority)
 };

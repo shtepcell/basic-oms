@@ -26,10 +26,10 @@ block('order').elem('head').content()(function () {
         order.id, clientText, order.info.contact, adressText, services[order.info.service], order.info.volume, order.info.add_info,
     ].filter(Boolean).join(' | ');
 
-    if(order.pause.status) pause = ' (на паузе)';
-    if(order.requestPause.status) pause = ' (запрос на паузу)';
+    if (order.pause.status) pause = ' (на паузе)';
+    if (order.requestPause.status) pause = ' (запрос на паузу)';
 
-    if(order.resp) {
+    if (order.resp) {
         resp = {
             elem: 'head-item',
             content: [
@@ -63,45 +63,64 @@ block('order').elem('head').content()(function () {
                 view: 'plain'
             },
             mix: {
-              block: 'order',
-              elem: 'clipboard',
-              js: {
-                str: clipboardText
-              }
+                block: 'order',
+                elem: 'clipboard',
+                js: {
+                    str: clipboardText
+                }
             },
             icon: {
                 block: 'icon',
                 attrs: {
-                  title: 'Нажмите, чтобы скопировать данные'
+                    title: 'Нажмите, чтобы скопировать данные'
                 },
                 url: '/copy.png'
             }
         },
         {
-            block : 'link',
-            mix: {
-              block: 'order',
-              elem: 'dublicate',
-              elemMods: {
-                visible: isInit
-              }
+            elem: 'priority',
+            elemMods: {
+                active: order.tech.priority,
             },
-            mods : { theme : 'islands', size : 'm' },
-            url : `/init?rel=${order.id}`,
-            content : 'Дублировать'
+            attrs: {
+                title: 'Приоритетность'
+            },
+            content: {
+                html: `<svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.5757 1.42426C11.81 1.18995 12.1899 1.18995 12.4243 1.42426L22.5757 11.5757C22.81 11.81 22.8101 12.1899 22.5757 12.4243L12.4243 22.5757C12.19 22.81 11.8101 22.8101 11.5757 22.5757L1.42426 12.4243C1.18995 12.19 1.18995 11.8101 1.42426 11.5757L11.5757 1.42426Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 7L16 11M12 7L8 11.1667M12 7L12 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                `
+            },
+            js: {
+                orderId: order.id,
+            },
         },
         {
-            block : 'link',
+            block: 'link',
             mix: {
-              block: 'order',
-              elem: 'change',
-              elemMods: {
-                visible: isOn && isInit && hasVolume
-              }
+                block: 'order',
+                elem: 'dublicate',
+                elemMods: {
+                    visible: isInit
+                }
             },
-            mods : { theme : 'islands', size : 'm' },
-            url : `/change-order/${order.id}`,
-            content : 'Изменить заказ'
+            mods: { theme: 'islands', size: 'm' },
+            url: `/init?rel=${order.id}`,
+            content: 'Дублировать'
+        },
+        {
+            block: 'link',
+            mix: {
+                block: 'order',
+                elem: 'change',
+                elemMods: {
+                    visible: isOn && isInit && hasVolume
+                }
+            },
+            mods: { theme: 'islands', size: 'm' },
+            url: `/change-order/${order.id}`,
+            content: 'Изменить заказ'
         },
         {
             block: 'dropdown',
@@ -111,11 +130,11 @@ block('order').elem('head').content()(function () {
                 size: 'm'
             },
             mix: {
-              block: 'order',
-              elem: 'direct',
-              elemMods: {
-                visible: isAdmin
-              }
+                block: 'order',
+                elem: 'direct',
+                elemMods: {
+                    visible: isAdmin
+                }
             },
             switcher: {
                 block: 'link',
@@ -127,8 +146,8 @@ block('order').elem('head').content()(function () {
                 content: 'Изменить этап'
             },
             popup: {
-              block: 'stages',
-              id: order.id
+                block: 'stages',
+                id: order.id
             }
         },
         {

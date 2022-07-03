@@ -45,6 +45,10 @@ function get(order, field) {
                 return _.get(order, 'date.network')
             }
         },
+        'date-shutdown': {
+            text: 'Дата отключения',
+            value: () => _.get(order, 'date.shutdown')
+        },
         'cms': {
             text: 'Номер СMS',
             value: () => _.get(order, 'info.cms')
@@ -89,7 +93,7 @@ function get(order, field) {
             text: 'Улица',
             value: () => {
                 return order.info.street ?
-                    `${order.info.street.type} ${order.info.street.name}`:
+                    `${order.info.street.type} ${order.info.street.name}` :
                     'улица не указана';
             }
         },
@@ -200,13 +204,17 @@ function get(order, field) {
         'stop-cost-monthly': {
             text: 'Операционные затраты ежемесячные СТОП',
             value: () => _.get(order, 'stop.cost-monthly')
+        },
+        'priority': {
+            text: 'Приоритетность',
+            value: () => _.get(order, 'tech.priority', false)
         }
     };
 
     return fields[field];
 }
 
-var def = ['id', 'date-init', 'initiator', 'date-on', 'date-end', 'cms', 'status', 'cs', 'department', 'typeOfClient',
+var def = ['id', 'date-init', 'initiator', 'date-on', 'date-end', 'date-shutdown', 'cms', 'status', 'cs', 'department', 'typeOfClient',
     'client', 'client-type', 'city', 'street', 'adds',
     'coordinate', 'service', 'volume', 'relation', 'ip',
     'init-add-info', 'income-once', 'income-monthly',
@@ -215,10 +223,10 @@ var def = ['id', 'date-init', 'initiator', 'date-on', 'date-end', 'cms', 'status
     'stop-capability', 'stop-provider', 'stop-contact',
     'stop-devices', 'stop-add-devices', 'stop-interfaces',
     'stop-time', 'stop-add-info', 'stop-org-info',
-    'stop-cost-once', 'stop-cost-monthly'];
+    'stop-cost-once', 'stop-cost-monthly', 'priority'];
 
 var reportDefs = ['id', 'date-start', 'date-plan', 'date-end', 'gzpDeadline', 'pause-time', 'status', 'department',
-    'client', 'city', 'street', 'adds'];
+    'client', 'city', 'street', 'adds', 'priority'];
 
 module.exports = {
 
@@ -244,6 +252,7 @@ module.exports = {
                         case 'date-init':
                         case 'date-on':
                         case 'date-end':
+                        case 'date-shutdown':
                             ws.cell(i + 2, j + 1).date(val);
                             break;
                         default:

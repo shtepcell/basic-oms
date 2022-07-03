@@ -204,6 +204,10 @@ var schema = new Schema({
             type: Boolean,
             default: false,
         },
+        priority: {
+            type: Boolean,
+            default: false,
+        },
     }
 }, {
     usePushEach: true
@@ -239,14 +243,10 @@ schema.statics.get = function (query = {}, flags) {
     }
 
     if (!private) {
-        if (query.tech) {
-            query.tech.private = private;
-        } else {
-            query.tech = { private };
-        }
+        query['tech.private'] = private;
     }
 
-    return order.find(query);
+    return order.find(query).sort('-tech.priority');
 };
 
 schema.pre('save', async function (next) {
@@ -255,7 +255,6 @@ schema.pre('save', async function (next) {
     }
     next();
 })
-
 
 schema.plugin(mongoosePaginate);
 order = mongoose.model('Order', schema);

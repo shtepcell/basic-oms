@@ -1,4 +1,5 @@
-.department
-{
-    font-family: sans-serif;
+.department__iframe {
+    border: none;
+    width: 100%;
+    height: 700px;
 }
