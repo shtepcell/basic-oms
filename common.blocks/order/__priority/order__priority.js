@@ -36,7 +36,7 @@ modules.define('order__priority', ['i-bem-dom', 'jquery'], function (provide, be
                     try {
                         const { errText } = err.responseJSON;
 
-                        alert(errText);
+                        alert(errText || 'Что-то пошло не так');
                     } catch (e) {
                         console.error(err);
                         console.error(e);

@@ -227,5 +227,5 @@ module.exports = function (app, io) {
 
     app.get("/api/admin/unused-cities", City.api.getUnused);
 
-    app.post("/api/order/:id/priority", Order.api.setPriority)
+    app.post("/api/order/:id/priority", initiatorAndAdminFilter, Order.api.setPriority)
 };

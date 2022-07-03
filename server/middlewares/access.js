@@ -8,7 +8,7 @@ const departmentTypeFilter = (types) => (req, res, next) => {
         return next();
     } else {
         if (req.xhr) {
-            return res.status(403).send({ error: 'Нет доступа' });
+            return res.status(403).send({ error: 'Нет доступа', errText: 'Нет доступа' });
         }
 
         return render(req, res, { view: '403' });
