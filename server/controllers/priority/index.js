@@ -13,7 +13,8 @@ const countPriorityOrders = async (departmentID) => {
         return 0;
     }
 
-    return Order.find({ $or: citiesQuery }).where('status').in(ACTIVE_STATUSES).count();
+    console.log()
+    return await Order.find({ $or: citiesQuery }).where('status').in(ACTIVE_STATUSES).where('tech.priority').eq(true).count();
 }
 
 const isAviableToCreatePriorityOrder = async (cityId) => {
@@ -21,6 +22,7 @@ const isAviableToCreatePriorityOrder = async (cityId) => {
 
     const countPO = await countPriorityOrders(gus._id);
 
+    console.log(countPO)
     if (countPO >= gus.priorityCapacity) {
         return { status: 'error', gus, countPO };
     }
