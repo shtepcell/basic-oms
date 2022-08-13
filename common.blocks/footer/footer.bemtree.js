@@ -1,4 +1,6 @@
 block('footer').content()(function() {
+    const company = this.data.locals.company;
+
     return [
         {
             block: 'link',
@@ -9,7 +11,7 @@ block('footer').content()(function() {
             },
             content: {
                 block: 'icon',
-                url: '/logo.jpg'
+                url: company === 'm' ? '/logo-m.jpg' : '/logo-t.png'
             }
         },
         {

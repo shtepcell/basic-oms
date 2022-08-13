@@ -4,6 +4,8 @@ block('root').replace()(function() {
         meta = data.meta || {},
         og = meta.og || {};
 
+    const company = data.locals.company;
+
     if (ctx.context) return ctx.context;
 
     const bundle = data.view.slice(5, data.view.length) || 'index';
@@ -11,7 +13,7 @@ block('root').replace()(function() {
     return {
         block: 'page',
         title: data.title,
-        favicon: '/favicon.ico',
+        favicon: `/favicon-${company}.ico`,
         styles: [
             {
                 elem: 'css',

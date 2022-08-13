@@ -2,8 +2,7 @@ Object.assign || (Object.assign = require("object-assign"));
 require("dotenv").config();
 
 const moment = require("moment");
-const next = require("next");
-const Auth = require("./controllers/auth");
+const nextJs = require("next");
 const Mass = require("./controllers/mass");
 
 var fs = require("fs"),
@@ -33,7 +32,7 @@ var fs = require("fs"),
 
 require("debug-http")();
 
-const nextApp = next({ dev: isDev });
+const nextApp = nextJs({ dev: isDev });
 const handle = nextApp.getRequestHandler();
 
 nextApp.prepare().catch((ex) => {
@@ -55,22 +54,36 @@ morgan.token("user", function (req, res) {
 });
 
 morgan.token("smart-url", function (req, res) {
-    if (req.originalUrl.length > 90)
-        {return (
+    if (req.originalUrl.length > 90) {
+        return (
             req.originalUrl.substring(0, 70) +
             ".-.-.-." +
             req.originalUrl.substring(
                 req.originalUrl.length - 20,
                 req.originalUrl.length
             )
-        );}
+        );
+    }
     return req.originalUrl;
+});
+
+app.use((req, res, next) => {
+    const company = /miranda\-media/.test(req.hostname) ? "m" : "t";
+
+    res.locals.company = company;
+    next();
 });
 
 app.disable("x-powered-by")
     .enable("trust proxy")
     .use(compression())
-    .use(favicon(path.join(staticFolder, "favicon.ico")))
+    .use((req, res, next) =>
+        favicon(path.join(staticFolder, `favicon-${res.locals.company}.ico`))(
+            req,
+            res,
+            next
+        )
+    )
     .use(serveStatic(staticFolder))
     .use(
         morgan(
