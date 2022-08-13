@@ -73,7 +73,7 @@ export default function Mass({ isAdmin }) {
         <div className={styles.page}>
             <Head>
                 <title>Массовые изменения</title>
-                <link rel="icon" href="/favicon.ico" />
+                <link rel="icon" href="/favicon-m.ico" />
             </Head>
             <main className={styles.content}>
                 <Typography className={styles.title} variant="h3">Массовые изменения в СУЗ</Typography>

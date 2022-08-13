@@ -14,7 +14,11 @@ const Provider = require("./controllers/provider");
 const Street = require("./controllers/street");
 const Mass = require("./controllers/mass");
 const fileUpload = require("express-fileupload");
-const { onlyInitiatorFilter, initiatorAndAdminFilter, privateOrder } = require("./middlewares/access");
+const {
+    onlyInitiatorFilter,
+    initiatorAndAdminFilter,
+    privateOrder,
+} = require("./middlewares/access");
 
 var Render = require("./render"),
     render = Render.render;
@@ -140,7 +144,7 @@ module.exports = function (app, io) {
 
     app.post("/notifies/:id", Notify.read);
 
-    app.get("/admin/clients", initiatorAndAdminFilter, Client.getPage)
+    app.get("/admin/clients", initiatorAndAdminFilter, Client.getPage);
     app.delete("/admin/clients", initiatorAndAdminFilter, Client.delete);
     app.post("/admin/clients/change", initiatorAndAdminFilter, Client.edit);
     app.post("/admin/clients/add", initiatorAndAdminFilter, Client.create);
@@ -223,9 +227,16 @@ module.exports = function (app, io) {
 
     app.get("/api/admin/department/:id", Department.api.getOne);
     app.post("/api/admin/department/:id/city", Department.api.addCity);
-    app.delete("/api/admin/department/:id/city/:cityId", Department.api.removeCity);
+    app.delete(
+        "/api/admin/department/:id/city/:cityId",
+        Department.api.removeCity
+    );
 
     app.get("/api/admin/unused-cities", City.api.getUnused);
 
-    app.post("/api/order/:id/priority", initiatorAndAdminFilter, Order.api.setPriority)
+    app.post(
+        "/api/order/:id/priority",
+        initiatorAndAdminFilter,
+        Order.api.setPriority
+    );
 };
