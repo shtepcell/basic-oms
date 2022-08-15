@@ -14,7 +14,7 @@ block('footer').content()(function() {
                 url: company === 'm' ? '/logo-m.jpg' : '/logo-t.png'
             }
         },
-        {
+        company === 'm' && {
             block: 'footer',
             elem: 'support',
             content: [
