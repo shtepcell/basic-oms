@@ -3,6 +3,7 @@ import { Typography,  Grid, Card, CardActions, CardContent, Button, Link, Linear
 import moment from 'moment'
 const texts = {
     'succes': 'Перевести в стасус "Включен"',
+    'shutdown': 'Перевести в стасус "Отключен"',
     'increase-priority': 'Повысить приоритет',
     'decrease-priority': 'Понизить приоритет',
 }
