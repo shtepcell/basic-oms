@@ -226,7 +226,7 @@ const isReject = {
 }
 
 schema.statics.get = function (query = {}, flags) {
-    const { archive = false, private = false } = flags || {};
+    const { archive = false, private = false, sort = true } = flags || {};
 
     const old = new Date();
     old.setDate(-90);
@@ -246,7 +246,11 @@ schema.statics.get = function (query = {}, flags) {
         query['tech.private'] = private;
     }
 
-    return order.find(query).sort('-tech.priority');
+    if (sort) {
+        return order.find(query).sort('-tech.priority');
+    }
+
+    return order.find(query);
 };
 
 schema.pre('save', async function (next) {
