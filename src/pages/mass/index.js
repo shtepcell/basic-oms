@@ -95,6 +95,7 @@ export default function Mass({ isAdmin }) {
                             autoWidth
                         >
                             <MenuItem value="succes">Перевести в статус "Включен"</MenuItem>
+                            <MenuItem value="shutdown">Перевести в статус "Отключен"</MenuItem>
                             <MenuItem value="increase-priority">Повысить приоритет</MenuItem>
                             <MenuItem value="decrease-priority">Понизить приоритет</MenuItem>
                         </Select>

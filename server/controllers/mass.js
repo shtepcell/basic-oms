@@ -3,6 +3,7 @@ const Request = require("../models/Request");
 const { closeOrder } = require("./mass-update/closeOrder");
 const { validateOrders, importOrders } = require("./mass-update/import");
 const { increasePriority, decreasePriority } = require("./mass-update/priority");
+const { shutdownOrder } = require("./mass-update/shutdownOrder");
 
 const populateAuthor = {
     path: "author",
@@ -112,6 +113,10 @@ const updateRequest = async (req, res) => {
 
         if (request.action === "succes") {
             await closeOrder(request.orders, request.author.login);
+        }
+
+        if (request.action === "shutdown") {
+            await shutdownOrder(request.orders, request.author.login);
         }
 
         if (request.action === "increase-priority") {
