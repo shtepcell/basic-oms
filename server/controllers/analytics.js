@@ -9,7 +9,7 @@ const getAnal = (array) => {
 };
 
 const getAnalytics = async (req, res) => {
-  const orders = await Order.get().lean();
+  const orders = await Order.get().select('date id').lean();
 
   const collectedData = orders.reduce(
     (acc, { date, id }) => {
