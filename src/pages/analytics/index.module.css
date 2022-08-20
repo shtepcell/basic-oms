@@ -1,0 +1,11 @@
+.root {
+    padding: 16px;
+}
+
+.section {
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+
+    gap: 12px;
+}
