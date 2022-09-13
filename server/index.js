@@ -95,7 +95,7 @@ app.disable("x-powered-by")
     .use(bodyParser.urlencoded({ extended: true }))
     .use(
         expressSession({
-            name: "basic-oms",
+            name: process.env.DATABASE_NAME,
             resave: false,
             saveUninitialized: false,
             cookie: {
