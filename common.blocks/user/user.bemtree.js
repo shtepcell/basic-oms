@@ -88,7 +88,7 @@ block('user').content()(function () {
             input: {
                 type: 'text',
                 name: 'email',
-                placeholder: 'example@miranda-media.ru'
+                placeholder: 'example@mail.ru'
             }
         },
         {
@@ -99,7 +99,7 @@ block('user').content()(function () {
             input: {
                 type: 'text',
                 name: 'phone',
-                placeholder: '+79787654321'
+                placeholder: '+71111111111'
             }
         },
         {

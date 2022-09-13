@@ -1,10 +1,12 @@
 'use strict';
 const nodemailer = require('nodemailer');
 const { notifies } = require('../common-data');
-const isDev = process.env.NODE_ENV === 'development';
+
+const { NODE_ENV, MAILER_HOST, PROJECT_HOST, DOMAIN_HOST } = process.env;
+const isDev = NODE_ENV === 'development';
 
 const transporter = nodemailer.createTransport({
-    host: 'relay1.miranda-media.ru',
+    host: MAILER_HOST,
     port: 25,
     secure: false
 });
@@ -34,7 +36,7 @@ module.exports = {
 
     sendMail(order, recipients, type) {
         const mailOptions = {
-            from: 'ops@miranda-media.ru'
+            from: `ops@${DOMAIN_HOST}`
         }
 
         const to = getRecipients(recipients);
@@ -65,7 +67,7 @@ module.exports = {
 
         mailOptions.subject = subject;
 
-        mailOptions.html = header + `<p style="font-size: 12pt;"><a href="http://ops.miranda-media.ru/order/${order.id}">` +
+        mailOptions.html = header + `<p style="font-size: 12pt;"><a href="http://${PROJECT_HOST}/order/${order.id}">` +
             `Заказ #${order.id} от [${order.info.client.type.shortName}] ${order.info.client.name}</a> - "${notifies[type]}"</p>` +
             footer
 

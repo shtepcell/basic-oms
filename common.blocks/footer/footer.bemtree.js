@@ -4,7 +4,6 @@ block('footer').content()(function() {
     return [
         {
             block: 'link',
-            url: 'http://www.miranda-media.ru/',
             mix: {
                 block: 'footer',
                 elem: 'company'

@@ -22,7 +22,7 @@ var fs = require("fs"),
     staticFolder = config.staticFolder,
     Render = require("./render"),
     render = Render.render,
-    port = process.env.PORT || config.defaultPort,
+    port = process.env.SERVER_PORT || 3000,
     isSocket = isNaN(port),
     isDev = process.env.NODE_ENV !== "production",
     mongoose = require("./controllers/connect"),
@@ -68,7 +68,7 @@ morgan.token("smart-url", function (req, res) {
 });
 
 app.use((req, res, next) => {
-    const company = /miranda\-media/.test(req.hostname) ? "m" : "t";
+    const company = req.hostname === process.env.PROJECT_HOST ? "m" : "t";
 
     res.locals.company = company;
     next();

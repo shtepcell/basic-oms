@@ -6,7 +6,7 @@ module.exports = function (opt, data) {
         meta: {
             description: 'Страница входа в СУЗ',
             og: {
-                url: 'https://suz.miranda-media.ru',
+                url: process.env.PROJECT_HOST,
                 siteName: 'СУЗ 2.0'
             }
         },

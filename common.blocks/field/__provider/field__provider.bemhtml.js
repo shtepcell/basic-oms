@@ -55,7 +55,7 @@ block('field').elem('provider').elemMod('access', true).content()((node, { order
                                 'has-dataprovider' : 'adress'
                             },
                             val: (providerExist) ? order.stop.provider.name : '',
-                            placeholder: 'Миранда-медиа',
+                            placeholder: 'Провайдер',
                             name: 'provider',
                             dataprovider: {
                                 data: dataset['providers']
