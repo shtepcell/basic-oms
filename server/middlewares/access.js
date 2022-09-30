@@ -21,7 +21,7 @@ const initiatorAndAdminFilter = departmentTypeFilter(['b2o', 'b2b', 'special', '
 const privateOrder = async (req, res, next) => {
     const order = await Order.findOne({ id: req.params.id }).select('tech.private');
 
-    if (order.tech.private && !res.locals.hasPrivateAcces) {
+    if (order.tech.private && !res.locals.hasPrivateAccess) {
         if (req.xhr) {
             return res.status(403).send({ error: 'Нет доступа' });
         }
