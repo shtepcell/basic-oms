@@ -227,7 +227,10 @@ module.exports = function (app, io) {
   app.post("/api/mass/import", Mass.importOrders);
   app.patch("/api/mass/:id", Mass.updateRequest);
 
-  app.get("/api/admin/users", Account.getAll);
+  app.get("/api/admin/users", Account.api.getAll);
+  app.patch("/api/admin/users/:id", Account.api.patch);
+  app.delete("/api/admin/users/:id", Account.api.delete);
+  app.patch("/api/admin/users/:id/password", Account.api.resetPassword);
 
   app.get("/api/departments", Department.api.getAll);
 

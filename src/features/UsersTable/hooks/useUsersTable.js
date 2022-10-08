@@ -5,7 +5,12 @@ import PasswordIcon from "@mui/icons-material/Password";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useDepartments } from "src/api/department";
-import { useAdminUsers } from "src/api/users";
+import {
+  deleteUser,
+  resetPasswordUser,
+  updateUser,
+  useAdminUsers,
+} from "src/api/users";
 import {
   accessGetter,
   accessSetter,
@@ -29,22 +34,70 @@ const Actions = ({ onDelete, onPasswordChange }) => [
 ];
 
 export const useUsersTable = () => {
-  const { users, error, loading } = useAdminUsers();
+  const { users, error, loading, mutate } = useAdminUsers();
   const { departments } = useDepartments();
+  const [selectedUser, setSelectedUser] = React.useState(null);
+  const [dialogType, setDialogType] = React.useState(null);
+  const [requestState, setRequestState] = React.useState(null);
 
-  const onEdit = React.useCallback((params) => {
-    const { value, field } = params;
-
-    console.log(field, value);
+  const onSnackbarClose = React.useCallback(() => {
+    setRequestState(null);
   }, []);
 
-  const onDelete = React.useCallback((params) => {
-    console.log("delete");
+  const onSuccess = React.useCallback((res) => {
+    setRequestState("success");
+
+    return res;
   }, []);
 
-  const onPasswordChange = React.useCallback((params) => {
-    console.log("pass change");
+  const onError = React.useCallback((res) => {
+    setRequestState("error");
+
+    return res;
   }, []);
+
+  const onEdit = React.useCallback((row) => {
+    return updateUser(row._id, row).then(onSuccess);
+  }, []);
+
+  const onAgreeDelete = React.useCallback(() => {
+    deleteUser(selectedUser)
+      .then(() => {
+        setDialogType(null);
+        mutate();
+        onSuccess();
+      })
+      .catch(onError);
+  }, [selectedUser]);
+
+  const onAgreeReset = React.useCallback(() => {
+    resetPasswordUser(selectedUser)
+      .then(() => {
+        setDialogType(null);
+        onSuccess();
+      })
+      .catch(onError);
+  }, [selectedUser]);
+
+  const onCloseDialog = React.useCallback(() => {
+    setDialogType(null);
+  }, []);
+
+  const onDelete = React.useCallback(
+    (id) => () => {
+      setSelectedUser(id);
+      setDialogType("delete");
+    },
+    []
+  );
+
+  const onPasswordChange = React.useCallback(
+    (id) => () => {
+      setSelectedUser(id);
+      setDialogType("reset");
+    },
+    []
+  );
 
   const columns = React.useMemo(
     () => [
@@ -57,7 +110,13 @@ export const useUsersTable = () => {
         editable: true,
         hide: true,
       },
-      { field: "phone", headerName: "Телефон", width: 350, hide: true },
+      {
+        field: "phone",
+        headerName: "Телефон",
+        width: 350,
+        hide: true,
+        editable: true,
+      },
       {
         field: "department",
         headerName: "Отдел",
@@ -69,7 +128,7 @@ export const useUsersTable = () => {
         valueSetter: departmentSetter(departments),
       },
       {
-        field: "mirandaAccess",
+        field: "access_miranda",
         type: "boolean",
         editable: true,
         headerName: "Miranda",
@@ -78,7 +137,7 @@ export const useUsersTable = () => {
         valueSetter: accessSetter("miranda"),
       },
       {
-        field: "mirtelekomAccess",
+        field: "access_mirtelekom",
         type: "boolean",
         editable: true,
         headerName: "Mirtelekom",
@@ -89,7 +148,11 @@ export const useUsersTable = () => {
       {
         field: "actions",
         type: "actions",
-        getActions: () => Actions({ onDelete, onPasswordChange }),
+        getActions: (params) =>
+          Actions({
+            onDelete: onDelete(params.id),
+            onPasswordChange: onPasswordChange(params.id),
+          }),
       },
     ],
     [departments]
@@ -101,5 +164,18 @@ export const useUsersTable = () => {
     rows: users || [],
     columns,
     onEdit,
+    deleteDialogOpened: dialogType === "delete",
+
+    onAgreeDelete,
+    onCloseDialog,
+
+    successSnackbarOpened: requestState === "success",
+    errorSnackbarOpened: requestState === "error",
+    onSnackbarClose,
+
+    resetDialogOpened: dialogType === "reset",
+    onAgreeReset,
+
+    onError,
   };
 };

@@ -35,6 +35,7 @@ export default function MyApp(props) {
             <Head>
                 <meta name="viewport" content="initial-scale=1, width=device-width" />
                 <link rel="icon" href="/favicon-m.ico" />
+                <title>СУЗ</title>
             </Head>
             <ThemeProvider theme={theme}>
                 <SWRConfig value={pageProps.fallback}>
