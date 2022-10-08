@@ -1,7 +1,5 @@
 import React from "react";
 
-import { Typography } from "@mui/material";
-
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useUsersTable } from "./hooks/useUsersTable";
 
@@ -9,10 +7,7 @@ export const UsersTable = () => {
   const { columns, rows, loading, onEdit } = useUsersTable();
 
   return (
-    <div style={{ height: 700, padding: "0 20px" }}>
-      <Typography variant="h4" marginTop={2} marginBottom={4}>
-        Управление пользователями
-      </Typography>
+    <div style={{ height: 700 }}>
       <DataGrid
         loading={loading}
         density="compact"
