@@ -22,6 +22,12 @@ const getRegexp = (string) => {
 
 module.exports = {
 
+	getAll: async (req, res) => {
+		const users = await Account.find({ status: true }).select('login name email phone department access').populate({ path: 'department', select: 'name type'}).lean();
+
+		return res.json({ users });
+	},
+
 	getPage: async (req, res) => {
 		const search = req.query.name || '';
 		const query = { status: true };

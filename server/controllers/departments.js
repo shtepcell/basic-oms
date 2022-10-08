@@ -195,6 +195,12 @@ module.exports = {
     },
 
     api: {
+        getAll: async (req, res) => {
+            const departments = await Department.find({ status: true }).select('name type');
+
+            return res.json({ departments })
+        },
+
         getOne: async (req, res) => {
             const department = await Department.findOne({ status: true, _id: req.params.id }).populate('cities');
 

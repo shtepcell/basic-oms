@@ -63,6 +63,11 @@ const schema = new Schema({
 	created: Date,
 	firstVisit: Date,
 	lastVisit: Date,
+	access: [{
+		type: String,
+		enum: ['miranda', 'mirtelekom'],
+		default: 'miranda'
+	}],
 }, {
 	usePushEach: true
 });

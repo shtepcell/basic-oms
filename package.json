@@ -23,6 +23,7 @@
     "@emotion/styled": "11.8.1",
     "@mui/icons-material": "5.8.0",
     "@mui/material": "5.8.1",
+    "@mui/x-data-grid": "5.17.6",
     "axios": "^0.24.0",
     "bem-calendar": "git+https://github.com/dalv96/bem-calendar.git",
     "bem-stat-counters": "3.0.0",
