@@ -1,4 +1,4 @@
-import { Button, Stack, Toolbar, Typography } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import React from "react";
 
 import { Header } from "src/components/Header";

@@ -221,6 +221,7 @@ module.exports = function (app, io) {
     });
   });
 
+  app.get("/api/auth", Auth.getUser);
   app.get("/api/requests", Mass.getOwnRequestsApi);
   app.post("/api/mass", Mass.makeRequestToChange);
   app.post("/api/mass/upload", Mass.validateOrders);
@@ -241,6 +242,9 @@ module.exports = function (app, io) {
     Department.api.removeCity
   );
 
+  app.get("/api/cities", City.api.getAll);
+  app.delete("/api/cities/:id", City.api.delete);
+  app.patch("/api/cities/:id", City.api.patch);
   app.get("/api/admin/unused-cities", City.api.getUnused);
 
   app.post(

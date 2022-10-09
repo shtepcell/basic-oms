@@ -18,7 +18,7 @@ block('navigator').elem('admin-drop').content()(function () {
             block: 'link',
             mods: { theme: 'islands', size : 'l' },
             mix: { block: 'navigator', elem: 'admin-link' },
-            url: '/admin/cities',
+            url: '/v2/cities',
             content: 'Города'
         },
         {
