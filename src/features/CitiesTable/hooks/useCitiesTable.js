@@ -5,6 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import { accessGetter, accessSetter } from "../helpers";
 import { useAuth } from "src/hooks/useAuth";
+import { CITY_TYPES } from "src/constants/city";
 
 const Actions = ({ onDelete, disabled }) => [
   <GridActionsCellItem
@@ -25,7 +26,7 @@ const useColumns = ({ onDelete }) => {
         width: 80,
         type: "singleSelect",
         editable: true,
-        valueOptions: ["г.", "пгт.", "с.", "пос.", "мыс."],
+        valueOptions: CITY_TYPES,
       },
       { field: "name", headerName: "Название", width: 350, editable: true },
       user &&
