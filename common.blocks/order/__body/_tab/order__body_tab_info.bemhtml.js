@@ -11,10 +11,6 @@ block('order').elem('body').elemMod('tab', 'info').content()(function () {
         mustIDOSS = (['internet', 'cloud', 'phone', 'wifi', 'iptv'].indexOf(order.info.service) >= 0);
 
     return [
-        order.tech.private && {
-            elem: 'banner',
-            content: 'ОГРАНИЧЕННЫЙ ДОСТУП',
-        },
         {
             block: 'field',
             elem: 'initiator',

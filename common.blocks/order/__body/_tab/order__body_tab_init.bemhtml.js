@@ -17,6 +17,8 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
         }
     });
 
+    const displayAccess = user.access.length > 1;
+
     srvs.unshift({ text: '' });
 
     return [
@@ -133,29 +135,6 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
             },
             order: { info: order },
             display: true
-        },
-        user.department.type === 'special' && {
-            elem: 'body-row',
-            content: [
-                {
-                    elem: 'body-row-name',
-                    content: 'Ограниченный доступ'
-                },
-                {
-                    elem: 'body-row-data',
-                    content: {
-                        block: 'checkbox',
-                        name: 'private',
-                        mods: {
-                            theme: 'islands',
-                            size: 'l',
-                            checked: true,
-                            disabled: true,
-                        },
-                        val: true
-                    }
-                }
-            ]
         },
         {
             elem: 'body-row',
@@ -365,6 +344,39 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                     text: 'ГЗП и СТОП',
                                     val: 'all-pre'
                                 }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        displayAccess && {
+            elem: 'body-row',
+            content: [
+                {
+                    elem: 'body-row-name',
+                    content: 'Доступ *'
+                },
+                {
+                    elem: 'body-row-data',
+                    content: [
+                        {
+                            block: 'select',
+                            name: 'access',
+                            mods: {
+                                mode: 'radio',
+                                theme: 'islands',
+                                size: 'l'
+                            },
+                            options: [
+                                {
+                                    text: 'miranda',
+                                    val: 'miranda'
+                                },
+                                {
+                                    text: 'mirtelekom',
+                                    val: 'mirtelekom'
+                                },
                             ]
                         }
                     ]

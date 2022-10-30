@@ -189,7 +189,12 @@ module.exports = {
   },
   api: {
     getAll: async (req, res) => {
-      const cities = await City.find().select("type name access").lean();
+      const { access } = res.locals.__user;
+
+      const cities = await City.find()
+        .or(access.map((item) => ({ access: item })))
+        .select("type name access")
+        .lean();
 
       return res.json({ cities });
     },

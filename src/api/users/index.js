@@ -4,7 +4,13 @@ import { fetcher, request } from "src/lib/request";
 
 export const updateUser = (id, { name, access, email, phone, department }) => {
   return request
-    .patch(`/api/admin/users/${id}`, { name, access, email, phone, department })
+    .patch(`/api/admin/users/${id}`, {
+      name,
+      access: [...new Set(access)],
+      email,
+      phone,
+      department,
+    })
     .then(({ data }) => data);
 };
 

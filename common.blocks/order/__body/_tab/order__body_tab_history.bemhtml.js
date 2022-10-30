@@ -56,10 +56,6 @@ block('order').elem('body').elemMod('tab', 'history').content()(function () {
         }
     })
     return [
-        order.tech.private && {
-            elem: 'banner',
-            content: 'ОГРАНИЧЕННЫЙ ДОСТУП',
-        },
         ...ret
     ];
 })

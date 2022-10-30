@@ -92,7 +92,7 @@ module.exports = function (app, io) {
   app.post("/init", onlyInitiatorFilter, (req, res) => {
     return Order.init(req, res);
   });
-
+  
   // app.post('/order/:id', Order.submit);
   app.post("/order/:id/action", privateOrder, Order.changeStatus);
 

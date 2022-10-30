@@ -360,10 +360,6 @@ module.exports = {
                 archive = true;
             }
 
-            if (query.func.indexOf('6') >= 0) {
-                qr['tech.private'] = true;
-            }
-
             if (query.func.indexOf('7') >= 0) {
                 qr['tech.priority'] = true;
             }
@@ -900,6 +896,13 @@ module.exports = {
                 }
             }
         }
+
+        if (qr['$or']) {
+            qr['$or'].push(...res.locals.__user.access.map((lvl) => ({ access: lvl })))
+        } else {
+            qr['$or'] = res.locals.__user.access.map((lvl) => ({ access: lvl }))
+        }
+
         return { query: qr, archive };
     },
 
@@ -970,10 +973,6 @@ module.exports = {
             case 'sks-pre':
             case 'sks-build':
                 var dep = await Department.findOne({ type: 'net' });
-
-                if (order.tech.private) {
-                    dep = await Department.findOne({ _id: order.special });
-                }
 
                 return dep.name;
             case 'client-match':
@@ -1061,12 +1060,13 @@ module.exports = {
     },
 
     getData: async (res) => {
+        const { access } = res.locals.__user;
         var clients = await Client.find().populate('type');
         var providers = await Provider.find();
 
-        var manDeps = await Department.find({ $or: [{ type: 'b2b' }, { type: 'b2o' }] });
+        var manDeps = await Department.find({ $or: [{ type: 'b2b' }, { type: 'b2o' }] }).lean();
 
-        var managers = await Account.find({ department: manDeps });
+        var managers = await Account.find({ department: manDeps }).lean();
 
         managers = managers.map(i => {
             return {
@@ -1075,8 +1075,8 @@ module.exports = {
             }
         });
 
-        var cities = await City.find();
-        var streets = await Street.find();
+        var cities = await City.find().or(access.map((item) => ({ access: item }))).lean();
+        var streets = await Street.find().lean();
         var _flags = await Flag.find({ user: res.locals.__user._id });
         var deps = await Department.find({
             $and: [

@@ -77,10 +77,8 @@ module.exports = {
         last: acc.last,
         settings: acc.settings,
         request: requestPause,
+        access: acc.access,
       };
-      res.locals.hasPrivateAccess = ["special", "admin"].includes(
-        acc.department.type
-      );
 
       next();
     } else {

@@ -13,7 +13,6 @@ const countPriorityOrders = async (departmentID) => {
         return 0;
     }
 
-    console.log()
     return await Order.find({ $or: citiesQuery }).where('status').in(ACTIVE_STATUSES).where('tech.priority').eq(true).count();
 }
 

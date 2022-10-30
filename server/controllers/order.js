@@ -566,8 +566,6 @@ module.exports = {
     },
 
     getMainPageMy: async (req, res) => {
-        const { hasPrivateAccess } = res.locals;
-
         var pagerId = 'first',
             pagers = [],
             pageNumber = req.query['pager' + pagerId] || 1,
@@ -604,9 +602,9 @@ module.exports = {
             ]
         };
 
-        const total = await Order.get({ $and: [query, subQ] }, { private: hasPrivateAccess }).count();
+        const total = await Order.get({ $and: [query, subQ] }).count();
 
-        var orders = await Order.get({ $and: [query, subQ] }, { private: hasPrivateAccess })
+        var orders = await Order.get({ $and: [query, subQ] })
             .populate([populateClient, populateCity, populateStreet])
             .skip((pageNumber - 1) * perPage)
             .limit(perPage)
@@ -733,10 +731,6 @@ module.exports = {
                     ]
                 }
                 break;
-            case 'special':
-                query = {
-                    private: true,
-                }
         }
 
         const total = await Order.get({ $and: [query, subQ] }).count();
@@ -894,9 +888,9 @@ module.exports = {
     },
 
     init: async (req, res) => {
+        const { access } = res.locals.__user;
         const histories = [];
         var data = req.body;
-        const isPrivate = res.locals.__user.department.type === 'special';
 
         Object.keys(data).forEach(item => {
             data[item] = data[item].trim();
@@ -911,11 +905,6 @@ module.exports = {
             info: data,
             tech: {},
         };
-
-        if (isPrivate) {
-            order.special = data.department;
-            order.tech.private = isPrivate;
-        }
 
         var clnt = await validator.client(order.info.client);
         if (!clnt._id) {
@@ -1039,6 +1028,7 @@ module.exports = {
             history: [helper.historyGenerator('init', res.locals.__user), ...histories],
             tech: order.tech,
             special: order.special,
+            access: data.access || access[0],
         });
 
         if (req.files && req.files['file-init']) {
@@ -2352,8 +2342,6 @@ module.exports = {
     },
 
     excel: async (req, res) => {
-        const { hasPrivateAccess } = res.locals;
-
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.func1 && req.query.func1.length == 1) req.query.func1 = [req.query.func1]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
@@ -2367,7 +2355,7 @@ module.exports = {
 
         var { query, archive } = await helper.makeQuery(req, res);
 
-        var orders = await Order.get(query, { archive, private: hasPrivateAccess }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query, { archive }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         orders.forEach(item => {
             item.status = stages[item.status];
@@ -2378,8 +2366,6 @@ module.exports = {
     },
 
     report: async (req, res) => {
-        const { hasPrivateAccess } = res.locals;
-
         if (req.query.func && req.query.func.length == 1) req.query.func = [req.query.func]
         if (req.query.func1 && req.query.func1.length == 1) req.query.func1 = [req.query.func1]
         if (req.query.pre && req.query.pre.length == 1) req.query.pre = [req.query.pre]
@@ -2395,7 +2381,7 @@ module.exports = {
 
         query.special = undefined;
 
-        var orders = await Order.get(query, { archive, private: hasPrivateAccess }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query, { archive }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         for (let i = 0; i < orders.length; i++) {
             orders[i].gusName = await helper.getGUSName(orders[i]);
@@ -2418,10 +2404,7 @@ module.exports = {
     },
 
     search: async (req, res) => {
-        const { hasPrivateAccess } = res.locals;
-
         res.locals.data = await helper.getData(res);
-        res.locals.data.hasPrivateAccess = res.locals.hasPrivateAccess;
 
         res.locals.err = {};
 
@@ -2467,9 +2450,9 @@ module.exports = {
             res.redirect(req.path);
         }
 
-        const total = await Order.get(query, { archive, private: hasPrivateAccess }).count();
+        const total = await Order.get(query, { archive }).count();
 
-        var orders = await Order.get(query, { archive, private: hasPrivateAccess })
+        var orders = await Order.get(query, { archive })
             .populate([populateClient, populateCity, populateStreet])
             .skip((pageNumber - 1) * perPage)
             .limit(perPage)
