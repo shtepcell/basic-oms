@@ -198,6 +198,11 @@ var schema = new Schema({
         author: String
     }],
     autoDeadline: Number,
+    access: {
+        type: String,
+        enum: ['miranda', 'mirtelekom'],
+        default: 'miranda'
+    },
     tech: {
         mass_upload: Boolean,
         private: {
@@ -226,7 +231,7 @@ const isReject = {
 }
 
 schema.statics.get = function (query = {}, flags) {
-    const { archive = false, private = false, sort = true } = flags || {};
+    const { archive = false, sort = true } = flags || {};
 
     const old = new Date();
     old.setDate(-90);
@@ -240,10 +245,6 @@ schema.statics.get = function (query = {}, flags) {
         query['$nor'] = [isSecret];
     } else {
         query['$nor'] = [isArchive, isSecret, isReject];
-    }
-
-    if (!private) {
-        query['tech.private'] = private;
     }
 
     if (sort) {

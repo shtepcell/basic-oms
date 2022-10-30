@@ -57,10 +57,10 @@ module.exports = function(opt, data) {
                     },
                     {
                         name: 'Кол-во сотрудников',
-                        getContent: (item) => `Не доступно`
+                        getContent: () => `Не доступно`
                     }
                 ],
-                url: '/admin/departments/',
+                url: '/v2/admin/departments/',
                 template: '_id',
                 data: deps
             }

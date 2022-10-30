@@ -4,7 +4,6 @@ block('searcher')(
         const data = ctx.data;
         const query = ctx.query;
         const { services } = ctx.dataset;
-        const { hasPrivateAccess } = data;
 
         data.deps = data.deps.map(item => {
             return {
@@ -129,10 +128,6 @@ block('searcher')(
                                                     {
                                                         val: '5',
                                                         text: 'Архивные'
-                                                    },
-                                                    hasPrivateAccess && {
-                                                        val: '6',
-                                                        text: 'Только специальные'
                                                     },
                                                     {
                                                         val: '7',

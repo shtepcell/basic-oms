@@ -6,6 +6,7 @@ import { Typography } from "@mui/material";
 import styles from "./index.module.css";
 import { fetcher } from "../../lib/request";
 import React from "react";
+import { Header } from "src/components/Header";
 
 const Page = () => {
   const { data, error } = useSWR("/api/analytics", fetcher);
@@ -16,6 +17,7 @@ const Page = () => {
         <Head>
           <title>Аналитика</title>
         </Head>
+        <Header />
         <main className={styles.root}>Ошибка при подсчете аналитики</main>
       </>
     );
@@ -26,9 +28,12 @@ const Page = () => {
       <Head>
         <title>Аналитика</title>
       </Head>
+      <Header />
       <main className={styles.root}>
         <div>
-          <Typography variant="h4" color="primary">Средний срок организации</Typography>
+          <Typography variant="h4" color="primary">
+            Средний срок организации
+          </Typography>
           <div className={styles.section}>
             <Typography variant="body1">ГЗП:</Typography>
             <Typography variant="body1">

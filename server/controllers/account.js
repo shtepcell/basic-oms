@@ -1,352 +1,401 @@
-'use strict';
+"use strict";
 
-const Account = require('../models/Account');
-const Department = require('../models/Department');
-const password = require('./password');
-const Render = require('../render'),
-	render = Render.render;
+const Account = require("../models/Account");
+const Department = require("../models/Department");
+const password = require("./password");
+const Render = require("../render"),
+  render = Render.render;
 
-const logger = require('./logger');
-const moment = require('moment');
+const logger = require("./logger");
+const moment = require("moment");
 
 const getRegexp = (string) => {
-	let str = string.replace(/\[/g, '');
+  let str = string.replace(/\[/g, "");
 
-	str = str.replace(/\]/g, '');
-	str = str.replace(/\\/g, '');
-	str = str.replace(/\(/g, '');
-	str = str.replace(/\)/g, '');
+  str = str.replace(/\]/g, "");
+  str = str.replace(/\\/g, "");
+  str = str.replace(/\(/g, "");
+  str = str.replace(/\)/g, "");
 
-	return new RegExp('' + str + '', 'i');
-}
+  return new RegExp("" + str + "", "i");
+};
 
 module.exports = {
+  getPage: async (req, res) => {
+    const search = req.query.name || "";
+    const query = { status: true };
 
-	getPage: async (req, res) => {
-		const search = req.query.name || '';
-		const query = { status: true };
+    if (search) {
+      query["$or"] = [
+        { name: { $regex: getRegexp(search) } },
+        { login: { $regex: getRegexp(search) } },
+      ];
+    }
 
-		if (search) {
-			query['$or'] = [
-				{ name: { $regex: getRegexp(search) }},
-				{ login: { $regex: getRegexp(search) }}
-			];
-		}
+    const accounts = await Account.find(query)
+      .populate("department")
+      .sort({ lastVisit: -1 })
+      .lean();
 
-		const accounts = await Account
-			.find(query)
-			.populate('department')
-			.sort({ lastVisit: -1 })
-			.lean();
+    res.locals.query = req.query;
+    res.locals.users = accounts.map((user) => {
+      const lastVisit = user.lastVisit && moment(user.lastVisit);
 
+      if (lastVisit) {
+        const isOnline = moment().diff(lastVisit, "minutes") <= 5;
+        const isExpired = moment().diff(lastVisit, "days") >= 90;
 
-		res.locals.query = req.query;
-		res.locals.users = accounts.map((user) => {
-			const lastVisit = user.lastVisit && moment(user.lastVisit);
+        return { ...user, isOnline, isExpired };
+      }
 
-			if (lastVisit) {
-				const isOnline = moment().diff(lastVisit, 'minutes') <= 5;
-				const isExpired = moment().diff(lastVisit, 'days') >= 90;
+      return user;
+    });
 
-				return { ...user, isOnline, isExpired }
-			}
+    render(req, res, {
+      viewName: "users",
+      options: {
+        reqUrl: "/admin/users",
+      },
+    });
+  },
 
-			return user
- 		});
+  getPageCreate: async (req, res) => {
+    res.locals.departments = await Department.find({ status: true });
 
-		render(req, res, {
-			viewName: 'users',
-			options: {
-				reqUrl: '/admin/users'
-			}
-		});
+    render(req, res, {
+      viewName: "user",
+      options: {
+        page: "create",
+      },
+    });
+  },
 
-	},
+  getOne: async (req, res) => {
+    res.locals.user = await Account.findOne({
+      login: req.params.login,
+      status: true,
+    });
+    res.locals.departments = await Department.find({ status: true });
 
-	getPageCreate: async (req, res) => {
-		res.locals.departments = await Department.find({ status: true });
+    render(req, res, {
+      viewName: "user",
+      options: {
+        page: "edit",
+      },
+    });
+  },
 
-		render(req, res, {
-			viewName: 'user',
-			options: {
-				page: 'create'
-			}
-		});
-	},
+  getProfile: async (req, res) => {
+    res.locals.user = await Account.findOne({
+      login: res.locals.__user.login,
+      status: true,
+    }).populate("department");
+    res.locals.departments = await Department.find({ status: true });
 
-	getOne: async (req, res) => {
-		res.locals.user = await Account.findOne({ login: req.params.login, status: true });
-		res.locals.departments = await Department.find({ status: true });
+    render(req, res, {
+      viewName: "user",
+      options: {
+        page: "profile",
+      },
+    });
+  },
 
-		render(req, res, {
-			viewName: 'user',
-			options: {
-				page: 'edit'
-			}
-		});
-	},
+  create: async (req, res) => {
+    var reqData = req.body,
+      errors = [];
 
-	getProfile: async (req, res) => {
-		res.locals.user = await Account.findOne({ login: res.locals.__user.login, status: true }).populate('department');
-		res.locals.departments = await Department.find({ status: true });
+    reqData.login = reqData.login.toLowerCase();
 
-		render(req, res, {
-			viewName: 'user',
-			options: {
-				page: 'profile'
-			}
-		});
-	},
+    if (await Account.findOne({ login: reqData.login })) {
+      errors.push({ errText: "Пользователь с таким логином уже существует!" });
+    }
 
-	create: async (req, res) => {
-		var reqData = req.body,
-			errors = [];
+    if (!reqData.name) errors.push({ errText: "Ф.И.О. - обязательное поле!" });
+    errors = validate(reqData, errors);
 
-		reqData.login = reqData.login.toLowerCase();
+    var settings = {};
 
-		if (await Account.findOne({ login: reqData.login }))
-			{errors.push({ errText: 'Пользователь с таким логином уже существует!' })}
+    var department = await Department.findOne({ _id: reqData.department });
 
-		if (!reqData.name) errors.push({ errText: 'Ф.И.О. - обязательное поле!' })
-		errors = validate(reqData, errors);
+    switch (department.type) {
+      case "admin":
+        settings.main = {
+          initiators: [],
+          zone: [],
+          stage: [],
+        };
+        break;
+      case "b2b":
+        settings.main = {
+          initiators: [department._id],
+          zone: [],
+          stage: ["client-match", "client-notify"],
+        };
+        break;
+      case "b2o":
+        settings.main = {
+          initiators: [department._id],
+          zone: [],
+          stage: ["client-match", "client-notify", "stop-pre", "stop-build"],
+        };
+        break;
+      case "network":
+        settings.main = {
+          initiators: [],
+          zone: [],
+          stage: ["network"],
+        };
+        break;
+      case "gus":
+        settings.main = {
+          initiators: [],
+          zone: [department._id],
+          stage: ["gzp-pre", "gzp-build", "install-devices"],
+        };
+        break;
+    }
 
-		var settings = {}
+    if (errors.length === 0) {
+      var acc = new Account({
+        login: reqData.login,
+        password: password.createHash(reqData.password),
+        name: reqData.name,
+        email: reqData.email,
+        phone: reqData.phone,
+        department: reqData.department,
+        status: true,
+        settings: settings,
+        created: new Date(),
+      });
+      var result = await acc.save();
+    } else res.status(400).send(errors);
 
-		var department = await Department.findOne({ _id: reqData.department });
+    if (result) {
+      logger.info(`Created user ${acc.login}`, res.locals.__user);
+      res.send({ ok: "ok" });
+    }
+  },
 
-		switch (department.type) {
-			case 'admin':
-				settings.main = {
-					initiators: [],
-					zone: [],
-					stage: []
-				};
-				break;
-			case 'b2b':
-				settings.main = {
-					initiators: [department._id],
-					zone: [],
-					stage: ['client-match', 'client-notify']
-				};
-				break;
-			case 'b2o':
-				settings.main = {
-					initiators: [department._id],
-					zone: [],
-					stage: ['client-match', 'client-notify', 'stop-pre', 'stop-build']
-				};
-				break;
-			case 'network':
-				settings.main = {
-					initiators: [],
-					zone: [],
-					stage: ['network']
-				};
-				break;
-			case 'gus':
-				settings.main = {
-					initiators: [],
-					zone: [department._id],
-					stage: ['gzp-pre', 'gzp-build', 'install-devices']
-				};
-				break;
-		}
+  edit: async (req, res) => {
+    var acc = await Account.findOne({ login: req.params.login });
+    var reqData = req.body;
 
-		if (errors.length === 0) {
-			var acc = new Account({
-				login: reqData.login,
-				password: password.createHash(reqData.password),
-				name: reqData.name,
-				email: reqData.email,
-				phone: reqData.phone,
-				department: reqData.department,
-				status: true,
-				settings: settings,
-				created: new Date(),
-			});
-			var result = await acc.save();
-		} else res.status(400).send(errors);
+    acc.name = reqData.name;
 
-		if (result) {
-			logger.info(`Created user ${acc.login}`, res.locals.__user);
-			res.send({ ok: 'ok' });
-		}
+    if (reqData.name == "") {
+      res.status(400).send({ errText: "Ф.И.О. - обязательное поле!" });
+      return;
+    }
 
-	},
+    acc.email = reqData.email;
+    acc.phone = reqData.phone;
+    acc.department = await Department.findOne({ _id: reqData.department });
 
-	edit: async (req, res) => {
-		var acc = await Account.findOne({ login: req.params.login });
-		var reqData = req.body;
+    if (reqData.password != "" || reqData.passwordRep != "") {
+      if (reqData.password == "" || reqData.passwordRep == "") {
+        res.status(400).send({
+          errText:
+            'Для изменения пароля заполните поля "Пароль" и "Повторите пароль".' +
+            " Если вы не собираетесь изменять пароль, то оставьте эти поля пустыми",
+        });
+        return;
+      }
+      if (reqData.password != reqData.passwordRep) {
+        res.status(400).send({ errText: "Пароли не совпадают!" });
+        return;
+      }
+      acc.password = password.createHash(reqData.password);
+    }
 
-		acc.name = reqData.name;
+    var result = await acc.save();
+    if (result) {
+      logger.info(`Edit account ${req.params.login}`, res.locals.__user);
+      res.send({ ok: "ok" });
+    }
+  },
 
-		if (reqData.name == '') {
-			res.status(400).send({ errText: 'Ф.И.О. - обязательное поле!' });
-			return;
-		}
+  selfEdit: async (req, res) => {
+    var acc = await Account.findOne({ login: res.locals.__user.login });
+    var reqData = req.body;
 
-		acc.email = reqData.email;
-		acc.phone = reqData.phone;
-		acc.department = await Department.findOne({ _id: reqData.department });
+    acc.email = req.body.email;
+    acc.name = req.body.name;
+    acc.phone = req.body.phone;
 
-		if (reqData.password != '' || reqData.passwordRep != '') {
-			if (reqData.password == '' || reqData.passwordRep == '') {
-				res.status(400).send({
-					errText: 'Для изменения пароля заполните поля "Пароль" и "Повторите пароль".' +
-						' Если вы не собираетесь изменять пароль, то оставьте эти поля пустыми'
-				})
-				return;
-			}
-			if (reqData.password != reqData.passwordRep) {
-				res.status(400).send({ errText: 'Пароли не совпадают!' })
-				return;
-			}
-			acc.password = password.createHash(reqData.password)
-		}
+    if (reqData.name == "") {
+      res.status(400).send({ errText: "Ф.И.О. - обязательное поле!" });
+      return;
+    }
 
-		var result = await acc.save();
-		if (result) {
-			logger.info(`Edit account ${req.params.login}`, res.locals.__user);
-			res.send({ ok: 'ok' });
-		}
-	},
+    if (
+      reqData.password != "" ||
+      reqData.passwordRep != "" ||
+      reqData.passwordOld != ""
+    ) {
+      if (
+        reqData.password == "" ||
+        reqData.passwordRep == "" ||
+        reqData.passwordOld == ""
+      ) {
+        res.status(400).send({
+          errText:
+            'Заполните поля "Текущий пароль", "Пароль" и "Повторите пароль".' +
+            " Если вы не собираетесь изменять пароль, то оставьте эти поля пустыми",
+        });
+        return;
+      }
+      if (reqData.password != reqData.passwordRep) {
+        res.status(400).send({ errText: "Пароли не совпадают!" });
+        return;
+      }
+      if (password.createHash(reqData.passwordOld) != acc.password) {
+        res.status(400).send({
+          errText: `Текущий пароль введен не верно!
+                    Если вы забыли текущий пароль - обратитесь к администратору!`,
+        });
+        return;
+      }
+      acc.password = password.createHash(reqData.password);
+    }
+    acc.settings.main.initiators = reqData.initiators || [];
+    acc.settings.main.zone = reqData.zone || [];
+    acc.settings.main.stage = reqData.stage || [];
 
-	selfEdit: async (req, res) => {
-		var acc = await Account.findOne({ login: res.locals.__user.login });
-		var reqData = req.body;
+    if (reqData.sendEmail == "1") {
+      acc.settings.sendEmail = true;
+    } else {
+      acc.settings.sendEmail = false;
+    }
 
-		acc.email = req.body.email;
-		acc.name = req.body.name;
-		acc.phone = req.body.phone;
+    var result = await acc.save();
 
-		if (reqData.name == '') {
-			res.status(400).send({ errText: 'Ф.И.О. - обязательное поле!' });
-			return;
-		}
+    if (result) {
+      logger.info(`Edit profile ${res.locals.__user.login}`, res.locals.__user);
+      res.send({ ok: "ok" });
+    }
+  },
 
-		if (reqData.password != '' || reqData.passwordRep != '' || reqData.passwordOld != '') {
-			if (reqData.password == '' || reqData.passwordRep == '' || reqData.passwordOld == '') {
-				res.status(400).send({
-					errText: 'Заполните поля "Текущий пароль", "Пароль" и "Повторите пароль".' +
-						' Если вы не собираетесь изменять пароль, то оставьте эти поля пустыми'
-				})
-				return;
-			}
-			if (reqData.password != reqData.passwordRep) {
-				res.status(400).send({ errText: 'Пароли не совпадают!' })
-				return;
-			}
-			if (password.createHash(reqData.passwordOld) != acc.password) {
-				res.status(400).send({
-					errText: `Текущий пароль введен не верно!
-                    Если вы забыли текущий пароль - обратитесь к администратору!`});
-				return;
-			}
-			acc.password = password.createHash(reqData.password)
-		}
-		acc.settings.main.initiators = reqData.initiators || [];
-		acc.settings.main.zone = reqData.zone || [];
-		acc.settings.main.stage = reqData.stage || [];
+  passEdit: async (req, res) => {
+    var acc = await Account.findOne({ login: req.params.login });
 
-		if (reqData.sendEmail == '1') {
-			acc.settings.sendEmail = true;
-		} else {
-			acc.settings.sendEmail = false;
-		}
+    if (acc && req.body.password === req.body.passwordRep) {
+      acc.password = password.createHash(req.body.password);
+      var result = await acc.save();
+    } else {
+      res.status(400).send([{ errText: "Пароли не совпадают!" }]);
+    }
 
-		var result = await acc.save();
+    if (result) {
+      logger.info(`Edit password ${req.params.login}`, res.locals.__user);
+      res.send({ ok: "ok" });
+    }
+  },
 
-		if (result) {
-			logger.info(`Edit profile ${res.locals.__user.login}`, res.locals.__user);
-			res.send({ ok: 'ok' });
-		}
+  selfPassEdit: async (req, res) => {
+    var acc = await Account.findOne({
+      login: res.locals.__user.login,
+      password: password.createHash(req.body.passwordOld),
+    });
 
-	},
+    if (acc) {
+      if (req.body.password === req.body.passwordRep) {
+        acc.password = password.createHash(req.body.password);
+        var result = await acc.save();
+      } else res.status(400).send([{ errText: "Пароли не совпадают!" }]);
+    } else res.status(400).send([{ errText: "Неверный пароль!" }]);
+    if (result) {
+      logger.info(`Edit profile password`, res.locals.__user);
+      res.send({ ok: "ok" });
+    }
+  },
 
-	passEdit: async (req, res) => {
-		var acc = await Account.findOne({ login: req.params.login });
+  delete: async (req, res) => {
+    var acc = await Account.findOne({
+      login: req.params.login,
+    });
 
-		if (acc && req.body.password === req.body.passwordRep) {
-			acc.password = password.createHash(req.body.password);
-			var result = await acc.save();
-		} else {
-			res.status(400).send([{ errText: 'Пароли не совпадают!' }]);
-		}
+    acc.login = Date.now() + acc.login;
+    acc.status = false;
 
-		if (result) {
-			logger.info(`Edit password ${req.params.login}`, res.locals.__user);
-			res.send({ ok: 'ok' });
-		}
+    var result = await acc.save();
+    if (result) {
+      res.status(200).send({ url: "/admin/users" });
+      return;
+    } else {
+      res.status(400).send("Что-то пошло не так...");
+      return;
+    }
+  },
 
-	},
+  settings: async (req, res) => {
+    var acc = await Account.findOne({ login: res.locals.__user.login }),
+      reqData = req.body,
+      tab = req.params.tab;
 
-	selfPassEdit: async (req, res) => {
-		var acc = await Account.findOne({
-			login: res.locals.__user.login,
-			password: password.createHash(req.body.passwordOld)
-		});
+    switch (tab) {
+      case "main-page":
+        acc.settings.main.zone = reqData.zone || [];
+        acc.settings.main.stage = reqData.stage || [];
+        break;
+      case "table":
+        acc.settings.table.perPage = +reqData.perPage || 50;
+      default:
+    }
 
-		if (acc) {
+    acc.save();
 
-			if (req.body.password === req.body.passwordRep) {
-				acc.password = password.createHash(req.body.password);
-				var result = await acc.save();
-			} else res.status(400).send([{ errText: 'Пароли не совпадают!' }]);
+    res.status(200).send({});
+  },
 
-		} else res.status(400).send([{ errText: 'Неверный пароль!' }]);
-		if (result) {
-			logger.info(`Edit profile password`, res.locals.__user);
-			res.send({ ok: 'ok' });
-		}
+  api: {
+    getAll: async (req, res) => {
+      const users = await Account.find({ status: true })
+        .select("login name email phone department access")
+        .populate({ path: "department", select: "name type" })
+        .lean();
 
-	},
+      return res.json({ users });
+    },
 
-	delete: async (req, res) => {
-		var acc = await Account.findOne({
-			login: req.params.login
-		});
+    patch: async (req, res) => {
+      const user = await Account.findByIdAndUpdate(
+        req.params.id,
+        { $set: req.body },
+        { new: true }
+      )
+        .select("login name email phone department access")
+        .populate({ path: "department", select: "name type" })
+        .lean();
 
-		acc.login = Date.now() + acc.login;
-		acc.status = false;
+      return res.json(user);
+    },
 
-		var result = await acc.save();
-		if (result) {
-			res.status(200).send({ url: '/admin/users' });
-			return;
-		} else {
-			res.status(400).send('Что-то пошло не так...');
-			return;
-		}
-	},
+    delete: async (req, res) => {
+      const user = await Account.findByIdAndUpdate(req.params.id, {
+        $set: { status: false },
+      });
 
-	settings: async (req, res) => {
+      return res.json(user);
+    },
 
-		var acc = await Account.findOne({ login: res.locals.__user.login }),
-			reqData = req.body,
-			tab = req.params.tab;
+    resetPassword: async (req, res) => {
+      const user = await Account.findByIdAndUpdate(req.params.id, {
+        $set: { password: password.createHash("Qaz1234") },
+      });
 
-		switch (tab) {
-			case 'main-page':
-				acc.settings.main.zone = reqData.zone || [];
-				acc.settings.main.stage = reqData.stage || [];
-				break;
-			case 'table':
-				acc.settings.table.perPage = +reqData.perPage || 50;
-			default:
-
-		}
-
-		acc.save();
-
-		res.status(200).send({});
-	}
+      return res.json(user);
+    },
+  },
 };
 
 function validate(user, errs) {
+  if (!/^[a-zA-Z][a-zA-Z0-9_]+$/.test(user.login)) {
+    errs.push({ errText: "Неверный формат логина" });
+  }
 
-	if (!/^[a-zA-Z][a-zA-Z0-9_]+$/.test(user.login)) errs.push({ errText: 'Неверный формат логина' });
+  if (user.password != user.passwordRep) {
+    errs.push({ errText: "Пароли не совпадают" });
+  }
 
-	if (user.password != user.passwordRep) errs.push({ errText: 'Пароли не совпадают' });
-
-	return errs;
+  return errs;
 }

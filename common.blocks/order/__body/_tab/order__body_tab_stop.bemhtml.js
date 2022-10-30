@@ -14,10 +14,6 @@ block('order').elem('body').elemMod('tab', 'stop').content()(function () {
     if (!order.date['cs-stop-pre']) { return 'Информации по СТОП нет!' }
 
     return [
-        order.tech.private && {
-            elem: 'banner',
-            content: 'ОГРАНИЧЕННЫЙ ДОСТУП',
-        },
         {
             block: 'field',
             elem: 'cs-stop-pre',

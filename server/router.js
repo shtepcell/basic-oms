@@ -92,7 +92,7 @@ module.exports = function (app, io) {
   app.post("/init", onlyInitiatorFilter, (req, res) => {
     return Order.init(req, res);
   });
-
+  
   // app.post('/order/:id', Order.submit);
   app.post("/order/:id/action", privateOrder, Order.changeStatus);
 
@@ -221,11 +221,19 @@ module.exports = function (app, io) {
     });
   });
 
+  app.get("/api/auth", Auth.getUser);
   app.get("/api/requests", Mass.getOwnRequestsApi);
   app.post("/api/mass", Mass.makeRequestToChange);
   app.post("/api/mass/upload", Mass.validateOrders);
   app.post("/api/mass/import", Mass.importOrders);
   app.patch("/api/mass/:id", Mass.updateRequest);
+
+  app.get("/api/admin/users", Account.api.getAll);
+  app.patch("/api/admin/users/:id", Account.api.patch);
+  app.delete("/api/admin/users/:id", Account.api.delete);
+  app.patch("/api/admin/users/:id/password", Account.api.resetPassword);
+
+  app.get("/api/departments", Department.api.getAll);
 
   app.get("/api/admin/department/:id", Department.api.getOne);
   app.post("/api/admin/department/:id/city", Department.api.addCity);
@@ -234,6 +242,9 @@ module.exports = function (app, io) {
     Department.api.removeCity
   );
 
+  app.get("/api/cities", City.api.getAll);
+  app.delete("/api/cities/:id", City.api.delete);
+  app.patch("/api/cities/:id", City.api.patch);
   app.get("/api/admin/unused-cities", City.api.getUnused);
 
   app.post(
