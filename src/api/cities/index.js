@@ -12,6 +12,10 @@ export const patchCity = (id, { name, type, access }) => {
     .then(({ data }) => data);
 };
 
+export const createCity = ({ name, type }) => {
+  return request.post("/api/cities/", { name, type }).then(({ data }) => data);
+};
+
 export const useCities = () => {
   const { data, error, mutate } = useSWR("/api/cities", fetcher);
 

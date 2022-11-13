@@ -30,8 +30,6 @@ export const AddCityButton = () => {
     defaultValues,
   } = useAddCityButtton();
 
-  console.log(errors);
-
   return (
     <>
       <Button

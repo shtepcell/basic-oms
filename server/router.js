@@ -74,7 +74,7 @@ module.exports = function (app, io) {
 
   app.post("/settings/:tab", Account.settings);
 
-  app.get("/status", Order.getStatPage);
+  // app.get("/status", Order.getStatPage);
 
   app.get("/search", Order.search);
   app.get("/search/reset", Order.searchReset);
@@ -243,6 +243,7 @@ module.exports = function (app, io) {
   );
 
   app.get("/api/cities", City.api.getAll);
+  app.post("/api/cities", City.api.create);
   app.delete("/api/cities/:id", City.api.delete);
   app.patch("/api/cities/:id", City.api.patch);
   app.get("/api/admin/unused-cities", City.api.getUnused);

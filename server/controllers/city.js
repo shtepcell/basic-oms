@@ -216,6 +216,22 @@ module.exports = {
       return res.json({ city });
     },
 
+    create: async (req, res) => {
+      const { access } = res.locals.__user;
+      const { name, type } = req.body;
+      const newCity = { name: name.trim(), type };
+      
+      const existCity = await City.findOne(newCity).lean();
+
+      if (existCity) {
+        return res.status(400).send({ error: true, message: "Такой город уже существует." });
+      }
+
+      const city = await City.create({...newCity, access });
+
+      return res.json(city);
+    },
+
     patch: async (req, res) => {
       const cityId = req.params.id;
       const { type, name, access } = req.body;
