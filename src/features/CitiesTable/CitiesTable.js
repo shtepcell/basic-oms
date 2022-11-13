@@ -44,7 +44,6 @@ export const CitiesTable = () => {
             showQuickFilter: true,
             quickFilterProps: { debounceMs: 500 },
             printOptions: { disableToolbarButton: true },
-            csvOptions: { disableToolbarButton: true },
           },
         }}
       />
