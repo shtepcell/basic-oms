@@ -73,10 +73,6 @@ block('department').elem('info').content()(function () {
                                 text: 'Руководство',
                                 val: 'man'
                             },
-                            {
-                                text: 'Спецотдел',
-                                val: 'special'
-                            }
                         ]
                     }
                 }

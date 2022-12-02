@@ -2,7 +2,7 @@ block('navigator').content()(function () {
     var user = this.ctx.user,
         deps = this.ctx.deps,
         isAdmin = user && (user.department.type == 'admin'),
-        isInit = user && ['b2b', 'b2o', 'special'].includes(user.department.type);
+        isInit = user && ['b2b', 'b2o'].includes(user.department.type);
 
     var init = {
         block: 'link',

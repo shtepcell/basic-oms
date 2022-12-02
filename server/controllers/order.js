@@ -52,13 +52,6 @@ var populateInitiator = {
     }
 };
 
-var populateSpecial = {
-    path: 'special',
-    options: {
-        lean: true
-    }
-};
-
 var populateCity = {
     path: 'info.city',
     select: 'name type',

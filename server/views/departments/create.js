@@ -70,10 +70,6 @@ module.exports = function (opt, data) {
                             {
                                 text: 'Руководство',
                                 val: 'man'
-                            },
-                            {
-                                text: 'Спецотдел',
-                                val: 'special'
                             }
                         ]
                     }

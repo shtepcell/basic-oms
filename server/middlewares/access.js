@@ -17,11 +17,10 @@ const departmentTypeFilter = (types) => (req, res, next) => {
   }
 };
 
-const onlyInitiatorFilter = departmentTypeFilter(["b2o", "b2b", "special"]);
+const onlyInitiatorFilter = departmentTypeFilter(["b2o", "b2b"]);
 const initiatorAndAdminFilter = departmentTypeFilter([
   "b2o",
   "b2b",
-  "special",
   "admin",
 ]);
 
