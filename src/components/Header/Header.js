@@ -55,7 +55,7 @@ export const Header = () => {
     () => [
       { name: "Главная", href: "/" },
       { name: "Поиск заказов", href: "/search" },
-      // { name: "Статус", href: "/status" },
+      { name: "Статус", href: "/status" },
       { name: "Администрирование", onClick: handleClickAdmin },
     ],
     [handleClickAdmin]

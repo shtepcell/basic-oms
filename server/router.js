@@ -74,7 +74,7 @@ module.exports = function (app, io) {
 
   app.post("/settings/:tab", Account.settings);
 
-  // app.get("/status", Order.getStatPage);
+  app.get("/status", Order.getStatPage);
 
   app.get("/search", Order.search);
   app.get("/search/reset", Order.searchReset);

@@ -39,13 +39,13 @@ block('navigator').content()(function () {
             url: '/search',
             content: 'Поиск заказов'
         },
-        // {
-        //     block: 'link',
-        //     mods: { theme: 'islands', size: 'l' },
-        //     mix: { block: 'navigator', elem: 'link' },
-        //     url: '/status',
-        //     content: 'Статус'
-        // },
+        {
+            block: 'link',
+            mods: { theme: 'islands', size: 'l' },
+            mix: { block: 'navigator', elem: 'link' },
+            url: '/status',
+            content: 'Статус'
+        },
         clients,
         {
             elem: 'admin-menu',
