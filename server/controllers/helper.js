@@ -897,12 +897,13 @@ module.exports = {
             }
         }
 
-        if (qr['$or']) {
-            qr['$or'].push(...res.locals.__user.access.map((lvl) => ({ access: lvl })))
-        } else {
-            qr['$or'] = res.locals.__user.access.map((lvl) => ({ access: lvl }))
-        }
 
+        if (qr['$and']) {
+            qr['$and'].push( {$or: res.locals.__user.access.map((lvl) => ({ access: lvl })) })
+        } else {
+            qr['$and'] = [{ $or: res.locals.__user.access.map((lvl) => ({ access: lvl })) }]
+        }
+        
         return { query: qr, archive };
     },
 
