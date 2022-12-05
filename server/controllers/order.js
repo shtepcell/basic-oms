@@ -2348,7 +2348,7 @@ module.exports = {
 
         var { query, archive } = await helper.makeQuery(req, res);
 
-        var orders = await Order.get(query, { archive }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query, { archive, sort: false }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         orders.forEach(item => {
             item.status = stages[item.status];
@@ -2374,7 +2374,7 @@ module.exports = {
 
         query.special = undefined;
 
-        var orders = await Order.get(query, { archive }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
+        var orders = await Order.get(query, { archive, sort: false }).populate([populateClient, populateCity, populateStreet, populateInitiator, populateProvider]).lean();
 
         for (let i = 0; i < orders.length; i++) {
             orders[i].gusName = await helper.getGUSName(orders[i]);
