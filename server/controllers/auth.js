@@ -77,7 +77,7 @@ module.exports = {
         last: acc.last,
         settings: acc.settings,
         request: requestPause,
-        access: acc.access,
+        access: acc.access.length === 0 ? ["none"] : acc.access,
       };
 
       next();
