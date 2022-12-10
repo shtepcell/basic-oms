@@ -28,6 +28,7 @@ export const AddCityButton = () => {
     handleSubmit,
     errors,
     defaultValues,
+    isAccessEditAllowed,
   } = useAddCityButtton();
 
   return (
@@ -43,7 +44,7 @@ export const AddCityButton = () => {
       </Button>
       <Dialog open={dialogOpened} onClose={onCloseDialog}>
         <DialogTitle>Добавление города</DialogTitle>
-        <DialogContent sx={{ width: 500 }}>
+        <DialogContent sx={{ width: 600 }}>
           <form className={styles.form} onSubmit={handleSubmit}>
             <Stack direction="row" spacing={1}>
               <FormControl sx={{ width: 120 }}>
@@ -68,6 +69,27 @@ export const AddCityButton = () => {
                 error={Boolean(errors.name)}
                 helperText={errors.name?.message}
               />
+              {isAccessEditAllowed && (
+                <FormControl sx={{ width: 280 }}>
+                  <InputLabel id="city_access" error={Boolean(errors.access)}>
+                    Доступ
+                  </InputLabel>
+                  <Select
+                    labelId="city_access"
+                    multiple
+                    {...register("access")}
+                    defaultValue={defaultValues.access}
+                    label="Доступ"
+                    error={Boolean(errors.access)}
+                  >
+                    {["miranda", "mirtelekom"].map((item) => (
+                      <MenuItem key={item} value={item}>
+                        {item}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </Stack>
           </form>
         </DialogContent>

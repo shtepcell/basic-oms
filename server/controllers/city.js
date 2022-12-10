@@ -217,8 +217,7 @@ module.exports = {
     },
 
     create: async (req, res) => {
-      const { access } = res.locals.__user;
-      const { name, type } = req.body;
+      const { name, type, access } = req.body;
       const newCity = { name: name.trim(), type };
       
       const existCity = await City.findOne(newCity).lean();

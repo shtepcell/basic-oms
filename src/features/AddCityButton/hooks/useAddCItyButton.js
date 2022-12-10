@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { CITY_TYPES } from "src/constants/city";
 import { useSnackbar } from "src/hooks/useSnackbar";
 import { createCity } from "src/api/cities";
+import { useAuth } from "src/hooks/useAuth";
 
 const schema = yup
   .object({
@@ -16,12 +17,15 @@ const schema = yup
       .max(30)
       .trim(),
     type: yup.string().required().oneOf(CITY_TYPES),
+    access: yup.array().required().min(1),
   })
   .required();
 
 export const useAddCityButtton = () => {
   const { openSnackbar } = useSnackbar();
   const [dialogOpened, setDilogOpened] = React.useState(false);
+  const { user } = useAuth();
+
   const {
     handleSubmit,
     register,
@@ -32,6 +36,7 @@ export const useAddCityButtton = () => {
     reValidateMode: "onSubmit",
     defaultValues: {
       type: "г.",
+      access: user.access,
     },
   });
 
@@ -69,5 +74,6 @@ export const useAddCityButtton = () => {
     handleSubmit: handleSubmit(onSubmit),
     errors,
     defaultValues,
+    isAccessEditAllowed: user.access.length > 1,
   };
 };

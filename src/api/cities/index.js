@@ -12,8 +12,8 @@ export const patchCity = (id, { name, type, access }) => {
     .then(({ data }) => data);
 };
 
-export const createCity = ({ name, type }) => {
-  return request.post("/api/cities/", { name, type }).then(({ data }) => data);
+export const createCity = ({ name, type, access }) => {
+  return request.post("/api/cities/", { name, type, access }).then(({ data }) => data);
 };
 
 export const useCities = () => {

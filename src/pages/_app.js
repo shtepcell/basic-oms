@@ -8,7 +8,7 @@ import theme from "../theme";
 
 import "./globals.css";
 import { useCallback, useState } from "react";
-import { Snackbar } from "@mui/material";
+import { Backdrop, CircularProgress, Snackbar } from "@mui/material";
 import { SnackbarProvider } from "../context/Snackbar";
 import { AuthProvider } from "src/context/Auth";
 import { useAuth } from "src/api/auth";
@@ -46,7 +46,18 @@ export default function MyApp(props) {
           <CssBaseline />
           <SnackbarProvider value={{ openSnackbar }}>
             <AuthProvider value={{ user }}>
-              <Component {...pageProps} />
+              {user && <Component {...pageProps} />}
+
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={!user}
+              >
+                <CircularProgress color="inherit" />
+              </Backdrop>
+
               <Snackbar
                 anchorOrigin={{ vertical: "top", horizontal: "right" }}
                 open={showSnackbar}
