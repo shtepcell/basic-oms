@@ -68,7 +68,7 @@ const SERVICES_HASH = {
 
 const SUPPORTED_END_STATUSES = ["Включено ГЗП", "Включено СТОП/VSAT"];
 
-const RELATION_NEEDED_SERVICES = ['l2vpn', 'vpls'];
+const RELATION_NEEDED_SERVICES = ['vpls'];
 const IP_NEEDED_SERVICES = ['internet', 'l3vpn'];
 const VOLUME_NEEDED_SERVICES = ['internet', 'l3vpn', 'l2vpn', 'sopka'];
 
