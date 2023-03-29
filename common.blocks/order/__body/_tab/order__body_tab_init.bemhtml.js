@@ -368,7 +368,12 @@ block('order').elem('body').elemMod('tab', 'init').content()(function () {
                                 theme: 'islands',
                                 size: 'l'
                             },
+                            val: null,
                             options: [
+                                {
+                                    text: '–',
+                                    val: null,
+                                },
                                 {
                                     text: 'miranda',
                                     val: 'miranda'

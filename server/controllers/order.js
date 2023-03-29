@@ -998,6 +998,10 @@ module.exports = {
                 break;
         }
 
+        if (access.length > 1 && !data.access) {
+            return res.status(400).send({ errText: 'Укажите уровень доступа заявки' });
+        }
+
         if (order.status !== 'gzp-pre' && data.priority) {
             return res.status(400).send({ errText: 'Заявка может быть приоритетной только для ГЗП' });
         }
